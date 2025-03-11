@@ -47,6 +47,23 @@ static int cmd_c(char *args) {
   return 0;
 }
 
+static int cmd_si(char *args){
+  cpu_exec(1);
+  return 0;
+}
+
+static int cmd_info(char *args){
+  if (*args == 'r'){
+    printf("you print info r\n");
+    //直接进去修改这个函数即可，此为空函数
+    isa_reg_display();
+  }
+  else if (*args == 'p'){
+    printf("you print info p\n");
+    //这里少一个打印watchpoint的函数，后续在完成
+  }
+  return 0;
+}
 
 static int cmd_q(char *args) {
   nemu_state.state = NEMU_QUIT;
@@ -62,6 +79,8 @@ static struct {
 } cmd_table [] = {
   { "help", "Display information about all supported commands", cmd_help },
   { "c", "Continue the execution of the program", cmd_c },
+  { "si", "execute one step", cmd_si },
+  { "info", "use 'info r' = show register status ***and*** use 'info w' = show watch point message", cmd_info },
   { "q", "Exit NEMU", cmd_q },
 
   /* TODO: Add more commands */
