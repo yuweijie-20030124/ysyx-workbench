@@ -43,11 +43,14 @@ static char* rl_gets() {
 }
 
 static int cmd_c(char *args) {
-  nemu_state.state = NEMU_QUIT;
   cpu_exec(-1);
   return 0;
 }
 
+static int cmd_si(char *args){
+  cpu_exec(1);
+  return 0;
+}
 
 static int cmd_q(char *args) {
   nemu_state.state = NEMU_QUIT;
@@ -63,6 +66,7 @@ static struct {
 } cmd_table [] = {
   { "help", "Display information about all supported commands", cmd_help },
   { "c", "Continue the execution of the program", cmd_c },
+  { "si", "execute one step", cmd_si },
   { "q", "Exit NEMU", cmd_q },
 
   /* TODO: Add more commands */
