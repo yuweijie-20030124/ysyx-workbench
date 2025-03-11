@@ -52,6 +52,11 @@ static int cmd_si(char *args){
   return 0;
 }
 
+static int cmd_info(char *args){
+  cpu_exec(1);
+  return 0;
+}
+
 static int cmd_q(char *args) {
   nemu_state.state = NEMU_QUIT;
   return -1;
@@ -67,6 +72,7 @@ static struct {
   { "help", "Display information about all supported commands", cmd_help },
   { "c", "Continue the execution of the program", cmd_c },
   { "si", "execute one step", cmd_si },
+  { "info", "use 'info r' = show register status//use 'info w' = show watch point message", cmd_info },
   { "q", "Exit NEMU", cmd_q },
 
   /* TODO: Add more commands */
