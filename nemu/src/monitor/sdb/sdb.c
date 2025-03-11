@@ -54,7 +54,7 @@ static int cmd_si(char *args){
 
 static int cmd_info(char *args){
   if (*args == 'r'){
-    printf("you print info r");
+    printf("you print info r/n");
     isa_reg_display();
   }
   else if (*args == 'p'){
