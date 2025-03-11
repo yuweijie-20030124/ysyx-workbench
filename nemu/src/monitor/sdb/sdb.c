@@ -54,11 +54,11 @@ static int cmd_si(char *args){
 
 static int cmd_info(char *args){
   if (*args == 'r'){
-    printf("you print info r/n");
+    printf("you print info r\n");
     isa_reg_display();
   }
   else if (*args == 'p'){
-    printf("you print info p");
+    printf("you print info p\n");
   }
   return 0;
 }
