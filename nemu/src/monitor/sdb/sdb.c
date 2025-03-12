@@ -133,7 +133,7 @@ static int cmd_x(char *args) {
   }
   else {
     for(i=0;i<*count;i++){
-      printf("0x%08x\n",vaddr_read(address, 4));
+      printf("0x%08x\n",vaddr_read((address+4*i), 4));
     }
   }
   return 0;
