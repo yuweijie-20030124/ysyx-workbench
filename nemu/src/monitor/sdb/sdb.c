@@ -18,6 +18,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "sdb.h"
+#include <memory/paddr.h>
 
 static int is_batch_mode = false;
 
@@ -87,9 +88,45 @@ static int cmd_q(char *args) {
 }
 
 static int cmd_x(char *args) {
-  
-  
-  
+  if (args == NULL) {
+    printf("Invalid argument\n");
+    return 0;
+  }
+
+  /* Extract the first argument */
+  char *arg = strtok(args, " ");
+  if (arg == NULL) {
+    printf("Invalid argument\n");
+    return 0;
+  }
+
+  /* Convert the first argument to int */
+  int n = atoi(arg);
+  if (n <= 0) {
+    printf("Invalid argument '%s'\n", arg);
+    return 0;
+  }
+
+  /* Eval the rest of arguments */
+  args = arg + strlen(arg) + 1;
+  if (args == NULL) {
+    printf("Invalid argument\n");
+    return 0;
+  }
+  // TODO: implement eval()
+  paddr_t addr = atoi(args);
+
+  /* Check the address */
+  if (addr < CONFIG_MBASE || CONFIG_MBASE + CONFIG_MSIZE <= addr) {
+    printf("Address out of bound\n");
+    return 0;
+  }
+
+  /* Dump the memory */
+  for (int i = 0; i < n; i++) {
+    printf("0x%08x:\t0x%08x\n", addr, paddr_read(addr, 4));
+    addr += 4;
+  }
   return 0;
 }
 
