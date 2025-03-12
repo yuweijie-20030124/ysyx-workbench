@@ -102,6 +102,7 @@ static int cmd_x(char *args) {
   // 分割参数
   char *count = strtok(args, " ");
   char *addr = strtok(NULL, " ");
+  int i = 0;
   //printf ("%s,%s\n",count,addr);
 
   // 检查参数数量
@@ -130,8 +131,11 @@ static int cmd_x(char *args) {
       printf("Out of address allowed range (0x80000000 ~ 0x8FFFFFFF)\n");
       return 0;
   }
-  else printf("good adress\n");
-
+  else {
+    for(i=0;i<*count;i++){
+      printf("0x%08x\n",vaddr_read(address, 4));
+    }
+  }
   return 0;
 }
 
