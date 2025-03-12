@@ -34,7 +34,7 @@ void isa_reg_display() {
 
 void isa_reg_display() {
   for (int i = 0; i < 32; i++) {
-    printf("%s\t0x%08x\t%d\n", reg_name(i), gpr(i), gpr(i));
+    printf("%s\t0x%08x\t%d\n", regs[i], *regs[i], *regs[i]);
   }
 }
 
