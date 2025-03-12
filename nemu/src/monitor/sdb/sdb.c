@@ -19,6 +19,7 @@
 #include <readline/history.h>
 #include "sdb.h"
 #include <memory/paddr.h>
+#include <memory/vaddr.h>
 
 static int is_batch_mode = false;
 
@@ -93,7 +94,7 @@ static int cmd_x(char *args) {
     return 0;
   }
   if (strcmp(args, "1") == 0){
-    paddr_read(0x80000000,10);
+    printf("0x%08x\n",vaddr_read(0x80000000, 4));
     return 0;
   }
 
