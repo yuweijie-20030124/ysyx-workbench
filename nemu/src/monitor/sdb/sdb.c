@@ -53,11 +53,11 @@ static int cmd_si(char *args) {
     return 0;
   }
 
-  int n = atoi(args);
-  if (n <= 0) {
+  int i = atoi(args);
+  if (i <= 0) {
     printf("Invalid argument '%s'\n", args);
   } else {
-    cpu_exec(n);
+    cpu_exec(i);
   }
 
   return 0;
