@@ -131,13 +131,15 @@ static int cmd_x(char *args) {
   vaddr_t address = strtoul(addr, &endptr, 0);
   //printf("0x%08x\n", address);
 
+  //中间还要添加一个表达式求值，但是现在还没完成
+
   // 检查地址是否在合法范围内
   if (address < 0x80000000 || address > 0x8FFFFFFF) {
       printf("Out of address allowed range (0x80000000 ~ 0x8FFFFFFF)\n");
       return 0;
   }
   for (int i = 0; i < num; i++) {
-    printf("0x%08x:%016x\n",address,paddr_read(address,4));
+    printf("0x%08x:%08x\n",address,paddr_read(address,4));
     address += 4;
 }  
   return 0;
