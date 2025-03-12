@@ -90,7 +90,7 @@ static int cmd_q(char *args) {
   nemu_state.state = NEMU_QUIT;
   return -1;
 }
-
+/*
 //example：x 10 0x80000000
 //printf("0x%08x\n",vaddr_read(0x80000000, 4));
 static int cmd_x(char *args) {
@@ -135,6 +135,50 @@ static int cmd_x(char *args) {
     word_t value = vaddr_read(current_addr, 4); // 读取 4 字节
     printf("0x%08x: 0x%08x\n", current_addr, value); // 打印地址和值
 }  
+  return 0;
+}
+*/
+
+static int cmd_x(char *args) {
+  if (args == NULL) {
+    printf("Invalid argument\n");
+    return 0;
+  }
+
+  /* Extract the first argument */
+  char *arg = strtok(args, " ");
+  if (arg == NULL) {
+    printf("Invalid argument\n");
+    return 0;
+  }
+
+  /* Convert the first argument to int */
+  int n = atoi(arg);
+  if (n <= 0) {
+    printf("Invalid argument '%s'\n", arg);
+    return 0;
+  }
+
+  /* Eval the rest of arguments */
+  args = arg + strlen(arg) + 1;
+  if (args == NULL) {
+    printf("Invalid argument\n");
+    return 0;
+  }
+  // TODO: implement eval()
+  paddr_t addr = atoi(args);
+
+  /* Check the address */
+  if (addr < CONFIG_MBASE || CONFIG_MBASE + CONFIG_MSIZE <= addr) {
+    printf("Address out of bound\n");
+    return 0;
+  }
+
+  /* Dump the memory */
+  for (int i = 0; i < n; i++) {
+    printf("0x%08x:\t0x%08x\n", addr, vaddr_read(addr, 4));
+    addr += 4;
+  }
   return 0;
 }
 
