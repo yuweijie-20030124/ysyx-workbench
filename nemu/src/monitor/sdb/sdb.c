@@ -102,7 +102,7 @@ static int cmd_x(char *args) {
   // 分割参数
   char *count = strtok(args, " ");
   char *addr = strtok(NULL, " ");
-  printf ("%s,%s\n",count,addr);
+  //printf ("%s,%s\n",count,addr);
 
   // 检查参数数量
   if (addr == NULL) {
@@ -123,16 +123,14 @@ static int cmd_x(char *args) {
       return 0;
   }
   unsigned int address = strtoul(addr, &endptr, 0);
-  printf("0x%08x\n", address);
-/*
+  //printf("0x%08x\n", address);
+
   // 检查地址是否在合法范围内
-  if (addr < 0x80000000 || addr > 0x8FFFFFFF) {
-      printf("0x%08x\n",addr);
+  if (address < 0x80000000 || address > 0x8FFFFFFF) {
       printf("Out of address allowed range (0x80000000 ~ 0x8FFFFFFF)\n");
       return 0;
   }
   else printf("good adress\n");
-*/
 
   return 0;
 }
