@@ -128,6 +128,7 @@ static int cmd_x(char *args) {
       printf("Out of address allowed range (0x80000000 ~ 0x8FFFFFFF)\n");
       return 0;
   }
+  else printf("good adress\n");
 
 
   return 0;
