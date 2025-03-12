@@ -90,19 +90,20 @@ static int cmd_q(char *args) {
   nemu_state.state = NEMU_QUIT;
   return -1;
 }
-/*
+
 //example：x 10 0x80000000
 //printf("0x%08x\n",vaddr_read(0x80000000, 4));
 static int cmd_x(char *args) {
-  if (args == NULL || *args == '\0') {
-      printf("Not enough parameters, two parameters are needed: quantity address (example: x 10 0x80000000) \n");
+  if (args == NULL) {
+      printf("You dont have any parameter, two parameters are needed: quantity address (example: x 10 0x80000000) \n");
       return 0;
   }
 
   // 分割参数
   char *count = strtok(args, " ");
   char *addr = strtok(NULL, " ");
-  //printf ("%s,%s\n",count,addr);
+  char *third = strtok(NULL, " ");
+  printf ("%s,%s,%s\n",count,addr,third);
 
   // 检查参数数量
   if (addr == NULL) {
@@ -133,52 +134,8 @@ static int cmd_x(char *args) {
   for (int i = 0; i < num; i++) {
     vaddr_t current_addr = address + 4 * i; // 每次偏移 4 字节
     word_t value = vaddr_read(current_addr, 4); // 读取 4 字节
-    printf("0x%08x: 0x%08x\n", current_addr, value); // 打印地址和值
+    printf("地址0x%08x : 值0x%08x\n", current_addr, value); // 打印地址和值
 }  
-  return 0;
-}
-*/
-
-static int cmd_x(char *args) {
-  if (args == NULL) {
-    printf("Invalid argument\n");
-    return 0;
-  }
-
-  /* Extract the first argument */
-  char *arg = strtok(args, " ");
-  if (arg == NULL) {
-    printf("Invalid argument\n");
-    return 0;
-  }
-
-  /* Convert the first argument to int */
-  int n = atoi(arg);
-  if (n <= 0) {
-    printf("Invalid argument '%s'\n", arg);
-    return 0;
-  }
-
-  /* Eval the rest of arguments */
-  args = arg + strlen(arg) + 1;
-  if (args == NULL) {
-    printf("Invalid argument\n");
-    return 0;
-  }
-  // TODO: implement eval()
-  paddr_t addr = atoi(args);
-
-  /* Check the address */
-  if (addr < CONFIG_MBASE || CONFIG_MBASE + CONFIG_MSIZE <= addr) {
-    printf("Address out of bound\n");
-    return 0;
-  }
-
-  /* Dump the memory */
-  for (int i = 0; i < n; i++) {
-    printf("0x%08x:\t0x%08x\n", addr, vaddr_read(addr, 4));
-    addr += 4;
-  }
   return 0;
 }
 
