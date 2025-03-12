@@ -92,7 +92,7 @@ static int cmd_x(char *args) {
     printf("you should print like **'x 10 0x80000000'**\n");
     return 0;
   }
-  if (*args == '1'){
+  if (strcmp(args, "1") == 0){
     paddr_read(0x80000000,10);
     return 0;
   }
