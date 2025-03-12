@@ -139,7 +139,7 @@ static int cmd_x(char *args) {
   for (int i = 0; i < num; i++) {
     vaddr_t current_addr = address + 4 * i; // 每次偏移 4 字节
     word_t value = vaddr_read(current_addr, 4); // 读取 4 字节
-    printf("地址0x%08x : 值0x%08x\n", current_addr, value); // 打印地址和值
+    printf("地址:0x%08x   ********   值:0x%08x\n", current_addr, value); // 打印地址和值
 }  
   return 0;
 }
