@@ -125,6 +125,7 @@ static int cmd_x(char *args) {
 
   // 检查地址是否在合法范围内
   if (*addr < 0x80000000 || *addr > 0x8FFFFFFF) {
+      printf("0x%08x\n",*addr);
       printf("Out of address allowed range (0x80000000 ~ 0x8FFFFFFF)\n");
       return 0;
   }
