@@ -88,14 +88,18 @@ static int cmd_q(char *args) {
   return -1;
 }
 
+//example：x 10 0x80000000
+//printf("0x%08x\n",vaddr_read(0x80000000, 4));
+//确定第一个参数是数字
 static int cmd_x(char *args) {
+  int i = atoi(args);
+  
   if (args == NULL){
-    printf("you should print like **'x 10 0x80000000'**\n");
+    printf("you need to enter parameters like ***x 10 0x80000000***\n");
     return 0;
   }
-  if (strcmp(args, "1") == 0){
-    printf("0x%08x\n",vaddr_read(0x80000000, 4));
-    return 0;
+  if (i<=0){
+    printf("enter a positive integer for the first parameter\n");
   }
 
   
