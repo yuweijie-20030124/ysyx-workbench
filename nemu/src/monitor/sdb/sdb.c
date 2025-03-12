@@ -106,7 +106,7 @@ static int cmd_x(char *args) {
 
   // 检查参数数量
   if (addr == NULL) {
-      printf("Not enough parameters, two parameters are needed: quantity address (example: x 10 0x80000000) \n");
+      printf("You only have one parameter, two parameters are needed: quantity address (example: x 10 0x80000000) \n");
       return 0;
   }
 
