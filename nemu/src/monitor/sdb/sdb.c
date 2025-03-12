@@ -55,10 +55,12 @@ static int cmd_si(char *args){
 static int cmd_info(char *args){
   if (*args == 'r'){
     printf("you print info r\n");
+    //直接进去修改这个函数即可，此为空函数
     isa_reg_display();
   }
   else if (*args == 'p'){
     printf("you print info p\n");
+    //这里少一个打印watchpoint的函数，后续在完成
   }
   return 0;
 }
