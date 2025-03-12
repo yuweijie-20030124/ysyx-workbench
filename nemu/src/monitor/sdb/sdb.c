@@ -54,15 +54,19 @@ static int cmd_si(char *args){
 
 static int cmd_info(char *args) {
   if (args == NULL) {
-    printf("Invalid argument\n");
+    printf("print r to see register status\n");
+    printf("print p to see watchpoint\n");
     return 0;
   }
 
   if (strcmp(args, "r") == 0) {
     isa_reg_display();
-  } else {
-    printf("Invalid argument '%s'\n", args);
+  } else if(strcmp(args, "p") == 0){
+    printf("print r or p, not'%s'\n", args);
   }
+    else{
+    printf("print r or p, not'%s'\n", args);
+    }
 
   return 0;
 }
