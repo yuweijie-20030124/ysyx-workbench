@@ -103,11 +103,16 @@ static int cmd_x(char *args) {
   char *count = strtok(args, " ");
   char *addr = strtok(NULL, " ");
   char *third = strtok(NULL, " ");
-  printf ("%s,%s,%s\n",count,addr,third);
+  //printf ("%s,%s,%s\n",count,addr,third);
 
   // 检查参数数量
   if (addr == NULL) {
       printf("You only have one parameter, two parameters are needed: quantity address (example: x 10 0x80000000) \n");
+      return 0;
+  }
+
+  if (third != NULL){
+      printf("You have too many parameter, two parameters are needed: quantity address (example: x 10 0x80000000) \n");
       return 0;
   }
 
