@@ -62,7 +62,7 @@ static int cmd_info(char *args) {
   if (strcmp(args, "r") == 0) {
     isa_reg_display();
   } else if(strcmp(args, "p") == 0){
-    printf("print r or p, not'%s'\n", args);
+    printf("you print info p");
   }
     else{
     printf("print r or p, not'%s'\n", args);
