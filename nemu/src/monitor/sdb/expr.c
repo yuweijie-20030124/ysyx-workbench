@@ -13,18 +13,19 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
+//1.识别出表达式的单元
+//2.
+
 #include <isa.h>
 
 /* We use the POSIX regex functions to process regular expressions.
  * Type 'man regex' for more information about POSIX regex functions.
  */
 #include <regex.h>
-
+//token类型枚举
 enum {
-  TK_NOTYPE = 256, TK_EQ,
-
-  /* TODO: Add more token types */
-
+  TK_NOTYPE = 256, TK_EQ, TK_NEQ,
+  TK_ADD, TK_SUB, TK_DIV, TK_MUL, TK_LPAR, TK_RPAR, TK_NUM,
 };
 
 static struct rule {
@@ -36,9 +37,16 @@ static struct rule {
    * Pay attention to the precedence level of different rules.
    */
 
-  {" +", TK_NOTYPE},    // spaces
-  {"\\+", '+'},         // plus
-  {"==", TK_EQ},        // equal
+  {" +", TK_NOTYPE},          // spaces
+  {"==", TK_EQ},             // equal
+  {"!=", TK_NEQ},           // not equal
+  {"\\+", TK_ADD},         // plus
+  {"\\-", TK_SUB},        // sub
+  {"\\/", TK_DIV},       // divide
+  {"\\*", TK_MUL},      // multiple
+  {"\\(", TK_LPAR},    // left parenthesis
+  {"\\)", TK_RPAR},   // right parenthesis
+  {")", TK_NUM},     // number
 };
 
 #define NR_REGEX ARRLEN(rules)
