@@ -98,10 +98,11 @@ static int cmd_x(char *args) {
     printf("you need to enter parameters like ***x 10 0x80000000***\n");
     return 0;
   }
+
   if (i<=0){
     printf("enter a positive integer for the first parameter\n");
+    printf("0x%08x" , *(args+4));
   }
-
   
   
   return 0;
