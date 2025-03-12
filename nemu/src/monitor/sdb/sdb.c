@@ -12,7 +12,10 @@
 *
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
-
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
 #include <isa.h>
 #include <cpu/cpu.h>
 #include <readline/readline.h>
@@ -90,21 +93,53 @@ static int cmd_q(char *args) {
 
 //example：x 10 0x80000000
 //printf("0x%08x\n",vaddr_read(0x80000000, 4));
-//确定第一个参数是数字
 static int cmd_x(char *args) {
-  int i = atoi(args);
-  
-  if (args == NULL){
-    printf("you need to enter parameters like ***x 10 0x80000000***\n");
-    return 0;
+  if (args == NULL || *args == '\0') {
+      printf("Not enough parameters, two parameters are needed: quantity address (example: x 10 0x80000000) \n");
+      return 0;
   }
 
-  if (i<=0){
-    printf("enter a positive integer for the first parameter\n");
-    printf("%d\n" , *(args+4));
+  // 分割参数
+  char *count_str = strtok(args, " ");
+  char *addr_str = strtok(NULL, " ");
+
+  // 检查参数数量
+  if (addr_str == NULL) {
+      printf("需要两个参数：数量 地址（示例：x 10 0x80000000）\n");
+      return 0;
   }
-  
-  
+
+  // 解析数量
+  char *endptr;
+  errno = 0; // 用于检测溢出
+  long count = strtol(count_str, &endptr, 10);
+  if (*endptr != '\0' || count <= 0) {
+      if (errno == ERANGE) {
+          printf("数量超出范围，请输入合理的正整数\n");
+      } else {
+          printf("数量必须为正整数（非法字符：%s）\n", endptr);
+      }
+      return 0;
+  }
+
+  // 解析地址
+  errno = 0;
+  unsigned long address = strtoul(addr_str, &endptr, 0); // 自动识别进制
+  if (*endptr != '\0' || addr_str[0] == '\0') {
+      printf("地址无效，请输入合法地址（示例：0x80000000）。错误字符：%s\n", endptr);
+      return 0;
+  }
+
+  // 可选：检查地址是否在合法范围内（根据你的模拟器实际情况调整）
+  if (address < 0x80000000 || address > 0x8FFFFFFF) {
+      printf("地址超出模拟器允许范围（0x80000000 ~ 0x8FFFFFFF）\n");
+      return 0;
+  }
+
+  // 执行内存扫描操作（此处为示例）
+  printf("正在从地址 0x%lX 开始扫描 %ld 字节内存...\n", address, count);
+  // TODO: 添加实际的内存读取代码
+
   return 0;
 }
 
