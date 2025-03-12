@@ -52,16 +52,18 @@ static int cmd_si(char *args){
   return 0;
 }
 
-static int cmd_info(char *args){
-  if (*args == 'r'){
-    printf("you print info r\n");
-    //直接进去修改这个函数即可，此为空函数
+static int cmd_info(char *args) {
+  if (args == NULL) {
+    printf("Invalid argument\n");
+    return 0;
+  }
+
+  if (strcmp(args, "r") == 0) {
     isa_reg_display();
+  } else {
+    printf("Invalid argument '%s'\n", args);
   }
-  else if (*args == 'p'){
-    printf("you print info p\n");
-    //这里少一个打印watchpoint的函数，后续在完成
-  }
+
   return 0;
 }
 
