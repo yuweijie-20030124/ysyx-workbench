@@ -102,7 +102,7 @@ static int cmd_x(char *args) {
   // 分割参数
   char *count_str = strtok(args, " ");
   char *addr_str = strtok(NULL, " ");
-
+  printf ("%s,%s\n",count_str,addr_str);
   // 检查参数数量
   if (addr_str == NULL) {
       printf("需要两个参数：数量 地址（示例：x 10 0x80000000）\n");
