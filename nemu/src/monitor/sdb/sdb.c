@@ -18,6 +18,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "sdb.h"
+#include <memory/paddr.h>
 
 static int is_batch_mode = false;
 
@@ -87,8 +88,15 @@ static int cmd_q(char *args) {
 }
 
 static int cmd_x(char *args) {
-  if (args == NULL){printf("you should print like 'x 10 0x80000000'");}
-  
+  if (args == NULL){
+    printf("you should print like **'x 10 0x80000000'**\n");
+    return 0;
+  }
+  if (*args == '1'){
+    paddr_read(0x80000000,10);
+    return 0;
+  }
+
   
   
   return 0;
