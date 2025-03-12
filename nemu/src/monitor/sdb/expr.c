@@ -13,18 +13,20 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
+//1.识别出表达式的单元
+//2.
+
 #include <isa.h>
 
 /* We use the POSIX regex functions to process regular expressions.
  * Type 'man regex' for more information about POSIX regex functions.
  */
 #include <regex.h>
-
+//token类型枚举
 enum {
-  TK_NOTYPE = 256, TK_EQ,
-
-  /* TODO: Add more token types */
-
+  TK_NOTYPE = 256, TK_EQ = 255, TK_NEQ,
+  TK_ADD, TK_SUB, TK_DIV, TK_MUL, TK_LPAR, TK_RPAR,
+  TK_DEC, TK_HEX ,TK_REG ,TK_VAR
 };
 
 static struct rule {
@@ -36,9 +38,19 @@ static struct rule {
    * Pay attention to the precedence level of different rules.
    */
 
-  {" +", TK_NOTYPE},    // spaces
-  {"\\+", '+'},         // plus
-  {"==", TK_EQ},        // equal
+  {" +", TK_NOTYPE},           // spaces
+  {"==", TK_EQ},              // equal
+  {"!=", TK_NEQ},            // not equal
+  {"\\+", TK_ADD},          // plus
+  {"-", TK_SUB},           // sub
+  {"/", TK_DIV},          // divide
+  {"\\*", TK_MUL},       // multiple
+  {"\\(", TK_LPAR},     // left parenthesis
+  {"\\)", TK_RPAR},    // right parenthesis
+  {"[0-9]+", TK_DEC}, // decimal number
+  {"0[xX][0-9a-fA-F]+", TK_HEX},    // hex number
+  {"\\$(\\$0|ra|sp|gp|tp|t0|t1|t2|s0|s1|a0|a1|a2|a3|a4|a5|a6|a7|s2|s3|s4|s5|s6|s7|s8|s9|s10|s11|t3|t4|t5|t6)", TK_REG}, // register
+  {"[a-zA-Z0-9_]+", TK_VAR},       // variable
 };
 
 #define NR_REGEX ARRLEN(rules)
@@ -70,7 +82,7 @@ typedef struct token {
 static Token tokens[32] __attribute__((used)) = {};
 static int nr_token __attribute__((used))  = 0;
 
-static bool make_token(char *e) {
+static bool make_token(char *e) {//将输入字符串分解为token数组
   int position = 0;
   int i;
   regmatch_t pmatch;
@@ -95,6 +107,9 @@ static bool make_token(char *e) {
          */
 
         switch (rules[i].token_type) {
+          case TK_NOTYPE:
+              printf("i get a space\n");
+              break;
           default: TODO();
         }
 

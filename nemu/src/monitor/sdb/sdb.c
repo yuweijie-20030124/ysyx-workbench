@@ -145,6 +145,11 @@ static int cmd_x(char *args) {
   return 0;
 }
 
+static int cmd_p(char *args) {
+  printf("you printf cmdp\n");
+  return 0;
+}
+
 static int cmd_help(char *args);
 
 static struct {
@@ -157,11 +162,9 @@ static struct {
   { "si", "execute one step", cmd_si },
   { "info", "use 'info r' to show register status ***and*** use 'info w' to show watch point message", cmd_info },
   { "x", "scan memory", cmd_x },
+  { "p", "expression evaluation", cmd_p },
   { "q", "Exit NEMU", cmd_q },
-
-
   /* TODO: Add more commands */
-
 };
 
 #define NR_CMD ARRLEN(cmd_table)
