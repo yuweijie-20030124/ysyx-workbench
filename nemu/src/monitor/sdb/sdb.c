@@ -47,8 +47,19 @@ static int cmd_c(char *args) {
   return 0;
 }
 
-static int cmd_si(char *args){
-  cpu_exec(1);
+static int cmd_si(char *args) {
+  if (args == NULL) {
+    cpu_exec(1);
+    return 0;
+  }
+
+  int n = atoi(args);
+  if (n <= 0) {
+    printf("Invalid argument '%s'\n", args);
+  } else {
+    cpu_exec(n);
+  }
+
   return 0;
 }
 
