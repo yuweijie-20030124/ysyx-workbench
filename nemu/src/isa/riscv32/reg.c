@@ -25,6 +25,7 @@ const char *regs[] = {
 
 void isa_reg_display() {
   printf("%s -- 0x%x\n",regs[0],*regs[0]);
+  printf("%s -- 0x%x\n",regs[1],*regs[1]);
 }
 
 word_t isa_reg_str2val(const char *s, bool *success) {
