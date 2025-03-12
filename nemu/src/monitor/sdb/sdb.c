@@ -87,6 +87,7 @@ static int cmd_q(char *args) {
 }
 
 static int cmd_x(char *args) {
+  if (args == NULL){printf("you should print like 'x 10 0x80000000'");}
   
   
   
