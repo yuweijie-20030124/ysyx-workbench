@@ -67,7 +67,6 @@ static int cmd_info(char *args) {
     else{
     printf("print r or p, not'%s'\n", args);
     }
-
   return 0;
 }
 
