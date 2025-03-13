@@ -104,7 +104,7 @@ static int cmd_x(char *args) {
   char *count = strtok(args, " ");
   char *addr = strtok(NULL, " ");
   char *third = strtok(NULL, " ");
-  //printf ("%s,%s,%s\n",count,addr,third);
+  printf ("%s,%s,%s\n",count,addr,third);
 
   // 检查参数数量
   if (addr == NULL) {
