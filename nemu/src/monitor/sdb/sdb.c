@@ -118,14 +118,9 @@ static int cmd_x(char *args) {
 
   // 解析数量
   char *endptr;
-  errno = 0; // 用于检测溢出
   long num = strtol(count, &endptr, 10);
   if (*endptr != '\0' || num <= 0) {
-      if (errno == ERANGE) {
-          printf("The number is out of range. Please enter a reasonable positive integer\n");
-      } else {
-          printf("Quantity must be a positive integer (illegal character: %s)\n", endptr);
-      }
+      printf("Quantity must be a positive integer (illegal character: %s)\n", endptr);   
       return 0;
   }
   vaddr_t address = strtoul(addr, &endptr, 0);
