@@ -213,6 +213,7 @@ static bool make_token(char *e) {//将输入字符串分解为token数组
     printf("Expression too long!\n");
     return false;
   }
+  tokens_num=nr_token;
   return true;
 }
 
