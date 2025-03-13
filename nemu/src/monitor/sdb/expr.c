@@ -132,7 +132,7 @@ static bool make_token(char *e) {//将输入字符串分解为token数组
   int position = 0;
   int i;
   regmatch_t pmatch;
-  memset(tokens, 0, sizeof(tokens)); //tokens清零,防止后续出现计算错误
+  memset(tokens, 0, sizeof(tokens)); 
   nr_token = 0;
 
   while (e[position] != '\0' && nr_token < MAX_TOKEN_NUM) {
@@ -161,9 +161,6 @@ static bool make_token(char *e) {//将输入字符串分解为token数组
           case TK_MUL:
           tokens[nr_token++].type=TK_MUL;
               break;
-          case TK_EQ:
-          tokens[nr_token++].type=TK_EQ;
-              break;
           case TK_ADD:
           tokens[nr_token++].type=TK_ADD;
               break;
@@ -178,6 +175,9 @@ static bool make_token(char *e) {//将输入字符串分解为token数组
               break;
           case TK_NEQ:
           tokens[nr_token++].type=TK_NEQ;
+              break;
+          case TK_EQ:
+          tokens[nr_token++].type=TK_EQ;
               break;
           case TK_AND:
           tokens[nr_token++].type=TK_AND;
