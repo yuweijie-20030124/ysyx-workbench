@@ -106,6 +106,13 @@ bool check_parentheses(uint16_t p, uint16_t q) {
     return false;
 }
 
+int order(int token) {//排列token的顺序优先级
+switch(token){
+
+  }
+return 0;
+}
+
 static bool make_token(char *e) {//将输入字符串分解为token数组
   int position = 0;
   int i;
