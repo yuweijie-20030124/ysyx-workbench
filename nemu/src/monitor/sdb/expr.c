@@ -42,9 +42,9 @@ static struct rule {
   {"==", TK_EQ},              // equal
   {"!=", TK_NEQ},            // not equal
   {"\\+", TK_ADD},          // plus
-  {"-", TK_SUB},           // sub
-  {"/", TK_DIV},          // divide
-  {"\\*", TK_MUL},       // multiple
+  {"-",  TK_SUB},           // sub
+  {"\\/", TK_DIV},          // divide
+  {"\\*",  TK_MUL},       // multiple
   {"\\(", TK_LPAR},     // left parenthesis
   {"\\)", TK_RPAR},    // right parenthesis
   {"[0-9]+", TK_DEC}, // decimal number
@@ -115,7 +115,23 @@ static bool make_token(char *e) {//将输入字符串分解为token数组
           case TK_NOTYPE:
               printf("i get a space\n"); //空格则不需要存入
               break;
-          
+          case TK_ADD:
+          case TK_SUB:
+          case TK_EQ:
+          case TK_MUL:
+          case TK_DIV:
+          case TK_LPAR:
+          case TK_RPAR:
+          case TK_NEQ:
+
+          break;
+
+          case TK_REG:
+          case TK_DEC:
+          case TK_HEX:
+          case TK_VAR:
+
+          break; 
           default: printf("you print unrecognized token\n");
         }
 
@@ -140,7 +156,7 @@ word_t expr(char *e, bool *success) {
   }
 
   /* TODO: Insert codes to evaluate the expression. */
-  TODO();
+
 
   return 0;
 }
