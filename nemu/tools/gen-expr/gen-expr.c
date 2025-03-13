@@ -19,6 +19,9 @@
 #include <time.h>
 #include <assert.h>
 #include <string.h>
+#include <stdbool.h>
+#include <stdbool.h>
+#include <errno.h>
 
 // this should be enough
 static char buf[65536] = {};
@@ -62,24 +65,6 @@ static void gen_num() {
   }// random space
 }
 
-static void gen_num() {
-  uint32_t randnum = rand() & (uint8_t)(-1);// % uint32
-  sprintf(buf + ptr, "%u", randnum);
-  ptr += strlen(buf + ptr);
-  if (rand() & 1) {
-    buf[ptr] = ' ';
-    ptr += 1;
-  }// random space
-}
-
-/*
- *将表达式展开成高度为depth+1的完全二叉树，将有 2 ** depth 个叶子结点。
- *每个叶子结点代表 数值 或 （数值）。
- *因此，depth深度的表达式，最长为：
- * 2 ** depth * len("( 10位%d数字uint32 ) op")
- *=2 ** depth * 16
- *因此，最大深度 MAX（depth）= log2(65536 / 16) = 12
- */
 static void gen_rand_expr(bool noMoreBrackets, uint8_t depth) {
   int choose3;
   if (noMoreBrackets)// Avoid multiple Brackets (( ... ))
