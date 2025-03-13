@@ -158,11 +158,11 @@ static int cmd_p(char *args) {
     return 0;
   }
   else{
-    uint64_t result;
+    word_t value;
     bool success;
-    result = expr(args,&success);
+    value = expr(args,&success);
     if(success){
-    printf("result = 0x%-8lx = %lu \n", result, result);
+    printf("value = 0x%-8x = %u \n", value, value);
     return 0;
     }
     else{
