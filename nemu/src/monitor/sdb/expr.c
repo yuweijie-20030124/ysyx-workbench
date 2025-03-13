@@ -88,6 +88,24 @@ typedef struct token {
 static Token tokens[MAX_TOKEN_NUM] __attribute__((used)) = {};
 static int nr_token __attribute__((used))  = 0;
 
+bool check_parentheses(uint16_t p, uint16_t q) {
+  if(tokens[p].type!='('||tokens[q].type!=')') {return false;}
+  if(tokens[p].type == '(' && tokens[q].type == ')')
+  {
+    int16_t cnt = 0;
+    uint16_t i;
+    for (i = p + 1; cnt > 0 && i < q; i++)
+    {
+        if (tokens[i].type == '(') cnt += 1;
+        else if (tokens[i].type == ')') cnt -= 1;
+    }
+    if(cnt == 0 && i == q) return true;
+    else return false;
+  }
+  else 
+    return false;
+}
+
 static bool make_token(char *e) {//将输入字符串分解为token数组
   int position = 0;
   int i;
@@ -152,24 +170,6 @@ static bool make_token(char *e) {//将输入字符串分解为token数组
     return false;
   }
   return true;
-}
-
-bool check_parentheses(uint16_t p, uint16_t q) {
-  if(tokens[p].type!='('||tokens[q].type!=')') {return false;}
-  if(tokens[p].type == '(' && tokens[q].type == ')')
-  {
-    int16_t cnt = 0;
-    uint16_t i;
-    for (i = p + 1; cnt > 0 && i < q; i++)
-    {
-        if (tokens[i].type == '(') cnt += 1;
-        else if (tokens[i].type == ')') cnt -= 1;
-    }
-    if(cnt == 0 && i == q) return true;
-    else return false;
-  }
-  else 
-    return false;
 }
 
 
