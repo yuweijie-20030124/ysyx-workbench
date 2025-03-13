@@ -77,8 +77,10 @@ static int cmd_info(char *args) {
 
   if (strcmp(args, "r") == 0) {
     isa_reg_display();
-  } else if(strcmp(args, "p") == 0){
+  } 
+  else if(strcmp(args, "p") == 0){
     printf("you print info p\n");
+    //info_wp();
   }
     else{
     printf("print r or p, not'%s'\n", args);
@@ -140,6 +142,16 @@ static int cmd_x(char *args) {
   return 0;
 }
 
+static int cmd_w(char *args) {
+  
+  return 0;
+  }
+
+static int cmd_d(char *args) {
+  
+  return 0;
+}
+
 static int cmd_p(char *args) {
   if (args == NULL) {
     printf("You dont have any parameter,try ***p 5 + 6*** \n");
@@ -174,8 +186,10 @@ static struct {
   { "info", "use 'info r' to show register status ***and*** use 'info w' to show watch point message", cmd_info },
   { "x", "scan memory", cmd_x },
   { "p", "expression evaluation", cmd_p },
+  { "w", "creat watchpoint", cmd_w },
+  { "d", "delete watchpoint", cmd_d },
   { "q", "Exit NEMU", cmd_q },
-  /* TODO: Add more commands */
+  /* TODO: Add more commands cmd_d*/
 };
 
 #define NR_CMD ARRLEN(cmd_table)
