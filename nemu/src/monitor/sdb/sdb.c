@@ -171,6 +171,11 @@ static int cmd_p(char *args) {
 
 static int cmd_help(char *args);
 
+static int cmd_test(char *args) {
+
+  return 0;
+}
+
 static struct {
   const char *name;
   const char *description;
@@ -184,6 +189,7 @@ static struct {
   { "p", "expression evaluation", cmd_p },
   { "w", "creat watchpoint", cmd_w },
   { "d", "delete watchpoint", cmd_d },
+  { "test", "evaluation test", cmd_test },
   { "q", "Exit NEMU", cmd_q },
   /* TODO: Add more commands cmd_d*/
 };

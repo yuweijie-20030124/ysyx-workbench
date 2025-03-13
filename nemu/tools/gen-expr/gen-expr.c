@@ -51,8 +51,18 @@ static void gen_rand_op() {
   }
 }
 
+static void gen_num() {
+  uint32_t randnum = rand() & (uint8_t)(-1);// % uint32
+  sprintf(buf + ptr, "%u", randnum);
+  ptr += strlen(buf + ptr);
+  if (rand() & 1) {
+    buf[ptr] = ' ';
+    ptr += 1;
+  }// random space
+}
+
 static void gen_rand_expr() {
-  buf[0] = '\0';
+  //buf[0] = '\0';
 }
 
 int main(int argc, char *argv[]) {
