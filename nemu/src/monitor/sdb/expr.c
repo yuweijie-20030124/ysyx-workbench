@@ -24,9 +24,9 @@
 #include <regex.h>
 //token类型枚举
 enum {
-  TK_NOTYPE = 256, TK_EQ = 255, TK_NEQ,
-  TK_ADD, TK_SUB, TK_DIV, TK_MUL, TK_LPAR, TK_RPAR,
-  TK_DEC, TK_HEX ,TK_REG ,TK_VAR
+  TK_NOTYPE = 256, TK_EQ , TK_NEQ ,
+  TK_ADD , TK_SUB , TK_DIV , TK_MUL , TK_LPAR , TK_RPAR ,
+  TK_DEC , TK_HEX , TK_REG , TK_VAR 
 };
 
 static struct rule {
@@ -38,19 +38,19 @@ static struct rule {
    * Pay attention to the precedence level of different rules.
    */
 
-  {" +", TK_NOTYPE},           // spaces
-  {"==", TK_EQ},              // equal
-  {"!=", TK_NEQ},            // not equal
-  {"\\+", TK_ADD},          // plus
-  {"-", TK_SUB},           // sub
-  {"/", TK_DIV},          // divide
-  {"\\*", TK_MUL},       // multiple
-  {"\\(", TK_LPAR},     // left parenthesis
-  {"\\)", TK_RPAR},    // right parenthesis
-  {"[0-9]+", TK_DEC}, // decimal number
-  {"0[xX][0-9a-fA-F]+", TK_HEX},    // hex number
-  {"\\$(\\$0|ra|sp|gp|tp|t0|t1|t2|s0|s1|a0|a1|a2|a3|a4|a5|a6|a7|s2|s3|s4|s5|s6|s7|s8|s9|s10|s11|t3|t4|t5|t6)", TK_REG}, // register
-  {"[a-zA-Z0-9_]+", TK_VAR},       // variable
+  {" +", TK_NOTYPE},           // spaces rules[0]
+  {"==", TK_EQ},              // equal rules[1]
+  {"!=", TK_NEQ},            // not equal rules[2]
+  {"\\+", TK_ADD},          // plus rules[3]
+  {"-",  TK_SUB},           // sub rules[4]
+  {"\\/", TK_DIV},          // divide rules[5]
+  {"\\*",  TK_MUL},       // multiple rules[6]
+  {"\\(", TK_LPAR},     // left parenthesis rules[7]
+  {"\\)", TK_RPAR},    // right parenthesis rules[8]
+  {"[0-9]+", TK_DEC}, // decimal number rules[9]
+  {"0[xX][0-9a-fA-F]+", TK_HEX},    // hex number rules[10]
+  {"\\$(\\$0|ra|sp|gp|tp|t0|t1|t2|s0|s1|a0|a1|a2|a3|a4|a5|a6|a7|s2|s3|s4|s5|s6|s7|s8|s9|s10|s11|t3|t4|t5|t6)", TK_REG}, // register rules[11]
+  {"[a-zA-Z0-9_]+", TK_VAR},       // variable rules[12]
 };
 
 #define NR_REGEX ARRLEN(rules)
@@ -76,10 +76,10 @@ void init_regex() {
 
 typedef struct token {
   int type;
-  char str[32];
+  char str[256];
 } Token;
-
-static Token tokens[32] __attribute__((used)) = {};
+#define MAX_TOKEN_NUM 256
+static Token tokens[MAX_TOKEN_NUM] __attribute__((used)) = {};
 static int nr_token __attribute__((used))  = 0;
 
 static bool make_token(char *e) {//将输入字符串分解为token数组
@@ -108,9 +108,26 @@ static bool make_token(char *e) {//将输入字符串分解为token数组
 
         switch (rules[i].token_type) {
           case TK_NOTYPE:
-              printf("i get a space\n");
+              printf("i get a space\n"); //空格则不需要存入
               break;
-          default: TODO();
+          case TK_ADD:
+          case TK_SUB:
+          case TK_EQ:
+          case TK_MUL:
+          case TK_DIV:
+          case TK_LPAR:
+          case TK_RPAR:
+          case TK_NEQ:
+
+          break;
+
+          case TK_REG:
+          case TK_DEC:
+          case TK_HEX:
+          case TK_VAR:
+
+          break; 
+          default: printf("you print unrecognized token\n");
         }
 
         break;
@@ -122,8 +139,28 @@ static bool make_token(char *e) {//将输入字符串分解为token数组
       return false;
     }
   }
-
+  if (e[position] != '\0' && nr_token >= MAX_TOKEN_NUM){
+    printf("Expression too long!\n");
+    return false;
+  }
   return true;
+}
+
+bool check_parentheses(uint16_t p, uint16_t q) {
+  if(tokens[p].type == '(' && tokens[q].type == ')')
+  {
+    int16_t cnt = 1;
+    uint16_t i;
+    for (i = p + 1; cnt > 0 && i < q; i++)
+    {
+        if (tokens[i].type == '(') cnt += 1;
+        else if (tokens[i].type == ')') cnt -= 1;
+    }
+    if(cnt == 1 && i == q) return true;
+    else return false;
+  }
+  else 
+    return false;
 }
 
 
@@ -134,7 +171,7 @@ word_t expr(char *e, bool *success) {
   }
 
   /* TODO: Insert codes to evaluate the expression. */
-  TODO();
+
 
   return 0;
 }

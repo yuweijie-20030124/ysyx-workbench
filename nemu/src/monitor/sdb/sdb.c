@@ -118,14 +118,9 @@ static int cmd_x(char *args) {
 
   // 解析数量
   char *endptr;
-  errno = 0; // 用于检测溢出
   long num = strtol(count, &endptr, 10);
   if (*endptr != '\0' || num <= 0) {
-      if (errno == ERANGE) {
-          printf("The number is out of range. Please enter a reasonable positive integer\n");
-      } else {
-          printf("Quantity must be a positive integer (illegal character: %s)\n", endptr);
-      }
+      printf("Quantity must be a positive integer\n");   
       return 0;
   }
   vaddr_t address = strtoul(addr, &endptr, 0);
@@ -146,7 +141,23 @@ static int cmd_x(char *args) {
 }
 
 static int cmd_p(char *args) {
-  printf("you printf cmdp\n");
+  if (args == NULL) {
+    printf("You dont have any parameter,try ***p 5 + 6*** \n");
+    return 0;
+  }
+  else{
+    uint64_t result;
+    bool success;
+    result = expr(args,&success);
+    if(success){
+    printf("result = 0x%-8lx = %lu \n", result, result);
+    return 0;
+    }
+    else{
+    printf("evalution error\n");
+    return 0;
+    }
+  }
   return 0;
 }
 
