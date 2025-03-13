@@ -155,6 +155,7 @@ static bool make_token(char *e) {//将输入字符串分解为token数组
 }
 
 bool check_parentheses(uint16_t p, uint16_t q) {
+  if(tokens[p].type!='('||tokens[q].type!=')') {return false;}
   if(tokens[p].type == '(' && tokens[q].type == ')')
   {
     int16_t cnt = 0;
