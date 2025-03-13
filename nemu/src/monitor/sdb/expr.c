@@ -108,7 +108,21 @@ bool check_parentheses(uint16_t p, uint16_t q) {
 
 int order(int token) {//排列token的顺序优先级
 switch(token){
-
+  case TK_OR:
+    return 7;
+  case TK_AND:
+    return 6;
+  case TK_EQ:
+  case TK_NEQ:
+    return 5;
+  case TK_ADD:
+  case TK_SUB:
+    return 4;
+  case TK_MUL:
+  case TK_DIV:
+    return 3;
+  default:
+    return 0;
   }
 return 0;
 }
