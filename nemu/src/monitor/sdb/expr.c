@@ -132,7 +132,7 @@ static bool make_token(char *e) {//将输入字符串分解为token数组
   int position = 0;
   int i;
   regmatch_t pmatch;
-  //memset(tokens, 0, sizeof(tokens)); //tokens清零,防止后续出现计算错误
+  memset(tokens, 0, sizeof(tokens)); //tokens清零,防止后续出现计算错误
   nr_token = 0;
 
   while (e[position] != '\0' && nr_token < MAX_TOKEN_NUM) {
