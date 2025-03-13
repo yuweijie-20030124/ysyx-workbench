@@ -197,12 +197,6 @@ static bool make_token(char *e) {//将输入字符串分解为token数组
           tokens[nr_token].type=TK_HEX;
           strncpy(tokens[nr_token++].str,&e[position-substr_len],substr_len);
                break;
-          case TK_VAR:
-          tokens[nr_token].type=TK_VAR;
-          strncpy(tokens[nr_token++].str,&e[position-substr_len],substr_len);
-               break;
-
-          break; 
           default: printf("you print unrecognized token\n");
         }
 
