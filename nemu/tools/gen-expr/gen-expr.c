@@ -30,6 +30,7 @@ static char *code_format =
 "  printf(\"%%u\", result); "
 "  return 0; "
 "}";
+static uint16_t ptr = 0;
 
 static void gen(char c) {
   buf[ptr] = c;
@@ -63,6 +64,7 @@ static void gen_num() {
 
 static void gen_rand_expr() {
   //buf[0] = '\0';
+
 }
 
 int main(int argc, char *argv[]) {
