@@ -82,10 +82,10 @@ void init_regex() {
 
 typedef struct token {
   int type;
-  char str[32];
+  char str[128];
 } Token;
 
-#define MAX_TOKEN_NUM 512
+#define MAX_TOKEN_NUM 1024
 static Token tokens[MAX_TOKEN_NUM] __attribute__((used)) = {};
 static int nr_token __attribute__((used))  = 0;
 
@@ -269,7 +269,7 @@ word_t eval(int p, int q) {
       case TK_MUL: return val1 * val2;
       case TK_DIV:
         if(val2==0){
-          Log("Val2 is invalid(val=0)");
+          printf("you cant divide zero\n");
           assert(0);
         }
         else return val1 / val2;
