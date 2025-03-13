@@ -24,9 +24,9 @@
 #include <regex.h>
 //token类型枚举
 enum {
-  TK_NOTYPE = 256, TK_EQ = 255, TK_NEQ = 254,
-  TK_ADD = 253, TK_SUB = 252, TK_DIV = 251, TK_MUL = 250, TK_LPAR = 249, TK_RPAR = 248,
-  TK_DEC = 247, TK_HEX = 246 ,TK_REG = 245 ,TK_VAR = 244
+  TK_NOTYPE = 256, TK_EQ , TK_NEQ ,
+  TK_ADD , TK_SUB , TK_DIV , TK_MUL , TK_LPAR , TK_RPAR ,
+  TK_DEC , TK_HEX , TK_REG , TK_VAR 
 };
 
 static struct rule {
@@ -38,19 +38,19 @@ static struct rule {
    * Pay attention to the precedence level of different rules.
    */
 
-  {" +", TK_NOTYPE},           // spaces
-  {"==", TK_EQ},              // equal
-  {"!=", TK_NEQ},            // not equal
-  {"\\+", TK_ADD},          // plus
-  {"-",  TK_SUB},           // sub
-  {"\\/", TK_DIV},          // divide
-  {"\\*",  TK_MUL},       // multiple
-  {"\\(", TK_LPAR},     // left parenthesis
-  {"\\)", TK_RPAR},    // right parenthesis
-  {"[0-9]+", TK_DEC}, // decimal number
-  {"0[xX][0-9a-fA-F]+", TK_HEX},    // hex number
-  {"\\$(\\$0|ra|sp|gp|tp|t0|t1|t2|s0|s1|a0|a1|a2|a3|a4|a5|a6|a7|s2|s3|s4|s5|s6|s7|s8|s9|s10|s11|t3|t4|t5|t6)", TK_REG}, // register
-  {"[a-zA-Z0-9_]+", TK_VAR},       // variable
+  {" +", TK_NOTYPE},           // spaces rules[0]
+  {"==", TK_EQ},              // equal rules[1]
+  {"!=", TK_NEQ},            // not equal rules[2]
+  {"\\+", TK_ADD},          // plus rules[3]
+  {"-",  TK_SUB},           // sub rules[4]
+  {"\\/", TK_DIV},          // divide rules[5]
+  {"\\*",  TK_MUL},       // multiple rules[6]
+  {"\\(", TK_LPAR},     // left parenthesis rules[7]
+  {"\\)", TK_RPAR},    // right parenthesis rules[8]
+  {"[0-9]+", TK_DEC}, // decimal number rules[9]
+  {"0[xX][0-9a-fA-F]+", TK_HEX},    // hex number rules[10]
+  {"\\$(\\$0|ra|sp|gp|tp|t0|t1|t2|s0|s1|a0|a1|a2|a3|a4|a5|a6|a7|s2|s3|s4|s5|s6|s7|s8|s9|s10|s11|t3|t4|t5|t6)", TK_REG}, // register rules[11]
+  {"[a-zA-Z0-9_]+", TK_VAR},       // variable rules[12]
 };
 
 #define NR_REGEX ARRLEN(rules)
@@ -76,7 +76,7 @@ void init_regex() {
 
 typedef struct token {
   int type;
-  char str[32];
+  char str[64];
 } Token;
 
 static Token tokens[32] __attribute__((used)) = {};
