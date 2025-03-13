@@ -178,7 +178,12 @@ static bool make_token(char *e) {//将输入字符串分解为token数组
           case TK_NEQ:
           tokens[nr_token++].type=TK_NEQ;
               break;
-
+          case TK_AND:
+          tokens[nr_token++].type=TK_AND;
+              break;              
+          case TK_OR:
+          tokens[nr_token++].type=TK_OR;
+              break;  
           break;
 
           case TK_REG:
