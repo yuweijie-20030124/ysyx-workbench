@@ -17,17 +17,18 @@
 //2.
 
 #include <isa.h>
-
+#include <memory/vaddr.h>
 /* We use the POSIX regex functions to process regular expressions.
  * Type 'man regex' for more information about POSIX regex functions.
  */
 #include <regex.h>
 //token类型枚举
+int tokens_num=0;
 enum {
   TK_NOTYPE = 256, TK_EQ , TK_NEQ ,
   TK_ADD , TK_SUB , TK_DIV , TK_MUL , TK_LPAR , TK_RPAR ,
   TK_DEC , TK_HEX , TK_REG , TK_VAR ,
-  TK_AND , TK_OR  , 
+  TK_AND , TK_OR  , TK_DEF , TK_NEG ,
 };
 
 static struct rule {
@@ -40,10 +41,10 @@ static struct rule {
    */
 
   {" +", TK_NOTYPE},           // spaces rules[0]
-  {"==", TK_EQ},              // equal rules[1]
-  {"!=", TK_NEQ},            // not equal rules[2]
+  {"\\=\\=", TK_EQ},              // equal rules[1]
+  {"\\!\\=", TK_NEQ},            // not equal rules[2]
   {"\\+", TK_ADD},          // plus rules[3]
-  {"-",  TK_SUB},           // sub rules[4]
+  {"\\-",  TK_SUB},           // sub rules[4]
   {"\\/", TK_DIV},          // divide rules[5]
   {"\\*",  TK_MUL},       // multiple rules[6]
   {"\\(", TK_LPAR},     // left parenthesis rules[7]
@@ -184,12 +185,22 @@ static bool make_token(char *e) {//将输入字符串分解为token数组
           case TK_OR:
           tokens[nr_token++].type=TK_OR;
               break;  
-          break;
-
           case TK_REG:
+          tokens[nr_token].type=TK_REG;
+          strncpy(tokens[nr_token++].str,&e[position-substr_len],substr_len);
+               break;
           case TK_DEC:
+          tokens[nr_token].type=TK_DEC;
+          strncpy(tokens[nr_token++].str,&e[position-substr_len],substr_len);
+               break;
           case TK_HEX:
+          tokens[nr_token].type=TK_HEX;
+          strncpy(tokens[nr_token++].str,&e[position-substr_len],substr_len);
+               break;
           case TK_VAR:
+          tokens[nr_token].type=TK_VAR;
+          strncpy(tokens[nr_token++].str,&e[position-substr_len],substr_len);
+               break;
 
           break; 
           default: printf("you print unrecognized token\n");
@@ -216,6 +227,21 @@ word_t expr(char *e, bool *success) {
   if (!make_token(e)) {
     *success = false;
     return 0;
+  }
+  int i;
+  for (i=0;i<tokens_num;i++) {
+    if (tokens[i].type == TK_SUB && ( i == 0 || (tokens[i - 1].type!=')'&&tokens[i - 1].type != TK_DEC&&tokens[i-1].type!=TK_HEX&&tokens[i-1].type!=TK_REG)) ) {
+      tokens[i].type = TK_NEG;
+    }
+    if (tokens[i].type == TK_MUL && ( i == 0 || (tokens[i - 1].type!=')'&&tokens[i - 1].type != TK_DEC&&tokens[i-1].type!=TK_HEX&&tokens[i-1].type!=TK_REG)) ) {
+      tokens[i].type = TK_DEF;
+    }
+    if (tokens[i].type == TK_REG){
+        bool flag=true; 
+        word_t reg_v=isa_reg_str2val(tokens[i].str,&flag);
+        if(flag==false) assert(0);
+        sprintf(tokens[i].str,"%u",reg_v);//用于将格式化的数据写入字符串中(str类型转化为u类型)
+    }
   }
 
   /* TODO: Insert codes to evaluate the expression. */
