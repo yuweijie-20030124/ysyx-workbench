@@ -131,7 +131,7 @@ static bool make_token(char *e) {//将输入字符串分解为token数组
   int position = 0;
   int i;
   regmatch_t pmatch;
-
+  //memset(tokens, 0, sizeof(tokens)); //tokens清零,防止后续出现计算错误
   nr_token = 0;
 
   while (e[position] != '\0' && nr_token < MAX_TOKEN_NUM) {
@@ -152,19 +152,32 @@ static bool make_token(char *e) {//将输入字符串分解为token数组
          */
 
         switch (rules[i].token_type) {
-          case TK_NOTYPE:
-              printf("i get a space\n"); //空格则不需要存入
+          case TK_NOTYPE://空格则不需要存入
               break;
           case TK_SUB:
+          tokens[nr_token++].type=TK_SUB;
+              break;
           case TK_MUL:
-
+          tokens[nr_token++].type=TK_MUL;
               break;
           case TK_EQ:
+          tokens[nr_token++].type=TK_EQ;
+              break;
           case TK_ADD:
+          tokens[nr_token++].type=TK_ADD;
+              break;
           case TK_DIV:
+          tokens[nr_token++].type=TK_DIV;
+              break;
           case TK_LPAR:
+          tokens[nr_token++].type=TK_LPAR;
+              break;
           case TK_RPAR:
+          tokens[nr_token++].type=TK_RPAR;
+              break;
           case TK_NEQ:
+          tokens[nr_token++].type=TK_NEQ;
+              break;
 
           break;
 
