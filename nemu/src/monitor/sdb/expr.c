@@ -76,10 +76,10 @@ void init_regex() {
 
 typedef struct token {
   int type;
-  char str[64];
+  char str[256];
 } Token;
-
-static Token tokens[32] __attribute__((used)) = {};
+#define MAX_TOKEN_NUM 256
+static Token tokens[MAX_TOKEN_NUM] __attribute__((used)) = {};
 static int nr_token __attribute__((used))  = 0;
 
 static bool make_token(char *e) {//将输入字符串分解为token数组
@@ -105,11 +105,6 @@ static bool make_token(char *e) {//将输入字符串分解为token数组
          * to record the token in the array `tokens'. For certain types
          * of tokens, some extra actions should be performed.
          */
-
-        if(nr_token >= 32){
-          printf("you print too many tokens\n");
-          return false;
-        } 
 
         switch (rules[i].token_type) {
           case TK_NOTYPE:
@@ -144,7 +139,10 @@ static bool make_token(char *e) {//将输入字符串分解为token数组
       return false;
     }
   }
-
+  if (e[position] != '\0' && nr_token >= MAX_TOKEN_NUM){
+    printf("Expression too long!\n");
+    return false;
+  }
   return true;
 }
 
