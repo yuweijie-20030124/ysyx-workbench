@@ -65,7 +65,7 @@ void init_regex() {
   char error_msg[128];
   int ret;
 
-  for (i = 0; i < NR_REGEX; i ++) { //一个个慢慢找，去匹配正则表达式
+  for (i = 0; i < NR_REGEX; i ++) {
     ret = regcomp(&re[i], rules[i].regex, REG_EXTENDED);
     if (ret != 0) {
       regerror(ret, &re[i], error_msg, 128);
@@ -106,11 +106,17 @@ static bool make_token(char *e) {//将输入字符串分解为token数组
          * of tokens, some extra actions should be performed.
          */
 
+        if(nr_token >= 32){
+          printf("you print too many tokens\n");
+          return false;
+        } 
+
         switch (rules[i].token_type) {
           case TK_NOTYPE:
               printf("i get a space\n"); //空格则不需要存入
               break;
-          default: TODO();
+          
+          default: printf("you print unrecognized token\n");
         }
 
         break;
