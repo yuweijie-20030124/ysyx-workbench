@@ -40,6 +40,17 @@ static void gen(char c) {
   }// random space
 }
 
+static void gen_rand_op() {
+  int choose4 = rand() % 4;//%4
+  switch (choose4) {
+    case 0: gen('+'); break;
+    case 1: gen('-'); break;
+    case 2: gen('*'); break;
+    case 3: gen('/'); break;
+    default: printf("ERROE: gen_rand_op! \n"); break;
+  }
+}
+
 static void gen_rand_expr() {
   buf[0] = '\0';
 }
