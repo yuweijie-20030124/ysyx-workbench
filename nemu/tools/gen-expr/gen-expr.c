@@ -31,6 +31,15 @@ static char *code_format =
 "  return 0; "
 "}";
 
+static void gen(char c) {
+  buf[ptr] = c;
+  ptr += 1;
+  if (rand() % 2 == 1) {
+    buf[ptr] = ' ';
+    ptr += 1;
+  }// random space
+}
+
 static void gen_rand_expr() {
   buf[0] = '\0';
 }
