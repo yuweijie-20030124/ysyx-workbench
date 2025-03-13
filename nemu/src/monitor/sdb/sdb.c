@@ -95,31 +95,49 @@ static int cmd_q(char *args) {
 //example：x 10 0x80000000
 //printf("0x%08x\n",vaddr_read(0x80000000, 4));
 static int cmd_x(char *args) {
-  char *arg = strtok(NULL, " ");
-  int s1 = atoi(arg);
-  char *EXPR  = strtok(NULL, " ");
-  bool flag=true;
-  word_t addr = expr(EXPR,&flag);
-  if(flag==false){
-    Log("There is an error in the expression, please retype it\n");
-    return 0;
+  if (args == NULL) {
+      printf("You dont have any parameter, two parameters are needed: quantity address (example: x 10 0x80000000) \n");
+      return 0;
   }
-  // vaddr_t addr;
-  // sscanf(EXPR,"%x", &addr);
-  int i,j;
-  printf("addr        mem\n");
-  for(i=0;i<s1;i++){
-    printf("0x%08x: ",addr);
-    vaddr_t data = vaddr_read(addr,4);
-    
-    for(j=3;j>=0;j--){
-      printf("0x%02x ",(data>>(j*8))&0xff);
-      // printf("0x%02x ",(data&0xff);
-      // data=data>>8; //内存显示顺序的两种方式,顺or逆
-    }
-    printf("\n");
-    addr+=4;
+
+  // 分割参数
+  char *count = strtok(args, " ");
+  char *addr = strtok(NULL, " ");
+  char *third = strtok(NULL, " ");
+  //printf ("%s,%s,%s\n",count,addr,third);
+
+  // 检查参数数量
+  if (addr == NULL) {
+      printf("You only have one parameter, two parameters are needed: quantity address (example: x 10 0x80000000) \n");
+      return 0;
   }
+
+  if (third != NULL){
+      printf("You have too many parameter, two parameters are needed: quantity address (example: x 10 0x80000000) \n");
+      return 0;
+  }
+
+  // 解析数量
+  char *endptr;
+  long num = strtol(count, &endptr, 10);
+  if (*endptr != '\0' || num <= 0) {
+      printf("Quantity must be a positive integer\n");   
+      return 0;
+  }
+  vaddr_t address = strtoul(addr, &endptr, 0);
+  //printf("0x%08x\n", address);
+
+  //中间还要添加一个表达式求值，但是现在还没完成
+
+  // 检查地址是否在合法范围内
+  if (address < 0x80000000 || address > 0x8FFFFFFF) {
+      printf("Out of address allowed range (0x80000000 ~ 0x8FFFFFFF)\n");
+      return 0;
+  }
+  for (int i = 0; i < num; i++) {
+    printf("0x%08x  :   0x%08x\n",address,paddr_read(address,4));
+    address += 4; 
+}  
   return 0;
 }
 
