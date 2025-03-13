@@ -120,6 +120,7 @@ static int cmd_x(char *args) {
   // 解析数量
   char *endptr;
   long num = strtol(count, &endptr, 10);
+  printf("%ld\n",num);
   if (*endptr != '\0' || num <= 0) {
       printf("Quantity must be a positive integer\n");   
       return 0;
