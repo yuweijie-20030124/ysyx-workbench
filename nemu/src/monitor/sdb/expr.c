@@ -217,6 +217,77 @@ static bool make_token(char *e) {//将输入字符串分解为token数组
   return true;
 }
 
+word_t eval(int p, int q) {
+  if (p > q) {
+    assert(0);
+    return -1;
+  }
+  else if (p == q) {
+    return strtoul(tokens[p].str, NULL, 0);
+  }
+  else if (check_parentheses(p, q) == true) {
+    /* The expression is surrounded by a matched pair of parentheses.
+     * If that is the case, just throw away the parentheses.
+     */
+    return eval(p + 1, q - 1);
+  }
+  else {
+    //op = the position of 主运算符 in the token expression;
+    int op=0;
+    int od=-1;
+    int i;
+    int val1=1;
+    int bracketCount=0;
+    for(i=p;i<=q;i++){
+      if (tokens[i].type=='(') {
+          bracketCount++;
+          continue;
+      } else if (tokens[i].type==')') {
+          bracketCount--;
+          if (bracketCount>0) {
+              continue; // 如果还有未匹配的括号，则继续跳过
+          }
+      }
+      if (bracketCount>0) {
+          continue; // 在括号内部，跳过处理
+      }
+      if(tokens[i].type==TK_DEC||tokens[i].type==TK_NOTYPE||tokens[i].type==TK_HEX||tokens[i].type==TK_REG){
+        continue;
+      }else if(order(tokens[i].type)>=od){ //pr是当前最高优先级
+        od=order(tokens[i].type);
+        op=i;
+      }
+    }
+    if(tokens[op].type!=TK_NEG&&tokens[op].type!=TK_DEF){
+      val1 = eval(p, op - 1);
+    }
+    word_t val2 = eval(op + 1, q);
+
+    switch (tokens[op].type) {
+      case TK_ADD: return val1 + val2;
+      case TK_SUB: return val1 - val2;
+      case TK_MUL: return val1 * val2;
+      case TK_DIV:
+        if(val2==0){
+          Log("Val2 is invalid(val=0)");
+          assert(0);
+        }
+        else return val1 / val2;
+      case TK_NEG: return val2=-val2;
+      case TK_EQ:
+        if(val1==val2) return 1;
+        else return 0;
+      case TK_NEQ:
+        if(val1!=val2) return 1;
+        else return 0;
+      case TK_AND: return val1&&val2;
+      case TK_OR : return val1||val2;
+      case TK_DEF: return vaddr_read(val2,4);
+      default: assert(0);
+    }
+  }
+}
+
 
 word_t expr(char *e, bool *success) {
   if (!make_token(e)) {
@@ -238,7 +309,7 @@ word_t expr(char *e, bool *success) {
         sprintf(tokens[i].str,"%u",reg_v);//用于将格式化的数据写入字符串中(str类型转化为u类型)
     }
   }
-
+  return eval(0,tokens_num-1);
   /* TODO: Insert codes to evaluate the expression. */
 
 
