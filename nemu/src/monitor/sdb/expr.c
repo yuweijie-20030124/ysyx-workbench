@@ -24,9 +24,9 @@
 #include <regex.h>
 //token类型枚举
 enum {
-  TK_NOTYPE = 256, TK_EQ = 255, TK_NEQ,
-  TK_ADD, TK_SUB, TK_DIV, TK_MUL, TK_LPAR, TK_RPAR,
-  TK_DEC, TK_HEX ,TK_REG ,TK_VAR
+  TK_NOTYPE = 256, TK_EQ = 255, TK_NEQ = 254,
+  TK_ADD = 253, TK_SUB = 252, TK_DIV = 251, TK_MUL = 250, TK_LPAR = 249, TK_RPAR = 248,
+  TK_DEC = 247, TK_HEX = 246 ,TK_REG = 245 ,TK_VAR = 244
 };
 
 static struct rule {
@@ -65,7 +65,7 @@ void init_regex() {
   char error_msg[128];
   int ret;
 
-  for (i = 0; i < NR_REGEX; i ++) {
+  for (i = 0; i < NR_REGEX; i ++) { //一个个慢慢找，去匹配正则表达式
     ret = regcomp(&re[i], rules[i].regex, REG_EXTENDED);
     if (ret != 0) {
       regerror(ret, &re[i], error_msg, 128);
@@ -108,7 +108,7 @@ static bool make_token(char *e) {//将输入字符串分解为token数组
 
         switch (rules[i].token_type) {
           case TK_NOTYPE:
-              printf("i get a space\n");
+              printf("i get a space\n"); //空格则不需要存入
               break;
           default: TODO();
         }
