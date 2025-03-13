@@ -159,16 +159,12 @@ static int cmd_p(char *args) {
   }
   else{
     word_t value;
-    bool success;
+    bool success = true;
     value = expr(args,&success);
-    if(success){
-    printf("value = 0x%-8x = %u \n", value, value);
-    return 0;
-    }
-    else{
-    printf("evalution error\n");
-    return 0;
-    }
+    if(success == false){
+      printf("expression has error\n");
+      return 0;
+    }else printf("%d\n",value);
   }
   return 0;
 }
