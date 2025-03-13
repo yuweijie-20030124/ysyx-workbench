@@ -51,6 +51,7 @@ static struct rule {
   {"0[xX][0-9a-fA-F]+", TK_HEX},    // hex number rules[10]
   {"\\$(\\$0|ra|sp|gp|tp|t0|t1|t2|s0|s1|a0|a1|a2|a3|a4|a5|a6|a7|s2|s3|s4|s5|s6|s7|s8|s9|s10|s11|t3|t4|t5|t6)", TK_REG}, // register rules[11]
   {"[a-zA-Z0-9_]+", TK_VAR},       // variable rules[12]
+
 };
 
 #define NR_REGEX ARRLEN(rules)
@@ -90,7 +91,7 @@ static bool make_token(char *e) {//将输入字符串分解为token数组
 
   nr_token = 0;
 
-  while (e[position] != '\0') {
+  while (e[position] != '\0' && nr_token < MAX_TOKEN_NUM) {
     /* Try all rules one by one. */
     for (i = 0; i < NR_REGEX; i ++) {
       if (regexec(&re[i], e + position, 1, &pmatch, 0) == 0 && pmatch.rm_so == 0) {
@@ -111,10 +112,12 @@ static bool make_token(char *e) {//将输入字符串分解为token数组
           case TK_NOTYPE:
               printf("i get a space\n"); //空格则不需要存入
               break;
-          case TK_ADD:
           case TK_SUB:
-          case TK_EQ:
           case TK_MUL:
+              
+              break;
+          case TK_EQ:
+          case TK_ADD:
           case TK_DIV:
           case TK_LPAR:
           case TK_RPAR:
