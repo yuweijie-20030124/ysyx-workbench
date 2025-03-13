@@ -120,7 +120,7 @@ static int cmd_x(char *args) {
   char *endptr;
   long num = strtol(count, &endptr, 10);
   if (*endptr != '\0' || num <= 0) {
-      printf("Quantity must be a positive integer (illegal character: %s)\n", endptr);   
+      printf("Quantity must be a positive integer");   
       return 0;
   }
   vaddr_t address = strtoul(addr, &endptr, 0);
@@ -141,7 +141,10 @@ static int cmd_x(char *args) {
 }
 
 static int cmd_p(char *args) {
-
+  if (args == NULL) {
+    printf("You dont have any parameter,try ***p 5 + 6*** \n");
+    return 0;
+}
   return 0;
 }
 
