@@ -150,7 +150,12 @@ static int cmd_p(char *args) {
     bool success;
     result = expr(args,&success);
     if(success){
-    printf(" = 0x%-8lx = %lu\n", result, result);
+    printf("result = 0x%-8lx = %lu \n", result, result);
+    return 0;
+    }
+    else{
+    printf("evalution error\n");
+    return 0;
     }
   }
   return 0;
