@@ -143,8 +143,16 @@ static int cmd_x(char *args) {
 static int cmd_p(char *args) {
   if (args == NULL) {
     printf("You dont have any parameter,try ***p 5 + 6*** \n");
-    //return 0;
-}
+    return 0;
+  }
+  else{
+    uint64_t result;
+    bool success;
+    result = expr(args,&success);
+    if(success){
+    printf(" = 0x%-8lx = %lu\n", result, result);
+    }
+  }
   return 0;
 }
 
