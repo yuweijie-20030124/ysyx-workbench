@@ -146,6 +146,23 @@ static bool make_token(char *e) {//将输入字符串分解为token数组
   return true;
 }
 
+bool check_parentheses(uint16_t p, uint16_t q) {
+  if(tokens[p].type == '(' && tokens[q].type == ')')
+  {
+    int16_t cnt = 1;
+    uint16_t i;
+    for (i = p + 1; cnt > 0 && i < q; i++)
+    {
+        if (tokens[i].type == '(') cnt += 1;
+        else if (tokens[i].type == ')') cnt -= 1;
+    }
+    if(cnt == 1 && i == q) return true;
+    else return false;
+  }
+  else 
+    return false;
+}
+
 
 word_t expr(char *e, bool *success) {
   if (!make_token(e)) {
