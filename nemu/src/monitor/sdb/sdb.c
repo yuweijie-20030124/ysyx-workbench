@@ -72,7 +72,6 @@ static int cmd_info(char *args) {
   if (args == NULL) {
     printf("print r to see register status\n");
     printf("print p to see watchpoint\n");
-    return 0;
   }
 
   if (strcmp(args, "r") == 0) {
