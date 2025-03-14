@@ -154,7 +154,11 @@ static int cmd_p(char *args) {
     printf("You dont have any parameter,try ***p 5 + 6*** \n");
     return 0;
   }
-  else{
+  else {
+  int i = atoi(args);
+  if (i <= 0) {
+    printf("Invalid argument '%s'\n", args);
+  } else {
     word_t value;
     bool success = true;
     value = expr(args,&success);
@@ -164,6 +168,7 @@ static int cmd_p(char *args) {
     }else printf("%d\n",value);
   }
   return 0;
+}
 }
 
 static int cmd_ptest(char* args){
