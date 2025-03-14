@@ -94,52 +94,50 @@ static int cmd_q(char *args) {
 
 //example：x 10 0x80000000
 //printf("0x%08x\n",vaddr_read(0x80000000, 4));
-static int cmd_x(char *args) {
-  if (args == NULL) {
-      printf("You dont have any parameter, two parameters are needed: quantity address (example: x 10 0x80000000) \n");
-      return 0;
+
+static int cmd_x(char *args){
+  //获取内存起始地址和扫描长度。扫描内存
+  if(args == NULL){
+      printf("too few parameter! \n");
+      return 1;
   }
-
-  // 分割参数
-  char *count = strtok(args, " ");
-  char *addr = strtok(NULL, " ");
-  char *third = strtok(NULL, " ");
-  //printf ("%s,%s,%s\n",count,addr,third);
-
-  // 检查参数数量
-  if (addr == NULL) {
-      printf("You only have one parameter, two parameters are needed: quantity address (example: x 10 0x80000000) \n");
-      return 0;
+   
+  char *arg = strtok(args," ");
+  if(arg == NULL){
+      printf("too few parameter!! \n");
+      return 1;
   }
-
-  if (third != NULL){
-      printf("You have too many parameter, two parameters are needed: quantity address (example: x 10 0x80000000) \n");
-      return 0;
+  int  n = atoi(arg);
+  char *EXPR = strtok(NULL," ");
+  if(EXPR == NULL){                                                                                                                                          
+      printf("too few parameter!!! \n");
+      return 1;
   }
-
-  // 解析数量
-  char *endptr;
-  long num = strtol(count, &endptr, 10);
-  if (*endptr != '\0' || num <= 0) {
-      printf("Quantity must be a positive integer\n");   
-      return 0;
+  if(strtok(NULL," ")!=NULL){
+      printf("too many parameter! \n");
+      return 1;
   }
-  vaddr_t address = strtoul(addr, &endptr, 0);
-  //printf("0x%08x\n", address);
-
-  //中间还要添加一个表达式求值，但是现在还没完成
-
-  // 检查地址是否在合法范围内
-  if (address < 0x80000000 || address > 0x8FFFFFFF) {
-      printf("Out of address allowed range (0x80000000 ~ 0x8FFFFFFF)\n");
-      return 0;
+  bool success = true;
+  if (success!=true){
+      printf("ERRO!!\n");
+      return 1;
   }
-  for (int i = 0; i < num; i++) {
-    printf("0x%08x  :   0x%08x\n",address,paddr_read(address,4));
-    address += 4; 
-}  
-  return 0;
+  char *str;
+  vaddr_t addr =  strtol( EXPR,&str,16 );
+  if(addr>=0x80000000 && addr<= 0x87ffffff){
+  for(int i = 0 ; i < n ; i++){
+      uint32_t data = vaddr_read(addr + i * 4,4);
+      printf("0x%08x  " , addr + i * 4 );
+      for(int j =0 ; j < 4 ; j++){
+          printf("0x%02x " , data & 0xff);
+          data = data >> 8 ;
+      }
+      printf("\n");
+  }
 }
+  else printf("you are out of bound\n");     
+  return 0;
+}    
 
 static int cmd_w(char *args) {
   
