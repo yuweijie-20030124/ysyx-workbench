@@ -167,10 +167,6 @@ static int cmd_p(char *args) {
 }
 
 static int cmd_ptest(char* args){
-  if(args== NULL){
-      printf("too few args\n");
-  return 0;
-}
 FILE *file;
 char line[126];
 int param1=0;
