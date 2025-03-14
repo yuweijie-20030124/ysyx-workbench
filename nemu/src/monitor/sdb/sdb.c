@@ -168,13 +168,13 @@ static int cmd_p(char *args) {
 
 static int cmd_ptest(char* args){
 FILE *file;
-char line[126];
+char line[128];
 int param1=0;
 int param2=0;
 int found =0;
 
 //打开文件
-file = popen("/home/yuweijie/ysyx-workbench/nemu/tools/gen-expr/gen-expr result buf","r");
+file = popen("/home/yuweijie/ysyx-workbench/nemu/tools/gen-expr/gen-expr","r");
 if(file == NULL){
   perror("Error opening file");
   return -1;
