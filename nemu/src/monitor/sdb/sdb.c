@@ -166,12 +166,46 @@ static int cmd_p(char *args) {
   return 0;
 }
 
-static int cmd_help(char *args);
-
-static int cmd_test(char *args) {
-
+static int cmd_ptest(char* args){
+  if(args== NULL){
+      printf("too few args\n");
   return 0;
 }
+FILE *file;
+char line[126];
+int param1=0;
+int param2=0;
+int found =0;
+
+//打开文件
+file = popen("/home/yuweijie/ysyx-workbench/nemu/tools/gen-expr/gen-expr result buf","r");
+if(file == NULL){
+  perror("Error opening file");
+  return -1;
+}
+
+// 读取文件，获取参数值
+  while (fgets(line, sizeof(line), file)) {
+
+      if ((sscanf(line, "param1=%d", &param1) == 1) ||
+     sscanf(line, "param1=%d", &param2) == 1) 
+  {
+          found++;
+      }
+  // 如果两个参数都找到了，就可以停止读取文件
+      if (found == 2) {
+          break;
+      } 
+  else {
+          printf("%s\n", line);
+      }	
+}
+//关闭文件
+pclose(file);
+return 0;
+}
+
+static int cmd_help(char *args);
 
 static struct {
   const char *name;
@@ -186,7 +220,7 @@ static struct {
   { "p", "expression evaluation", cmd_p },
   { "w", "creat watchpoint", cmd_w },
   { "d", "delete watchpoint", cmd_d },
-  { "test", "evaluation test", cmd_test },
+  { "ptest", "evaluation test", cmd_ptest },
   { "q", "Exit NEMU", cmd_q },
   /* TODO: Add more commands cmd_d*/
 };
