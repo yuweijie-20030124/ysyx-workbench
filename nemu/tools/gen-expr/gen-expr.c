@@ -95,7 +95,7 @@
  int main(int argc, char *argv[]) {
      int seed = time(0);
      srand(seed);
-     int loop = 1;
+     int loop = 2;
      if (argc > 1) {
    sscanf(argv[1], "%d", &loop);
      }
@@ -121,6 +121,7 @@
    pclose(fp);//关闭进程
  
    printf("the result is %u , the buf is %s\n", result, buf);//打印结果和表达式
+
    index_buf = 0; //重置buf索引以便下次生成
      }
      return 0;
