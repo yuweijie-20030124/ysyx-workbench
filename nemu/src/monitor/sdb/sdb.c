@@ -77,8 +77,9 @@ static int cmd_info(char *args) {
 
   if (strcmp(args, "r") == 0) {
     isa_reg_display();
-  } else if(strcmp(args, "p") == 0){
-    printf("you print info p\n");
+  } 
+  else if(strcmp(args, "p") == 0){
+    //display_watch();
   }
     else{
     printf("print r or p, not'%s'\n", args);
@@ -93,50 +94,58 @@ static int cmd_q(char *args) {
 
 //example：x 10 0x80000000
 //printf("0x%08x\n",vaddr_read(0x80000000, 4));
-static int cmd_x(char *args) {
-  if (args == NULL) {
-      printf("You dont have any parameter, two parameters are needed: quantity address (example: x 10 0x80000000) \n");
-      return 0;
+
+static int cmd_x(char *args){
+  //获取内存起始地址和扫描长度。扫描内存
+  if(args == NULL){
+      printf("too few parameter! \n");
+      return 1;
+  }
+   
+  char *arg = strtok(args," ");
+  if(arg == NULL){
+      printf("too few parameter!! \n");
+      return 1;
+  }
+  int  n = atoi(arg);
+  char *EXPR = strtok(NULL," ");
+  if(EXPR == NULL){                                                                                                                                          
+      printf("too few parameter!!! \n");
+      return 1;
+  }
+  if(strtok(NULL," ")!=NULL){
+      printf("too many parameter! \n");
+      return 1;
+  }
+  bool success = true;
+  if (success!=true){
+      printf("ERRO!!\n");
+      return 1;
+  }
+  char *str;
+  vaddr_t addr =  strtol( EXPR,&str,16 );
+  if(addr>=0x80000000 && addr<= 0x87ffffff){
+  for(int i = 0 ; i < n ; i++){
+      uint32_t data = vaddr_read(addr + i * 4,4);
+      printf("0x%08x  " , addr + i * 4 );
+      for(int j =0 ; j < 4 ; j++){
+          printf("0x%02x " , data & 0xff);
+          data = data >> 8 ;
+      }
+      printf("\n");
+  }
+}
+  else printf("you are out of bound\n");     
+  return 0;
+}    
+
+static int cmd_w(char *args) {
+  
+  return 0;
   }
 
-  // 分割参数
-  char *count = strtok(args, " ");
-  char *addr = strtok(NULL, " ");
-  char *third = strtok(NULL, " ");
-  //printf ("%s,%s,%s\n",count,addr,third);
-
-  // 检查参数数量
-  if (addr == NULL) {
-      printf("You only have one parameter, two parameters are needed: quantity address (example: x 10 0x80000000) \n");
-      return 0;
-  }
-
-  if (third != NULL){
-      printf("You have too many parameter, two parameters are needed: quantity address (example: x 10 0x80000000) \n");
-      return 0;
-  }
-
-  // 解析数量
-  char *endptr;
-  long num = strtol(count, &endptr, 10);
-  if (*endptr != '\0' || num <= 0) {
-      printf("Quantity must be a positive integer\n");   
-      return 0;
-  }
-  vaddr_t address = strtoul(addr, &endptr, 0);
-  //printf("0x%08x\n", address);
-
-  //中间还要添加一个表达式求值，但是现在还没完成
-
-  // 检查地址是否在合法范围内
-  if (address < 0x80000000 || address > 0x8FFFFFFF) {
-      printf("Out of address allowed range (0x80000000 ~ 0x8FFFFFFF)\n");
-      return 0;
-  }
-  for (int i = 0; i < num; i++) {
-    printf("0x%08x  :   0x%08x\n",address,paddr_read(address,4));
-    address += 4; 
-}  
+static int cmd_d(char *args) {
+  
   return 0;
 }
 
@@ -145,20 +154,56 @@ static int cmd_p(char *args) {
     printf("You dont have any parameter,try ***p 5 + 6*** \n");
     return 0;
   }
-  else{
-    uint64_t result;
-    bool success;
-    result = expr(args,&success);
-    if(success){
-    printf("result = 0x%-8lx = %lu \n", result, result);
-    return 0;
-    }
-    else{
-    printf("evalution error\n");
-    return 0;
-    }
+  else {
+  int i = atoi(args);
+  if (i <= 0) {
+    printf("Invalid argument '%s'\n", args);
+  } else {
+    word_t value;
+    bool success = true;
+    value = expr(args,&success);
+    if(success == false){
+      printf("expression has error\n");
+      return 0;
+    }else printf("%d\n",value);
   }
   return 0;
+}
+}
+
+static int cmd_ptest(char* args){
+FILE *file;
+char line[128];
+int param1=0;
+int param2=0;
+int found =0;
+
+//打开文件
+file = popen("/home/yuweijie/ysyx-workbench/nemu/tools/gen-expr/gen-expr","r");
+if(file == NULL){
+  perror("Error opening file");
+  return -1;
+}
+
+// 读取文件，获取参数值
+  while (fgets(line, sizeof(line), file)) {
+
+      if ((sscanf(line, "param1=%d", &param1) == 1) ||
+     sscanf(line, "param1=%d", &param2) == 1) 
+  {
+          found++;
+      }
+  // 如果两个参数都找到了，就可以停止读取文件
+      if (found == 2) {
+          break;
+      } 
+  else {
+          printf("%s\n", line);
+      }	
+}
+//关闭文件
+pclose(file);
+return 0;
 }
 
 static int cmd_help(char *args);
@@ -174,8 +219,11 @@ static struct {
   { "info", "use 'info r' to show register status ***and*** use 'info w' to show watch point message", cmd_info },
   { "x", "scan memory", cmd_x },
   { "p", "expression evaluation", cmd_p },
+  { "w", "creat watchpoint", cmd_w },
+  { "d", "delete watchpoint", cmd_d },
+  { "ptest", "evaluation test", cmd_ptest },
   { "q", "Exit NEMU", cmd_q },
-  /* TODO: Add more commands */
+  /* TODO: Add more commands cmd_d*/
 };
 
 #define NR_CMD ARRLEN(cmd_table)
