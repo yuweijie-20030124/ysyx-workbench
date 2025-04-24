@@ -21,12 +21,13 @@
  */
 #include <regex.h>
 //token类型枚举
-int tokens_num=0;
+int tokens_num=0;//记录tokens的数量
 enum {
   TK_NOTYPE = 256, TK_EQ , TK_NEQ ,
   TK_ADD , TK_SUB , TK_DIV , TK_MUL , TK_LPAR , TK_RPAR ,
   TK_DEC , TK_HEX , TK_REG , TK_VAR ,
   TK_AND , TK_OR  , TK_DEF , TK_NEG ,
+  /* TODO: Add more token types */
 };
 
 static struct rule {
@@ -87,23 +88,22 @@ typedef struct token {
 static Token tokens[MAX_TOKEN_NUM] __attribute__((used)) = {};
 static int nr_token __attribute__((used))  = 0;
 
-bool check_parentheses(uint16_t p, uint16_t q) {
-  if(tokens[p].type!='('||tokens[q].type!=')') {return false;}
-  if(tokens[p].type == '(' && tokens[q].type == ')')
-  {
-    int16_t cnt = 0;
-    uint16_t i;
-    for (i = p + 1; cnt > 0 && i < q; i++)
-    {
-        if (tokens[i].type == '(') cnt += 1;
-        else if (tokens[i].type == ')') cnt -= 1;
+bool check_parentheses(int p,int q){
+  if(tokens[p].type!='('||tokens[q].type!=')') return false;
+  int i=0;
+  int left_c=0;
+  int flag=0;
+  for(i=p;i<=q;i++){
+    if(tokens[i].type=='('){
+      left_c++;
+    }else if(tokens[i].type==')'){
+      left_c--;
     }
-    if(cnt == 0 && i == q) return true;
-    else return false;
+    if(left_c==0&&i!=q) flag=1;
   }
-  else 
-    return false;
-}
+  if(flag==1) return false;
+  else return true;
+} 
 
 int order(int token) {//排列token的顺序优先级
 switch(token){
