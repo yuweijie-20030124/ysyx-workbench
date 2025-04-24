@@ -151,7 +151,7 @@ static int cmd_d(char *args) {
 
 static int cmd_p(char *args) {
   if (args == NULL) {
-    printf("You dont have any parameter,try ***p 5 + 6*** \n");
+    printf("You dont have any parameter,try ***p 5+6*** \n");
     return 0;
   }
   else {
