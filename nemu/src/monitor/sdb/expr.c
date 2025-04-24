@@ -13,8 +13,6 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
-//1.识别出表达式的单元
-//2.
 
 #include <isa.h>
 #include <memory/vaddr.h>
