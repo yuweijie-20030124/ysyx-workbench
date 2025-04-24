@@ -217,10 +217,10 @@ static bool make_token(char *e) {//将输入字符串分解为token数组
 
 word_t eval(int p, int q) {
   if (p > q) {
-    printf("why p > q\n");
-    //assert(0);
-    //return -1;
-    return 0;
+    //printf("why p > q\n");
+    assert(0);
+    return -1;
+    //return 0;
   }
   else if (p == q) {
     return strtoul(tokens[p].str, NULL, 0);
