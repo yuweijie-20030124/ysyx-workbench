@@ -130,7 +130,7 @@ static bool make_token(char *e) {//将输入字符串分解为token数组
   int position = 0;
   int i;
   regmatch_t pmatch;
-  memset(tokens, 0, sizeof(tokens)); 
+  memset(tokens, 0, sizeof(tokens)); //tokens清零
   nr_token = 0;
 
   while (e[position] != '\0' && nr_token < MAX_TOKEN_NUM) {
@@ -219,11 +219,11 @@ word_t eval(int p, int q) {
   if (p > q) {
     //printf("why p > q\n");
     assert(0);
-    return -1;
+    return -1;//bad expression
     //return 0;
   }
   else if (p == q) {
-    return strtoul(tokens[p].str, NULL, 0);
+    return strtoul(tokens[p].str, NULL, 0);//将字符串转换为无符号长整数型
   }
   else if (check_parentheses(p, q) == true) {
     /* The expression is surrounded by a matched pair of parentheses.
@@ -296,10 +296,10 @@ word_t expr(char *e, bool *success) {
   }
   int i;
   for (i=0;i<tokens_num;i++) {
-    if (tokens[i].type == TK_SUB && ( i == 0 || (tokens[i - 1].type!=')'&&tokens[i - 1].type != TK_DEC&&tokens[i-1].type!=TK_HEX&&tokens[i-1].type!=TK_REG)) ) {
+    if (tokens[i].type == '-' && ( i == 0 || (tokens[i - 1].type!=')'&&tokens[i - 1].type != TK_DEC&&tokens[i-1].type!=TK_HEX&&tokens[i-1].type!=TK_REG)) ) {
       tokens[i].type = TK_NEG;
     }
-    if (tokens[i].type == TK_MUL && ( i == 0 || (tokens[i - 1].type!=')'&&tokens[i - 1].type != TK_DEC&&tokens[i-1].type!=TK_HEX&&tokens[i-1].type!=TK_REG)) ) {
+    if (tokens[i].type == '*' && ( i == 0 || (tokens[i - 1].type!=')'&&tokens[i - 1].type != TK_DEC&&tokens[i-1].type!=TK_HEX&&tokens[i-1].type!=TK_REG)) ) {
       tokens[i].type = TK_DEF;
     }
     if (tokens[i].type == TK_REG){
@@ -310,8 +310,5 @@ word_t expr(char *e, bool *success) {
     }
   }
   return eval(0,tokens_num-1);
-  /* TODO: Insert codes to evaluate the expression. */
-
-
-  return 0;
+  // return 0;
 }
