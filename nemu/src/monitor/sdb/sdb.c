@@ -155,20 +155,14 @@ static int cmd_p(char *args) {
     return 0;
   }
   else {
-  int i = atoi(args);
-  if (i <= 0) {
-    printf("Invalid argument '%s'\n", args);
-  } else {
-    word_t value;
-    bool success = true;
-    value = expr(args,&success);
-    if(success == false){
-      printf("expression has error\n");
+    bool flag=true;
+    word_t value_p = expr(args,&flag);
+    if(flag==false&&args==NULL){
+      printf("There is an error in the expression, please retype it\n");
       return 0;
-    }else printf("%d\n",value);
+    }else printf("%d\n",value_p);
+    return 0;
   }
-  return 0;
-}
 }
 
 static int cmd_ptest(char* args){
