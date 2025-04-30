@@ -24,7 +24,46 @@
 #include <memory/paddr.h>
 #include <memory/vaddr.h>
 
-#define MAX_BUF_LEN 512  // 假设一行最大长度
+#define MAX_ENTRIES 1000  // 假设最多1000组数据
+#define MAX_BUF_LEN 512   // 每行buf的最大长度
+
+typedef struct {
+    int result;
+    char buf[MAX_BUF_LEN];
+} ResultEntry;
+
+ResultEntry entries[MAX_ENTRIES];  // 存储所有结果的数组
+int entry_count = 0;               // 当前存储的条目数
+
+static void collect() {//收集input文件中的所有result和buf
+    FILE *file;
+    char line[MAX_BUF_LEN];
+    int result;
+    char buf[MAX_BUF_LEN];
+
+    file = popen("/home/yuweijie/ysyx-workbench/nemu/tools/gen-expr/gen-expr", "r");
+    if (file == NULL) {
+        perror("Error opening file");
+        return;
+    }
+
+    while (fgets(line, sizeof(line), file)) {
+        // 匹配 "the result is xxx , the buf is yyy" 格式
+        if (sscanf(line, "the result is %d , the buf is %[^\n]", &result, buf) == 2) {
+            if (entry_count < MAX_ENTRIES) {
+                entries[entry_count].result = result;
+                strncpy(entries[entry_count].buf, buf, MAX_BUF_LEN - 1);
+                entries[entry_count].buf[MAX_BUF_LEN - 1] = '\0';  // 确保字符串终止
+                entry_count++;
+            } else {
+                fprintf(stderr, "Warning: Reached maximum entry limit (%d)\n", MAX_ENTRIES);
+                break;
+            }
+        }
+    }
+
+    pclose(file);
+}
 
 static int is_batch_mode = false;
 
@@ -165,30 +204,17 @@ static int cmd_p(char *args) {
 }
 
 static int cmd_ptest() {
-  FILE *file;
-  char line[MAX_BUF_LEN];
-  int result;
-  char buf[MAX_BUF_LEN];
+  collect();
 
-  file = popen("/home/yuweijie/ysyx-workbench/nemu/tools/gen-expr/gen-expr", "r");
-  if(file == NULL) {
-      perror("Error opening file");
-      return 0;
+  // 打印所有提取的 result 和 buf
+  printf("Extracted Results (Total: %d):\n", entry_count);
+  printf("-----------------------------\n");
+  for (int i = 0; i < entry_count; i++) {
+      printf("[%d] Result: %d\n", i + 1, entries[i].result);
+      printf("    Buf: %s\n", entries[i].buf);
+      printf("-----------------------------\n");
   }
 
-  printf("Extracted results:\n");
-  printf("-----------------\n");
-  
-  while (fgets(line, sizeof(line), file)) {
-      // 尝试匹配 "the result is xxx , the buf is yyy" 格式
-      if (sscanf(line, "the result is %d , the buf is %[^\n]", &result, buf) == 2) {
-          printf("Result: %d\n", result);
-          printf("Buf: %s\n", buf);
-          printf("-----------------\n");
-      }
-  }
-
-  pclose(file);
   return 0;
 }
 
