@@ -113,10 +113,6 @@ static int cmd_x(char *args){
       printf("too few parameter!!! \n");
       return 0;
   }
-  if(strtok(NULL," ")!=NULL){
-      printf("too many parameter! \n");
-      return 0;
-  }
   bool success = true;
   if (success!=true){
       printf("ERRO!!\n");
