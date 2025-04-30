@@ -24,6 +24,8 @@
 #include <memory/paddr.h>
 #include <memory/vaddr.h>
 
+#define MAX_BUF_LEN 512  // 假设一行最大长度
+
 static int is_batch_mode = false;
 
 void init_regex();
@@ -162,47 +164,33 @@ static int cmd_p(char *args) {
   }
 }
 
-
-static int cmd_ptest(char* args) {
+static int cmd_ptest() {
   FILE *file;
-  char line[128];
-  int param1 = 0;
-  int param2 = 0;
-  int found = 0;
+  char line[MAX_BUF_LEN];
+  int result;
+  char buf[MAX_BUF_LEN];
 
   file = popen("/home/yuweijie/ysyx-workbench/nemu/tools/gen-expr/gen-expr", "r");
   if(file == NULL) {
       perror("Error opening file");
-      return -1;
+      return 0;
   }
 
+  printf("Extracted results:\n");
+  printf("-----------------\n");
+  
   while (fgets(line, sizeof(line), file)) {
-      // 尝试解析param1
-      if (sscanf(line, "param1=%d", &param1) == 1) {
-          found++;
-      }
-      // 尝试解析param2
-      else if (sscanf(line, "param2=%d", &param2) == 1) {
-          found++;
-      }
-      
-      // 打印原始行（可选）
-      printf("%s", line);
-      
-      // 两个参数都找到后退出
-      if (found >= 2) {
-          break;
+      // 尝试匹配 "the result is xxx , the buf is yyy" 格式
+      if (sscanf(line, "the result is %d , the buf is %[^\n]", &result, buf) == 2) {
+          printf("Result: %d\n", result);
+          printf("Buf: %s\n", buf);
+          printf("-----------------\n");
       }
   }
 
   pclose(file);
-  
-  // 这里可以添加对参数的使用
-  printf("Got param1=%d, param2=%d\n", param1, param2);
-  
   return 0;
 }
-
 
 static int cmd_help(char *args);
 

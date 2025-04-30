@@ -23,6 +23,7 @@
 #include <stdio.h>
 
 #define UNUSED(x) (void)(x)
+
 int tokens_num=0; //放一个全局变量记录tokens的个数
 enum {
   TK_NOTYPE = 256, TK_EQ,
