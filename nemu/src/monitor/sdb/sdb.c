@@ -105,7 +105,7 @@ static int cmd_x(char *args){
   char *arg = strtok(args," ");
   if(arg == NULL){
       printf("too few parameter!! \n");
-      return 1;
+      return 0;
   }
   int  n = atoi(arg);
   char *EXPR = strtok(NULL," ");
