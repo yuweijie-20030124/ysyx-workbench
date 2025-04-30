@@ -94,7 +94,7 @@ static int cmd_q(char *args) {
 
 //example：x 10 0x80000000
 //printf("0x%08x\n",vaddr_read(0x80000000, 4));
-
+/*
 static int cmd_x(char *args){
   //获取内存起始地址和扫描长度。扫描内存
   if(args == NULL){
@@ -134,7 +134,35 @@ static int cmd_x(char *args){
   else printf("you are out of bound\n");     
   return 0;
 }    
-
+*/
+static int cmd_x(char *args) {
+  char *arg = strtok(NULL, " ");
+  int s1 = atoi(arg);
+  char *EXPR  = strtok(NULL, " ");
+  bool flag=true;
+  word_t addr = expr(EXPR,&flag);
+  if(flag==false){
+    Log("There is an error in the expression, please retype it\n");
+    return 0;
+  }
+  // vaddr_t addr;
+  // sscanf(EXPR,"%x", &addr);
+  int i,j;
+  printf("addr        mem\n");
+  for(i=0;i<s1;i++){
+    printf("0x%08x: ",addr);
+    vaddr_t data = vaddr_read(addr,4);
+    
+    for(j=3;j>=0;j--){
+      printf("0x%02x ",(data>>(j*8))&0xff);
+      // printf("0x%02x ",(data&0xff);
+      // data=data>>8; //内存显示顺序的两种方式,顺or逆
+    }
+    printf("\n");
+    addr+=4;
+  }
+  return 0;
+}
 static int cmd_w(char *args) {
   
   return 0;
