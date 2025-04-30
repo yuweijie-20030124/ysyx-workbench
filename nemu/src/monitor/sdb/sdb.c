@@ -134,39 +134,55 @@ static int cmd_x(char *args){
 }
   else printf("you are out of bound\n");     
   return 0;
-}    
-/*
+}  
+
 static int cmd_ptest(char *args){
-  bool ret;
-  uint64_t testinput, testoutput;
-  FILE* fp = fopen("/home/yuweijie/ysyx-workbench/nemu/tools/gen-expr/input", "r");
-  if (fp == NULL) {
-    printf("Fail to open file!\n");
-    exit(0);  //退出程序（结束程序）
-  }
-  char buf[1024];
-
-  while (fgets(buf, sizeof(buf), fp) != NULL) {
-
-    char* find = strchr(buf, '\n');  //找出data中的"\n"
-    if (find)
-      *find = '\0';   //替换
-    char* cmd = strtok(buf, " ");
-    char* args = cmd + strlen(cmd) + 1;
-    DEBUG_M("%s\n", buf);
-    DEBUG_M("%s\n", cmd);
-    DEBUG_M("%s\n", args);
-
-    int temp;
-    sscanf(cmd, "%d", &temp);
-    testinput = temp;
-    testoutput = expr(args, &ret);
-    Assert(testinput == testoutput, "input:%lu,output:%lu", testinput, testoutput);
-  }
-  fclose(fp);
-  return 0;
+  int right_ans = 0;
+  FILE *input_file = fopen("/home/yuweijie/ysyx-workbench/nemu/tools/gen-expr/input", "r");
+    if (input_file == NULL) {
+        perror("Error opening input file");
+        return 1;
+    }
+ 
+    char record[1024];
+    unsigned real_val;
+    char buf[1024];
+ 
+    // 循环读取每一条记录
+    for (int i = 0; i < 100; i++) {
+        // 读取一行记录
+        if (fgets(record, sizeof(record), input_file) == NULL) {
+            perror("Error reading input file");
+            break;
+        }
+ 
+        // 分割记录，获取数字和表达式
+        char *token = strtok(record, " ");
+        if (token == NULL) {
+            printf("Invalid record format\n");
+            continue;
+        }
+        real_val = atoi(token); // 将数字部分转换为整数
+ 
+        // 处理表达式部分，可能跨越多行
+        strcpy(buf, ""); // 清空buf
+        while ((token = strtok(NULL, "\n")) != NULL) {
+            strcat(buf, token);
+            strcat(buf, " "); // 拼接换行后的部分，注意添加空格以分隔多行内容
+        }
+ 
+        // 输出结果
+        printf("Real Value: %u, Expression: %s\n", real_val, buf);
+        bool flag = false;
+        unsigned res = expr(buf,&flag);
+        if(res == real_val)right_ans ++;
+ 
+    }
+    printf("test 100 expressions,the accuracy is %d/100\n",right_ans);
+    fclose(input_file);
+    return 0;
 }
-*/
+
 static int cmd_w(char *args) {
   
   return 0;
@@ -192,7 +208,7 @@ static int cmd_p(char *args) {
     return 0;
   }
 }
-
+/*
 static int cmd_ptest(char* args){
 FILE *file;
 char line[128];
@@ -227,7 +243,7 @@ if(file == NULL){
 pclose(file);
 return 0;
 }
-
+*/
 static int cmd_help(char *args);
 
 static struct {
