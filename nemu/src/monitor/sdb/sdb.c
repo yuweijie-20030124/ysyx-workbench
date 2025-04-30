@@ -118,10 +118,8 @@ static int cmd_x(char *args){
       printf("ERRO!!\n");
       return 0;
   }
-  //char *str;
-  //vaddr_t addr =  strtol( EXPR,&str,16 );
-  vaddr_t addr = expr(EXPR,&success);
-  printf("0x%08x: ",addr);
+  char *str;
+  vaddr_t addr =  strtol( EXPR,&str,16 );
   if(addr>=0x80000000 && addr<= 0x87ffffff){
   for(int i = 0 ; i < n ; i++){
       uint32_t data = vaddr_read(addr + i * 4,4);
