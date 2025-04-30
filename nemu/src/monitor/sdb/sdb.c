@@ -94,7 +94,7 @@ static int cmd_q(char *args) {
 
 //example：x 10 0x80000000
 //printf("0x%08x\n",vaddr_read(0x80000000, 4));
-/*
+
 static int cmd_x(char *args){
   //获取内存起始地址和扫描长度。扫描内存
   if(args == NULL){
@@ -118,8 +118,9 @@ static int cmd_x(char *args){
       printf("ERRO!!\n");
       return 0;
   }
-  char *str;
-  vaddr_t addr =  strtol( EXPR,&str,16 );
+  //char *str;
+  //vaddr_t addr =  strtol( EXPR,&str,16 );
+  vaddr_t addr = expr(EXPR,&success);
   if(addr>=0x80000000 && addr<= 0x87ffffff){
   for(int i = 0 ; i < n ; i++){
       uint32_t data = vaddr_read(addr + i * 4,4);
@@ -134,7 +135,8 @@ static int cmd_x(char *args){
   else printf("you are out of bound\n");     
   return 0;
 }    
-*/
+
+/*
 static int cmd_x(char *args) {
   char *arg = strtok(NULL, " ");
   int s1 = atoi(arg);
@@ -147,8 +149,7 @@ static int cmd_x(char *args) {
   }
   // vaddr_t addr;
   // sscanf(EXPR,"%x", &addr);
-  int i,j;
-  printf("addr        mem\n");
+  int i,j;x 
   for(i=0;i<s1;i++){
     printf("0x%08x: ",addr);
     vaddr_t data = vaddr_read(addr,4);
@@ -163,6 +164,8 @@ static int cmd_x(char *args) {
   }
   return 0;
 }
+*/
+
 static int cmd_w(char *args) {
   
   return 0;
