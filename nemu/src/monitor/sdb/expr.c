@@ -19,6 +19,8 @@
  * Type 'man regex' for more information about POSIX regex functions.
  */
 #include <regex.h>
+#include <string.h>
+#include <stdio.h>
 
 #define UNUSED(x) (void)(x)
 int tokens_num=0; //放一个全局变量记录tokens的个数
@@ -320,3 +322,35 @@ word_t expr(char *e, bool *success) {
 
   // return 0;
 }
+
+/* 表达式测试 
+void expr_test(void) {
+  bool ret;
+  uint64_t testinput, testoutput;
+  FILE* fp = fopen("/home/yuweijie/ysyx-workbench/nemu/tools/gen-expr/input", "r");
+  if (fp == NULL) {
+    printf("Fail to open file!\n");
+    exit(0);  //退出程序（结束程序）
+  }
+  char buf[1024];
+
+  while (fgets(buf, sizeof(buf), fp) != NULL) {
+
+    char* find = strchr(buf, '\n');  //找出data中的"\n"
+    if (find)
+      *find = '\0';   //替换
+    char* cmd = strtok(buf, " ");
+    char* args = cmd + strlen(cmd) + 1;
+    DEBUG_M("%s\n", buf);
+    DEBUG_M("%s\n", cmd);
+    DEBUG_M("%s\n", args);
+
+    int temp;
+    sscanf(cmd, "%d", &temp);
+    testinput = temp;
+    testoutput = expr(args, &ret);
+    Assert(testinput == testoutput, "input:%lu,output:%lu", testinput, testoutput);
+  }
+  fclose(fp);
+}
+*/

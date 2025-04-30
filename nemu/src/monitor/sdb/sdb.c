@@ -135,37 +135,38 @@ static int cmd_x(char *args){
   else printf("you are out of bound\n");     
   return 0;
 }    
-
 /*
-static int cmd_x(char *args) {
-  char *arg = strtok(NULL, " ");
-  int s1 = atoi(arg);
-  char *EXPR  = strtok(NULL, " ");
-  bool flag=true;
-  word_t addr = expr(EXPR,&flag);
-  if(flag==false){
-    Log("There is an error in the expression, please retype it\n");
-    return 0;
+static int cmd_ptest(char *args){
+  bool ret;
+  uint64_t testinput, testoutput;
+  FILE* fp = fopen("/home/yuweijie/ysyx-workbench/nemu/tools/gen-expr/input", "r");
+  if (fp == NULL) {
+    printf("Fail to open file!\n");
+    exit(0);  //退出程序（结束程序）
   }
-  // vaddr_t addr;
-  // sscanf(EXPR,"%x", &addr);
-  int i,j;x 
-  for(i=0;i<s1;i++){
-    printf("0x%08x: ",addr);
-    vaddr_t data = vaddr_read(addr,4);
-    
-    for(j=3;j>=0;j--){
-      printf("0x%02x ",(data>>(j*8))&0xff);
-      // printf("0x%02x ",(data&0xff);
-      // data=data>>8; //内存显示顺序的两种方式,顺or逆
-    }
-    printf("\n");
-    addr+=4;
+  char buf[1024];
+
+  while (fgets(buf, sizeof(buf), fp) != NULL) {
+
+    char* find = strchr(buf, '\n');  //找出data中的"\n"
+    if (find)
+      *find = '\0';   //替换
+    char* cmd = strtok(buf, " ");
+    char* args = cmd + strlen(cmd) + 1;
+    DEBUG_M("%s\n", buf);
+    DEBUG_M("%s\n", cmd);
+    DEBUG_M("%s\n", args);
+
+    int temp;
+    sscanf(cmd, "%d", &temp);
+    testinput = temp;
+    testoutput = expr(args, &ret);
+    Assert(testinput == testoutput, "input:%lu,output:%lu", testinput, testoutput);
   }
+  fclose(fp);
   return 0;
 }
 */
-
 static int cmd_w(char *args) {
   
   return 0;
@@ -244,6 +245,7 @@ static struct {
   { "d", "delete watchpoint", cmd_d },
   { "ptest", "evaluation test", cmd_ptest },
   { "q", "Exit NEMU", cmd_q },
+
   /* TODO: Add more commands cmd_d*/
 };
 
