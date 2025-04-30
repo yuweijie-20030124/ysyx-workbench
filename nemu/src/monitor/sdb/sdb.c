@@ -163,7 +163,7 @@ static int cmd_p(char *args) {
 }
 static int cmd_ptest(char *args){
   int right_ans = 0;
-  FILE *input_file = fopen("/home/dmz/ics2023/nemu/tools/gen-expr/input", "r");
+  FILE *input_file = fopen("/home/yuweijie/ysyx-workbench/nemu/tools/gen-expr/gen-expr", "r");
     if (input_file == NULL) {
         perror("Error opening input file");
         return 1;
