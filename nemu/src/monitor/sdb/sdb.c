@@ -111,16 +111,16 @@ static int cmd_x(char *args){
   char *EXPR = strtok(NULL," ");
   if(EXPR == NULL){                                                                                                                                          
       printf("too few parameter!!! \n");
-      return 1;
+      return 0;
   }
   if(strtok(NULL," ")!=NULL){
       printf("too many parameter! \n");
-      return 1;
+      return 0;
   }
   bool success = true;
   if (success!=true){
       printf("ERRO!!\n");
-      return 1;
+      return 0;
   }
   char *str;
   vaddr_t addr =  strtol( EXPR,&str,16 );
