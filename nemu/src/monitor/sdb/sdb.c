@@ -164,38 +164,43 @@ static int cmd_p(char *args) {
 
 
 static int cmd_ptest(char* args) {
-FILE *file;
-char line[128];
-int param1=0;
-int param2=0;
-int found =0;
+  FILE *file;
+  char line[128];
+  int param1 = 0;
+  int param2 = 0;
+  int found = 0;
 
-//打开文件
-file = popen("/home/yuweijie/ysyx-workbench/nemu/tools/gen-expr/gen-expr","r");
-if(file == NULL){
-  perror("Error opening file");
-  return -1;
-}
+  file = popen("/home/yuweijie/ysyx-workbench/nemu/tools/gen-expr/gen-expr", "r");
+  if(file == NULL) {
+      perror("Error opening file");
+      return -1;
+  }
 
-// 读取文件，获取参数值
   while (fgets(line, sizeof(line), file)) {
-
-      if ((sscanf(line, "param1=%d", &param1) == 1) ||
-     sscanf(line, "param1=%d", &param2) == 1) 
-  {
+      // 尝试解析param1
+      if (sscanf(line, "param1=%d", &param1) == 1) {
           found++;
       }
-  // 如果两个参数都找到了，就可以停止读取文件
-      if (found == 2) {
+      // 尝试解析param2
+      else if (sscanf(line, "param2=%d", &param2) == 1) {
+          found++;
+      }
+      
+      // 打印原始行（可选）
+      printf("%s", line);
+      
+      // 两个参数都找到后退出
+      if (found >= 2) {
           break;
-      } 
-  else {
-          printf("%s\n", line);
-      }	
-}
-//关闭文件
-pclose(file);
-return 0;
+      }
+  }
+
+  pclose(file);
+  
+  // 这里可以添加对参数的使用
+  printf("Got param1=%d, param2=%d\n", param1, param2);
+  
+  return 0;
 }
 
 
