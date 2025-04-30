@@ -105,25 +105,22 @@ static int cmd_x(char *args){
   char *arg = strtok(args," ");
   if(arg == NULL){
       printf("too few parameter!! \n");
-      return 1;
+      return 0;
   }
   int  n = atoi(arg);
   char *EXPR = strtok(NULL," ");
   if(EXPR == NULL){                                                                                                                                          
       printf("too few parameter!!! \n");
-      return 1;
-  }
-  if(strtok(NULL," ")!=NULL){
-      printf("too many parameter! \n");
-      return 1;
+      return 0;
   }
   bool success = true;
   if (success!=true){
       printf("ERRO!!\n");
-      return 1;
+      return 0;
   }
-  char *str;
-  vaddr_t addr =  strtol( EXPR,&str,16 );
+  //char *str;
+  //vaddr_t addr =  strtol( EXPR,&str,16 );
+  vaddr_t addr = expr(EXPR,&success);
   if(addr>=0x80000000 && addr<= 0x87ffffff){
   for(int i = 0 ; i < n ; i++){
       uint32_t data = vaddr_read(addr + i * 4,4);
@@ -139,6 +136,36 @@ static int cmd_x(char *args){
   return 0;
 }    
 
+/*
+static int cmd_x(char *args) {
+  char *arg = strtok(NULL, " ");
+  int s1 = atoi(arg);
+  char *EXPR  = strtok(NULL, " ");
+  bool flag=true;
+  word_t addr = expr(EXPR,&flag);
+  if(flag==false){
+    Log("There is an error in the expression, please retype it\n");
+    return 0;
+  }
+  // vaddr_t addr;
+  // sscanf(EXPR,"%x", &addr);
+  int i,j;x 
+  for(i=0;i<s1;i++){
+    printf("0x%08x: ",addr);
+    vaddr_t data = vaddr_read(addr,4);
+    
+    for(j=3;j>=0;j--){
+      printf("0x%02x ",(data>>(j*8))&0xff);
+      // printf("0x%02x ",(data&0xff);
+      // data=data>>8; //内存显示顺序的两种方式,顺or逆
+    }
+    printf("\n");
+    addr+=4;
+  }
+  return 0;
+}
+*/
+
 static int cmd_w(char *args) {
   
   return 0;
@@ -151,24 +178,18 @@ static int cmd_d(char *args) {
 
 static int cmd_p(char *args) {
   if (args == NULL) {
-    printf("You dont have any parameter,try ***p 5 + 6*** \n");
+    printf("You dont have any parameter,try ***p 5+6*** \n");
     return 0;
   }
   else {
-  int i = atoi(args);
-  if (i <= 0) {
-    printf("Invalid argument '%s'\n", args);
-  } else {
-    word_t value;
-    bool success = true;
-    value = expr(args,&success);
-    if(success == false){
-      printf("expression has error\n");
+    bool flag=true;
+    word_t value_p = expr(args,&flag);
+    if(flag==false&&args==NULL){
+      printf("There is an error in the expression, please retype it\n");
       return 0;
-    }else printf("%d\n",value);
+    }else printf("%d\n",value_p);
+    return 0;
   }
-  return 0;
-}
 }
 
 static int cmd_ptest(char* args){
