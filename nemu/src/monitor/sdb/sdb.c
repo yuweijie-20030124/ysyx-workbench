@@ -204,20 +204,15 @@ static int cmd_p(char *args) {
 }
 
 static int cmd_ptest() {
-  // 清空之前的数据
-  entry_count = 0;
-  
-  // 收集最新数据
   collect();
 
-  // 只显示最新结果
-  if (entry_count > 0) {
-      printf("Latest Result:\n");
-      printf("Result: %d\n", entries[entry_count-1].result);
-      printf("Buf: %s\n", entries[entry_count-1].buf);
+  // 打印所有提取的 result 和 buf
+  printf("Extracted Results (Total: %d):\n", entry_count);
+  printf("-----------------------------\n");
+  for (int i = 0; i < entry_count; i++) {
+      printf("[%d] Result: %d\n", i + 1, entries[i].result);
+      printf("    Buf: %s\n", entries[i].buf);
       printf("-----------------------------\n");
-  } else {
-      printf("No result found\n");
   }
 
   return 0;
