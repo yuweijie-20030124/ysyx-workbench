@@ -192,7 +192,7 @@ static int cmd_p(char *args) {
   if(strcmp(args, "test") == 0) {
     char str[3000];
     uint64_t answer;
-    FILE *fp=fopen("/home/yuweijie/ysyx-workbench/nemu/tools/gen-expr/input","r");
+    FILE *fp=fopen("/home/yuweijie/ysyx-workbench/nemu/tools/gen-expr/build/input","r");
     assert(fp!=NULL);
     while(fscanf(fp,"%lu %[^\n]",&answer,str)>0){
       uint64_t result=expr(str,&success);
