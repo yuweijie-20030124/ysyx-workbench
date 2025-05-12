@@ -188,19 +188,31 @@ static int cmd_d(char *args) {
 }
 
 static int cmd_p(char *args) {
-  if (args == NULL) {
-    printf("You dont have any parameter,try ***p 5+6*** \n");
-    return 0;
+  bool success;
+  if(strcmp(args, "test") == 0) {
+    char str[3000];
+    uint64_t answer;
+    FILE *fp=fopen("/home/yuweijie/ysyx-workbench/nemu/tools/gen-expr/build/input","r");
+    assert(fp!=NULL);
+    while(fscanf(fp,"%lu %[^\n]",&answer,str)>0){
+      uint64_t result=expr(str,&success);
+      if(result!=answer){
+        printf("Wrong calculate for %s, right answer: %lu, wrong calculate: %lu\n",str,answer,result);
+      }
+    }
+    fclose(fp);
+    printf("Test passed.\n");
   }
-  else {
-    bool flag=true;
-    word_t value_p = expr(args,&flag);
-    if(flag==false&&args==NULL){
-      printf("There is an error in the expression, please retype it\n");
+  else{
+  uint64_t result = expr(args,&success);
+  if(!success){
+    printf("wrong calculate in expr\n");
+	}
+  else{
+    printf("%lu\n",result);
+    }
+  }
       return 0;
-    }else printf("%d\n",value_p);
-    return 0;
-  }
 }
 
 static int cmd_ptest() {
