@@ -199,6 +199,7 @@ static int cmd_p(char *args) {
       if(result!=answer){
         printf("Wrong calculate for %s, right answer: %lu, wrong calculate: %lu\n",str,answer,result);
       }
+      else{printf("Right calculate for %s, answer=result=%lu\n",str,result);}
     }
     fclose(fp);
     printf("Test passed.\n");
