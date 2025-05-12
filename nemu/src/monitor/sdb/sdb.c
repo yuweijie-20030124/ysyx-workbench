@@ -24,6 +24,47 @@
 #include <memory/paddr.h>
 #include <memory/vaddr.h>
 
+#define MAX_ENTRIES 100  // 假设最多1000组数据
+#define MAX_BUF_LEN 512   // 每行buf的最大长度
+
+typedef struct {
+    int result;
+    char buf[MAX_BUF_LEN];
+} ResultEntry;
+
+ResultEntry entries[MAX_ENTRIES];  // 存储所有结果的数组
+int entry_count = 0;               // 当前存储的条目数
+
+static void collect() {//收集input文件中的所有result和buf
+    FILE *file;
+    char line[MAX_BUF_LEN];
+    int result;
+    char buf[MAX_BUF_LEN];
+
+    file = popen("/home/yuweijie/ysyx-workbench/nemu/tools/gen-expr/gen-expr", "r");
+    if (file == NULL) {
+        perror("Error opening file");
+        return;
+    }
+
+    while (fgets(line, sizeof(line), file)) {
+        // 匹配 "the result is xxx , the buf is yyy" 格式
+        if (sscanf(line, "the result is %d , the buf is %[^\n]", &result, buf) == 2) {
+            if (entry_count < MAX_ENTRIES) {
+                entries[entry_count].result = result;
+                strncpy(entries[entry_count].buf, buf, MAX_BUF_LEN - 1);
+                entries[entry_count].buf[MAX_BUF_LEN - 1] = '\0';  // 确保字符串终止
+                entry_count++;
+            } else {
+                fprintf(stderr, "Warning: Reached maximum entry limit (%d)\n", MAX_ENTRIES);
+                break;
+            }
+        }
+    }
+
+    pclose(file);
+}
+
 static int is_batch_mode = false;
 
 void init_regex();
@@ -134,37 +175,7 @@ static int cmd_x(char *args){
 }
   else printf("you are out of bound\n");     
   return 0;
-}    
-
-/*
-static int cmd_x(char *args) {
-  char *arg = strtok(NULL, " ");
-  int s1 = atoi(arg);
-  char *EXPR  = strtok(NULL, " ");
-  bool flag=true;
-  word_t addr = expr(EXPR,&flag);
-  if(flag==false){
-    Log("There is an error in the expression, please retype it\n");
-    return 0;
-  }
-  // vaddr_t addr;
-  // sscanf(EXPR,"%x", &addr);
-  int i,j;x 
-  for(i=0;i<s1;i++){
-    printf("0x%08x: ",addr);
-    vaddr_t data = vaddr_read(addr,4);
-    
-    for(j=3;j>=0;j--){
-      printf("0x%02x ",(data>>(j*8))&0xff);
-      // printf("0x%02x ",(data&0xff);
-      // data=data>>8; //内存显示顺序的两种方式,顺or逆
-    }
-    printf("\n");
-    addr+=4;
-  }
-  return 0;
-}
-*/
+}  
 
 static int cmd_w(char *args) {
   
@@ -177,54 +188,47 @@ static int cmd_d(char *args) {
 }
 
 static int cmd_p(char *args) {
-  if (args == NULL) {
-    printf("You dont have any parameter,try ***p 5+6*** \n");
-    return 0;
-  }
-  else {
-    bool flag=true;
-    word_t value_p = expr(args,&flag);
-    if(flag==false&&args==NULL){
-      printf("There is an error in the expression, please retype it\n");
-      return 0;
-    }else printf("%d\n",value_p);
-    return 0;
-  }
-}
-
-static int cmd_ptest(char* args){
-FILE *file;
-char line[128];
-int param1=0;
-int param2=0;
-int found =0;
-
-//打开文件
-file = popen("/home/yuweijie/ysyx-workbench/nemu/tools/gen-expr/gen-expr","r");
-if(file == NULL){
-  perror("Error opening file");
-  return -1;
-}
-
-// 读取文件，获取参数值
-  while (fgets(line, sizeof(line), file)) {
-
-      if ((sscanf(line, "param1=%d", &param1) == 1) ||
-     sscanf(line, "param1=%d", &param2) == 1) 
-  {
-          found++;
+  bool success;
+  if(strcmp(args, "test") == 0) {
+    char str[3000];
+    uint64_t answer;
+    FILE *fp=fopen("/home/yuweijie/ysyx-workbench/nemu/tools/gen-expr/build/input","r");
+    assert(fp!=NULL);
+    while(fscanf(fp,"%lu %[^\n]",&answer,str)>0){
+      uint64_t result=expr(str,&success);
+      if(result!=answer){
+        printf("Wrong calculate for %s, right answer: %lu, wrong calculate: %lu\n",str,answer,result);
       }
-  // 如果两个参数都找到了，就可以停止读取文件
-      if (found == 2) {
-          break;
-      } 
-  else {
-          printf("%s\n", line);
-      }	
+      else{printf("Right calculate for %s, answer=result=%lu\n",str,result);}
+    }
+    fclose(fp);
+    printf("Test passed.\n");
+  }
+  else{
+  uint64_t result = expr(args,&success);
+  if(!success){
+    printf("wrong calculate in expr\n");
+	}
+  else{
+    printf("%lu\n",result);
+    }
+  }
+      return 0;
 }
-//关闭文件
-pclose(file);
-return 0;
+
+static int cmd_ptest() {
+  collect();
+
+  // 打印所有提取的 result 和 buf
+  printf("Extracted Results (Total: %d):\n", entry_count);
+  printf("-----------------------------\n");
+  for (int i = 0; i < entry_count; i++) {
+      printf("[%d] Result: %d\n", i + 1, entries[i].result);
+      printf("    Buf: %s\n", entries[i].buf);
+      printf("-----------------------------\n");
+  }
+
+  return 0;
 }
 
 static int cmd_help(char *args);
@@ -244,6 +248,7 @@ static struct {
   { "d", "delete watchpoint", cmd_d },
   { "ptest", "evaluation test", cmd_ptest },
   { "q", "Exit NEMU", cmd_q },
+
   /* TODO: Add more commands cmd_d*/
 };
 
