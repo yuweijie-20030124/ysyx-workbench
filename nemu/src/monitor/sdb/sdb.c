@@ -96,7 +96,7 @@ static int cmd_info(char *args) {
     isa_reg_display();
   } 
   else if(strcmp(args, "p") == 0){
-    //sdb_watchpoint_display();
+    display_watch();
   }
     else{
     printf("print r or p, not'%s'\n", args);
