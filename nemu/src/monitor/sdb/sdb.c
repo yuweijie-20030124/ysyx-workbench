@@ -29,6 +29,9 @@
 
 void init_regex();
 void init_wp_pool();
+void add_watch(char *expr,word_t addr);
+void display_watch();
+void remove_watch(int num);
 
 typedef struct {
     int result;
@@ -60,8 +63,6 @@ static char* rl_gets() {
 
   return line_read;
 }
-
-
 
 static int cmd_c(char *args) {
   cpu_exec(-1);
@@ -152,21 +153,26 @@ static int cmd_x(char *args){
   return 0;
 }  
 
-static int cmd_w(char* args){
-    if(args== NULL)
-	printf("cmd_w,No args.\n");
-    //else{create_watchpoint(args);}
-    return 0;
-}
-
 static int cmd_d(char *args) {
-
-  /*
   char *NUM  = strtok(NULL, " ");
   int num = atoi(NUM);
-  delete_watchpoint(num);
- 
-  */
+  remove_watch(num);
+  return 0;
+}
+
+static int cmd_w(char *args) {
+  char *EXPR  = strtok(NULL, " ");
+  if(EXPR==NULL){
+    Log("There is an error in the expression, please retype it\n");
+    return 0;
+  }
+  bool flag=true;
+  word_t addr = expr(EXPR,&flag);
+  if(flag==false){
+    Log("There is an error in the expression, please retype it\n");
+    return 0;
+  }
+  add_watch(EXPR,addr);
   return 0;
 }
 
