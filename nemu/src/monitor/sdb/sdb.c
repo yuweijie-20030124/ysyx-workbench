@@ -27,6 +27,12 @@
 #define MAX_ENTRIES 100  // 假设最多1000组数据
 #define MAX_BUF_LEN 512   // 每行buf的最大长度
 
+void init_regex();
+void init_wp_pool();
+void add_watch(char *expr,word_t addr);
+void display_watch();
+void remove_watch(int num);
+
 typedef struct {
     int result;
     char buf[MAX_BUF_LEN];
@@ -34,36 +40,6 @@ typedef struct {
 
 ResultEntry entries[MAX_ENTRIES];  // 存储所有结果的数组
 int entry_count = 0;               // 当前存储的条目数
-
-static void collect() {//收集input文件中的所有result和buf
-    FILE *file;
-    char line[MAX_BUF_LEN];
-    int result;
-    char buf[MAX_BUF_LEN];
-
-    file = popen("/home/yuweijie/ysyx-workbench/nemu/tools/gen-expr/gen-expr", "r");
-    if (file == NULL) {
-        perror("Error opening file");
-        return;
-    }
-
-    while (fgets(line, sizeof(line), file)) {
-        // 匹配 "the result is xxx , the buf is yyy" 格式
-        if (sscanf(line, "the result is %d , the buf is %[^\n]", &result, buf) == 2) {
-            if (entry_count < MAX_ENTRIES) {
-                entries[entry_count].result = result;
-                strncpy(entries[entry_count].buf, buf, MAX_BUF_LEN - 1);
-                entries[entry_count].buf[MAX_BUF_LEN - 1] = '\0';  // 确保字符串终止
-                entry_count++;
-            } else {
-                fprintf(stderr, "Warning: Reached maximum entry limit (%d)\n", MAX_ENTRIES);
-                break;
-            }
-        }
-    }
-
-    pclose(file);
-}
 
 static int is_batch_mode = false;
 
@@ -120,7 +96,7 @@ static int cmd_info(char *args) {
     isa_reg_display();
   } 
   else if(strcmp(args, "p") == 0){
-    //display_watch();
+    display_watch();
   }
     else{
     printf("print r or p, not'%s'\n", args);
@@ -177,13 +153,26 @@ static int cmd_x(char *args){
   return 0;
 }  
 
-static int cmd_w(char *args) {
-  
-  return 0;
-  }
-
 static int cmd_d(char *args) {
-  
+  char *NUM  = strtok(NULL, " ");
+  int num = atoi(NUM);
+  remove_watch(num);
+  return 0;
+}
+
+static int cmd_w(char *args) {
+  char *EXPR  = strtok(NULL, " ");
+  if(EXPR==NULL){
+    Log("There is an error in the expression, please retype it\n");
+    return 0;
+  }
+  bool flag=true;
+  word_t addr = expr(EXPR,&flag);
+  if(flag==false){
+    Log("There is an error in the expression, please retype it\n");
+    return 0;
+  }
+  add_watch(EXPR,addr);
   return 0;
 }
 
@@ -216,21 +205,6 @@ static int cmd_p(char *args) {
       return 0;
 }
 
-static int cmd_ptest() {
-  collect();
-
-  // 打印所有提取的 result 和 buf
-  printf("Extracted Results (Total: %d):\n", entry_count);
-  printf("-----------------------------\n");
-  for (int i = 0; i < entry_count; i++) {
-      printf("[%d] Result: %d\n", i + 1, entries[i].result);
-      printf("    Buf: %s\n", entries[i].buf);
-      printf("-----------------------------\n");
-  }
-
-  return 0;
-}
-
 static int cmd_help(char *args);
 
 static struct {
@@ -246,7 +220,6 @@ static struct {
   { "p", "expression evaluation", cmd_p },
   { "w", "creat watchpoint", cmd_w },
   { "d", "delete watchpoint", cmd_d },
-  { "ptest", "evaluation test", cmd_ptest },
   { "q", "Exit NEMU", cmd_q },
 
   /* TODO: Add more commands cmd_d*/
