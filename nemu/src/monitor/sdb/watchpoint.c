@@ -81,7 +81,7 @@ void display_watch(){
   }else{
     printf("Num     What    Value\n");
     while(h){
-      printf("%-10d%-10s%u(0x%10x)\n",h->NO,h->expr,h->last,h->last);
+      printf("%-8d%-8s%u(0x%08x)\n",h->NO,h->expr,h->last,h->last);
       h=h->next;
     }
   }
