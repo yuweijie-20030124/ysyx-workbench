@@ -109,16 +109,11 @@ static int cmd_q(char *args) {
   return -1;
 }
 
-//example：x 10 0x80000000
-//printf("0x%08x\n",vaddr_read(0x80000000, 4));
-
 static int cmd_x(char *args){
-  //获取内存起始地址和扫描长度。扫描内存
   if(args == NULL){
       printf("too few parameter! \n");
       return 1;
-  }
-   
+  } 
   char *arg = strtok(args," ");
   if(arg == NULL){
       printf("too few parameter!! \n");
@@ -131,13 +126,11 @@ static int cmd_x(char *args){
       return 0;
   }
   bool success = true;
+  vaddr_t addr = expr(EXPR,&success);
   if (success!=true){
       printf("ERRO!!\n");
       return 0;
   }
-  //char *str;
-  //vaddr_t addr =  strtol( EXPR,&str,16 );
-  vaddr_t addr = expr(EXPR,&success);
   if(addr>=0x80000000 && addr<= 0x87ffffff){
   for(int i = 0 ; i < n ; i++){
       uint32_t data = vaddr_read(addr + i * 4,4);
