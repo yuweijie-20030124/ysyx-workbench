@@ -174,27 +174,21 @@ static int cmd_p(char *args) {
     if(strcmp(args, "test") == 0) {
         char str[3000];
         uint64_t answer;
-        bool all_correct = true;  // 添加标志位跟踪所有结果是否正确
-        
+        bool all_correct = true;
         FILE *fp = fopen("/home/yuweijie/ysyx-workbench/nemu/tools/gen-expr/build/input", "r");
         assert(fp != NULL);
         
         while(fscanf(fp, "%lu %[^\n]", &answer, str) > 0) {
             uint64_t result = expr(str, &success);
-            
-            // 检查表达式是否计算正确
             if(!success || result != answer) {
                 printf("calculate wrong,the expr is \"%s\"\n", str);
                 printf("your answer is: %lu, the true answer is: %lu\n",result,answer);
                 all_correct = false;
-                printf("tests not passe\n");
-                break;  // 发现错误立即跳出循环
+                printf("tests not pass\n");
+                break;  
             }
         }
-        
         fclose(fp);
-        
-        // 只有所有表达式都正确才输出"测试通过"
         if(all_correct) {
             printf("all tests pass\n");
         }
