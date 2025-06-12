@@ -109,16 +109,11 @@ static int cmd_q(char *args) {
   return -1;
 }
 
-//example：x 10 0x80000000
-//printf("0x%08x\n",vaddr_read(0x80000000, 4));
-
 static int cmd_x(char *args){
-  //获取内存起始地址和扫描长度。扫描内存
   if(args == NULL){
       printf("too few parameter! \n");
       return 1;
-  }
-   
+  } 
   char *arg = strtok(args," ");
   if(arg == NULL){
       printf("too few parameter!! \n");
@@ -131,13 +126,11 @@ static int cmd_x(char *args){
       return 0;
   }
   bool success = true;
+  vaddr_t addr = expr(EXPR,&success);
   if (success!=true){
       printf("ERRO!!\n");
       return 0;
   }
-  //char *str;
-  //vaddr_t addr =  strtol( EXPR,&str,16 );
-  vaddr_t addr = expr(EXPR,&success);
   if(addr>=0x80000000 && addr<= 0x87ffffff){
   for(int i = 0 ; i < n ; i++){
       uint32_t data = vaddr_read(addr + i * 4,4);
@@ -163,13 +156,13 @@ static int cmd_d(char *args) {
 static int cmd_w(char *args) {
   char *EXPR  = strtok(NULL, " ");
   if(EXPR==NULL){
-    Log("There is an error in the expression, please retype it\n");
+    Log(" error expression\n");
     return 0;
   }
   bool flag=true;
   word_t addr = expr(EXPR,&flag);
   if(flag==false){
-    Log("There is an error in the expression, please retype it\n");
+    Log("error expression\n");
     return 0;
   }
   add_watch(EXPR,addr);
@@ -177,32 +170,39 @@ static int cmd_w(char *args) {
 }
 
 static int cmd_p(char *args) {
-  bool success;
-  if(strcmp(args, "test") == 0) {
-    char str[3000];
-    uint64_t answer;
-    FILE *fp=fopen("/home/yuweijie/ysyx-workbench/nemu/tools/gen-expr/build/input","r");
-    assert(fp!=NULL);
-    while(fscanf(fp,"%lu %[^\n]",&answer,str)>0){
-      uint64_t result=expr(str,&success);
-      if(result!=answer){
-        printf("Wrong calculate for %s, right answer: %lu, wrong calculate: %lu\n",str,answer,result);
-      }
-      else{printf("Right calculate for %s, answer=result=%lu\n",str,result);}
+    bool success;
+    if(strcmp(args, "test") == 0) {
+        char str[3000];
+        uint64_t answer;
+        bool all_correct = true;
+        FILE *fp = fopen("/home/yuweijie/ysyx-workbench/nemu/tools/gen-expr/build/input", "r");
+        assert(fp != NULL);
+        
+        while(fscanf(fp, "%lu %[^\n]", &answer, str) > 0) {
+            uint64_t result = expr(str, &success);
+            if(!success || result != answer) {
+                printf("calculate wrong,the expr is \"%s\"\n", str);
+                printf("your answer is: %lu, the true answer is: %lu\n",result,answer);
+                all_correct = false;
+                printf("tests not pass\n");
+                break;  
+            }
+        }
+        fclose(fp);
+        if(all_correct) {
+            printf("all tests pass\n");
+        }
     }
-    fclose(fp);
-    printf("Test passed.\n");
-  }
-  else{
-  uint64_t result = expr(args,&success);
-  if(!success){
-    printf("wrong calculate in expr\n");
-	}
-  else{
-    printf("%lu\n",result);
+    else {
+        uint64_t result = expr(args, &success);
+        if(!success) {
+            printf("表达式计算错误\n");
+        }
+        else {
+            printf("%lu\n", result);
+        }
     }
-  }
-      return 0;
+    return 0;
 }
 
 static int cmd_help(char *args);
@@ -221,7 +221,6 @@ static struct {
   { "w", "creat watchpoint", cmd_w },
   { "d", "delete watchpoint", cmd_d },
   { "q", "Exit NEMU", cmd_q },
-
   /* TODO: Add more commands cmd_d*/
 };
 

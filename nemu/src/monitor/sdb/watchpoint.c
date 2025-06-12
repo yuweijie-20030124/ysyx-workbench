@@ -17,10 +17,12 @@
 
 #define NR_WP 32
 
+
+
 typedef struct watchpoint {
   int NO;
   char expr[1000];
-  word_t last;
+  word_t last;//上一次的值
   struct watchpoint *next;
 
   /* TODO: Add more members if necessary */
@@ -29,6 +31,26 @@ typedef struct watchpoint {
 
 static WP wp_pool[NR_WP] = {};
 static WP *head = NULL, *free_ = NULL;
+
+int update_watchpoint() {
+	int n_changed = 0;
+	WP *ptr = head;
+	while (ptr != NULL) {
+		bool success = false;
+		word_t value = expr(ptr->expr, &success);
+		Assert(success, "wrong expression %s\n", ptr->expr);
+
+		if (value != ptr->last) {
+			n_changed += 1;
+			printf("Watchpoint %d: %s\n", ptr->NO, ptr->expr);
+			printf("				Old value = 0x%08x(%d)\n", ptr->last, ptr->last);
+			printf("				New value = 0x%08x(%d)\n", value, value);
+			ptr->last = value;
+		}
+		ptr = ptr->next;
+	}
+	return n_changed;
+}
 
 WP* new_wp(){
   if(free_==NULL){
