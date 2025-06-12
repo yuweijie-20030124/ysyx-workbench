@@ -170,33 +170,44 @@ static int cmd_w(char *args) {
 }
 
 static int cmd_p(char *args) {
-  bool success;
-  if(strcmp(args, "test") == 0) {
-    char str[3000];
-    uint64_t answer;
-    FILE *fp=fopen("/home/yuweijie/ysyx-workbench/nemu/tools/gen-expr/build/input","r");
-    assert(fp!=NULL);
-    while(fscanf(fp,"%lu %[^\n]",&answer,str)>0){
-      uint64_t result=expr(str,&success);
-      if(result!=answer){
-        printf("Wrong calculate for %s, right answer: %lu, wrong calculate: %lu\n",str,answer,result);
-        success = false;
-      }
-      else{printf("Right calculate for %s, answer=result=%lu\n",str,result);}
+    bool success;
+    if(strcmp(args, "test") == 0) {
+        char str[3000];
+        uint64_t answer;
+        bool all_correct = true;  // 添加标志位跟踪所有结果是否正确
+        
+        FILE *fp = fopen("/home/yuweijie/ysyx-workbench/nemu/tools/gen-expr/build/input", "r");
+        assert(fp != NULL);
+        
+        while(fscanf(fp, "%lu %[^\n]", &answer, str) > 0) {
+            uint64_t result = expr(str, &success);
+            
+            // 检查表达式是否计算正确
+            if(!success || result != answer) {
+                printf("计算错误：表达式 \"%s\"\n", str);
+                printf("正确答案: %lu, 实际结果: %lu\n", answer, result);
+                all_correct = false;
+                break;  // 发现错误立即跳出循环
+            }
+        }
+        
+        fclose(fp);
+        
+        // 只有所有表达式都正确才输出"测试通过"
+        if(all_correct) {
+            printf("测试通过：所有表达式计算正确\n");
+        }
     }
-    fclose(fp);
-    printf("Test passed.\n");
-  }
-  else{
-  uint64_t result = expr(args,&success);
-  if(!success){
-    printf("wrong calculate in expr\n");
-	}
-  else{
-    printf("%lu\n",result);
+    else {
+        uint64_t result = expr(args, &success);
+        if(!success) {
+            printf("表达式计算错误\n");
+        }
+        else {
+            printf("%lu\n", result);
+        }
     }
-  }
-      return 0;
+    return 0;
 }
 
 static int cmd_help(char *args);
