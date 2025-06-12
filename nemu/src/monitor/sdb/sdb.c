@@ -216,7 +216,7 @@ void difftest_sync_mem_reg_to_ref();
 static int cmd_attach(char *args) {
   IFNDEF(CONFIG_DIFFTEST,printf("not have difftest config");return 0;)
   printf("wait.... it's slow(About 10 seconds) \n");
-  difftest_sync_mem_reg_to_ref();
+  //difftest_sync_mem_reg_to_ref();
   printf("difftest is open\n");
   difftest_mode=true;
   return 0;
