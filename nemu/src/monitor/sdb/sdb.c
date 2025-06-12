@@ -156,13 +156,13 @@ static int cmd_d(char *args) {
 static int cmd_w(char *args) {
   char *EXPR  = strtok(NULL, " ");
   if(EXPR==NULL){
-    Log("There is an error in the expression, please retype it\n");
+    Log(" error expression\n");
     return 0;
   }
   bool flag=true;
   word_t addr = expr(EXPR,&flag);
   if(flag==false){
-    Log("There is an error in the expression, please retype it\n");
+    Log("error expression\n");
     return 0;
   }
   add_watch(EXPR,addr);
@@ -205,6 +205,23 @@ static int cmd_p(char *args) {
     return 0;
 }
 
+bool difftest_mode=true;
+static int cmd_detach(char *args) {
+  IFNDEF(CONFIG_DIFFTEST,printf("not have difftest config");return 0;)
+  printf("difftest is close\n");
+  difftest_mode=false;
+  return 0;
+}
+void difftest_sync_mem_reg_to_ref();
+static int cmd_attach(char *args) {
+  IFNDEF(CONFIG_DIFFTEST,printf("not have difftest config");return 0;)
+  printf("wait.... it's slow(About 10 seconds) \n");
+  difftest_sync_mem_reg_to_ref();
+  printf("difftest is open\n");
+  difftest_mode=true;
+  return 0;
+}
+
 static int cmd_help(char *args);
 
 static struct {
@@ -221,7 +238,8 @@ static struct {
   { "w", "creat watchpoint", cmd_w },
   { "d", "delete watchpoint", cmd_d },
   { "q", "Exit NEMU", cmd_q },
-
+  { "detach", "\"d N\"close difftest mode" ,cmd_detach},
+  { "attach", "\"d N\"open  difftest mode" ,cmd_attach},
   /* TODO: Add more commands cmd_d*/
 };
 
