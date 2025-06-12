@@ -185,7 +185,7 @@ static int cmd_p(char *args) {
             // 检查表达式是否计算正确
             if(!success || result != answer) {
                 printf("calculate wrong,the expr is \"%s\"\n", str);
-                printf("your answer is: %lu, the true answer is: %lu\n", answer, result);
+                printf("your answer is: %lu, the true answer is: %lu\n",result,answer);
                 all_correct = false;
                 printf("tests not passe\n");
                 break;  // 发现错误立即跳出循环
