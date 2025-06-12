@@ -20,7 +20,7 @@
 typedef struct watchpoint {
   int NO;
   char expr[1000];
-  word_t last;
+  word_t last;//上一次的值
   struct watchpoint *next;
 
   /* TODO: Add more members if necessary */

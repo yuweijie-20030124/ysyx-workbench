@@ -89,22 +89,11 @@
     nr_token = 0;
 
     while (e[position] != '\0') {
-      /* Try all rules one by one. */
       for (i = 0; i < NR_REGEX; i ++) {
         if (regexec(&re[i], e + position, 1, &pmatch, 0) == 0 && pmatch.rm_so == 0) {
           char *substr_start = e + position;
           int substr_len = pmatch.rm_eo;
-
-  //        Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s",
-  //            i, rules[i].regex, position, substr_len, substr_len, substr_start);
-
           position += substr_len;
-
-          /* TODO: Now a new token is recognized with rules[i]. Add codes
-          * to record the token in the array `tokens'. For certain types
-          * of tokens, some extra actions should be performed.
-          */
-
           switch (rules[i].token_type) {
             case TK_NOTYPE : break;
             case TK_NUM : case TK_HEX : case TK_REG:
@@ -118,7 +107,7 @@
               break;
             default: tokens[nr_token].type = rules[i].token_type;
                 nr_token++;
-                break;
+              break;
           }
 
           break;
@@ -180,10 +169,10 @@
       case TK_LEFT_BRACKET: case TK_RIGHT_BRACKET: return 10;
       case TK_NOT: case TK_DEREF: case TK_NEG: return 8;
       case '*': case '/' : return 6;
-            case '+': case '-' : return 4;
-            case TK_EQ: case TK_NEQ: return 2;
-            case TK_AND : return 1;
-            case TK_OR : return 0;
+      case '+': case '-' : return 4;
+      case TK_EQ: case TK_NEQ: return 2;
+      case TK_AND : return 1;
+      case TK_OR : return 0;
       default : return -1;
   }
   }
@@ -209,7 +198,11 @@
     }
     return main_op;
   }
-
+/*在表达式求值前，需要重新检查减号`-`和乘号`*`，因为它们可能是负号（`TK_NEG`）或
+解引用（`TK_DEREF`）而不是减法和乘法。
+- 如果`-`或`*`出现在表达式开头，或者前面不是数字、寄存器、十六进制数或右括号，则它
+们分别被重新标记为`TK_NEG`（负号）或`TK_DEREF`（解引用）。
+*/
   static void recheck_op(Token *t){
     for(int i=0;i<nr_token;i++)
       if(i==0||(tokens[i-1].type!=TK_NUM && tokens[i-1].type!=TK_HEX && tokens[i-1].type!=TK_REG  && tokens[i-1].type!=TK_RIGHT_BRACKET)){
