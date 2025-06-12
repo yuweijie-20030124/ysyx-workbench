@@ -184,10 +184,10 @@ static int cmd_p(char *args) {
             
             // 检查表达式是否计算正确
             if(!success || result != answer) {
-                printf("计算错误：表达式 \"%s\"\n", str);
-                printf("正确答案: %lu, 实际结果: %lu\n", answer, result);
+                printf("calculate wrong,the expr is \"%s\"\n", str);
+                printf("your answer is: %lu, the true answer is: %lu\n", answer, result);
                 all_correct = false;
-                printf("test not passes\n");
+                printf("tests not passe\n");
                 break;  // 发现错误立即跳出循环
             }
         }
@@ -196,7 +196,7 @@ static int cmd_p(char *args) {
         
         // 只有所有表达式都正确才输出"测试通过"
         if(all_correct) {
-            printf("测试通过：所有表达式计算正确\n");
+            printf("all tests pass\n");
         }
     }
     else {
