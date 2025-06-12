@@ -180,6 +180,7 @@ static int cmd_p(char *args) {
       uint64_t result=expr(str,&success);
       if(result!=answer){
         printf("Wrong calculate for %s, right answer: %lu, wrong calculate: %lu\n",str,answer,result);
+        success = false;
       }
       else{printf("Right calculate for %s, answer=result=%lu\n",str,result);}
     }
