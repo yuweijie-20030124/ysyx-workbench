@@ -187,7 +187,7 @@ static int cmd_p(char *args) {
                 printf("计算错误：表达式 \"%s\"\n", str);
                 printf("正确答案: %lu, 实际结果: %lu\n", answer, result);
                 all_correct = false;
-                printf("测试不通过\n");
+                printf("test not passes\n");
                 break;  // 发现错误立即跳出循环
             }
         }
