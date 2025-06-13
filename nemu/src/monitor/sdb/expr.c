@@ -177,27 +177,45 @@
   }
   }
 
-  static int main_op_position(int p, int q) {
-  // printf("in main_op_position\n");
+ static int main_op_position(int p, int q) {
     int main_op = -1;
     int parentheses_cnt = 0;
     int cmp_op_priority = 0;
-    for (int i=p;i<=q;i++){
-      switch(tokens[i].type){
-        case TK_NUM:case TK_HEX: case TK_REG: continue;
-        case TK_LEFT_BRACKET:parentheses_cnt++; break;
-        case TK_RIGHT_BRACKET:parentheses_cnt--; break;
-        default :
-          cmp_op_priority = op_order(tokens[i].type) - op_order(tokens[main_op].type);
-          if(parentheses_cnt==0){
-            if(main_op==-1 || cmp_op_priority <= 0){
-              main_op = i;
-            }
-          }
-      }
+
+    // 边界检查
+    if (p < 0 || q >= nr_token || p > q) {
+        return -1;
+    }
+
+    for (int i = p; i <= q; i++) {
+        switch(tokens[i].type) {
+            case TK_NUM: case TK_HEX: case TK_REG: 
+                continue;
+            case TK_LEFT_BRACKET:
+                parentheses_cnt++; 
+                break;
+            case TK_RIGHT_BRACKET:
+                parentheses_cnt--; 
+                break;
+            default:
+                if (parentheses_cnt == 0) {
+                    if (main_op == -1) {
+                        // 第一个遇到的运算符直接赋值
+                        main_op = i;
+                    } else {
+                        // 比较运算符优先级
+                        cmp_op_priority = op_order(tokens[i].type) - op_order(tokens[main_op].type);
+                        if (cmp_op_priority <= 0) {
+                            main_op = i;
+                        }
+                    }
+                }
+        }
     }
     return main_op;
-  }
+}
+
+
 /*在表达式求值前，需要重新检查减号`-`和乘号`*`，因为它们可能是负号（`TK_NEG`）或
 解引用（`TK_DEREF`）而不是减法和乘法。
 - 如果`-`或`*`出现在表达式开头，或者前面不是数字、寄存器、十六进制数或右括号，则它
