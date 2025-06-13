@@ -43,8 +43,8 @@ int update_watchpoint() {
 		if (value != ptr->last) {
 			n_changed += 1;
 			printf("Watchpoint %d: %s\n", ptr->NO, ptr->expr);
-			printf("				Old value = 0x%08x(%d)\n", ptr->last, ptr->last);
-			printf("				New value = 0x%08x(%d)\n", value, value);
+			printf("Old value = 0x%08x(%d)\n", ptr->last, ptr->last);
+			printf("New value = 0x%08x(%d)\n", value, value);
 			ptr->last = value;
 		}
 		ptr = ptr->next;
