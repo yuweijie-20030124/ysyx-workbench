@@ -119,10 +119,15 @@
         return false;
       }
     }
+  /*    for(int i=0;i<nr_token;i++)
+    {
+      printf("%5d%5s\n",tokens[i].type,tokens[i].str);
+    }*/
     return true;
   }
 
   static bool check_parentheses(int p, int q){
+  // printf("in check_parentheses\n");
     if(q<=p+1){
       return false;
     }
@@ -193,7 +198,11 @@
     }
     return main_op;
   }
-
+/*在表达式求值前，需要重新检查减号`-`和乘号`*`，因为它们可能是负号（`TK_NEG`）或
+解引用（`TK_DEREF`）而不是减法和乘法。
+- 如果`-`或`*`出现在表达式开头，或者前面不是数字、寄存器、十六进制数或右括号，则它
+们分别被重新标记为`TK_NEG`（负号）或`TK_DEREF`（解引用）。
+*/
   static void recheck_op(Token *t){
     for(int i=0;i<nr_token;i++)
       if(i==0||(tokens[i-1].type!=TK_NUM && tokens[i-1].type!=TK_HEX && tokens[i-1].type!=TK_REG  && tokens[i-1].type!=TK_RIGHT_BRACKET)){
