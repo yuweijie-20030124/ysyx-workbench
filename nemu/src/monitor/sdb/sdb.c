@@ -172,7 +172,7 @@ static int cmd_w(char *args) {
 static int cmd_p(char *args) {
     bool success;
     if(strcmp(args, "test") == 0) {
-        char str[3000];
+        char str[5000];
         uint64_t answer;
         bool all_correct = true;
         FILE *fp = fopen("/home/yuweijie/ysyx-workbench/nemu/tools/gen-expr/build/input", "r");
