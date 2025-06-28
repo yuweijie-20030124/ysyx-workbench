@@ -1,46 +1,53 @@
 # Makefile for AbstractMachine Kernels and Libraries
 
-### *Get a more readable version of this Makefile* by `make html` (requires python-markdown)
+### *Get a more readable version of this Makefile* by `make html` (requires python-markdown) 
+###想让人家看的清楚一点，但是我觉得还是这里好看一点
 html:
 	cat Makefile | sed 's/^\([^#]\)/    \1/g' | markdown_py > Makefile.html
 .PHONY: html
 
 ## 1. Basic Setup and Checks
-
-### Default to create a bare-metal kernel image
+##如果你直接 `make` 没指定目标，默认目标就是 `image`，即生成裸机镜像。
+### Default to create a bare-metal kernel image  $(MAKECMDGOALS)就是make后面带的参数
 ifeq ($(MAKECMDGOALS),)
   MAKECMDGOALS  = image
   .DEFAULT_GOAL = image
 endif
-
+##如果你make clean或者make clean-all，那就跳过去环境检查
 ### Override checks when `make clean/clean-all/html`
 ifeq ($(findstring $(MAKECMDGOALS),clean|clean-all|html),)
 
-### Print build info message
+### Print build info message name是我的主机名字 后面是我的参数 [里面是选择的架构]，为你提供信息的。
 $(info # Building $(NAME)-$(MAKECMDGOALS) [$(ARCH)])
 
-### Check: environment variable `$AM_HOME` looks sane
+### Check: environment variable `$AM_HOME` looks sane 检查你环境变量有没有问题
 ifeq ($(wildcard $(AM_HOME)/am/include/am.h),)
   $(error $$AM_HOME must be an AbstractMachine repo)
 endif
 
-### Check: environment variable `$ARCH` must be in the supported list
+### Check: environment variable `$ARCH` must be in the supported list 将scripts中的后缀为.mk的文件名去掉后缀和目录名，得到一个列表
+### 例如：`x86_64-qemu.mk` -> `x86_64-qemu`
+### 这个列表就是ARCHS
+### 如果你没有设置ARCH变量，默认是native
 ARCHS = $(basename $(notdir $(shell ls $(AM_HOME)/scripts/*.mk)))
-ifeq ($(filter $(ARCHS), $(ARCH)), )
+ifeq ($(filter $(ARCHS), $(ARCH)), )	
+##将ARCH中的内容和ARCHS中的内容进行比较,
+##在loongarch32r-nemu mips32-nemu native riscv32-nemu riscv32e-nemu riscv32e-npc 
+##riscv32mini-nemu riscv64-nemu spike x86-nemu x86-qemu x86_64-qemu中找，如果找不到就error掉
   $(error Expected $$ARCH in {$(ARCHS)}, Got "$(ARCH)")
 endif
 
 ### Extract instruction set architecture (`ISA`) and platform from `$ARCH`. Example: `ARCH=x86_64-qemu -> ISA=x86_64; PLATFORM=qemu`
-ARCH_SPLIT = $(subst -, ,$(ARCH))
-ISA        = $(word 1,$(ARCH_SPLIT))
-PLATFORM   = $(word 2,$(ARCH_SPLIT))
+ARCH_SPLIT = $(subst -, ,$(ARCH)) ##将ARCH中的-替换成空格
+ISA        = $(word 1,$(ARCH_SPLIT)) ##将ARCH_SPLIT中的第一个单词赋值给ISA
+PLATFORM   = $(word 2,$(ARCH_SPLIT)) ##将ARCH_SPLIT中的第二个单词赋值给PLATFORM
 
-### Check if there is something to build
+### Check if there is something to build  $ (flavor var)函数  当输入变量在makefile及其include中都没有时，函数输出为’undefined’字符串
 ifeq ($(flavor SRCS), undefined)
   $(error Nothing to build)
 endif
 
-### Checks end here
+### Checks end here 如果不是clean clean-all html就继续下面编译
 endif
 
 ## 2. General Compilation Targets
@@ -50,16 +57,19 @@ WORK_DIR  = $(shell pwd)
 DST_DIR   = $(WORK_DIR)/build/$(ARCH)
 $(shell mkdir -p $(DST_DIR))
 
-### Compilation targets (a binary image or archive)
+### Compilation targets (a binary image or archive)   编译的环境配置好
 IMAGE_REL = build/$(NAME)-$(ARCH)
-IMAGE     = $(abspath $(IMAGE_REL))
-ARCHIVE   = $(WORK_DIR)/build/$(NAME)-$(ARCH).a
+IMAGE     = $(abspath $(IMAGE_REL)) ##把imagerel的绝对路径显示出来
+ARCHIVE   = $(WORK_DIR)/build/$(NAME)-$(ARCH).a  ##将build/NAME-ARCH.a的绝对路径显示出来
 
 ### Collect the files to be linked: object files (`.o`) and libraries (`.a`)
-OBJS      = $(addprefix $(DST_DIR)/, $(addsuffix .o, $(basename $(SRCS))))
-LIBS     := $(sort $(LIBS) am klib) # lazy evaluation ("=") causes infinite recursions
-LINKAGE   = $(OBJS) \
-  $(addsuffix -$(ARCH).a, $(join \
+OBJS      = $(addprefix $(DST_DIR)/, $(addsuffix .o, $(basename $(SRCS))))   ##给后面一整串东西前缀加上 $(DST_DIR)/，后缀加上.o
+LIBS     := $(sort $(LIBS) am klib) # lazy evaluation ("=") causes infinite recursions  将LIBS中的内容和am klib进行合并，去重，排序
+###自动拼出所有需要参与最终链接的目标文件和依赖库的完整路径，方便后续一条命令全部链接生成最终镜像。
+###这是你本项目编译出来的所有 .o 目标文件的绝对路径。将LIBS中的每个元素和-ARCH.a进行连接，得到一个新的列表
+###疯狂加后缀
+LINKAGE   = $(OBJS) \ 
+  $(addsuffix -$(ARCH).a, $(join \ 
     $(addsuffix /build/, $(addprefix $(AM_HOME)/, $(LIBS))), \
     $(LIBS) ))
 
