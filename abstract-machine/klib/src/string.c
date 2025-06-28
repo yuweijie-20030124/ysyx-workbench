@@ -2,7 +2,7 @@
 #include <klib-macros.h>
 #include <stdint.h>
 
-//补全这些函数，之前的string用例不能使用，完成这些应该就可以使用了？
+//补全这些函数，之前的string用例不能使用，完成这些应该就可以使用了吧？
 
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 
