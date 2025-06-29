@@ -26,6 +26,8 @@ $(BINARY):: compile_git
 
 override ARGS ?= --log=$(BUILD_DIR)/nemu-log.txt
 override ARGS += $(ARGS_DIFF)
+#override ARGS += -b ，当你make run的时候他其实就输入了make run ARGS="-b"，启动批处理模式
+override ARGS += -b
 
 # Command to execute NEMU
 IMG ?=
@@ -36,6 +38,7 @@ run-env: $(BINARY) $(DIFF_REF_SO)
 run: run-env
 	$(call git_commit, "run NEMU")
 	$(NEMU_EXEC)
+#	ARGS = "-b"
 
 gdb: run-env
 	$(call git_commit, "gdb NEMU")

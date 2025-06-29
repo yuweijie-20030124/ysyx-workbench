@@ -39,7 +39,7 @@ static void welcome() {
 #ifndef CONFIG_TARGET_AM
 #include <getopt.h>
 
-void sdb_set_batch_mode();
+void sdb_set_batch_mode(); //批处理模式
 
 static char *log_file = NULL;
 static char *diff_so_file = NULL;
@@ -68,6 +68,9 @@ static long load_img() {
   return size;
 }
 
+//在这里开启是否批处理模式
+//批处理模式下，sdb_mainloop()不会被调用
+//而是直接执行cpu_exec(-1)来执行指令
 static int parse_args(int argc, char *argv[]) {
   const struct option table[] = {
     {"batch"    , no_argument      , NULL, 'b'},
