@@ -112,6 +112,8 @@ static int decode_exec(Decode *s) {
   INSTPAT("0000001 ????? ????? 111 ????? 01100 11", remu   , R, R(rd) = (unsigned)src1 % (unsigned)src2);
   INSTPAT("0000001 ????? ????? 101 ????? 01100 11", divu   , R, R(rd) = (unsigned)src1 / (unsigned)src2);
   INSTPAT("0000001 ????? ????? 001 ????? 01100 11", mulh   , R, R(rd) = ((int64_t)(int32_t)src1 * (int64_t)(int32_t)src2) >> 32;);
+  INSTPAT("0000001 ????? ????? 010 ????? 01100 11", mulhsu , R, R(rd) = ((int64_t)(int32_t)src1 * (int64_t)(uint32_t)src2) >> 32;);
+  
   
   //printf("mulh:%lx\n", (int64_t)(~src1+1) * (int64_t)src2));
   //正确的a5:0001 1001 1101 0010 1001 1010 1011 1001
