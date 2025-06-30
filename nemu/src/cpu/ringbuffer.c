@@ -2,8 +2,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
  
-#define BUFFER_SIZE 5  // 定义环形缓冲区大小
- 
 // 定义环形缓冲区结构体
 typedef struct {
     int *buffer;  // 缓冲区数组
