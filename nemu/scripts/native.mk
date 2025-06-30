@@ -24,7 +24,7 @@ $(BINARY):: compile_git
 
 # Some convenient rules
 
-override ARGS ?= --log=$(BUILD_DIR)/nemu-log.txt
+override ARGS ?= --log=$(BUILD_DIR)/nemu-loggggg.txt
 override ARGS += $(ARGS_DIFF)
 #override ARGS += -b ，当你make run的时候他其实就输入了make run ARGS="-b"，启动批处理模式
 override ARGS += -b  ###批处理是这一行，不要的话可以注释掉
