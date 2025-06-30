@@ -76,7 +76,8 @@ static void exec_once(Decode *s, vaddr_t pc) {
       MUXDEF(CONFIG_ISA_x86, s->snpc, s->pc), (uint8_t *)&s->isa.inst, ilen);
 #endif
 }
-
+/*代码会对一个用于记录客户指令的计数器加1, 然后进行一些trace和difftest相关的操作(此时先忽略), 
+然后检查NEMU的状态是否为NEMU_RUNNING, 若是, 则继续执行下一条指令, 否则则退出执行指令的循环.*/
 static void execute(uint64_t n) {
   Decode s;
   for (;n > 0; n --) {
@@ -85,7 +86,8 @@ static void execute(uint64_t n) {
     trace_and_difftest(&s, cpu.pc);
     if (nemu_state.state != NEMU_RUNNING) break;
     IFDEF(CONFIG_DEVICE, device_update());
-  }
+  }/*条件编译宏，如果CONFIG_DEVICE被定义，则调用device_update函数，如果 CONFIG_DEVICE 没有被定义，
+  这一行什么都不会生成（等价于被注释掉）。*/
 }
 
 static void statistic() {

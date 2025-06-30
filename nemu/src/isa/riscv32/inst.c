@@ -50,7 +50,7 @@ static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_
 		
  }
 }
-
+//取值之后就译码，这里是译码一次
 static int decode_exec(Decode *s) {
   int rd = 0;
   word_t src1 = 0, src2 = 0, imm = 0;
@@ -63,6 +63,7 @@ static int decode_exec(Decode *s) {
 }
 
   INSTPAT_START();
+  //INSTPAT(模式字符串, 指令名称, 指令类型, 指令执行操作);
   INSTPAT("??????? ????? ????? ??? ????? 00101 11", auipc  , U, R(rd) = s->pc + imm); 
   INSTPAT("??????? ????? ????? ??? ????? 01101 11", lui    , U, R(rd) = imm);     
 
@@ -139,6 +140,8 @@ static int decode_exec(Decode *s) {
   return 0;
 }
 
+//随着取指的过程修改s->snpc的值，使得从isa_exec_once函数返回时，s->snpc指向下一条指令
+//接下来代码将通过s->snpc来更新PC，这里的dnpc是"dynamic next PC"的意思
 int isa_exec_once(Decode *s) {
   s->isa.inst = inst_fetch(&s->snpc, 4);
   return decode_exec(s);

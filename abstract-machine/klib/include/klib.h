@@ -1,6 +1,6 @@
 #ifndef KLIB_H__
 #define KLIB_H__
-
+//为方便程序开发提供二glibc地常用功能，如printf() strcpy().
 #include <am.h>
 #include <stddef.h>
 #include <stdarg.h>

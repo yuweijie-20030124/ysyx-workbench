@@ -87,6 +87,9 @@ finish:
 
 
 // --- pattern matching wrappers for decode ---
+//INSTPAT(模式字符串, 指令名称, 指令类型, 指令执行操作);
+//do { ... } while (0)，宏展开后无论放在 if/else 还是单独一行都不会出错。
+//while(0) 永远不会循环，代码只执行一次。
 #define INSTPAT(pattern, ...) do { \
   uint64_t key, mask, shift; \
   pattern_decode(pattern, STRLEN(pattern), &key, &mask, &shift); \
