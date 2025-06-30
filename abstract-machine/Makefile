@@ -27,6 +27,8 @@ ifeq ($(wildcard $(AM_HOME)/am/include/am.h),)
   $(error $$AM_HOME must be an AbstractMachine repo)
 endif
 
+###basename是取前缀的函数，notdir是取文件名的函数，filter是过滤的函数
+###第一句话就是ARCHS=保留.mk后缀的文件名然后取文件名之后保留前缀
 ### Check: environment variable `$ARCH` must be in the supported list
 ARCHS = $(basename $(notdir $(shell ls $(AM_HOME)/scripts/*.mk)))
 ifeq ($(filter $(ARCHS), $(ARCH)), )
