@@ -118,7 +118,11 @@ static int decode_exec(Decode *s) {
   INSTPAT("0000001 ????? ????? 101 ????? 01100 11", divu   , R, if (src2 == 0) R(rd) = 0xFFFFFFFF;else R(rd) = (uint32_t)src1 / (uint32_t)src2;);
   INSTPAT("0000001 ????? ????? 110 ????? 01100 11", rem    , R, if (src2 == 0) R(rd) = (int32_t)src1;else if ((int32_t)src1 == INT32_MIN && (int32_t)src2 == -1) R(rd) = 0;else R(rd) = (int32_t)src1 % (int32_t)src2;);
   INSTPAT("0000001 ????? ????? 111 ????? 01100 11", remu   , R, if (src2 == 0) R(rd) = (uint32_t)src1;else R(rd) = (uint32_t)src1 % (uint32_t)src2;);
-
+  //div注释：
+  //匹配 div 指令（有符号除法）。
+  //如果除数 src2 为 0，结果规定为 -1。
+  //如果被除数是最小负数（INT32_MIN），除数为 -1，结果规定为 INT32_MIN（防止溢出）。
+  //否则正常做有符号除法。
   
   //printf("mulh:%lx\n", (int64_t)(~src1+1) * (int64_t)src2));
   //正确的a5:0001 1001 1101 0010 1001 1010 1011 1001

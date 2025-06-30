@@ -36,11 +36,15 @@ ifeq ($(filter $(ARCHS), $(ARCH)), )
 endif
 ###如果你设置的 ARCH 不在支持的架构列表里，就会报错。
 
+###替换字符，将ARCH中的"-"替换成空格
+###ISA取ARCH的第一个单词，PLATFORM取ARCH的第二个单词
+###如果ARCH是x86_64-qemu，那么ISA就是x86_64，PLATFORM就是qemu
 ### Extract instruction set architecture (`ISA`) and platform from `$ARCH`. Example: `ARCH=x86_64-qemu -> ISA=x86_64; PLATFORM=qemu`
 ARCH_SPLIT = $(subst -, ,$(ARCH))
 ISA        = $(word 1,$(ARCH_SPLIT))
 PLATFORM   = $(word 2,$(ARCH_SPLIT))
 
+###当这个SRCS变量没有定义的时候，默认是空的，返回undefined，ifeq就会执行下面的error
 ### Check if there is something to build
 ifeq ($(flavor SRCS), undefined)
   $(error Nothing to build)
