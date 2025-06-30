@@ -78,11 +78,25 @@ static void exec_once(Decode *s, vaddr_t pc) {
   disassemble(p, s->logbuf + sizeof(s->logbuf) - p,
       MUXDEF(CONFIG_ISA_x86, s->snpc, s->pc), (uint8_t *)&s->isa.inst, ilen);
       //muxdef，有点像  ？：，
-
+/*
 //在这里实现iringbuf记录
-  
-
-
+  CircularBuffer cb;
+  initBuffer(&cb, BUFFER_SIZE);
+  if (isFull(&cb)) {
+    printf("缓冲区已满，无法写入指令\n");
+  } else {
+    enqueue(&cb, s->logbuf); // 将指令的值写入环形缓冲区
+  }
+  if (isEmpty(&cb)) {
+    printf("缓冲区为空，无法读取指令\n");
+  } else {
+    int value;
+    dequeue(&cb, &value); // 从环形缓冲区读取指令的值
+    printf("从环形缓冲区读取的指令值: %d\n", value);
+  }
+  printBuffer(&cb); // 打印环形缓冲区内容
+  freeBuffer(&cb); // 释放环形缓冲区
+  */
 
 #endif
 }
@@ -90,6 +104,8 @@ static void exec_once(Decode *s, vaddr_t pc) {
 然后检查NEMU的状态是否为NEMU_RUNNING, 若是, 则继续执行下一条指令, 否则则退出执行指令的循环.*/
 static void execute(uint64_t n) {
   Decode s;
+  CircularBuffer cb;
+  initBuffer(&cb, BUFFER_SIZE);
   for (;n > 0; n --) {
     exec_once(&s, cpu.pc);
     g_nr_guest_inst ++;
@@ -98,6 +114,8 @@ static void execute(uint64_t n) {
     IFDEF(CONFIG_DEVICE, device_update());
   }/*条件编译宏，如果CONFIG_DEVICE被定义，则调用device_update函数，如果 CONFIG_DEVICE 没有被定义，
   这一行什么都不会生成（等价于被注释掉）。*/
+  printBuffer(&cb); // 打印环形缓冲区内容
+  freeBuffer(&cb); // 释放环形缓冲区
 }
 
 static void statistic() {
