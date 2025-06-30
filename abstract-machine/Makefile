@@ -4,22 +4,25 @@
 html:
 	cat Makefile | sed 's/^\([^#]\)/    \1/g' | markdown_py > Makefile.html
 .PHONY: html
+##生成一个makefile.html，然后可以方便你阅读
 
 ## 1. Basic Setup and Checks
 
 ### Default to create a bare-metal kernel image
-ifeq ($(MAKECMDGOALS),)
+#这个MAKECMDGOALS是make之后带的参数，如果后面没有参数的话那参数和默认目标就是image
+ifeq ($(MAKECMDGOALS),) 
   MAKECMDGOALS  = image
   .DEFAULT_GOAL = image
 endif
 
+###如果后面的参数是clean或者clean-all或者html的话就不执行下面的检查
 ### Override checks when `make clean/clean-all/html`
 ifeq ($(findstring $(MAKECMDGOALS),clean|clean-all|html),)
 
 ### Print build info message
 $(info # Building $(NAME)-$(MAKECMDGOALS) [$(ARCH)])
 
-### Check: environment variable `$AM_HOME` looks sane
+### 如果 $(AM_HOME)/am/include/am.h 这个文件不存在，那就报错
 ifeq ($(wildcard $(AM_HOME)/am/include/am.h),)
   $(error $$AM_HOME must be an AbstractMachine repo)
 endif
