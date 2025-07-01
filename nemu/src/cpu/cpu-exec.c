@@ -28,6 +28,8 @@
 
 #define BUFFER_SIZE 5// 定义环形缓冲区大小
 
+CircularBuffer cb;
+
 CPU_state cpu = {};
 uint64_t g_nr_guest_inst = 0;
 static uint64_t g_timer = 0; // unit: us
@@ -104,7 +106,6 @@ static void exec_once(Decode *s, vaddr_t pc) {
 然后检查NEMU的状态是否为NEMU_RUNNING, 若是, 则继续执行下一条指令, 否则则退出执行指令的循环.*/
 static void execute(uint64_t n) {
   Decode s;
-  CircularBuffer cb;
   initBuffer(&cb, BUFFER_SIZE);
   for (;n > 0; n --) {
     exec_once(&s, cpu.pc);
