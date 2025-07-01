@@ -3,25 +3,19 @@
 
 #include "common.h"
 
+#define IRINGBUF_SIZE 16
+#define LOGBUF_SIZE 128
+
 typedef struct {
-    int *buffer;  // 缓冲区数组
-    int head;     // 读取位置
-    int tail;     // 写入位置
-    int size;     // 缓冲区容量
+    char buffer[IRINGBUF_SIZE][LOGBUF_SIZE]; // 每条指令一个字符串
+    int head;
+    int count;
 } CircularBuffer;
 
-void initBuffer(CircularBuffer *cb, int size);
+void initBuffer(CircularBuffer *cb);
 
-bool isEmpty(CircularBuffer *cb);
-
-bool isFull(CircularBuffer *cb);
-
-bool enqueue(CircularBuffer *cb, int value);
-
-bool dequeue(CircularBuffer *cb, int *value);
+void enqueue(CircularBuffer *cb, const char *logbuf);
 
 void printBuffer(CircularBuffer *cb);
-
-void freeBuffer(CircularBuffer *cb);
 
 #endif

@@ -26,8 +26,6 @@
  */
 #define MAX_INST_TO_PRINT 10
 
-#define BUFFER_SIZE 5// 定义环形缓冲区大小
-
 CircularBuffer cb;
 
 CPU_state cpu = {};
@@ -79,7 +77,9 @@ static void exec_once(Decode *s, vaddr_t pc) {
   void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
   disassemble(p, s->logbuf + sizeof(s->logbuf) - p,
       MUXDEF(CONFIG_ISA_x86, s->snpc, s->pc), (uint8_t *)&s->isa.inst, ilen);
-      //muxdef，有点像  ？：，
+            //muxdef，有点像  ？：，
+
+
 /*
 //在这里实现iringbuf记录
   CircularBuffer cb;
@@ -106,7 +106,6 @@ static void exec_once(Decode *s, vaddr_t pc) {
 然后检查NEMU的状态是否为NEMU_RUNNING, 若是, 则继续执行下一条指令, 否则则退出执行指令的循环.*/
 static void execute(uint64_t n) {
   Decode s;
-  initBuffer(&cb, BUFFER_SIZE);
   for (;n > 0; n --) {
     exec_once(&s, cpu.pc);
     g_nr_guest_inst ++;
@@ -115,8 +114,6 @@ static void execute(uint64_t n) {
     IFDEF(CONFIG_DEVICE, device_update());
   }/*条件编译宏，如果CONFIG_DEVICE被定义，则调用device_update函数，如果 CONFIG_DEVICE 没有被定义，
   这一行什么都不会生成（等价于被注释掉）。*/
-  printBuffer(&cb); // 打印环形缓冲区内容
-  freeBuffer(&cb); // 释放环形缓冲区
 }
 
 static void statistic() {
