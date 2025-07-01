@@ -21,13 +21,16 @@ void initBuffer(CircularBuffer *cb){
 void enqueue(CircularBuffer *cb, const char *logbuf)
 {
     //cb->buffer[cb->head] = logbuf; // 将指令的值写入环形缓冲区
+    cb -> head ++;
     strcpy(cb->buffer[cb->head] , logbuf);
 
 
 }
 
 void printBuffer(CircularBuffer *cb)
-{}
+{
+    //printf();
+}
 
 /*
 // 初始化环形缓冲区
