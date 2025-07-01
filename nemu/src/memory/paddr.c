@@ -58,7 +58,6 @@ word_t paddr_read(paddr_t addr, int len) {
   #ifdef CONFIG_MTRACE
     printf("mtrace: read memory from 0x%08x, %d bytes\n", addr, len);
   #endif
-    printf("mtrace: read memory from 0x%08x, %d bytes\n", addr, len);
   out_of_bound(addr);
   return 0;
 }
