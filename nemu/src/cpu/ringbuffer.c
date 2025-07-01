@@ -18,24 +18,24 @@ void initBuffer(CircularBuffer *cb){
     cb->count = 0;
 }
 
-void enqueue(CircularBuffer *cb, const char *logbuf)
-{
-    //cb->buffer[cb->head] = logbuf; // 将指令的值写入环形缓冲区
-    cb -> head ++;
-    cb -> count ++;
-    strcpy(cb->buffer[cb->head] , logbuf);
-    if(cb -> head == 15){
-        cb -> head = 0;
+void enqueue(CircularBuffer *cb, const char *logbuf) {
+    strncpy(cb->buffer[cb->head], logbuf, LOGBUF_SIZE - 1);
+    cb->buffer[cb->head][LOGBUF_SIZE - 1] = '\0';
+    cb->head = (cb->head + 1) % IRINGBUF_SIZE; //能直接15变成0
+    if (cb->count < IRINGBUF_SIZE) {
+        cb->count++;
     }
-    if(cb -> count == 15){
-        cb -> count --;
-    }
-
 }
 
-void printBuffer(CircularBuffer *cb)
-{
-    //printf();
+void printBuffer(CircularBuffer *cb) {
+    if (cb->count == 0) {
+        printf("缓冲区为空\n");
+        return;
+    }
+    int idx = (cb->head + IRINGBUF_SIZE - cb->count) % IRINGBUF_SIZE;
+    for (int i = 0; i < cb->count; i++) {
+        printf("%s\n", cb->buffer[(idx + i) % IRINGBUF_SIZE]);
+    }
 }
 
 /*
