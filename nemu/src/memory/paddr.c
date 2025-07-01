@@ -18,6 +18,8 @@
 #include <device/mmio.h>
 #include <isa.h>
 
+//只需要在paddr_read()和paddr_write()中进行记录即可. 你可以自行定义mtrace输出的格式.
+
 #if   defined(CONFIG_PMEM_MALLOC)
 static uint8_t *pmem = NULL;
 #else // CONFIG_PMEM_GARRAY
