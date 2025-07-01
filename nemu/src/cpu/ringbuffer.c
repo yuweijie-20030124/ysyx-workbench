@@ -34,7 +34,7 @@ void printBuffer(CircularBuffer *cb) {
     }
     int idx = (cb->head + IRINGBUF_SIZE - cb->count) % IRINGBUF_SIZE;
     for (int i = 0; i < cb->count; i++) {
-        if(i == cb->head - 1){
+        if(i == cb->head){
         printf("->%s\n", cb->buffer[(idx + i) % IRINGBUF_SIZE]);
         }
         else{
