@@ -22,8 +22,14 @@ void enqueue(CircularBuffer *cb, const char *logbuf)
 {
     //cb->buffer[cb->head] = logbuf; // 将指令的值写入环形缓冲区
     cb -> head ++;
+    cb -> count ++;
     strcpy(cb->buffer[cb->head] , logbuf);
-
+    if(cb -> head == 15){
+        cb -> head = 0;
+    }
+    if(cb -> count == 15){
+        cb -> count --;
+    }
 
 }
 
