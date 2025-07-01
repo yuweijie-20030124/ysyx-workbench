@@ -53,9 +53,9 @@ void init_mem() {
 }
 
 word_t paddr_read(paddr_t addr, int len) {
-  if (likely(in_pmem(addr))) return pmem_read(addr, len);
+  if (likely(in_pmem(addr))) return pmem_read(addr, len);//likely还有点分支预测信息
   IFDEF(CONFIG_DEVICE, return mmio_read(addr, len));
-  printf("************************1\n");
+  IFDEF(MTRACE, return printf("mtrace: read memory from 0x%08x, %d bytes\n", addr, len));
   out_of_bound(addr);
   return 0;
 }
