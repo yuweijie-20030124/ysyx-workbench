@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-#define IRINGBUF_SIZE 16
+#define IRINGBUF_SIZE 8
 #define LOGBUF_SIZE 128
 
 // 定义环形缓冲区结构体
