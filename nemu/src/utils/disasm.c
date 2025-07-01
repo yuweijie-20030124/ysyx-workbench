@@ -59,6 +59,12 @@ void init_disasm() {
 #endif
 }
 
+//将指令进行反汇编
+// str: 存储反汇编结果的字符串
+// size: str 的大小
+// pc: 指令的地址
+// code: 指令的机器码
+// nbyte: 指令的字节数
 void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte) {
 	cs_insn *insn;
 	size_t count = cs_disasm_dl(handle, code, nbyte, pc, 0, &insn);
