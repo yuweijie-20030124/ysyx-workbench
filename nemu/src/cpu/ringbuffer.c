@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
- 
+#include <string.h>
 #define IRINGBUF_SIZE 16
 #define LOGBUF_SIZE 128
 
@@ -12,11 +12,18 @@ typedef struct {
     int count;
 } CircularBuffer;
  
-void initBuffer(CircularBuffer *cb)
-{}
+void initBuffer(CircularBuffer *cb){
+    //strcpy(cb->buffer , (char *)malloc(sizeof(char) * IRINGBUF_SIZE * LOGBUF_SIZE));
+    cb->head = 0;
+    cb->count = 0;
+}
 
 void enqueue(CircularBuffer *cb, const char *logbuf)
-{}
+{
+    //cb->buffer[cb->head] = logbuf; // 将指令的值写入环形缓冲区
+
+
+}
 
 void printBuffer(CircularBuffer *cb)
 {}
