@@ -4,47 +4,37 @@
 html:
 	cat Makefile | sed 's/^\([^#]\)/    \1/g' | markdown_py > Makefile.html
 .PHONY: html
-##生成一个makefile.html，然后可以方便你阅读
 
 ## 1. Basic Setup and Checks
 
 ### Default to create a bare-metal kernel image
-#这个MAKECMDGOALS是make之后带的参数，如果后面没有参数的话那参数和默认目标就是image
-ifeq ($(MAKECMDGOALS),) 
+ifeq ($(MAKECMDGOALS),)
   MAKECMDGOALS  = image
   .DEFAULT_GOAL = image
 endif
 
-###如果后面的参数是clean或者clean-all或者html的话就不执行下面的检查
 ### Override checks when `make clean/clean-all/html`
 ifeq ($(findstring $(MAKECMDGOALS),clean|clean-all|html),)
 
 ### Print build info message
 $(info # Building $(NAME)-$(MAKECMDGOALS) [$(ARCH)])
 
-### 如果 $(AM_HOME)/am/include/am.h 这个文件不存在，那就报错
+### Check: environment variable `$AM_HOME` looks sane
 ifeq ($(wildcard $(AM_HOME)/am/include/am.h),)
   $(error $$AM_HOME must be an AbstractMachine repo)
 endif
 
-###basename是取前缀的函数，notdir是取文件名的函数，filter是过滤的函数
-###第一句话就是ARCHS=保留.mk后缀的文件名然后取文件名之后保留前缀
 ### Check: environment variable `$ARCH` must be in the supported list
 ARCHS = $(basename $(notdir $(shell ls $(AM_HOME)/scripts/*.mk)))
 ifeq ($(filter $(ARCHS), $(ARCH)), )
   $(error Expected $$ARCH in {$(ARCHS)}, Got "$(ARCH)")
 endif
-###如果你设置的 ARCH 不在支持的架构列表里，就会报错。
 
-###替换字符，将ARCH中的"-"替换成空格
-###ISA取ARCH的第一个单词，PLATFORM取ARCH的第二个单词
-###如果ARCH是x86_64-qemu，那么ISA就是x86_64，PLATFORM就是qemu
 ### Extract instruction set architecture (`ISA`) and platform from `$ARCH`. Example: `ARCH=x86_64-qemu -> ISA=x86_64; PLATFORM=qemu`
 ARCH_SPLIT = $(subst -, ,$(ARCH))
 ISA        = $(word 1,$(ARCH_SPLIT))
 PLATFORM   = $(word 2,$(ARCH_SPLIT))
 
-###当这个SRCS变量没有定义的时候，默认是空的，返回undefined，ifeq就会执行下面的error
 ### Check if there is something to build
 ifeq ($(flavor SRCS), undefined)
   $(error Nothing to build)

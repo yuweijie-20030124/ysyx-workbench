@@ -30,14 +30,7 @@ paddr_t host_to_guest(uint8_t *haddr);
 static inline bool in_pmem(paddr_t addr) {
   return addr - CONFIG_MBASE < CONFIG_MSIZE;
 }
-/*
-判断物理地址 addr 是否在主存（pmem）范围内。
-CONFIG_MBASE 是主存的起始地址，CONFIG_MSIZE 是主存的大小。
-addr - CONFIG_MBASE 得到 addr 距离主存起始的偏移量。
-如果这个偏移量小于主存大小，说明 addr 在主存范围内，返回 true；否则返回 false。
-总结：
-判断 addr 是否属于 [CONFIG_MBASE, CONFIG_MBASE + CONFIG_MSIZE) 这个区间。
-*/
+
 word_t paddr_read(paddr_t addr, int len);
 void paddr_write(paddr_t addr, int len, word_t data);
 
