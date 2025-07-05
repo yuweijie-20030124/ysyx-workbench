@@ -171,10 +171,7 @@ config WATCHPOINT
 config MTRACE
   depends on TRACE && TARGET_NATIVE_ELF && ENGINE_INTERPRETER
   bool "Enable memory tracer"
-  default y
-  help
-    Enable watchpoint with a reference design.
-    Note that this will significantly reduce the performance of NEMU.
+  default y  
     
 choice
   prompt "Reference design"
