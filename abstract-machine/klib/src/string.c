@@ -7,12 +7,23 @@
 size_t strlen(const char *s) {
   //panic("Not implemented");
   int num = 0;
-  while(*s++ != '\0') num ++;
+  while(*s++ != '\0') {num ++;}
   return num;
 }
 
 char *strcpy(char *dst, const char *src) {
-  panic("Not implemented");
+  //panic("Not implemented");
+  char *p = NULL;
+  if(src == NULL || dst == NULL){
+    return NULL;
+  }
+  p = dst;
+  while(*src != '\0'){
+    *dst = *src;
+    dst++;
+    src++;
+  }
+  return p;
 }
 
 char *strncpy(char *dst, const char *src, size_t n) {
