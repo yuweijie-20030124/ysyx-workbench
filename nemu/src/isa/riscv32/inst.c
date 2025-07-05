@@ -109,6 +109,7 @@ static int decode_exec(Decode *s) {
     else if (rd == 1)//跳转到某个寄存器的位置时，因为rd默认为1
         call_trace(s->pc, s->dnpc);})
    );
+   
 
   INSTPAT("0000000 ????? ????? 101 ????? 00100 11", srli   , R, R(rd) = (int32_t)src1 >> BITS(imm, 5, 0));
   INSTPAT("0000000 ????? ????? 101 ????? 01100 11", srl    , R, R(rd) = src1 >> BITS(src2, 4, 0));
