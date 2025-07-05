@@ -42,7 +42,14 @@ char *strncpy(char *dst, const char *src, size_t n) {
 }
 
 char *strcat(char *dst, const char *src) {
-  panic("Not implemented");
+  //panic("Not implemented");
+  if(src == NULL || dst == NULL){
+    return NULL;
+  }
+  char * temp = dst;
+  while (*dst) dst++;
+  while (*src) *dst++ = *src++;
+  return temp;
 }
 
 int strcmp(const char *s1, const char *s2) {
