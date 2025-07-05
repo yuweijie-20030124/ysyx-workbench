@@ -94,24 +94,10 @@ static int decode_exec(Decode *s) {
   INSTPAT("??????? ????? ????? 011 ????? 01000 11", sd     , S, Mw(src1 + imm, 8, src2)); 
 
   INSTPAT("??????? ????? ????? ??? ????? 11011 11", jal    , J, R(rd) = s->pc + 4;
-   s->dnpc = s->pc + imm;
-   IFDEF(CONFIG_FTRACE, {
-    if (rd == 1) {
-        call_trace(s->pc, s->dnpc);
-    }})
-  );
+   s->dnpc = s->pc + imm;);
 
   INSTPAT("??????? ????? ????? 000 ????? 11001 11", jalr   , I, R(rd) = s->pc + 4;
-   s->dnpc = (src1 + imm) & (~1);
-   IFDEF(CONFIG_FTRACE,{
-    if (s->isa.inst.val == 0x00008067)
-        ret_trace(s->pc);
-    else if (rd == 1)//跳转到某个寄存器的位置时，因为rd默认为1
-        call_trace(s->pc, s->dnpc);
-    else if (dest == 0 && imm == 0)
-        call_trace(s->pc, s->dnpc);  
-      })
-   );
+  s->dnpc = (src1 + imm) & (~1););
    
 
   INSTPAT("0000000 ????? ????? 101 ????? 00100 11", srli   , R, R(rd) = (int32_t)src1 >> BITS(imm, 5, 0));
