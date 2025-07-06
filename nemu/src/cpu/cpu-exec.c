@@ -63,25 +63,25 @@ static void exec_once(Decode *s, vaddr_t pc) {
   //str -- 目标字符串，用于存储格式化后的字符串的字符数组的指针。   size -- 字符数组的大小。
   //format -- 格式化字符串。    ... -- 可变参数，可变数量的参数根据 format 中的格式化指令进行格式化。
   p += snprintf(p, sizeof(s->logbuf), FMT_WORD ":", s->pc);//FMT_WORD：格式化字符串（如 "0x%08x"），用于输出 PC 地址。
-  int ilen = s->snpc - s->pc;
+  int ilen = s->snpc - s->pc; //计算指令长度
   int i;
   uint8_t *inst = (uint8_t *)&s->isa.inst;
 #ifdef CONFIG_ISA_x86
-  for (i = 0; i < ilen; i ++) {
+  for (i = 0; i < ilen; i ++) { //x86是小段，从低地址开始打印
 #else
-  for (i = ilen - 1; i >= 0; i --) {
+  for (i = ilen - 1; i >= 0; i --) {//riscv是大段，从高地址开始打印
 #endif
-    p += snprintf(p, 4, " %02x", inst[i]);
+    p += snprintf(p, 4, " %02x", inst[i]); //把指令打印出来
   }
-  int ilen_max = MUXDEF(CONFIG_ISA_x86, 8, 4);
-  int space_len = ilen_max - ilen;
-  if (space_len < 0) space_len = 0;
+  int ilen_max = MUXDEF(CONFIG_ISA_x86, 8, 4); //不是x86ilenmax就是4
+  int space_len = ilen_max - ilen;   //计算需要填充的空格数
+  if (space_len < 0) space_len = 0; //
   space_len = space_len * 3 + 1;
   memset(p, ' ', space_len);
   p += space_len;
 
-  void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
-  disassemble(p, s->logbuf + sizeof(s->logbuf) - p,
+  void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);//反汇编指令
+  disassemble(p, s->logbuf + sizeof(s->logbuf) - p,   //将反汇编指令出来后传到logbuf里面
       MUXDEF(CONFIG_ISA_x86, s->snpc, s->pc), (uint8_t *)&s->isa.inst, ilen);
             //muxdef，有点像  ？：，
   enqueue(&cb, s->logbuf);
@@ -138,7 +138,7 @@ void cpu_exec(uint64_t n) {
   uint64_t timer_end = get_time();//获取执行指令后的时间
   g_timer += timer_end - timer_start; //看执行了多久。
 
-  switch (nemu_state.state) {
+  switch (nemu_state.state) { 
     case NEMU_RUNNING: nemu_state.state = NEMU_STOP; break;
 
     case NEMU_END: case NEMU_ABORT:
