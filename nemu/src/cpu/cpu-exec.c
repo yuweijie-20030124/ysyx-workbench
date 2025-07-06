@@ -80,26 +80,6 @@ static void exec_once(Decode *s, vaddr_t pc) {
             //muxdef，有点像  ？：，
   enqueue(&cb, s->logbuf);
 
-/*
-//在这里实现iringbuf记录
-  CircularBuffer cb;
-  initBuffer(&cb, BUFFER_SIZE);
-  if (isFull(&cb)) {
-    printf("缓冲区已满，无法写入指令\n");
-  } else {
-    enqueue(&cb, s->logbuf); // 将指令的值写入环形缓冲区
-  }
-  if (isEmpty(&cb)) {
-    printf("缓冲区为空，无法读取指令\n");
-  } else {
-    int value;
-    dequeue(&cb, &value); // 从环形缓冲区读取指令的值
-    printf("从环形缓冲区读取的指令值: %d\n", value);
-  }
-  printBuffer(&cb); // 打印环形缓冲区内容
-  freeBuffer(&cb); // 释放环形缓冲区
-  */
-
 #endif
 }
 /*代码会对一个用于记录客户指令的计数器加1, 然后进行一些trace和difftest相关的操作(此时先忽略), 
@@ -118,8 +98,11 @@ static void execute(uint64_t n) {
   printBuffer(&cb);
 }
 
+//如果退出就执行statistic
+//输出数字格式的本地化信息，   “”表示为 用户环境变量中的默认设置。
 static void statistic() {
   IFNDEF(CONFIG_TARGET_AM, setlocale(LC_NUMERIC, ""));
+
 #define NUMBERIC_FMT MUXDEF(CONFIG_TARGET_AM, "%", "%'") PRIu64
   Log("host time spent = " NUMBERIC_FMT " us", g_timer);
   Log("total guest instructions = " NUMBERIC_FMT, g_nr_guest_inst);
@@ -127,7 +110,7 @@ static void statistic() {
   else Log("Finish running in less than 1 us and can not calculate the simulation frequency");
 }
 
-void assert_fail_msg() {
+void assert_fail_msg() {//输出错误信息
   isa_reg_display();
   statistic();
 }
@@ -138,15 +121,15 @@ void cpu_exec(uint64_t n) {
   switch (nemu_state.state) {
     case NEMU_END: case NEMU_ABORT: case NEMU_QUIT:
       printf("Program execution has ended. To restart the program, exit NEMU and run again.\n");
-      return;//如果状态时
-    default: nemu_state.state = NEMU_RUNNING;
+      return;//如果状态是结束了，出错了，退出了就打印“退出nemu”。
+    default: nemu_state.state = NEMU_RUNNING;//默认running
   }
 
-  uint64_t timer_start = get_time();
+  uint64_t timer_start = get_time();//获取执行指令前的时间
 
   execute(n);
 
-  uint64_t timer_end = get_time();
+  uint64_t timer_end = get_time();//获取执行指令后的时间
   g_timer += timer_end - timer_start; //看执行了多久。
 
   switch (nemu_state.state) {
@@ -154,7 +137,8 @@ void cpu_exec(uint64_t n) {
 
     case NEMU_END: case NEMU_ABORT:
       Log("nemu: %s at pc = " FMT_WORD,
-          (nemu_state.state == NEMU_ABORT ? ANSI_FMT("ABORT", ANSI_FG_RED) :
+        //nemu出错或者异常退出就用红色打印，正常退出就绿色打印。  
+        (nemu_state.state == NEMU_ABORT ? ANSI_FMT("ABORT", ANSI_FG_RED) :
            (nemu_state.halt_ret == 0 ? ANSI_FMT("HIT GOOD TRAP", ANSI_FG_GREEN) :
             ANSI_FMT("HIT BAD TRAP", ANSI_FG_RED))),
           nemu_state.halt_pc);
