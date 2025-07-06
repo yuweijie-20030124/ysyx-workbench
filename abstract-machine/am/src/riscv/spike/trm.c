@@ -30,6 +30,6 @@ void halt(int code) { //用于结束程序的运行
 }
 
 void _trm_init() {    //进行TRM相关的初始化工作
-  int ret = main(mainargs);
+  int ret = main(mainargs);//会在这个main函数里面执行用户代码
   halt(ret);
 }
