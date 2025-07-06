@@ -139,6 +139,8 @@ void wp_trace(char *decodelog){
 }
 
 
+
+//初始化watchpoint链表
 void init_wp_pool() {
   int i;
   for (i = 0; i < NR_WP; i ++) {
