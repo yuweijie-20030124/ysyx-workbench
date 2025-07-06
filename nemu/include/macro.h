@@ -108,7 +108,7 @@
     ioe_read(reg, &__io_param); \
     __io_param; })
 
-
+//简化IO设备寄存器的写入操作
 #define io_write(reg, ...) \
   ({ reg##_T __io_param = (reg##_T) { __VA_ARGS__ }; \
     ioe_write(reg, &__io_param); })
