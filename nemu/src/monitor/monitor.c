@@ -70,7 +70,7 @@ static long load_img() {
   
   assert(ret == 1);
 
-  fclose(fp);
+  //fclose(fp); //fopen之后一定要fclose
   return size;
 }
 
