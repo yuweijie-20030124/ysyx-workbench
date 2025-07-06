@@ -47,6 +47,7 @@ void *malloc(size_t size) {
   return NULL;
 }
 
+//可以先不管，内存有很多
 void free(void *ptr) {
 }
 
