@@ -36,7 +36,7 @@ void vga_update_screen();
 //last是静态变量，记录上次更新时间。
 //now是当前时间，单位为微秒。
 //如果当前时间与上次更新时间的差小于1秒除以定时器频率（TIMER_HZ），则直接返回，不进行更新。
-void device_update() { //仿真器中设备定时轮询与事件处理，现在pa2不需要管这个好像。
+void device_update() { 
   static uint64_t last = 0;
   uint64_t now = get_time();
   if (now - last < 1000000 / TIMER_HZ) {
