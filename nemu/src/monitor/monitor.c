@@ -109,7 +109,7 @@ static int parse_args(int argc, char *argv[]) {
 void init_monitor(int argc, char *argv[]) {
   /* Perform some global initialization. */
 
-  /* Parse arguments. */
+  /* Parse arguments.通过getopt_long传进来的参数决定后面的行为 */
   parse_args(argc, argv);
 
   /* Set random seed. */
