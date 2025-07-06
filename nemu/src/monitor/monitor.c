@@ -122,7 +122,7 @@ void init_monitor(int argc, char *argv[]) {
   init_mem();
 
   /* Initialize devices. */
-  IFDEF(CONFIG_DEVICE, init_device());
+  IFDEF(CONFIG_DEVICE, init_device());//如果定义了device，那就初始化device，晚点看。
 
   /* Perform ISA dependent initialization. */
   init_isa();
