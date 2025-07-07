@@ -28,7 +28,7 @@
 //最高位第7位表示按键状态，1表示按下，0表示弹起。
 
 #ifndef CONFIG_TARGET_AM
-#include <SDL2/SDL.h>
+#include <SDL2/SDL.h> //依赖SDL库获取键盘输入。
 
 // Note that this is not the standard
 #define NEMU_KEYS(f) \
@@ -59,7 +59,7 @@ static void init_keymap() {
 static int key_queue[KEY_QUEUE_LEN] = {};
 static int key_f = 0, key_r = 0;
 
-////key_f和key_r：队首和队尾指针，实现环形缓冲。
+//key_f和key_r：队首和队尾指针，实现环形缓冲。
 static void key_enqueue(uint32_t am_scancode) {
   key_queue[key_r] = am_scancode; //key_queue[1024]：存储待处理的键盘事件。
   key_r = (key_r + 1) % KEY_QUEUE_LEN;
@@ -75,6 +75,7 @@ static uint32_t key_dequeue() {
   return key;
 }
 
+//send_key()将SDL事件转换为模拟器事件。按键按下就把扫描码发过去
 void send_key(uint8_t scancode, bool is_keydown) {
   if (nemu_state.state == NEMU_RUNNING && keymap[scancode] != NEMU_KEY_NONE) {
     uint32_t am_scancode = keymap[scancode] | (is_keydown ? KEYDOWN_MASK : 0);
@@ -99,6 +100,9 @@ static void i8042_data_io_handler(uint32_t offset, int len, bool is_write) {
   i8042_data_port_base[0] = key_dequeue();
 }
 
+/*分配4字节内存空间作为数据端口。
+注册端口/内存的IO处理函数。
+初始化键位映射（非AM平台时）。*/
 void init_i8042() {
   i8042_data_port_base = (uint32_t *)new_space(4);
   i8042_data_port_base[0] = NEMU_KEY_NONE;
