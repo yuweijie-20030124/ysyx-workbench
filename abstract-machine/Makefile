@@ -34,7 +34,7 @@ endif
 #notdir用于去掉文件的绝对路径，只保留文件名。path/nemu.mk ---> nemu.mk
 #basename取前缀函数，	nemu.mk ---> nemu
 ARCHS = $(basename $(notdir $(shell ls $(AM_HOME)/scripts/*.mk)))
-
+#filter函数用于检查 $(ARCH) 是否在 $(ARCHS) 列表中。如果 $(ARCH) 在列表中，返回 $(ARCH)。如果不在，返回空字符串。
 ifeq ($(filter $(ARCHS), $(ARCH)), )
   $(error Expected $$ARCH in {$(ARCHS)}, Got "$(ARCH)")
 endif
