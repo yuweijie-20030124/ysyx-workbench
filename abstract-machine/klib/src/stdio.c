@@ -15,13 +15,13 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
 }
 
 int sprintf(char *out, const char *fmt, ...) {
-  va_list arg;
-  va_start(arg, fmt);
+  va_list ap;
+  va_start(ap, fmt);
+  
+  int val = vsnprintf(out, 1024, fmt, ap);
+  va_end(ap);
 
-  int res = vsprintf(out ,fmt, arg);    // 将格式化的内容(字符串)赋值给out
-
-  va_end(arg);
-  return res;
+  return val;
 }
 
 //out是指向数组的指针，输出字符串将字符存储在该指针指向的数组中。数组必须足够大，能够容纳输出字符串。
