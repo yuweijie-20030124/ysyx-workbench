@@ -89,10 +89,15 @@ OBJCOPY   = $(CROSS_COMPILE)objcopy
 READELF   = $(CROSS_COMPILE)readelf
 
 ### Compilation flags
+#给LIBS加上amhome前缀之后加上include后缀再加上workdir/include
 INC_PATH += $(WORK_DIR)/include $(addsuffix /include/, $(addprefix $(AM_HOME)/, $(LIBS)))
-INCFLAGS += $(addprefix -I, $(INC_PATH))·
+
+#给incpath加上-I前缀
+INCFLAGS += $(addprefix -I, $(INC_PATH))
 
 ARCH_H := arch/$(ARCH).h
+#-O2：启用中级优化（平衡性能与编译速度）。-MMD：生成依赖文件（.d），用于自动追踪头文件变更。
+#-Wall -Werror：启用所有警告并将其视为错误（严格模式）。 $(INCFLAGS)：可能包含额外的头文件搜索路径（如 -Iinclude）。
 CFLAGS   += -O2 -MMD -Wall -Werror $(INCFLAGS) \
             -D__ISA__=\"$(ISA)\" -D__ISA_$(shell echo $(ISA) | tr a-z A-Z)__ \
             -D__ARCH__=$(ARCH) -D__ARCH_$(shell echo $(ARCH) | tr a-z A-Z | tr - _) \
