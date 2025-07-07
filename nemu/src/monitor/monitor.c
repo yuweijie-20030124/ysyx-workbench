@@ -24,7 +24,7 @@ void init_device();
 void init_sdb();
 void init_disasm();
 
-static void welcome() {
+static void welcome() {//打印一些基本信息
   Log("Trace: %s", MUXDEF(CONFIG_TRACE, ANSI_FMT("ON", ANSI_FG_GREEN), ANSI_FMT("OFF", ANSI_FG_RED)));
   IFDEF(CONFIG_TRACE, Log("If trace is enabled, a log file will be generated "
         "to record the trace. This may lead to a large log file. "
@@ -54,19 +54,23 @@ static long load_img() {
     return 4096; // built-in image size
   }
 
-  FILE *fp = fopen(img_file, "rb");
+  FILE *fp = fopen(img_file, "rb");//二进制读入imgfile
   Assert(fp, "Can not open '%s'", img_file);
 
-  fseek(fp, 0, SEEK_END);
-  long size = ftell(fp);
+  fseek(fp, 0, SEEK_END);//将fp的指针移到最后位置
+  long size = ftell(fp);//返回fp当前文件位置
 
   Log("The image is %s, size = %ld", img_file, size);
 
-  fseek(fp, 0, SEEK_SET);
+  fseek(fp, 0, SEEK_SET);//将fp的指针移到文件最开头
+  //size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream) 从给定流 stream 读取数据到 ptr 所指向的数组中。
+  //如果fread读取成功就会返回nmemb，也就是“1”。
   int ret = fread(guest_to_host(RESET_VECTOR), size, 1, fp);
+  //从文件指针 fp 指向的文件中读取二进制数据，并将其直接写入到客户机（Guest）物理内存的 RESET_VECTOR 地址处
+  
   assert(ret == 1);
 
-  fclose(fp);
+  fclose(fp); //fopen之后一定要fclose
   return size;
 }
 
@@ -109,7 +113,7 @@ static int parse_args(int argc, char *argv[]) {
 void init_monitor(int argc, char *argv[]) {
   /* Perform some global initialization. */
 
-  /* Parse arguments. */
+  /* Parse arguments.通过getopt_long传进来的参数决定后面的行为 */
   parse_args(argc, argv);
 
   /* Set random seed. */
@@ -122,7 +126,7 @@ void init_monitor(int argc, char *argv[]) {
   init_mem();
 
   /* Initialize devices. */
-  IFDEF(CONFIG_DEVICE, init_device());
+  IFDEF(CONFIG_DEVICE, init_device());//如果定义了device，那就初始化device，晚点看。
 
   /* Perform ISA dependent initialization. */
   init_isa();

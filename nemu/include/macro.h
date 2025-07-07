@@ -28,7 +28,7 @@
 // calculate the length of an array
 #define ARRLEN(arr) (int)(sizeof(arr) / sizeof(arr[0]))
 
-// macro concatenation
+// macro concatenation 拼接
 #define concat_temp(x, y) x ## y
 #define concat(x, y) concat_temp(x, y)
 #define concat3(x, y, z) concat(concat(x, y), z)
@@ -98,11 +98,17 @@
 #endif
 
 // for AM IOE
+// for AM IOE
+//简化IO设备寄存器的读取操作
+//##是宏连接符，把reg和_T拼接起来，比如io_read(kbd)会变成kbd_T __io_param，这表示声明一个类型为reg_T的临时变量__io_param。
+//ioe_read(reg, &__io_param);调用ioe_read函数，把reg和__io_param传进去。这一步会把设备寄存器reg的值读到__io_param里。
+//__io_param;返回这个临时变量的值。
 #define io_read(reg) \
   ({ reg##_T __io_param; \
     ioe_read(reg, &__io_param); \
     __io_param; })
 
+//简化IO设备寄存器的写入操作
 #define io_write(reg, ...) \
   ({ reg##_T __io_param = (reg##_T) { __VA_ARGS__ }; \
     ioe_write(reg, &__io_param); })

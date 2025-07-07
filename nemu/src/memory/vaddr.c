@@ -16,14 +16,16 @@
 #include <isa.h>
 #include <memory/paddr.h>
 
+//取指 == 读地址
 word_t vaddr_ifetch(vaddr_t addr, int len) {
   return paddr_read(addr, len);
 }
 
+//读地址 == 取指
 word_t vaddr_read(vaddr_t addr, int len) {
   return paddr_read(addr, len);
 }
-
+//写地址
 void vaddr_write(vaddr_t addr, int len, word_t data) {
   paddr_write(addr, len, data);
 }

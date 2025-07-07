@@ -22,6 +22,7 @@ static IOMap maps[NR_MAP] = {};
 static int nr_map = 0;
 
 static IOMap* fetch_mmio_map(paddr_t addr) {
+  //mapid多路访问外围识别符：分配给连接到计算机系统的每个外围设备的唯一标识符
   int mapid = find_mapid_by_addr(maps, nr_map, addr);
   return (mapid == -1 ? NULL : &maps[mapid]);
 }

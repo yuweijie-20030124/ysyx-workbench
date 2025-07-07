@@ -26,7 +26,21 @@ static uint8_t *pmem = NULL;
 static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
 #endif
 
+//客户机是nemu 主机是我，客户机执行 mov [0x80001000], eax，模拟器会调用 guest_to_host(0x80001000) 找到主机内存位置并写入数据。
+/*paddr_t
+表示客户机的物理地址（Guest Physical Address），即客户机操作系统认为的“真实”物理地址。
+
+uint8_t*（或 void*）
+表示主机的虚拟地址（Host Virtual Address），即宿主程序（如模拟器）实际使用的内存指针。
+
+pmem
+主机上分配的一块连续内存，用于模拟客户机的物理内存（即客户机的“物理内存”实际存储在宿主机的这块内存中）。
+
+CONFIG_MBASE
+客户机物理地址的起始基址（Guest Physical Memory Base），表示客户机物理地址空间的起始偏移量（例如 0x80000000）。*/
+//将客户机物理地址转换为主机虚拟地址。
 uint8_t* guest_to_host(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
+//将主机虚拟地址转换回客户机物理地址。
 paddr_t host_to_guest(uint8_t *haddr) { return haddr - pmem + CONFIG_MBASE; }
 
 static word_t pmem_read(paddr_t addr, int len) {
@@ -48,6 +62,9 @@ void init_mem() {
   pmem = malloc(CONFIG_MSIZE);
   assert(pmem);
 #endif
+  //如果定义了MEM随机化，那就执行memset
+  //*memset(void *str, int c, size_t n) 用于将一段内存区域设置为指定的值。
+  //memset() 函数将指定的值 c 复制到 str 所指向的内存区域的前 n 个字节中，这可以用于将内存块清零或设置为特定值。
   IFDEF(CONFIG_MEM_RANDOM, memset(pmem, rand(), CONFIG_MSIZE));
   Log("physical memory area [" FMT_PADDR ", " FMT_PADDR "]", PMEM_LEFT, PMEM_RIGHT);
 }

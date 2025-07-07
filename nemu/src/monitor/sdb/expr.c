@@ -59,14 +59,18 @@
   /* Rules are used for many times.
   * Therefore we compile them only once before any usage.
   */
+ //正则表达式初始化，c语言使用正则表达式一般分为三步。
+ //编译正则表达式 regcomp()匹配正则表达式 regexec()释放正则表达式 regfree()
   void init_regex() {
     int i;
     char error_msg[128];
     int ret;
 
     for (i = 0; i < NR_REGEX; i ++) {
+      //int regcomp (regex_t *compiled, const char *pattern, int cflags)
       ret = regcomp(&re[i], rules[i].regex, REG_EXTENDED);
       if (ret != 0) {
+        //当执行regcomp 或者regexec 产生错误的时候，就可以调用这个函数而返回一个包含错误信息的字符串。
         regerror(ret, &re[i], error_msg, 128);
         panic("regex compilation failed: %s\n%s", error_msg, rules[i].regex);
       }

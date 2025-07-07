@@ -26,7 +26,7 @@ enum {
   TYPE_I, TYPE_U, TYPE_S, TYPE_J, TYPE_B, TYPE_R, 
   TYPE_N, // none 
 };
-
+//看riscv指令对不同类型i u s j b 会进行处理
 #define src1R() do { *src1 = R(rs1); } while (0)
 #define src2R() do { *src2 = R(rs2); } while (0)
 #define immI() do { *imm = SEXT(BITS(i, 31, 20), 12); } while(0)
@@ -50,7 +50,7 @@ static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_
 		
  }
 }
-//取值之后就译码，这里是译码一次
+//取值之后就译码，根据译的码来这里执行
 static int decode_exec(Decode *s) {
   int rd = 0;
   word_t src1 = 0, src2 = 0, imm = 0;
@@ -153,6 +153,6 @@ static int decode_exec(Decode *s) {
 //随着取指的过程修改s->snpc的值，使得从isa_exec_once函数返回时，s->snpc指向下一条指令
 //接下来代码将通过s->snpc来更新PC，这里的dnpc是"dynamic next PC"的意思
 int isa_exec_once(Decode *s) {
-  s->isa.inst = inst_fetch(&s->snpc, 4);
+  s->isa.inst = inst_fetch(&s->snpc, 4);//取指4
   return decode_exec(s);
 }

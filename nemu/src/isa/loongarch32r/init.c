@@ -27,7 +27,7 @@ static const uint32_t img [] = {
 };
 
 static void restart() {
-  /* Set the initial program counter. */
+  /* Set the initial program counter.初始化PC */
   cpu.pc = RESET_VECTOR;
 
   /* The zero register is always 0. */
@@ -36,8 +36,10 @@ static void restart() {
 
 void init_isa() {
   /* Load built-in image. */
-  memcpy(guest_to_host(RESET_VECTOR), img, sizeof(img));
+  //memcpy(void *str1, const void *str2, size_t n) 从存储区 str2 复制 n 个字节到存储区 str1。
+  memcpy(guest_to_host(RESET_VECTOR), img, sizeof(img));//完整的吧img（启动指令）复制到nemu的0x80000000地址处，他
+  //的pc就在0x80000000，所以他一启动就会执行img中的指令。
 
-  /* Initialize this virtual computer system. */
+  /* Initialize this virtual computer system. 初始化nemu系统*/
   restart();
 }
