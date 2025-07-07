@@ -17,6 +17,9 @@
 #include <utils.h>
 
 #define KEYDOWN_MASK 0x8000
+//断码等于通码 + 0x80 
+//对于断码和通码可以这样理解，它们由8位比特组成，
+//最高位第7位表示按键状态，1表示按下，0表示弹起。
 
 #ifndef CONFIG_TARGET_AM
 #include <SDL2/SDL.h>
