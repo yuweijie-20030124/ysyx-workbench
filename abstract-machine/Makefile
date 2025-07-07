@@ -117,6 +117,7 @@ LDFLAGS  += -z noexecstack $(addprefix -T, $(LDSCRIPTS))
 ## 5. Compilation Rules
 
 ### Rule (compile): a single `.c` -> `.o` (gcc)
+#%.c是依赖的文件，要把.c .cc .cpp .S编译成.o放到dstdir中
 $(DST_DIR)/%.o: %.c
 	@mkdir -p $(dir $@) && echo + CC $<
 	@$(CC) -std=gnu11 $(CFLAGS) -c -o $@ $(realpath $<)
@@ -138,6 +139,7 @@ $(DST_DIR)/%.o: %.S
 
 ifeq ($(MAKECMDGOALS),archive)
 ### Rule (archive): objects (`*.o`) -> `ARCHIVE.a` (ar)
+#用ar将这些目标文件作为一个库，打包成归档文件abstract-machine/am/build/am-$ISA-nemu.a
 $(ARCHIVE): $(OBJS)
 	@echo + AR "->" $(shell realpath $@ --relative-to .)
 	@$(AR) rcs $@ $^
