@@ -8,15 +8,20 @@ html:
 ## 1. Basic Setup and Checks
 
 ### Default to create a bare-metal kernel image
+#MAKECMDGOLS是make周的参数
 ifeq ($(MAKECMDGOALS),)
   MAKECMDGOALS  = image
   .DEFAULT_GOAL = image
 endif
 
 ### Override checks when `make clean/clean-all/html`
+#如果make clean cleanall html 
+#ifeq 看后面两个参数相等吗，如果相等就进入ifeq中
+#逻辑是如果makecmdgoals 不等于clean cleanall 或者html就进入ifeq中
 ifeq ($(findstring $(MAKECMDGOALS),clean|clean-all|html),)
 
 ### Print build info message
+### 打印调试信息
 $(info # Building $(NAME)-$(MAKECMDGOALS) [$(ARCH)])
 
 ### Check: environment variable `$AM_HOME` looks sane
