@@ -67,11 +67,12 @@ $(shell mkdir -p $(DST_DIR))
 IMAGE_REL = build/$(NAME)-$(ARCH)
 #将image_rel中的文件变成绝对路径之后返回给IMAGE
 IMAGE     = $(abspath $(IMAGE_REL))
-
 ARCHIVE   = $(WORK_DIR)/build/$(NAME)-$(ARCH).a
 
 ### Collect the files to be linked: object files (`.o`) and libraries (`.a`)
+#basename取SRCS的前缀  addsuffix给SRCS的后缀加一个.o  addprefix给SRCS.o加一个类似路径的前缀。
 OBJS      = $(addprefix $(DST_DIR)/, $(addsuffix .o, $(basename $(SRCS))))
+#sort是排序函数，将$(LIBS) am klib 按照首字母进行升序，并去除重复的单词。
 LIBS     := $(sort $(LIBS) am klib) # lazy evaluation ("=") causes infinite recursions
 LINKAGE   = $(OBJS)  # library archives are added by LIB_TEMPLATE below
 
@@ -89,7 +90,7 @@ READELF   = $(CROSS_COMPILE)readelf
 
 ### Compilation flags
 INC_PATH += $(WORK_DIR)/include $(addsuffix /include/, $(addprefix $(AM_HOME)/, $(LIBS)))
-INCFLAGS += $(addprefix -I, $(INC_PATH))
+INCFLAGS += $(addprefix -I, $(INC_PATH))·
 
 ARCH_H := arch/$(ARCH).h
 CFLAGS   += -O2 -MMD -Wall -Werror $(INCFLAGS) \
