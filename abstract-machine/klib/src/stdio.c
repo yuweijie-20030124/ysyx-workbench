@@ -5,11 +5,6 @@
 
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 
-char buf[1024];
-void putch(char ch);
-
-
-
 int printf(const char *fmt, ...) {
   panic("Not implemented");
 }
@@ -28,7 +23,6 @@ int sprintf(char *out, const char *fmt, ...) {
   va_end(arg);
   return res;
 }
-
 
 //out是指向数组的指针，输出字符串将字符存储在该指针指向的数组中。数组必须足够大，能够容纳输出字符串。
 //n  指定写入字符串的最大数量，最大数量为为(n-1),不包括末尾空字符。
