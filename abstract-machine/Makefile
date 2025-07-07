@@ -22,7 +22,7 @@ ifeq ($(findstring $(MAKECMDGOALS),clean|clean-all|html),)
 
 ### Print build info message
 ### 打印调试信息
-$(info # Building $(NAME)-$(MAKECMDGOALS) [$(ARCH)])
+$(info # Buildinging $(NAME)-$(MAKECMDGOALS) [$(ARCH)])
 
 ### Check: environment variable `$AM_HOME` looks sane
 ifeq ($(wildcard $(AM_HOME)/am/include/am.h),)
