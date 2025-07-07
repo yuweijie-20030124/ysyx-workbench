@@ -1,6 +1,8 @@
 #ifndef AM_H__
 #define AM_H__
 
+//AM各种API
+
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>

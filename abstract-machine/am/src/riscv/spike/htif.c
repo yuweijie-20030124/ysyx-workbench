@@ -105,7 +105,7 @@ void htif_console_putchar(uint8_t ch)
 void htif_poweroff()
 {
   while (1) {
-    fromhost = 0;
-    tohost = 1;
+    fromhost = 0;    // 清除主机响应
+    tohost = 1;      // 向主机发送关机请求
   }
 }

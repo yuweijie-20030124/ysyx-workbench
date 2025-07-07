@@ -3,9 +3,10 @@
 
 #include <klib-macros.h>
 
-#include ISA_H // the macro `ISA_H` is defined in CFLAGS
+#include ISA_H // the macro `ISA_H` is defined in CFLAGS CFLAGS可以理解为环境变量
                // it will be expanded as "x86/x86.h", "mips/mips32.h", ...
 
+//这个nemutrap适合ISA相关的
 #if defined(__ISA_X86__)
 # define nemu_trap(code) asm volatile ("int3" : :"a"(code))
 #elif defined(__ISA_MIPS32__)
