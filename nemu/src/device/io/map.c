@@ -21,7 +21,7 @@
 #define IO_SPACE_MAX (32 * 1024 * 1024)
 
 static uint8_t *io_space = NULL;
-static uint8_t *p_space = NULL;
+static uint8_t *p_space = NULL;//初始化map的空间
 
 uint8_t* new_space(int size) {
   uint8_t *p = p_space;
@@ -58,6 +58,7 @@ word_t map_read(paddr_t addr, int len, IOMap *map) {
   paddr_t offset = addr - map->low;
   invoke_callback(map->callback, offset, len, false); // prepare data to read
   word_t ret = host_read(map->space + offset, len);
+  //IFDEF(CONFIG_DTRACE, Log("read device %s : address in  = " FMT_PADDR ", len = %d\n", map->name , addr, len));
   return ret;
 }
 
@@ -67,4 +68,5 @@ void map_write(paddr_t addr, int len, word_t data, IOMap *map) {
   paddr_t offset = addr - map->low;
   host_write(map->space + offset, len, data);
   invoke_callback(map->callback, offset, len, true);
+   //IFDEF(CONFIG_DTRACE, Log("write device %s : address in = " FMT_PADDR ", len = %d\n", addr, len));
 }
