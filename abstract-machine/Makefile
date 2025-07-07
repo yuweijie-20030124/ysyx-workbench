@@ -35,16 +35,20 @@ endif
 #basename取前缀函数，	nemu.mk ---> nemu
 ARCHS = $(basename $(notdir $(shell ls $(AM_HOME)/scripts/*.mk)))
 #filter函数用于检查 $(ARCH) 是否在 $(ARCHS) 列表中。如果 $(ARCH) 在列表中，返回 $(ARCH)。如果不在，返回空字符串。
+#arch如果不在archs中，返回空字符串 ifeq逻辑生效 直接error。
 ifeq ($(filter $(ARCHS), $(ARCH)), )
   $(error Expected $$ARCH in {$(ARCHS)}, Got "$(ARCH)")
 endif
 
+#subst字符串替换函数，$(subst <from>,<to>,<text>)，from替换成to在text中  逻辑：将ARCH中的-替换成“空格”
 ### Extract instruction set architecture (`ISA`) and platform from `$ARCH`. Example: `ARCH=x86_64-qemu -> ISA=x86_64; PLATFORM=qemu`
+#word取单词 1 2是第几个单词，逻辑就是isa取split中第一个单词，platform取split中第二个单词。
 ARCH_SPLIT = $(subst -, ,$(ARCH))
 ISA        = $(word 1,$(ARCH_SPLIT))
 PLATFORM   = $(word 2,$(ARCH_SPLIT))
 
 ### Check if there is something to build
+###flavor是寻找变量函数，但SRCS在makefile及其include中都没有时，函数输出undefined。ifeq就生效执行error
 ifeq ($(flavor SRCS), undefined)
   $(error Nothing to build)
 endif
@@ -61,6 +65,7 @@ $(shell mkdir -p $(DST_DIR))
 
 ### Compilation targets (a binary image or archive)
 IMAGE_REL = build/$(NAME)-$(ARCH)
+
 IMAGE     = $(abspath $(IMAGE_REL))
 ARCHIVE   = $(WORK_DIR)/build/$(NAME)-$(ARCH).a
 
