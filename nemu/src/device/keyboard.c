@@ -13,6 +13,12 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
+/*
+模拟PS/2键盘控制器（i8042芯片）的行为，
+将宿主机的键盘输入转换为模拟系统的键盘中断信号。
+通过KEYDOWN_MASK (0x8000)区分按键按下（最高位为1）和释放（最高位为0）。
+使用循环队列缓冲键盘事件，避免输入丢失。
+*/
 #include <device/map.h>
 #include <utils.h>
 
@@ -40,10 +46,11 @@ enum {
   NEMU_KEY_NONE = 0,
   MAP(NEMU_KEYS, NEMU_KEY_NAME)
 };
-
+//keymap[256]数组将SDL的扫描码（如SDL_SCANCODE_A）映射到NEMU自定义的键值（如NEMU_KEY_A）。
 #define SDL_KEYMAP(k) keymap[SDL_SCANCODE_ ## k] = NEMU_KEY_ ## k;
 static uint32_t keymap[256] = {};
 
+//初始化：init_keymap()函数通过宏展开填充keymap数组。
 static void init_keymap() {
   MAP(NEMU_KEYS, SDL_KEYMAP)
 }
@@ -52,8 +59,9 @@ static void init_keymap() {
 static int key_queue[KEY_QUEUE_LEN] = {};
 static int key_f = 0, key_r = 0;
 
+////key_f和key_r：队首和队尾指针，实现环形缓冲。
 static void key_enqueue(uint32_t am_scancode) {
-  key_queue[key_r] = am_scancode;
+  key_queue[key_r] = am_scancode; //key_queue[1024]：存储待处理的键盘事件。
   key_r = (key_r + 1) % KEY_QUEUE_LEN;
   Assert(key_r != key_f, "key queue overflow!");
 }
