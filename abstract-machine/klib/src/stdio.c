@@ -40,7 +40,7 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
                 }
             }
             else if (*fmt == 'd') {
-                int tmp_int = va_arg(ap, int);
+                int tmp_int = va_arg(ap, int);//从可变参量列表ap中获取int类型的参数
                 if (tmp_int < 0) {
                     *out++ = '-';
                     tmp_int = -1 * tmp_int;
@@ -48,15 +48,15 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
                 int number = tmp_int;
                 int len  = 0;
                 do {
-                    number /= 10;
+                    number /= 10; //看这个%d一共有几位
                     len++;
                 } while (number);
-                out = out + len - 1;
-                int tmp_len = len;
+                out = out + len - 1;//定位输出位置
+                int tmp_len = len;  //逐位写入数字字符
                 while (tmp_len--) {
                     int tmp = tmp_int % 10;
-                    *out-- = tmp + 48;
-                    tmp_int /= 10;
+                    *out-- = tmp + 48; //将数字转换为对应的ASCII字符
+                    tmp_int /= 10;  //准备处理下一个字符
                 }
                 out += (len+1);
             }
