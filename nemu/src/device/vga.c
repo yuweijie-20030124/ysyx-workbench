@@ -16,6 +16,7 @@
 #include <common.h>
 #include <device/map.h>
 
+//修改设置
 #define SCREEN_W (MUXDEF(CONFIG_VGA_SIZE_800x600, 800, 400))
 #define SCREEN_H (MUXDEF(CONFIG_VGA_SIZE_800x600, 600, 300))
 
@@ -90,3 +91,7 @@ void init_vga() {
   IFDEF(CONFIG_VGA_SHOW_SCREEN, init_screen());
   IFDEF(CONFIG_VGA_SHOW_SCREEN, memset(vmem, 0, screen_size()));
 }
+
+//memset((void *)0xa1000000, 0, SCR_SIZE);
+/*对x86来说, 内存映射I/O的一个例子是NEMU中的物理地址区间[0xa1000000, 0xa1800000). 
+这段物理地址区间被映射到VGA内部的显存, 读写这段物理地址区间就相当于对读写VGA显存的数据. 例如*/

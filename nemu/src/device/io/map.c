@@ -23,16 +23,17 @@
 static uint8_t *io_space = NULL;
 static uint8_t *p_space = NULL;//初始化map的空间
 
-uint8_t* new_space(int size) {
-  uint8_t *p = p_space;
+//分配一块大小为 size 的连续内存空间，并返回指向这块空间的指针（类型为 uint8_t*，即无符号8位整数指针）。
+uint8_t* new_space(int size) {  
+  uint8_t *p = p_space; //p = p_space 记录分配前的指针位置，后续作为返回值。
   // page aligned;
-  size = (size + (PAGE_SIZE - 1)) & ~PAGE_MASK;
-  p_space += size;
+  size = (size + (PAGE_SIZE - 1)) & ~PAGE_MASK;//将 size 向上取整到最近的页面大小（PAGE_SIZE）的倍数。
+  p_space += size; //将全局指针向后移动 size 字节，标记为已分配。
   assert(p_space - io_space < IO_SPACE_MAX);
   return p;
 }
 
-static void check_bound(IOMap *map, paddr_t addr) {
+static void check_bound(IOMap *map, paddr_t addr) {//检查是否溢出
   if (map == NULL) {
     Assert(map != NULL, "address (" FMT_PADDR ") is out of bound at pc = " FMT_WORD, addr, cpu.pc);
   } else {
@@ -55,13 +56,15 @@ void init_map() {
 word_t map_read(paddr_t addr, int len, IOMap *map) {
   assert(len >= 1 && len <= 8);
   check_bound(map, addr);
-  paddr_t offset = addr - map->low;
-  invoke_callback(map->callback, offset, len, false); // prepare data to read
+  paddr_t offset = addr - map->low;  //将物理地址转换为映射区域内的相对偏移量
+  invoke_callback(map->callback, offset, len, false); // 如果map->callback存在，调用它并传入参数（offset、len、false 表示读操作）。
+  
   word_t ret = host_read(map->space + offset, len);
   IFDEF(CONFIG_DTRACE, Log("read device %s : address in  = " FMT_PADDR ", len = %d\n", map->name , addr, len));
   return ret;
 }
-
+//其中map_read()和map_write()用于将地址addr映射到map所指示的目标空间, 并进行访问. 
+//每次进行I/O读写的时候, 才会调用设备提供的回调函数(callback).
 void map_write(paddr_t addr, int len, word_t data, IOMap *map) {
   assert(len >= 1 && len <= 8);
   check_bound(map, addr);
