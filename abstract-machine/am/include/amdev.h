@@ -3,6 +3,7 @@
 
 // **MAY SUBJECT TO CHANGE IN THE FUTURE**
 
+//id寄存器的唯一标识符，reg是寄存器名称，perm是寄存器权限，vaargs是寄存器字段定义
 #define AM_DEVREG(id, reg, perm, ...) \
   enum { AM_##reg = (id) }; \
   typedef struct { __VA_ARGS__; } AM_##reg##_T;
