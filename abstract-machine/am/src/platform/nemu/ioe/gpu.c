@@ -12,10 +12,15 @@ void __am_gpu_init() {
    outl(SYNC_ADDR, 1);
 }
 
+//获取屏幕大小
+
 void __am_gpu_config(AM_GPU_CONFIG_T *cfg) {
+  uint32_t wh = inl(VGACTL_ADDR);
+  uint16_t w = wh & 0xffff;
+  uint16_t h = wh >> 16;
   *cfg = (AM_GPU_CONFIG_T) {
     .present = true, .has_accel = false,
-    .width = 0, .height = 0,
+    .width = w, .height = h,
     .vmemsz = 0
   };
 }

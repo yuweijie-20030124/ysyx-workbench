@@ -9,6 +9,8 @@
   typedef struct { __VA_ARGS__; } AM_##reg##_T;
 
 //方便定义寄存器结构体所需要的成员和权限。
+//gpuconfig：AM显示控制器信息, 可读出屏幕大小信息width和height. 另外AM假设系统在运行过程中, 屏幕大小不会发生变化.
+//gpufbdraw，AM帧缓冲控制器，可写入绘图信息，向屏幕x y坐标绘制w*h的举行图像
 AM_DEVREG( 1, UART_CONFIG,  RD, bool present);
 AM_DEVREG( 2, UART_TX,      WR, char data);
 AM_DEVREG( 3, UART_RX,      RD, char data);
