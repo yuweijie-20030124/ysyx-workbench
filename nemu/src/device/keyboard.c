@@ -31,6 +31,7 @@
 #include <SDL2/SDL.h> //依赖SDL库获取键盘输入。
 
 // Note that this is not the standard
+// 通过这个宏生成枚举和键位映射表 keymap[256]，将 SDL 的扫描码（如 SDL_SCANCODE_A）映射到 NEMU 自定义的键值（如 NEMU_KEY_A）。
 #define NEMU_KEYS(f) \
   f(ESCAPE) f(F1) f(F2) f(F3) f(F4) f(F5) f(F6) f(F7) f(F8) f(F9) f(F10) f(F11) f(F12) \
 f(GRAVE) f(1) f(2) f(3) f(4) f(5) f(6) f(7) f(8) f(9) f(0) f(MINUS) f(EQUALS) f(BACKSPACE) \
