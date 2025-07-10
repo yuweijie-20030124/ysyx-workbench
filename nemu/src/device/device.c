@@ -12,7 +12,7 @@
 *
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
-
+//含有和sdl库相关的代码
 #include <common.h>
 #include <utils.h>
 #include <device/alarm.h>

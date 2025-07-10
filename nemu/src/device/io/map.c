@@ -42,7 +42,7 @@ static void check_bound(IOMap *map, paddr_t addr) {//检查是否溢出
         addr, map->name, map->low, map->high, cpu.pc);
   }
 }
-
+//offset：相对于map->low的偏移量 len是读取的字节数 is_write false是表示读取操作，true时表示写操作
 static void invoke_callback(io_callback_t c, paddr_t offset, int len, bool is_write) {
   if (c != NULL) { c(offset, len, is_write); }
 }
@@ -58,8 +58,11 @@ word_t map_read(paddr_t addr, int len, IOMap *map) {
   check_bound(map, addr);
   paddr_t offset = addr - map->low;  //将物理地址转换为映射区域内的相对偏移量
   invoke_callback(map->callback, offset, len, false); // 如果map->callback存在，调用它并传入参数（offset、len、false 表示读操作）。
-  
+  //callback用于模拟硬件设备的副作用（例如，读取某个寄存器可能自动清除状态位）。
+  //map->space + offset：定位到映射区域中的目标地址。
+  //host_read：从指针处读取 len 字节并返回 word_t 类型的地址。
   word_t ret = host_read(map->space + offset, len);
+  //如果启用调试（CONFIG_DTRACE），记录读取操作的设备名、地址和长度。
   IFDEF(CONFIG_DTRACE, Log("read device %s : address in  = " FMT_PADDR ", len = %d\n", map->name , addr, len));
   return ret;
 }

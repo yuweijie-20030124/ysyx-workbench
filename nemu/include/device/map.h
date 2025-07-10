@@ -21,6 +21,12 @@
 typedef void(*io_callback_t)(uint32_t, int, bool);
 uint8_t* new_space(int size);
 
+/*在硬件交互中，某些寄存器的读取可能具有副作用（side effects），例如：
+状态寄存器：读取后可能自动清除某些标志位（如中断状态寄存器）。
+FIFO 缓冲区：读取数据后，硬件可能自动更新内部指针。
+计数器/定时器：读取计数值可能影响其行为。
+callback 允许在 map_read 执行真正的数据读取之前，先通知设备（或模拟器）：“有一个读取操作发生了，请做好相应处理”。*/
+
 typedef struct {
   const char *name;   //设备名称，调试用
   // we treat ioaddr_t as paddr_t here
