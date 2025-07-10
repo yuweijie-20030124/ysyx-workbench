@@ -73,7 +73,7 @@ static inline void update_screen() {
 #endif
 
 void vga_update_screen() {//更新屏幕
-  if(vgactl_port_base[1]== 0x0001){
+  if(vgactl_port_base[1] == 1){
   update_screen();
   vgactl_port_base[1]= 0;
   }
