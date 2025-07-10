@@ -16,8 +16,8 @@ void __am_gpu_init() {
 
 void __am_gpu_config(AM_GPU_CONFIG_T *cfg) {
   uint32_t wh = inl(VGACTL_ADDR);
-  uint32_t w = wh & 0xffff; //取低16位
-  uint32_t h = wh >> 16;    //取高16位
+  uint16_t w = wh & 0xffff; //取低16位
+  uint16_t h = wh >> 16;    //取高16位
   *cfg = (AM_GPU_CONFIG_T) {
     .present = true, .has_accel = false,
     .width = w, .height = h,
@@ -29,7 +29,7 @@ void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
   if (!ctl->sync) return;
   int x = ctl->x, y = ctl->y, w = ctl->w, h = ctl->h;
   uint32_t *pixels = ctl->pixels;
-  uint32_t screenw = inl(VGACTL_ADDR) >> 16;
+  uint16_t screenw = inl(VGACTL_ADDR) >> 16;
   uint32_t *fb = (uint32_t *)(uintptr_t)FB_ADDR;
 
   for (int i = y; i < y+h; i++) {
