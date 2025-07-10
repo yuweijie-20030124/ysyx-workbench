@@ -16,8 +16,8 @@ void __am_gpu_init() {
 
 void __am_gpu_config(AM_GPU_CONFIG_T *cfg) {
   uint32_t wh = inl(VGACTL_ADDR);
-  uint16_t w = wh & 0xffff; //取低16位
-  uint16_t h = wh >> 16;    //取高16位
+  uint32_t w = wh & 0xffff; //取低16位
+  uint32_t h = wh >> 16;    //取高16位
   *cfg = (AM_GPU_CONFIG_T) {
     .present = true, .has_accel = false,
     .width = w, .height = h,
