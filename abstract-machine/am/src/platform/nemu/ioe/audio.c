@@ -18,16 +18,12 @@ sbuf_size寄存器可读出流缓冲区的大小
 count寄存器可以读出当前流缓冲区已经使用的大小*/
 
 void __am_audio_init() {
-  int freq = inl(AUDIO_FREQ_ADDR);
-  int channels = inl(AUDIO_CHANNELS_ADDR);
-  int samples = inl(AUDIO_SAMPLES_ADDR);
-
-  printf("%d %d %d\n",freq,channels,samples);
+  
 }
 
 void __am_audio_config(AM_AUDIO_CONFIG_T *cfg) {
   cfg->present = true;
-  cfg->bufsize = 0;
+  //cfg->bufsize = 0;
 }
 
 void __am_audio_ctrl(AM_AUDIO_CTRL_T *ctrl) {
