@@ -18,7 +18,6 @@
 #include <SDL2/SDL.h>
 
 enum {
-  //change
   reg_freq,
   reg_channels,
   reg_samples,
