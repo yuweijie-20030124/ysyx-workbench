@@ -48,7 +48,7 @@ static void audio_write(uint8_t *buf, int len) {
     nwrite += n;
   }
 }
-
+//在这里实现音频功能，初始化音频子系统，用SDL库来设置音频参数并启动音频播放
 void __am_audio_ctrl(AM_AUDIO_CTRL_T *ctrl) {
   SDL_AudioSpec s = {}; //初始化一个audiospec结构体s
   s.freq = ctrl->freq;
