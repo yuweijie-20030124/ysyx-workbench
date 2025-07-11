@@ -8,6 +8,14 @@
 #define AUDIO_INIT_ADDR      (AUDIO_ADDR + 0x10)
 #define AUDIO_COUNT_ADDR     (AUDIO_ADDR + 0x14)
 
+/*freq, channels和samples这三个寄存器可写入相应的初始化参数
+init寄存器用于初始化, 写入后将根据设置好的freq, channels和
+samples来对SDL的音频子系统进行初始化
+流缓冲区STREAM_BUF是一段MMIO空间, 用于存放来自程序的音频数据, 
+这些音频数据会在将来写入到SDL库中
+sbuf_size寄存器可读出流缓冲区的大小
+count寄存器可以读出当前流缓冲区已经使用的大小*/
+
 void __am_audio_init() {
 }
 

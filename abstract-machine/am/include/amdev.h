@@ -9,9 +9,15 @@
   enum { AM_##reg = (id) }; \
   typedef struct { __VA_ARGS__; } AM_##reg##_T;
 
-//方便定义寄存器结构体所需要的成员和权限。
-//gpuconfig：AM显示控制器信息, 可读出屏幕大小信息width和height. 另外AM假设系统在运行过程中, 屏幕大小不会发生变化.
-//gpufbdraw，AM帧缓冲控制器，可写入绘图信息，向屏幕x y坐标绘制w*h的举行图像
+//方便定义寄存器结构体所需要的成员和权限。下列都是am抽象寄存器
+//9  gpuconfig：AM显示控制器信息, 可读出屏幕大小信息width和height. 另外AM假设系统在运行过程中, 屏幕大小不会发生变化.
+//11 gpufbdraw：AM帧缓冲控制器，可写入绘图信息，向屏幕x y坐标绘制w*h的举行图像
+//14 audioconfig：AM声卡控制器信息，可读出在present以及流缓冲区的大小bufsize
+//15 audioctrl：AM声卡控制寄存器，可根据写入的freq，channels和samples对声卡进行初始化
+//16 audiostatus：AM声卡状态寄存器，可读出当前流缓冲区已经使用的大小count
+//17 audioplay： AM声卡播放寄存器，可将(buf.start,buf.end)区间的内容作为
+//音频数据写入流缓冲区若当前流缓冲区的空闲空间少于即将写入的音频数据, 此次写入将会一直等待, 
+//直到有足够的空闲空间将音频数据完全写入流缓冲区才会返回.
 AM_DEVREG( 1, UART_CONFIG,  RD, bool present);
 AM_DEVREG( 2, UART_TX,      WR, char data);
 AM_DEVREG( 3, UART_RX,      RD, char data);
