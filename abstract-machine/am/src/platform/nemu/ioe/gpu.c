@@ -1,6 +1,7 @@
 #include <am.h>
 #include <nemu.h>
 
+//从这里可以看出syn在宽高寄存器后面4个地址
 #define SYNC_ADDR (VGACTL_ADDR + 4)
 
 void __am_gpu_init() {
@@ -9,6 +10,7 @@ void __am_gpu_init() {
    int w = wh >> 16;  // TODO: get the correct width
    int h = wh & 0xffff;  // TODO: get the correct height
    uint32_t *fb = (uint32_t *)(uintptr_t)FB_ADDR;
+   //如果i填满了fb，那就给sync_addr设置1，
    for (i = 0; i < w * h; i ++) fb[i] = i;
    outl(SYNC_ADDR, 1);
 }
