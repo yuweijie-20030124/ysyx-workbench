@@ -1,5 +1,6 @@
 #include <am.h>
 #include <nemu.h>
+#include <stdio.h>
 
 #define AUDIO_FREQ_ADDR      (AUDIO_ADDR + 0x00)
 #define AUDIO_CHANNELS_ADDR  (AUDIO_ADDR + 0x04)
@@ -17,6 +18,10 @@ sbuf_size寄存器可读出流缓冲区的大小
 count寄存器可以读出当前流缓冲区已经使用的大小*/
 
 void __am_audio_init() {
+  int freq = inl(AUDIO_FREQ_ADDR);
+  int channels = inl(AUDIO_FREQ_ADDR);
+  int samples = inl(AUDIO_FREQ_ADDR);
+  printf("%d %d %d",freq,channels,samples);
 }
 
 void __am_audio_config(AM_AUDIO_CONFIG_T *cfg) {
