@@ -27,6 +27,7 @@ enum {
   nr_reg
 };
 
+//static uint32_t sbuf_pos = 0;
 static uint8_t *sbuf = NULL;
 static uint32_t *audio_base = NULL;
 
