@@ -21,7 +21,7 @@ void __am_audio_init() {
   int freq = inl(AUDIO_FREQ_ADDR);
   int channels = inl(AUDIO_FREQ_ADDR);
   int samples = inl(AUDIO_FREQ_ADDR);
-  printf("%d %d %d",freq,channels,samples);
+  printf("%d! %d %d",freq,channels,samples);
 }
 
 void __am_audio_config(AM_AUDIO_CONFIG_T *cfg) {
