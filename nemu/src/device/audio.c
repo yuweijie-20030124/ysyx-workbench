@@ -32,38 +32,16 @@ static uint32_t *audio_base = NULL;
 
 static void audio_io_handler(uint32_t offset, int len, bool is_write) {
 }
-/*
-void __am_audio_ctrl(AM_AUDIO_CTRL_T *ctrl) {
-  SDL_AudioSpec s = {}; //初始化一个audiospec结构体s
-  s.freq = ctrl->freq;
-  s.format = AUDIO_S16SYS;
-  s.channels = ctrl->channels;
-  s.samples = ctrl->samples;
-  s.callback = audio_play;
-  s.userdata = NULL;
-
-  count = 0;
-  int ret = SDL_InitSubSystem(SDL_INIT_AUDIO);
-  if (ret == 0) {
-    SDL_OpenAudio(&s, NULL); //初始化音频子系统
-    SDL_PauseAudio(0);
-  }
-}
-*/
-//audio_play
 
 void init_audio() {
   uint32_t space_size = sizeof(uint32_t) * nr_reg;
   audio_base = (uint32_t *)new_space(space_size);
-  //注册0x200处长度为24个字节的端口，以及0xa0000200出长度为24字节的MMIO空间
-  //它们都会映射到上述寄存器; 此外还注册了从0xa1200000开始, 长度为64KB的MMIO空间作为流缓冲区.
-  #ifdef CONFIG_HAS_PORT_IO
+#ifdef CONFIG_HAS_PORT_IO
   add_pio_map ("audio", CONFIG_AUDIO_CTL_PORT, audio_base, space_size, audio_io_handler);
 #else
   add_mmio_map("audio", CONFIG_AUDIO_CTL_MMIO, audio_base, space_size, audio_io_handler);
 #endif
-  
+
   sbuf = (uint8_t *)new_space(CONFIG_SB_SIZE);
   add_mmio_map("audio-sbuf", CONFIG_SB_ADDR, sbuf, CONFIG_SB_SIZE, NULL);
 }
-

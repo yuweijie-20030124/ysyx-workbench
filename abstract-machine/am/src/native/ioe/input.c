@@ -48,8 +48,6 @@ void __am_input_config(AM_INPUT_CONFIG_T *cfg) {
   cfg->present = true;
 }
 
-
-
 void __am_input_keybrd(AM_INPUT_KEYBRD_T *kbd) {
   int k = AM_KEY_NONE;
 
