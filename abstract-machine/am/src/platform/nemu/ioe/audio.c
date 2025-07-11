@@ -17,6 +17,8 @@ samples来对SDL的音频子系统进行初始化
 sbuf_size寄存器可读出流缓冲区的大小
 count寄存器可以读出当前流缓冲区已经使用的大小*/
 
+//static uint32_t sbuf_pos = 0;
+
 void __am_audio_init() {
   
 }
@@ -39,5 +41,5 @@ void __am_audio_status(AM_AUDIO_STATUS_T *stat) {
 }
 
 void __am_audio_play(AM_AUDIO_PLAY_T *ctl) {
-  //int len = ctl->buf.end - ctl->buf.start;
+  
 }

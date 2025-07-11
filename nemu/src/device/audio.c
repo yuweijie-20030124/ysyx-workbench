@@ -32,6 +32,25 @@ static uint32_t *audio_base = NULL;
 
 static void audio_io_handler(uint32_t offset, int len, bool is_write) {
 }
+/*
+void __am_audio_ctrl(AM_AUDIO_CTRL_T *ctrl) {
+  SDL_AudioSpec s = {}; //初始化一个audiospec结构体s
+  s.freq = ctrl->freq;
+  s.format = AUDIO_S16SYS;
+  s.channels = ctrl->channels;
+  s.samples = ctrl->samples;
+  s.callback = audio_play;
+  s.userdata = NULL;
+
+  count = 0;
+  int ret = SDL_InitSubSystem(SDL_INIT_AUDIO);
+  if (ret == 0) {
+    SDL_OpenAudio(&s, NULL); //初始化音频子系统
+    SDL_PauseAudio(0);
+  }
+}
+*/
+//audio_play
 
 void init_audio() {
   uint32_t space_size = sizeof(uint32_t) * nr_reg;
