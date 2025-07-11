@@ -22,6 +22,9 @@ static void audio_play(void *userdata, uint8_t *stream, int len) {
   if (count < len) nread = count;
   int b = 0;
   while (b < nread) {
+/*read()会把参数fd 所指的文件传送count 个字节到buf 指针所指的内存中. 若参数
+count 为0, 则read()不会有作用并返回0. 返回值为实际读取到的字节数, 如果返回0
+, 表示已到达文件尾或是无可读取的数据,此外文件读写位置会随读取到的字节移动.*/
     int n = read(rfd, stream, nread);
     if (n > 0) b += n;
   }
