@@ -9,7 +9,7 @@ static int rfd = -1, wfd = -1;
 static volatile int count = 0;
 
 //实现audio初始化需要
-void __am_audio_init() {
+void __am_audio_init() {  
   int fds[2];     //存储管道两端文件描述符的数组
   int ret = pipe2(fds, O_NONBLOCK); //nonblock确保读写操作不会阻塞进程
   assert(ret == 0); //确保管道创建成功
