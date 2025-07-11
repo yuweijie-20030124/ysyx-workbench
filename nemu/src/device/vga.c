@@ -82,6 +82,7 @@ void vga_update_screen() {//更新屏幕
 }
 
 void init_vga() {
+  /*声明了八个字节，宽高寄存器用了四个自己，还有四个字节其实是给sync寄存器了*/
   vgactl_port_base = (uint32_t *)new_space(8);
   vgactl_port_base[0] = (screen_width() << 16) | screen_height();//宽是高16位，高是低16位
 #ifdef CONFIG_HAS_PORT_IO
@@ -94,8 +95,10 @@ void init_vga() {
   add_mmio_map("vmem", CONFIG_FB_ADDR, vmem, screen_size(), NULL);
   IFDEF(CONFIG_VGA_SHOW_SCREEN, init_screen());
   IFDEF(CONFIG_VGA_SHOW_SCREEN, memset(vmem, 0, screen_size()));
+  //初始化mmio这段空间，全写为
 }
 
+//C 库函数 void *memset(void *str, int c, size_t n) 用于将一段内存区域设置为指定的值。
 //memset((void *)0xa1000000, 0, SCR_SIZE);
 /*对x86来说, 内存映射I/O的一个例子是NEMU中的物理地址区间[0xa1000000, 0xa1800000). 
 这段物理地址区间被映射到VGA内部的显存, 读写这段物理地址区间就相当于对读写VGA显存的数据. 例如*/

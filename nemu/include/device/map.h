@@ -43,6 +43,7 @@ static inline bool map_inside(IOMap *map, paddr_t addr) {
   return (addr >= map->low && addr <= map->high);
 }
 
+//给你地址，范围和mmio，你要找出这个地址和范围在mmio中的id是多少
 static inline int find_mapid_by_addr(IOMap *maps, int size, paddr_t addr) {
   int i;
   for (i = 0; i < size; i ++) {//遍历一遍要找的addr中的size空间

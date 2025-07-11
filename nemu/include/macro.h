@@ -109,6 +109,13 @@
     ioe_read(reg, &__io_param); \
     __io_param; })
 
+/*({
+    // 声明和语句
+    变量声明;
+    执行语句;
+    返回值表达式; // 整个复合语句的值
+})*/
+
 //简化IO设备寄存器的写入操作
 #define io_write(reg, ...) \
   ({ reg##_T __io_param = (reg##_T) { __VA_ARGS__ }; \

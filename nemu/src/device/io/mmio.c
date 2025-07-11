@@ -21,18 +21,23 @@
 static IOMap maps[NR_MAP] = {};
 static int nr_map = 0;
 
+//根据物理地址查找对应的MMIO设备映射区域
+/*输入一个物理地址 addr返回该地址所属的
+MMIO设备映射信息（如果存在），否则返回NULL*/
 static IOMap* fetch_mmio_map(paddr_t addr) {
   //mapid多路访问外围识别符：分配给连接到计算机系统的每个外围设备的唯一标识符
   int mapid = find_mapid_by_addr(maps, nr_map, addr);
   return (mapid == -1 ? NULL : &maps[mapid]);
 }
 
+//mmio重叠了，报错
 static void report_mmio_overlap(const char *name1, paddr_t l1, paddr_t r1,
     const char *name2, paddr_t l2, paddr_t r2) {
   panic("MMIO region %s@[" FMT_PADDR ", " FMT_PADDR "] is overlapped "
                "with %s@[" FMT_PADDR ", " FMT_PADDR "]", name1, l1, r1, name2, l2, r2);
 }
 
+//初始化一个map，把名字，地址，空间，长度，是否回调都写进去。
 /* device interface */
 void add_mmio_map(const char *name, paddr_t addr, void *space, uint32_t len, io_callback_t callback) {
   assert(nr_map < NR_MAP);
@@ -55,6 +60,7 @@ void add_mmio_map(const char *name, paddr_t addr, void *space, uint32_t len, io_
 }
 
 /* bus interface 总线接口*/
+//输入地址和长度，
 word_t mmio_read(paddr_t addr, int len) {
   return map_read(addr, len, fetch_mmio_map(addr));
 }
