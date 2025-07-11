@@ -1,3 +1,4 @@
+//读懂native就知道riscv-32nemu如何实现
 #define _GNU_SOURCE
 #include <fcntl.h>
 #include <unistd.h>
@@ -52,7 +53,7 @@ void __am_audio_ctrl(AM_AUDIO_CTRL_T *ctrl) {
   count = 0;
   int ret = SDL_InitSubSystem(SDL_INIT_AUDIO);
   if (ret == 0) {
-    SDL_OpenAudio(&s, NULL);
+    SDL_OpenAudio(&s, NULL); //初始化音频子系统
     SDL_PauseAudio(0);
   }
 }
