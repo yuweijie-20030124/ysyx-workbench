@@ -60,7 +60,7 @@ void add_mmio_map(const char *name, paddr_t addr, void *space, uint32_t len, io_
 }
 
 /* bus interface 总线接口*/
-//输入地址和长度，写如
+//输入地址和长度，
 word_t mmio_read(paddr_t addr, int len) {
   return map_read(addr, len, fetch_mmio_map(addr));
 }

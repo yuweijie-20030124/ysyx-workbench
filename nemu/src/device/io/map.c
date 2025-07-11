@@ -23,7 +23,7 @@
 static uint8_t *io_space = NULL;
 static uint8_t *p_space = NULL;//初始化map的空间
 
-//分配一块大小为 size 的连续内存空间，并返回指向这块空间的指针（类型为 uint8_t*，即无符号8位整数指针）。
+//分配一块大小为 size 字节的连续内存空间，并返回指向这块空间的指针（类型为 uint8_t*，即无符号8位整数指针）。
 uint8_t* new_space(int size) {  
   uint8_t *p = p_space; //p = p_space 记录分配前的指针位置，后续作为返回值。
   // page aligned;
