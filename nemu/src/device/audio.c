@@ -37,7 +37,6 @@ void sdl_audio_callback(void *userdata, uint8_t *stream, int len){
   uint32_t used_cnt = audio_base[reg_count];
   len = len > used_cnt ? used_cnt : len;  //保证读取不超过可用数据量
   uint32_t sbuf_size = audio_base[reg_sbuf_size];
-  printf("%u\n",sbuf_size);
   //如果剩余数据(sbuf_pos + len)超过缓冲区大小(sbuf_size)，需要分两次拷贝，需要指针回到开头再输入
   if( (sbuf_pos + len) > sbuf_size ){
     SDL_MixAudio(stream, sbuf + sbuf_pos, sbuf_size - sbuf_pos , SDL_MIX_MAXVOLUME);
@@ -46,7 +45,8 @@ void sdl_audio_callback(void *userdata, uint8_t *stream, int len){
   }
   else 
     SDL_MixAudio(stream, sbuf + sbuf_pos, len , SDL_MIX_MAXVOLUME);
-  sbuf_pos = (sbuf_pos + len);  //当读到末尾时自动回到开头
+  sbuf_pos = (sbuf_pos + len) % sbuf_size;  //当读到末尾时自动回到开头
+    printf("%u\n",sbuf_pos);
   audio_base[reg_count] -= len;
 }
 
