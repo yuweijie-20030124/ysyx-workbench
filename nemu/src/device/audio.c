@@ -61,6 +61,7 @@ int init_sound() {
   if (ret == 0) {
     SDL_OpenAudio(&s, NULL);
     SDL_PauseAudio(0);  //播放，可以执行音频子系统的回调函数
+    printf("fuckyou!!!!!!!!!!\n");
   }       
   return 0;
 }
