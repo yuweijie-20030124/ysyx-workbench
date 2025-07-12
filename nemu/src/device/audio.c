@@ -32,7 +32,7 @@ static uint8_t *sbuf = NULL;  //hi一个循环使用的音频缓冲区
 static uint32_t *audio_base = NULL;
 
 void sdl_audio_callback(void *userdata, uint8_t *stream, int len){
-  SDL_memset(stream, 0, len);
+  //SDL_memset(stream, 0, len);
   printf("%d\n",len);
   uint32_t used_cnt = audio_base[reg_count];
   len = len > used_cnt ? used_cnt : len;  //保证读取不超过可用数据量
