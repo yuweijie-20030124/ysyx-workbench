@@ -57,7 +57,7 @@ int init_sound() {
   s.freq = audio_base[reg_freq];
   s.channels = audio_base[reg_channels];
   s.samples = audio_base[reg_samples];
-  //printf("%d\n",s.samples);
+  printf("%d\n",s.samples);
   s.callback = sdl_audio_callback;
   int ret = SDL_InitSubSystem(SDL_INIT_AUDIO);
   if (ret == 0) {
