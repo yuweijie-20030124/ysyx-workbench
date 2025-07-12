@@ -63,7 +63,7 @@ static int key_f = 0, key_r = 0;
 //key_f和key_r：队首和队尾指针，实现环形缓冲。
 static void key_enqueue(uint32_t am_scancode) {
   key_queue[key_r] = am_scancode; //key_queue[1024]：存储待处理的键盘事件。
-  key_r = (key_r + 1) % KEY_QUEUE_LEN;
+  key_r = (key_r + 1) % KEY_QUEUE_LEN; //指针回到头
   //检测队列是否已满
   Assert(key_r != key_f, "key queue overflow!");
 }
