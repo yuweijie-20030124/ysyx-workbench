@@ -75,6 +75,7 @@ int init_sound() {
 static void audio_io_handler(uint32_t offset, int len, bool is_write) {
   if(audio_base[reg_init]==1){
     init_sound();
+    printf("fuckyou!!\n");
     audio_base[reg_init] = 0;
   }
 }
