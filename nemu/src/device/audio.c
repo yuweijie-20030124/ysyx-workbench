@@ -57,7 +57,7 @@ int init_sound() {
   s.channels = audio_base[reg_channels];
   s.samples = audio_base[reg_samples];
   s.callback = sdl_audio_callback;
-  int ret = SDL_InitSubSystem(SDL_INIT_AUDIO);
+  int ret = SDL_Init(SDL_INIT_AUDIO);
   if (ret == 0) {
     SDL_OpenAudio(&s, NULL);
     SDL_PauseAudio(0);  //播放，可以执行音频子系统的回调函数
