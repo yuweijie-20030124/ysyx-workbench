@@ -33,7 +33,7 @@ static uint32_t *audio_base = NULL;
 
 void sdl_audio_callback(void *userdata, uint8_t *stream, int len){
   SDL_memset(stream, 0, len);
-  printf("%d\n",len);
+  //printf("%d\n",len);
   uint32_t used_cnt = audio_base[reg_count];
   len = len > used_cnt ? used_cnt : len;  //保证读取不超过可用数据量
   uint32_t sbuf_size = audio_base[reg_sbuf_size];
