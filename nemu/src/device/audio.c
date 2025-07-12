@@ -57,7 +57,7 @@ int init_sound() {
   s.channels = audio_base[reg_channels];
   s.samples = audio_base[reg_samples];
   s.callback = sdl_audio_callback;
-  int ret = SDL_Init(SDL_INIT_AUDIO);
+  int ret = SDL_InitSubSystem(SDL_INIT_AUDIO);
   if (ret == 0) {
     SDL_OpenAudio(&s, NULL);
     SDL_PauseAudio(0);  //播放，可以执行音频子系统的回调函数
@@ -86,6 +86,7 @@ void init_audio() {
   add_pio_map ("audio", CONFIG_AUDIO_CTL_PORT, audio_base, space_size, audio_io_handler);
 #else
   add_mmio_map("audio", CONFIG_AUDIO_CTL_MMIO, audio_base, space_size, audio_io_handler);
+  printf("fuckyou\n");
 #endif
 
   sbuf = (uint8_t *)new_space(CONFIG_SB_SIZE);
