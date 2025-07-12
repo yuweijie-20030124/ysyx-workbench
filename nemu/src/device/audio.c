@@ -33,10 +33,10 @@ static uint32_t *audio_base = NULL;
 
 void sdl_audio_callback(void *userdata, uint8_t *stream, int len){
   //SDL_memset(stream, 0, len);
-  printf("%d\n",len);
+  //printf("%d\n",len);
   uint32_t used_cnt = audio_base[reg_count];
   len = len > used_cnt ? used_cnt : len;  //保证读取不超过可用数据量
-  //printf("%u\n",used_cnt);
+  printf("%u\n",used_cnt);
   uint32_t sbuf_size = audio_base[reg_sbuf_size];
   //如果剩余数据(sbuf_pos + len)超过缓冲区大小(sbuf_size)，需要分两次拷贝，需要指针回到开头再输入
   if( (sbuf_pos + len) > sbuf_size ){
