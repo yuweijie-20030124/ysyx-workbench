@@ -37,6 +37,7 @@ void sdl_audio_callback(void *userdata, uint8_t *stream, int len){
   len = len > used_cnt ? used_cnt : len;  //保证读取不超过可用数据量
   
   uint32_t sbuf_size = audio_base[reg_sbuf_size];
+  printf("fuckyou\n");
   //如果剩余数据(sbuf_pos + len)超过缓冲区大小(sbuf_size)，需要分两次拷贝，需要指针回到开头再输入
   if( (sbuf_pos + len) > sbuf_size ){
     SDL_MixAudio(stream, sbuf + sbuf_pos, sbuf_size - sbuf_pos , SDL_MIX_MAXVOLUME);
@@ -61,7 +62,6 @@ int init_sound() {
   if (ret == 0) {
     SDL_OpenAudio(&s, NULL);
     SDL_PauseAudio(0);  //播放，可以执行音频子系统的回调函数
-    printf("fuckyou!!!!!!!!!!\n");
   }       
   return 0;
 }
@@ -76,7 +76,6 @@ int init_sound() {
 static void audio_io_handler(uint32_t offset, int len, bool is_write) {
   if(audio_base[reg_init]==1){
     init_sound();
-    printf("fuckyou!!\n");
     audio_base[reg_init] = 0;
   }
 }
@@ -88,7 +87,6 @@ void init_audio() {
   add_pio_map ("audio", CONFIG_AUDIO_CTL_PORT, audio_base, space_size, audio_io_handler);
 #else
   add_mmio_map("audio", CONFIG_AUDIO_CTL_MMIO, audio_base, space_size, audio_io_handler);
-  printf("fuckyou\n");
 #endif
 
   sbuf = (uint8_t *)new_space(CONFIG_SB_SIZE);
