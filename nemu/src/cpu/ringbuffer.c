@@ -7,7 +7,7 @@
 
 // 定义环形缓冲区结构体
 typedef struct {
-    char buffer[IRINGBUF_SIZE][LOGBUF_SIZE]; // 每条指令一个字符串
+    char buffer[IRINGBUF_SIZE][LOGBUF_SIZE]; // 每个环形缓冲器的格子里面放一个字符串
     int head;
     int count;
 } CircularBuffer;
@@ -21,7 +21,7 @@ void initBuffer(CircularBuffer *cb){
 void enqueue(CircularBuffer *cb, const char *logbuf) {
     strncpy(cb->buffer[cb->head], logbuf, LOGBUF_SIZE - 1);
     cb->buffer[cb->head][LOGBUF_SIZE - 1] = '\0';
-    cb->head = (cb->head + 1) % IRINGBUF_SIZE; //能直接15变成0
+    cb->head = (cb->head + 1) % IRINGBUF_SIZE; //能直接15+1变成0
     if (cb->count < IRINGBUF_SIZE) {
         cb->count++;
     }

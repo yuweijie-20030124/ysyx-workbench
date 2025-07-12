@@ -69,18 +69,19 @@ void init_mem() {
   Log("physical memory area [" FMT_PADDR ", " FMT_PADDR "]", PMEM_LEFT, PMEM_RIGHT);
 }
 
+//读物理地址
 word_t paddr_read(paddr_t addr, int len) {
   if (likely(in_pmem(addr))) {  
     IFDEF(CONFIG_MTRACE, Log("read in address = " FMT_PADDR ", len = %d\n", addr, len));
     return pmem_read(addr, len);
   }
-
   IFDEF(CONFIG_DEVICE, return mmio_read(addr, len));
   //printf("");
   out_of_bound(addr);
   return 0;
 }
 
+//写物理地址
 void paddr_write(paddr_t addr, int len, word_t data) {
   if (likely(in_pmem(addr))) { 
     pmem_write(addr, len, data);
