@@ -33,7 +33,7 @@ static uint32_t *audio_base = NULL;
 
 void sdl_audio_callback(void *userdata, uint8_t *stream, int len){
   SDL_memset(stream, 0, len);
-  //printf("%d\n",len);
+  printf("%d\n",len);
   uint32_t used_cnt = audio_base[reg_count];
   len = len > used_cnt ? used_cnt : len;  //保证读取不超过可用数据量
   uint32_t sbuf_size = audio_base[reg_sbuf_size];
@@ -47,7 +47,7 @@ void sdl_audio_callback(void *userdata, uint8_t *stream, int len){
     SDL_MixAudio(stream, sbuf + sbuf_pos, len , SDL_MIX_MAXVOLUME);
   sbuf_pos = (sbuf_pos + len) % sbuf_size;  //当读到末尾时自动回到开头
   audio_base[reg_count] -= len;
-  printf("%u\n",audio_base[reg_count]);
+  //printf("%u\n",audio_base[reg_count]);
 }
 
 int init_sound() {
