@@ -27,8 +27,8 @@ enum {
   nr_reg
 };
 
-static uint32_t sbuf_pos = 0;
-static uint8_t *sbuf = NULL;
+static uint32_t sbuf_pos = 0; //标记当前读取位置
+static uint8_t *sbuf = NULL;  //hi一个循环使用的音频缓冲区
 static uint32_t *audio_base = NULL;
 
 void sdl_audio_callback(void *userdata, uint8_t *stream, int len){
@@ -37,14 +37,15 @@ void sdl_audio_callback(void *userdata, uint8_t *stream, int len){
   len = len > used_cnt ? used_cnt : len;
   
   uint32_t sbuf_size = audio_base[reg_sbuf_size];
+  //如果剩余数据(sbuf_pos + len)超过缓冲区大小(sbuf_size)，需要分两次拷贝
   if( (sbuf_pos + len) > sbuf_size ){
     SDL_MixAudio(stream, sbuf + sbuf_pos, sbuf_size - sbuf_pos , SDL_MIX_MAXVOLUME);
-    SDL_MixAudio(stream +  (sbuf_size - sbuf_pos), sbuf +  (sbuf_size - sbuf_pos), 
-                    len - (sbuf_size - sbuf_pos), SDL_MIX_MAXVOLUME);
+    SDL_MixAudio(stream + sbuf_size - sbuf_pos, sbuf + sbuf_size - sbuf_pos, 
+                    len - sbuf_size + sbuf_pos, SDL_MIX_MAXVOLUME);
   }
   else 
     SDL_MixAudio(stream, sbuf + sbuf_pos, len , SDL_MIX_MAXVOLUME);
-  sbuf_pos = (sbuf_pos + len) % sbuf_size;
+  sbuf_pos = (sbuf_pos + len) % sbuf_size;  //当读到末尾时自动回到开头
   audio_base[reg_count] -= len;
 }
 
@@ -64,6 +65,13 @@ int init_sound() {
   return 0;
 }
 
+/*
+回调函数是指一个通过函数指针调用的函数。简单来说：
+定义：你定义一个函数
+注册：你把函数指针交给另一个系统/模块
+调用：当特定事件发生时，系统/模块会"回调"你的函数
+*/
+
 static void audio_io_handler(uint32_t offset, int len, bool is_write) {
   if(audio_base[reg_init]==1){
     init_sound();
@@ -72,7 +80,7 @@ static void audio_io_handler(uint32_t offset, int len, bool is_write) {
 }
 
 void init_audio() {
-  uint32_t space_size = sizeof(uint32_t) * 7;
+  uint32_t space_size = sizeof(uint32_t) * nr_reg;
   audio_base = (uint32_t *)new_space(space_size);
 #ifdef CONFIG_HAS_PORT_IO
   add_pio_map ("audio", CONFIG_AUDIO_CTL_PORT, audio_base, space_size, audio_io_handler);
