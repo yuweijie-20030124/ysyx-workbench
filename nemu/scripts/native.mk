@@ -24,7 +24,6 @@ $(BINARY):: compile_git
 
 # Some convenient rules
 override ARGS += -l $(shell dirname $(IMAGE).elf)/nemu-log.txt 
-override ARGS += -f $(IMAGE).elf 
 
 override ARGS ?= --log=$(BUILD_DIR)/nemu-log.txt   # --log=指定日志文件的路径
 override ARGS += $(ARGS_DIFF)
