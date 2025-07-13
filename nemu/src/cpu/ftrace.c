@@ -21,10 +21,7 @@ char *get_strtab(Elf32_Shdr *strtab, FILE *file);
 void parse_elf(const char *elf_file);
 void print_sym_entrys();
 char *get_function_name_by_addres(paddr_t addr);
-void trace_func_call(paddr_t pc, paddr_t target);
-void trace_func_ret(paddr_t pc);
-void trace_dread(paddr_t addr, int len, IOMap *map);
-void trace_dwrite(paddr_t addr, int len, word_t data, IOMap *map);
+
 
 
 
