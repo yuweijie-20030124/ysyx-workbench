@@ -4,6 +4,9 @@
 #include <elf.h>
 #include <assert.h>
 
+int elf_value;
+char elf_name;
+
 void parse_elf(const char *elf_file) {
     // 打开 ELF 文件
     FILE *fp = fopen(elf_file, "rb");
@@ -85,6 +88,8 @@ void parse_elf(const char *elf_file) {
         unsigned char type = ELF32_ST_TYPE(sym->st_info);
         if (type == STT_FUNC) {
             const char *name = strtab + sym->st_name;
+            //elf_value[i] = sym->st_value;
+           // elf_name[i] = name;
             printf("0x%x:   %s\n", sym->st_value, name);
         }
     }
@@ -96,4 +101,14 @@ void parse_elf(const char *elf_file) {
     free(strtab);
     fclose(fp);
 }
+/*
 
+void call_trace(s->pc, s->dnpc){
+
+}
+
+void ret_trace(s->pc){
+
+}
+
+*/
