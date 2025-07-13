@@ -118,7 +118,6 @@ void print_sym_entrys() {
 
 
 void call_trace(paddr_t pc, paddr_t target) {
-    printf("fuck you\n");
 	if (trace_func_call_flag == 0) return; //No elf file
 	++call_depth;
 
@@ -127,12 +126,7 @@ void call_trace(paddr_t pc, paddr_t target) {
 	char *name  = get_function_name_by_addres(target);
 	// Example output: 0x800001f8:     call [f0@0x80000010]
 
-	Log(FMT_PADDR ": %*scall [%s@" FMT_PADDR "]\n", 
-		pc,
-		(call_depth-3)*2, "", 
-		name?name:"???",
-		target
-	);
+	Log(FMT_PADDR ": %*scall [%s@" FMT_PADDR "]\n", pc,(call_depth-3)*2, "", name?name:"???",target);
 }
 
 void ret_trace(paddr_t pc) {
@@ -141,11 +135,7 @@ void ret_trace(paddr_t pc) {
 	if (call_depth <= 2) return; // ignore _trm_init & main
 
 	char *name = get_function_name_by_addres(pc);
-	Log(FMT_PADDR ": %*sret [%s]\n",
-		pc,
-		(call_depth-3)*2, "",
-		name?name:"???"
-	);
+	Log(FMT_PADDR ": %*sret [%s]\n",pc,(call_depth-3)*2, "",name?name:"???");
 
 	--call_depth;
 }
