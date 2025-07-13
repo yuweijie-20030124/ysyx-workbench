@@ -38,7 +38,7 @@ void parse_elf(const char *elf_file) {
 	FILE *file = fopen(elf_file, "rb");
 	assert(file != NULL);
 
-	init_symtab_entrys(file);
+	//init_symtab_entrys(file);
 	//print_sym_entrys();
 }
 
