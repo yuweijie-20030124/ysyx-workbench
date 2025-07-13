@@ -38,7 +38,7 @@ void parse_elf(const char *elf_file) {
 	FILE *file = fopen(elf_file, "rb");
 	assert(file != NULL);
 
-	//init_symtab_entrys(file);
+	init_symtab_entrys(file);
 	//print_sym_entrys();
 }
 
@@ -117,7 +117,7 @@ void print_sym_entrys() {
 
 
 
-void trace_func_call(paddr_t pc, paddr_t target) {
+void call_trace(paddr_t pc, paddr_t target) {
 	if (trace_func_call_flag == 0) return; //No elf file
 	++call_depth;
 
@@ -134,7 +134,7 @@ void trace_func_call(paddr_t pc, paddr_t target) {
 	);
 }
 
-void trace_func_ret(paddr_t pc) {
+void ret_trace(paddr_t pc) {
 	if (trace_func_call_flag == 0) return; //No elf file
 
 	if (call_depth <= 2) return; // ignore _trm_init & main
