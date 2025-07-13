@@ -1,109 +1,166 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <device/map.h>
+#include <fcntl.h>
 #include <elf.h>
-#include <assert.h>
+#include <unistd.h>
+#include <common.h>
+
+typedef struct SymbolEntry {
+	char name[32];	// Locate at strtab
+	unsigned char info;
+	paddr_t address;
+	word_t size;
+} SymbolEntry;
+
+static SymbolEntry* sym_entrys = NULL;
+static uint32_t sym_num = 0;
+static uint32_t call_depth = 0;
+static uint32_t trace_func_call_flag = 0;	// Flag to determine whether to trace function calls
+
+void init_symtab_entrys(FILE *file);
+char *get_strtab(Elf32_Shdr *strtab, FILE *file);
+void parse_elf(const char *elf_file);
+void print_sym_entrys();
+char *get_function_name_by_addres(paddr_t addr);
+void trace_func_call(paddr_t pc, paddr_t target);
+void trace_func_ret(paddr_t pc);
+void trace_dread(paddr_t addr, int len, IOMap *map);
+void trace_dwrite(paddr_t addr, int len, word_t data, IOMap *map);
 
 
-uint32_t *elf_value;
-char *elf_name;
 
 void parse_elf(const char *elf_file) {
-    // 打开 ELF 文件
-    FILE *fp = fopen(elf_file, "rb");
-    //assert(fp, "Can not open '%s'", elf_file);
-    //printf("已经读取到文件\n");
+	if (elf_file == NULL) {
+		return;
+	}
+	
+	Log("The elf file is %s\n", elf_file);
+	trace_func_call_flag = 1;
+	FILE *file = fopen(elf_file, "rb");
+	assert(file != NULL);
 
-    // 读取 ELF 头
-    Elf32_Ehdr elf_head;
-    int a = fread(&elf_head, sizeof(Elf32_Ehdr), 1, fp);
-    if (a != 1) {
-        printf("fail to read head\n");
-        exit(0);
-    }
-
-    // 检查 ELF 魔数
-    if (elf_head.e_ident[0] != 0x7F ||
-        elf_head.e_ident[1] != 'E' ||
-        elf_head.e_ident[2] != 'L' ||
-        elf_head.e_ident[3] != 'F') {
-        printf("Not a ELF file\n");
-        exit(0);
-    }
-
-    // 读取 section header 表
-    Elf32_Shdr *shdr = (Elf32_Shdr *)malloc(sizeof(Elf32_Shdr) * elf_head.e_shnum);
-    if (shdr == NULL) {
-        printf("shdr malloc failed\n");
-        exit(0);
-    }
-	//找到段表的位置，然后赋予fp指针
-	//然后读段表内容。放到shdr中
-    fseek(fp, elf_head.e_shoff, SEEK_SET);
-    a = fread(shdr, sizeof(Elf32_Shdr), elf_head.e_shnum, fp);
-
-    if (a != elf_head.e_shnum) {
-        printf("fail to read section headers\n");
-        exit(0);
-    }
-
-	/****/
-
-    // 读取段表字符串表
-    Elf32_Shdr shstr = shdr[elf_head.e_shstrndx];
-    char *shstrtab = (char *)malloc(shstr.sh_size);
-    fseek(fp, shstr.sh_offset, SEEK_SET);
-    int b = fread(shstrtab, shstr.sh_size, 1, fp);
-
-	//找到sh_type的符号表和字符串表
-    // 找到 .symtab 和 .strtab
-    Elf32_Shdr *symtab_sh = NULL;
-    Elf32_Shdr *strtab_sh = NULL;
-    for (int i = 0; i < elf_head.e_shnum; i++) {
-        char *secname = shstrtab + shdr[i].sh_name;
-        if (strcmp(secname, ".symtab") == 0) symtab_sh = &shdr[i];
-        if (strcmp(secname, ".strtab") == 0) strtab_sh = &shdr[i];
-    }
-    if (!symtab_sh || !strtab_sh) {
-        printf("No .symtab or .strtab found!\n");
-        exit(1);
-    }
-
-    // 读取符号表
-    Elf32_Sym *symtab = (Elf32_Sym *)malloc(symtab_sh->sh_size);
-    fseek(fp, symtab_sh->sh_offset, SEEK_SET);
-    int c = fread(symtab, symtab_sh->sh_size, 1, fp);
-    int sym_count = symtab_sh->sh_size / sizeof(Elf32_Sym);
-
-    // 读取字符串表
-    char *strtab = (char *)malloc(strtab_sh->sh_size);
-    fseek(fp, strtab_sh->sh_offset, SEEK_SET);
-    int d = fread(strtab, strtab_sh->sh_size, 1, fp);
-
-    // 遍历符号表，输出 type 为函数的符号的 value 和 name
-	printf("   Value     ");
-	printf(" Function");
-	printf("\n");
-    for (int i = 0; i < sym_count; i++) {
-        Elf32_Sym *sym = &symtab[i];
-        unsigned char type = ELF32_ST_TYPE(sym->st_info);
-        if (type == STT_FUNC) {
-            const char *name = strtab + sym->st_name;
-            //elf_value[i] = sym->st_value;
-            //elf_name[i] = *name;
-            //elf_value = sym->st_value;
-            //strcpy(elf_name,name);
-            printf("0x%x:   %s\n", sym->st_value, name);
-        }
-    }
-    if(b+c+d == 0){printf("none sence");}
-    // 释放资源
-    free(shdr);
-    free(shstrtab);
-    free(symtab);
-    free(strtab);
-    fclose(fp);
+	init_symtab_entrys(file);
+	//print_sym_entrys();
 }
+
+char *get_function_name_by_addres(paddr_t addr) {
+	for (int i = 0; i < sym_num; i++) {
+		if (ELF32_ST_TYPE(sym_entrys[i].info) == STT_FUNC) {
+			if (addr >= sym_entrys[i].address && addr < (sym_entrys[i].size + sym_entrys[i].address)) {
+				return sym_entrys[i].name;
+			}
+		}
+	}
+	return NULL;
+}
+
+void init_symtab_entrys(FILE *elf_file) {
+	if (elf_file == NULL) assert(0);
+	// Get ELF header
+	Elf32_Ehdr ehdr;
+	int result = fread(&ehdr, sizeof(Elf32_Ehdr), 1, elf_file);
+	assert(&ehdr != NULL && result == 1);
+
+	// Get Section header by ELF header
+	Elf32_Shdr *shdrs = malloc(sizeof(Elf32_Shdr) * ehdr.e_shnum);
+	result = fseek(elf_file, ehdr.e_shoff, SEEK_SET);
+	assert(result == 0);
+	result = fread(shdrs, sizeof(Elf32_Shdr), ehdr.e_shnum, elf_file);
+	assert(result != 0);
+
+	// Get Symtab from Section headr entrys
+	Elf32_Shdr *symtab = NULL;
+	for (int i = 0; i < ehdr.e_shnum; i++) {
+		if (shdrs[i].sh_type == SHT_SYMTAB) {
+			symtab = shdrs + i;
+ 	  }
+  }
+	assert(symtab != NULL);
+
+	// Get entry num and offset
+	uint32_t entry_num = symtab->sh_size / symtab->sh_entsize;
+	sym_num = entry_num;	// Set global entry num
+	uint32_t offset = symtab->sh_offset;
+
+
+	// Get symtab entrys
+	Elf32_Sym *symbol_tables = malloc(sizeof(Elf32_Sym) * entry_num);
+	result = fseek(elf_file, offset, SEEK_SET);
+	assert(result == 0);
+	result = fread(symbol_tables, sizeof(Elf32_Sym), entry_num, elf_file);
+	assert(result != 0);
+
+	// Initialize sym_entrys
+	sym_entrys = malloc(sizeof(SymbolEntry) * entry_num);
+	char *str = get_strtab(&shdrs[ehdr.e_shnum - 2], elf_file);
+	assert(str != NULL);
+	for (int i = 0; i < entry_num; i++) {
+		strcpy(sym_entrys[i].name, str + symbol_tables[i].st_name);
+		sym_entrys[i].info = symbol_tables[i].st_info;
+		sym_entrys[i].address = (paddr_t) symbol_tables[i].st_value;
+		sym_entrys[i].size = (word_t) symbol_tables[i].st_size;
+	}
+
+	// Free ELF headers, Symbol Entrys structure arrays and str
+	free(shdrs);
+	free(symbol_tables);
+	free(str);
+}
+
+
+void print_sym_entrys() {
+	assert(sym_entrys != NULL);
+	for (int i = 0; i < sym_num; i++) {
+		printf("Num:%2d, Name: %20s, Info: %d, Addr:%08x, size: %04x\n",
+		i, sym_entrys[i].name, sym_entrys[i].info, sym_entrys[i].address, sym_entrys[i].size);
+	}
+}
+
+
+
+void trace_func_call(paddr_t pc, paddr_t target) {
+	if (trace_func_call_flag == 0) return; //No elf file
+	++call_depth;
+
+	if (call_depth <= 2) return; // ignore _trm_init & main
+	
+	char *name  = get_function_name_by_addres(target);
+	// Example output: 0x800001f8:     call [f0@0x80000010]
+
+	Log(FMT_PADDR ": %*scall [%s@" FMT_PADDR "]\n", 
+		pc,
+		(call_depth-3)*2, "", 
+		name?name:"???",
+		target
+	);
+}
+
+void trace_func_ret(paddr_t pc) {
+	if (trace_func_call_flag == 0) return; //No elf file
+
+	if (call_depth <= 2) return; // ignore _trm_init & main
+
+	char *name = get_function_name_by_addres(pc);
+	Log(FMT_PADDR ": %*sret [%s]\n",
+		pc,
+		(call_depth-3)*2, "",
+		name?name:"???"
+	);
+
+	--call_depth;
+}
+
+
+char *get_strtab(Elf32_Shdr *strtab, FILE *file) {
+	char *str = malloc(strtab->sh_size);
+
+	int result = fseek(file, strtab->sh_offset, SEEK_SET);
+	assert(result == 0);
+  result = fread(str, 1, strtab->sh_size, file);
+	assert(result != 0);
+
+	return str;
+}
+
 /*
 
 void call_trace(s->pc, s->dnpc){
