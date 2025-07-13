@@ -105,7 +105,7 @@ static int decode_exec(Decode *s) {
    IFDEF(CONFIG_FTRACE,{
     if (s->isa.inst.val == 0x00008067)
         ret_trace(s->pc);
-    else if (rd == 1)//跳转到某个寄存器的位置时，因为rd默认为1
+    else if (rd == 1)
         call_trace(s->pc, s->dnpc);
    })
    );
