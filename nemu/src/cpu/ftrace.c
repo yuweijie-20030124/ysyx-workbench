@@ -4,7 +4,8 @@
 #include <elf.h>
 #include <assert.h>
 
-uint32_t elf_value[6];
+
+uint32_t *elf_value;
 char *elf_name;
 
 void parse_elf(const char *elf_file) {
