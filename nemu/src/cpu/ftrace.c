@@ -56,7 +56,7 @@ void init_symtab_entrys(FILE *elf_file) {
         printf("Not a ELF file\n");
         exit(0);
     }
-    else printf("is a ELF file\n");
+    else printf("is a ELF file***\n");
 
 	// Get Section header by ELF header
 	Elf32_Shdr *shdrs = malloc(sizeof(Elf32_Shdr) * ehdr.e_shnum);
