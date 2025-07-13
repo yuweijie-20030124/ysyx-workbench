@@ -33,7 +33,7 @@ void parse_elf(const char *elf_file) {
 		return;
 	}
 	
-	Log("The elf file is %s\n", elf_file);
+	Log("******The elf file is %s*******\n", elf_file);
 	trace_func_call_flag = 1;
 	FILE *file = fopen(elf_file, "rb");
 	assert(file != NULL);
