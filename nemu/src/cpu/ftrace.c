@@ -121,7 +121,7 @@ void call_trace(paddr_t pc, paddr_t target) {
 	if (trace_func_call_flag == 0) return; //No elf file
 	++call_depth;
 
-	if (call_depth <= 2) return; // ignore _trm_init & main
+	//if (call_depth <= 2) return; // ignore _trm_init & main
 	
 	char *name  = get_function_name_by_addres(target);
 	// Example output: 0x800001f8:     call [f0@0x80000010]
@@ -132,7 +132,7 @@ void call_trace(paddr_t pc, paddr_t target) {
 void ret_trace(paddr_t pc) {
 	if (trace_func_call_flag == 0) return; //No elf file
 
-	if (call_depth <= 2) return; // ignore _trm_init & main
+	//if (call_depth <= 2) return; // ignore _trm_init & main
 
 	char *name = get_function_name_by_addres(pc);
 	Log(FMT_PADDR ": %*sret [%s]\n",pc,(call_depth-3)*2, "",name?name:"???");
@@ -151,15 +151,3 @@ char *get_strtab(Elf32_Shdr *strtab, FILE *file) {
 
 	return str;
 }
-
-/*
-
-void call_trace(s->pc, s->dnpc){
-
-}
-
-void ret_trace(s->pc){
-
-}
-
-*/
