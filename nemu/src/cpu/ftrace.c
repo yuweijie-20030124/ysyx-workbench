@@ -5,7 +5,7 @@
 #include <common.h>
 
 typedef struct SymbolEntry {
-	char name[64];	// Locate at strtab
+	char name[128];	// Locate at strtab
 	unsigned char info;
 	paddr_t address;
 	word_t size;
