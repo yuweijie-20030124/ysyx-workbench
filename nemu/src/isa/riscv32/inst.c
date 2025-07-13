@@ -17,7 +17,7 @@
 #include <cpu/cpu.h>
 #include <cpu/ifetch.h>
 #include <cpu/decode.h>
-
+#include </home/yuweijie/ysyx-workbench/nemu/include/cpu/ftrace.h>
 #define R(i) gpr(i)
 #define Mr vaddr_read
 #define Mw vaddr_write
@@ -103,10 +103,10 @@ static int decode_exec(Decode *s) {
   INSTPAT("??????? ????? ????? 000 ????? 11001 11", jalr   , I, R(rd) = s->pc + 4;
    s->dnpc = (src1 + imm) & (~1);
    IFDEF(CONFIG_FTRACE,{
-    if (s->isa.inst.val == 0x00008067)
+    if (s->isa.inst == 0x00008067)
         ret_trace(s->pc);
-    else if (dest == 1) {call_trace(s->pc, s->dnpc);} 
-    else if (dest == 0 && imm == 0) {ret_trace(s->pc, s->dnpc);}
+    else if (rd == 1) {call_trace(s->pc, s->dnpc);} 
+    else if (rd == 0 && imm == 0) {call_trace(s->pc, s->dnpc);}
    })
    );
 
