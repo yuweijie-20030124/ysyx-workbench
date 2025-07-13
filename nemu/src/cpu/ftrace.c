@@ -20,9 +20,6 @@ void init_symtab_entrys(FILE *file);
 char *get_strtab(Elf32_Shdr *strtab, FILE *file);
 char *get_function_name_by_addres(paddr_t addr);
 
-
-
-
 void parse_elf(const char *elf_file) {
 	if (elf_file == NULL) {
 		return;
@@ -32,7 +29,6 @@ void parse_elf(const char *elf_file) {
 	FILE *file = fopen(elf_file, "rb");
 	assert(file != NULL);
 	init_symtab_entrys(file);
-	//print_sym_entrys();
 }
 
 char *get_function_name_by_addres(paddr_t addr) {
@@ -52,6 +48,16 @@ void init_symtab_entrys(FILE *elf_file) {
 	Elf32_Ehdr ehdr;
 	int result = fread(&ehdr, sizeof(Elf32_Ehdr), 1, elf_file);
 	assert(&ehdr != NULL && result == 1);
+
+    // 检查 ELF 魔数
+    if (ehdr.e_ident[0] != 0x7F ||
+        ehdr.e_ident[1] != 'E' ||
+        ehdr.e_ident[2] != 'L' ||
+        ehdr.e_ident[3] != 'F') {
+        printf("Not a ELF file\n");
+        exit(0);
+    }
+    else printf("is a ELF file\n");
 
 	// Get Section header by ELF header
 	Elf32_Shdr *shdrs = malloc(sizeof(Elf32_Shdr) * ehdr.e_shnum);
