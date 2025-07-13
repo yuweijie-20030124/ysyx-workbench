@@ -39,7 +39,7 @@ void parse_elf(const char *elf_file) {
 	assert(file != NULL);
 
 	init_symtab_entrys(file);
-	print_sym_entrys();
+	//print_sym_entrys();
 }
 
 char *get_function_name_by_addres(paddr_t addr) {
@@ -118,6 +118,7 @@ void print_sym_entrys() {
 
 
 void call_trace(paddr_t pc, paddr_t target) {
+    printf("fuck you\n");
 	if (trace_func_call_flag == 0) return; //No elf file
 	++call_depth;
 
