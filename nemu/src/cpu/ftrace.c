@@ -26,13 +26,11 @@ char *get_function_name_by_addres(paddr_t addr);
 void parse_elf(const char *elf_file) {
 	if (elf_file == NULL) {
 		return;
-	}
-	
+	}	
 	Log("******The elf file is %s*******\n", elf_file);
 	trace_func_call_flag = 1;
 	FILE *file = fopen(elf_file, "rb");
 	assert(file != NULL);
-
 	init_symtab_entrys(file);
 	//print_sym_entrys();
 }
@@ -104,34 +102,24 @@ void init_symtab_entrys(FILE *elf_file) {
 void call_trace(paddr_t pc, paddr_t target) {
 	if (trace_func_call_flag == 0) return; //No elf file
 	++call_depth;
-
-	//if (call_depth <= 2) return; // ignore _trm_init & main
-	
 	char *name  = get_function_name_by_addres(target);
 	// Example output: 0x800001f8:     call [f0@0x80000010]
-
 	Log(FMT_PADDR ":%*scall [%s@" FMT_PADDR "]\n", pc, call_depth , "", name?name:"???",target);
 }
 
 void ret_trace(paddr_t pc) {
 	if (trace_func_call_flag == 0) return; //No elf file
-
-	//if (call_depth <= 2) return; // ignore _trm_init & main
-
 	char *name = get_function_name_by_addres(pc);
 	Log(FMT_PADDR ":%*sret [%s]\n",pc, call_depth , "",name?name:"???");
-
 	--call_depth;
 }
 
 
 char *get_strtab(Elf32_Shdr *strtab, FILE *file) {
 	char *str = malloc(strtab->sh_size);
-
 	int result = fseek(file, strtab->sh_offset, SEEK_SET);
 	assert(result == 0);
   result = fread(str, 1, strtab->sh_size, file);
 	assert(result != 0);
-
 	return str;
 }
