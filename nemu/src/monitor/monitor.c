@@ -53,7 +53,7 @@ static long load_img() {
     Log("No image is given. Use the default build-in image.");
     return 4096; // built-in image size
   }
-  printf ("%s\n",img_file);
+  printf ("%s!!!!!!!!!!\n",img_file);
   FILE *fp = fopen(img_file, "rb");//二进制读入imgfile
   Assert(fp, "Can not open '%s'", img_file);
 
