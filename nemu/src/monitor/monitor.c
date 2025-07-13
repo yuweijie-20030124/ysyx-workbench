@@ -117,6 +117,9 @@ void init_monitor(int argc, char *argv[]) {
   /* Parse arguments.通过getopt_long传进来的参数决定后面的行为 */
   parse_args(argc, argv);
 
+  /* parse elf file*/
+  parse_elf(elf_file);
+
   /* Set random seed. */
   init_rand();
 
