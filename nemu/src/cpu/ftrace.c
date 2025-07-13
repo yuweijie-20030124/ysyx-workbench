@@ -4,7 +4,7 @@
 #include <elf.h>
 #include <assert.h>
 
-int *elf_value;
+uint32_t elf_value;
 char *elf_name;
 
 void parse_elf(const char *elf_file) {
@@ -89,7 +89,9 @@ void parse_elf(const char *elf_file) {
         if (type == STT_FUNC) {
             const char *name = strtab + sym->st_name;
             //elf_value[i] = sym->st_value;
-            elf_name[i] = *name;
+            //elf_name[i] = *name;
+            elf_value = sym->st_value;
+            //strcpy(elf_name,name);
             printf("0x%x:   %s\n", sym->st_value, name);
         }
     }
