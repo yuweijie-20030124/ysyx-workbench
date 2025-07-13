@@ -109,13 +109,13 @@ void call_trace(paddr_t pc, paddr_t target) {
 	++call_depth;
 	char *name  = get_function_name_by_addres(target);
 	// Example output: 0x800001f8:     call [f0@0x80000010]
-	Log(FMT_PADDR ":%*scall [%s@" FMT_PADDR "]\n", pc, call_depth , "", name?name:"???",target);
+	Log(FMT_PADDR ":%*scall [%s@" FMT_PADDR "]\n", pc, call_depth , "", name,target);
 }
 
 void ret_trace(paddr_t pc) {
 	if (trace_func_call_flag == 0) return; //No elf file
 	char *name = get_function_name_by_addres(pc);
-	Log(FMT_PADDR ":%*sret [%s]\n",pc, call_depth , "",name?name:"???");
+	Log(FMT_PADDR ":%*sret [%s]\n",pc, call_depth , "",name);
 	--call_depth;
 }
 
