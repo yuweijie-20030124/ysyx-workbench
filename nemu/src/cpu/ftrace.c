@@ -88,7 +88,7 @@ void parse_elf(const char *elf_file) {
             printf("0x%x:   %s\n", sym->st_value, name);
         }
     }
-    if(b+c+d != 0){printf("none sence");}
+    if(b+c+d == 0){printf("none sence");}
     // 释放资源
     free(shdr);
     free(shstrtab);
