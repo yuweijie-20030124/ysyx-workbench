@@ -106,17 +106,6 @@ void init_symtab_entrys(FILE *elf_file) {
 	free(str);
 }
 
-
-void print_sym_entrys() {
-	assert(sym_entrys != NULL);
-	for (int i = 0; i < sym_num; i++) {
-		printf("Num:%2d, Name: %20s, Info: %d, Addr:%08x, size: %04x\n",
-		i, sym_entrys[i].name, sym_entrys[i].info, sym_entrys[i].address, sym_entrys[i].size);
-	}
-}
-
-
-
 void call_trace(paddr_t pc, paddr_t target) {
 	if (trace_func_call_flag == 0) return; //No elf file
 	++call_depth;
