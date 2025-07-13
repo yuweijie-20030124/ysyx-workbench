@@ -92,8 +92,8 @@ static int parse_args(int argc, char *argv[]) {
     switch (o) {
       case 'b': sdb_set_batch_mode(); break;
       case 'p': sscanf(optarg, "%d", &difftest_port); break;
-      case 'l': log_file = optarg; printf("***%s***\n",log_file); break;
-      case 'f': elf_file = optarg; printf("***%s***\n",elf_file); break;
+      case 'l': log_file = optarg; break;
+      case 'f': elf_file = optarg; break;
       case 'd': diff_so_file = optarg; break;
       case 1: img_file = optarg; return 0;
       default:
@@ -115,7 +115,7 @@ void init_monitor(int argc, char *argv[]) {
 
   /* Parse arguments.通过getopt_long传进来的参数决定后面的行为 */
   parse_args(argc, argv);
-
+  printf("%s*********\n",elf_file);
   /* Set random seed. */
   init_rand();
 
