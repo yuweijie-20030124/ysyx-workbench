@@ -126,7 +126,7 @@ void call_trace(paddr_t pc, paddr_t target) {
 	char *name  = get_function_name_by_addres(target);
 	// Example output: 0x800001f8:     call [f0@0x80000010]
 
-	Log(FMT_PADDR ": %*scall [%s@" FMT_PADDR "]\n", pc,(call_depth-3)*2, "", name?name:"???",target);
+	Log(FMT_PADDR ": %*scall [%s@" FMT_PADDR "]\n", pc, call_depth , "", name?name:"???",target);
 }
 
 void ret_trace(paddr_t pc) {
