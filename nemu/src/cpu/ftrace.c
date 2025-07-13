@@ -23,7 +23,7 @@ void parse_elf(const char *elf_file) {
 	if (elf_file == NULL) {
 		return;
 	}	
-	Log("******The elf file is %s*******\n", elf_file);
+	Log("The elf file is %s\n", elf_file);
 	trace_func_call_flag = 1;
 	FILE *file = fopen(elf_file, "rb");
 	assert(file != NULL);
@@ -33,7 +33,8 @@ void parse_elf(const char *elf_file) {
 char *get_function_name_by_addres(paddr_t addr) {
 	for (int i = 0; i < sym_num; i++) {
 		if (ELF32_ST_TYPE(sym_entrys[i].info) == STT_FUNC) {
-			if (addr >= sym_entrys[i].address && addr < (sym_entrys[i].size + sym_entrys[i].address)) {
+			if (addr >= sym_entrys[i].address && addr < 
+                (sym_entrys[i].size + sym_entrys[i].address)) {
 				return sym_entrys[i].name;
 			}
 		}
@@ -48,7 +49,7 @@ void init_symtab_entrys(FILE *elf_file) {
 	int result = fread(&ehdr, sizeof(Elf32_Ehdr), 1, elf_file);
 	assert(&ehdr != NULL && result == 1);
 
-    // 检查 ELF 魔数
+    // 检查 ELF 魔数 16进制打开所有的elf文件前四个必须是这四个
     if (ehdr.e_ident[0] != 0x7F ||
         ehdr.e_ident[1] != 'E' ||
         ehdr.e_ident[2] != 'L' ||
@@ -56,10 +57,9 @@ void init_symtab_entrys(FILE *elf_file) {
         printf("Not a ELF file\n");
         exit(0);
     }
-    else printf("is a ELF file***\n");
 
 	// Get Section header by ELF header
-	Elf32_Shdr *shdrs = malloc(sizeof(Elf32_Shdr) * ehdr.e_shnum);
+	Elf32_Shdr *shdrs = malloc(sizeof(Elf32_Shdr) * ehdr.e_shnum);//把段表空间申请进来
 	result = fseek(elf_file, ehdr.e_shoff, SEEK_SET);
 	assert(result == 0);
 	result = fread(shdrs, sizeof(Elf32_Shdr), ehdr.e_shnum, elf_file);
