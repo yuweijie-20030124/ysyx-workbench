@@ -18,7 +18,6 @@ static uint32_t trace_func_call_flag = 0;	// Flag to determine whether to trace 
 
 void init_symtab_entrys(FILE *file);
 char *get_strtab(Elf32_Shdr *strtab, FILE *file);
-char *get_function_name_by_addres(paddr_t addr);
 
 void parse_elf(const char *elf_file) {
 	if (elf_file == NULL) {
