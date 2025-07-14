@@ -82,7 +82,7 @@ void init_symtab_entrys(FILE *elf_file) {
 		sym_entrys[i].info = symbol_tables[i].st_info;
 		sym_entrys[i].address = (paddr_t) symbol_tables[i].st_value;
 		sym_entrys[i].size = (word_t) symbol_tables[i].st_size;
-        printf("%d",symbol_tables[i].st_info);
+        printf("%s",str + symbol_tables[i].st_name);
 	}
         
 	// Free ELF headers, Symbol Entrys structure arrays and str
