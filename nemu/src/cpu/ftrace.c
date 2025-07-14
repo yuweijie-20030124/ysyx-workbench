@@ -63,14 +63,15 @@ void init_symtab_entrys(FILE *elf_file) {
     assert(shdrs != 0);
 	result = fseek(elf_file, ehdr.e_shoff, SEEK_SET); //根据文件的开头和偏移跳转到段表
 	assert(result == 0);
-	result = fread(shdrs, sizeof(Elf32_Shdr), ehdr.e_shnum, elf_file);
+	result = fread(shdrs, sizeof(Elf32_Shdr), ehdr.e_shnum, elf_file);//从文件中读取shnum个节头，每个节点的大小是sizeof elfshdr
 	assert(result != 0);
 
-	// Get Symtab from Section headr entrys
+    //遍历节头表，查找符号表
 	Elf32_Shdr *symtab = NULL;
 	for (int i = 0; i < ehdr.e_shnum; i++) {
 		if (shdrs[i].sh_type == SHT_SYMTAB) {
 			symtab = shdrs + i;
+            break;
  	  }
   }
 	assert(symtab != NULL);
