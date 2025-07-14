@@ -75,13 +75,16 @@ void init_symtab_entrys(FILE *elf_file) {
     str_result = fread(str, 1, strtab -> sh_size, elf_file);
     assert(str_result != 0);
 	assert(str != NULL);
+    //把strtab中的str解析出来。
+
 	for (int i = 0; i < entry_num; i++) {
 		strcpy(sym_entrys[i].name, str + symbol_tables[i].st_name);
 		sym_entrys[i].info = symbol_tables[i].st_info;
 		sym_entrys[i].address = (paddr_t) symbol_tables[i].st_value;
 		sym_entrys[i].size = (word_t) symbol_tables[i].st_size;
+        printf("%d",symbol_tables[i].st_info);
 	}
-
+        
 	// Free ELF headers, Symbol Entrys structure arrays and str
 	free(shdrs);
 	free(symbol_tables);
