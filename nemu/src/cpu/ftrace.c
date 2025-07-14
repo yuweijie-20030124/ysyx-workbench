@@ -66,32 +66,42 @@ void init_symtab_entrys(FILE *elf_file) {
 	result = fread(shdrs, sizeof(Elf32_Shdr), ehdr.e_shnum, elf_file);//从文件中读取shnum个节头，每个节点的大小是sizeof elfshdr
 	assert(result != 0);
 
-    //遍历节头表，查找符号表
+    //遍历节头表，查找符号表，用偏移赋值给他
 	Elf32_Shdr *symtab = NULL;
+    Elf32_Shdr *strtab = NULL;
 	for (int i = 0; i < ehdr.e_shnum; i++) {
 		if (shdrs[i].sh_type == SHT_SYMTAB) {
-			symtab = shdrs + i;
-            break;
- 	  }
+			symtab = shdrs + i;  
+ 	    }
+        if (shdrs[i].sh_type == SHT_STRTAB) {
+			strtab = shdrs + i;  
+ 	    }
   }
 	assert(symtab != NULL);
 
-	// Get entry num and offset
+	//计算符号表中条目数量 shsize是符号表的大小   shentsize是每个符号条目的大小
+    //两者相除得到符号表中包含的符号总数量，赋值给全局变量symnum
+    //获得符号表在ELF文件中的偏移量
 	uint32_t entry_num = symtab->sh_size / symtab->sh_entsize;
-	sym_num = entry_num;	// Set global entry num
-	uint32_t offset = symtab->sh_offset;
+	sym_num = entry_num;	
+	uint32_t offset = symtab->sh_offset; //符号数据在文件的起始位置的偏移量多少，用于后面进来读取具体内容。
 
 
-	// Get symtab entrys
+	//把符号表的内容读取到symbol tables中，从 ELF 文件中读取 entry_num 个符号，存入 symbol_tables 数组中。
 	Elf32_Sym *symbol_tables = malloc(sizeof(Elf32_Sym) * entry_num);
 	result = fseek(elf_file, offset, SEEK_SET);
 	assert(result == 0);
 	result = fread(symbol_tables, sizeof(Elf32_Sym), entry_num, elf_file);
 	assert(result != 0);
 
-	// Initialize sym_entrys
+	// 初始化自定义符号表
 	sym_entrys = malloc(sizeof(SymbolEntry) * entry_num);
-	char *str = get_strtab(&shdrs[ehdr.e_shnum - 2], elf_file);
+    char *str = malloc(strtab -> sh_size);
+    int str_result = fseek(elf_file, strtab -> sh_offset, SEEK_SET);
+    assert(str_result == 0);
+    str_result = fread(str, 1, strtab -> sh_size, elf_file);
+    assert(str_result != 0);
+	//char *str = get_strtab(&shdrs[ehdr.e_shnum - 2], elf_file);
 	assert(str != NULL);
 	for (int i = 0; i < entry_num; i++) {
 		strcpy(sym_entrys[i].name, str + symbol_tables[i].st_name);
@@ -107,10 +117,9 @@ void init_symtab_entrys(FILE *elf_file) {
 }
 
 void call_trace(paddr_t pc, paddr_t target) {
-	if (trace_func_call_flag == 0) return; //No elf file
+	if (trace_func_call_flag == 0) return;
 	++call_depth;
 	char *name  = get_function_name_by_addres(target);
-	// Example output: 0x800001f8:     call [f0@0x80000010]
 	Log(FMT_PADDR ":%*scall [%s@" FMT_PADDR "]\n", pc, call_depth , "", name, target);
 }
 
@@ -121,7 +130,7 @@ void ret_trace(paddr_t pc) {
 	--call_depth;
 }
 
-
+//从ELF文件中读取字符串表的内容
 char *get_strtab(Elf32_Shdr *strtab, FILE *file) {
 	char *str = malloc(strtab->sh_size);
 	int result = fseek(file, strtab->sh_offset, SEEK_SET);
