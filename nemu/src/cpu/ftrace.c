@@ -16,33 +16,6 @@ static uint32_t sym_num = 0;
 static uint32_t call_depth = 0;
 static uint32_t trace_func_call_flag = 0;
 
-void init_symtab_entrys(FILE *file);
-char *get_strtab(Elf32_Shdr *strtab, FILE *file);
-
-void parse_elf(const char *elf_file) {
-	if (elf_file == NULL) {
-		return;
-	}	
-	Log("The elf file is %s\n", elf_file);
-	trace_func_call_flag = 1;
-	FILE *file = fopen(elf_file, "rb");
-	assert(file != NULL);
-	init_symtab_entrys(file);
-}
-
-char *get_function_name_by_addres(paddr_t addr) {
-	for (int i = 0; i < sym_num; i++) {
-		if (ELF32_ST_TYPE(sym_entrys[i].info) == STT_FUNC) {
-			if (addr >= sym_entrys[i].address && addr < 
-                (sym_entrys[i].size + sym_entrys[i].address)) {
-                    //确保地址落在函数起始结束地址之间。
-				return sym_entrys[i].name;
-			}
-		}
-	}
-	return NULL;
-}
-
 void init_symtab_entrys(FILE *elf_file) {
 	if (elf_file == NULL) assert(0);
 	// Get ELF header
@@ -101,7 +74,6 @@ void init_symtab_entrys(FILE *elf_file) {
     assert(str_result == 0);
     str_result = fread(str, 1, strtab -> sh_size, elf_file);
     assert(str_result != 0);
-	//char *str = get_strtab(&shdrs[ehdr.e_shnum - 2], elf_file);
 	assert(str != NULL);
 	for (int i = 0; i < entry_num; i++) {
 		strcpy(sym_entrys[i].name, str + symbol_tables[i].st_name);
@@ -114,6 +86,30 @@ void init_symtab_entrys(FILE *elf_file) {
 	free(shdrs);
 	free(symbol_tables);
 	free(str);
+}
+
+void parse_elf(const char *elf_file) {
+	if (elf_file == NULL) {
+		return;
+	}	
+	Log("The elf file is %s\n", elf_file);
+	trace_func_call_flag = 1;
+	FILE *file = fopen(elf_file, "rb");
+	assert(file != NULL);
+	init_symtab_entrys(file);
+}
+
+char *get_function_name_by_addres(paddr_t addr) {
+	for (int i = 0; i < sym_num; i++) {
+		if (ELF32_ST_TYPE(sym_entrys[i].info) == STT_FUNC) {
+			if (addr >= sym_entrys[i].address && addr < 
+                (sym_entrys[i].size + sym_entrys[i].address)) {
+                    //确保地址落在函数起始结束地址之间。
+				return sym_entrys[i].name;
+			}
+		}
+	}
+	return NULL;
 }
 
 void call_trace(paddr_t pc, paddr_t target) {
@@ -130,12 +126,3 @@ void ret_trace(paddr_t pc) {
 	--call_depth;
 }
 
-//从ELF文件中读取字符串表的内容
-char *get_strtab(Elf32_Shdr *strtab, FILE *file) {
-	char *str = malloc(strtab->sh_size);
-	int result = fseek(file, strtab->sh_offset, SEEK_SET);
-	assert(result == 0);
-  result = fread(str, 1, strtab->sh_size, file);
-	assert(result != 0);
-	return str;
-}
