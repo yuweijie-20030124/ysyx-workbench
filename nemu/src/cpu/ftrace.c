@@ -5,16 +5,16 @@
 #include <common.h>
 
 typedef struct SymbolEntry {
-	char name[128];	// Locate at strtab
-	unsigned char info;
-	paddr_t address;
-	word_t size;
+	char name[128];	//函数名
+	unsigned char info;     //ELF符号类型信息
+	paddr_t address;       //函数起始地址
+	word_t size;        //函数大小
 } SymbolEntry;
 
 static SymbolEntry* sym_entrys = NULL;
 static uint32_t sym_num = 0;
 static uint32_t call_depth = 0;
-static uint32_t trace_func_call_flag = 0;	// Flag to determine whether to trace function calls
+static uint32_t trace_func_call_flag = 0;
 
 void init_symtab_entrys(FILE *file);
 char *get_strtab(Elf32_Shdr *strtab, FILE *file);
@@ -35,6 +35,7 @@ char *get_function_name_by_addres(paddr_t addr) {
 		if (ELF32_ST_TYPE(sym_entrys[i].info) == STT_FUNC) {
 			if (addr >= sym_entrys[i].address && addr < 
                 (sym_entrys[i].size + sym_entrys[i].address)) {
+                    //确保地址落在函数起始结束地址之间。
 				return sym_entrys[i].name;
 			}
 		}
@@ -58,9 +59,8 @@ void init_symtab_entrys(FILE *elf_file) {
         exit(0);
     }
 
-	// Get Section header by ELF header
 	Elf32_Shdr *shdrs = malloc(sizeof(Elf32_Shdr) * ehdr.e_shnum);//把段表空间申请进来
-	result = fseek(elf_file, ehdr.e_shoff, SEEK_SET);
+	result = fseek(elf_file, ehdr.e_shoff, SEEK_SET); //根据文件的开头和偏移跳转到段表
 	assert(result == 0);
 	result = fread(shdrs, sizeof(Elf32_Shdr), ehdr.e_shnum, elf_file);
 	assert(result != 0);
@@ -109,13 +109,13 @@ void call_trace(paddr_t pc, paddr_t target) {
 	++call_depth;
 	char *name  = get_function_name_by_addres(target);
 	// Example output: 0x800001f8:     call [f0@0x80000010]
-	Log(FMT_PADDR ":%*scall [%s@" FMT_PADDR "]\n", pc, call_depth , "", name,target);
+	Log(FMT_PADDR ":%*scall [%s@" FMT_PADDR "]\n", pc, call_depth , "", name, target);
 }
 
 void ret_trace(paddr_t pc) {
 	if (trace_func_call_flag == 0) return; //No elf file
 	char *name = get_function_name_by_addres(pc);
-	Log(FMT_PADDR ":%*sret [%s]\n",pc, call_depth , "",name);
+	Log(FMT_PADDR ":%*sret [%s]\n",pc, call_depth , "", name);
 	--call_depth;
 }
 
