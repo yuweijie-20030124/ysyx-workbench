@@ -59,7 +59,8 @@ void init_symtab_entrys(FILE *elf_file) {
         exit(0);
     }
 
-	Elf32_Shdr *shdrs = malloc(sizeof(Elf32_Shdr) * ehdr.e_shnum);//把段表空间申请进来
+	Elf32_Shdr *shdrs = malloc(sizeof(Elf32_Shdr) * ehdr.e_shnum);//申请节头表的内存空间
+    assert(shdrs != 0);
 	result = fseek(elf_file, ehdr.e_shoff, SEEK_SET); //根据文件的开头和偏移跳转到段表
 	assert(result == 0);
 	result = fread(shdrs, sizeof(Elf32_Shdr), ehdr.e_shnum, elf_file);
