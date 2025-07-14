@@ -29,14 +29,15 @@ void isa_reg_display() {
   }
 }
 
+//讲寄存器名字符转换为对应的寄存器值
 word_t isa_reg_str2val(const char *s, bool *success) {
   int idx=0;
   char str[10];
   strcpy(str,s+1); //去除最左边的$
-  if(strcmp(str,"pc")==0) return cpu.pc; //实现断点
+  if(strcmp(str,"pc")==0) return cpu.pc; //如果是pc那就返回cpu.pc的值
   for(int i=0;i<MUXDEF(CONFIG_RVE, 16, 32);i++){
     if(strcmp(regs[i],str)==0){
-      idx=i;
+      idx=i; //返回索引值
       break;
     }
     if(i==31) *success=false;

@@ -17,7 +17,7 @@
 #include <cpu/cpu.h>
 #include <cpu/ifetch.h>
 #include <cpu/decode.h>
-
+#include </home/yuweijie/ysyx-workbench/nemu/include/cpu/ftrace.h>
 #define R(i) gpr(i)
 #define Mr vaddr_read
 #define Mw vaddr_write
@@ -26,6 +26,7 @@ enum {
   TYPE_I, TYPE_U, TYPE_S, TYPE_J, TYPE_B, TYPE_R, 
   TYPE_N, // none 
 };
+
 //看riscv指令对不同类型i u s j b 会进行处理
 #define src1R() do { *src1 = R(rs1); } while (0)
 #define src2R() do { *src2 = R(rs2); } while (0)
@@ -94,9 +95,21 @@ static int decode_exec(Decode *s) {
   INSTPAT("??????? ????? ????? 011 ????? 01000 11", sd     , S, Mw(src1 + imm, 8, src2)); 
 
   INSTPAT("??????? ????? ????? ??? ????? 11011 11", jal    , J, R(rd) = s->pc + 4;
-   s->dnpc = s->pc + imm;);
+   s->dnpc = s->pc + imm;
+   IFDEF(CONFIG_FTRACE, {
+    if (rd == 1) {
+        call_trace(s->pc, s->dnpc);
+    }})
+   );
   INSTPAT("??????? ????? ????? 000 ????? 11001 11", jalr   , I, R(rd) = s->pc + 4;
-  s->dnpc = (src1 + imm) & (~1););
+   s->dnpc = (src1 + imm) & (~1);
+   IFDEF(CONFIG_FTRACE,{
+    if (s->isa.inst == 0x00008067)
+        ret_trace(s->pc);
+    else if (rd == 1) {call_trace(s->pc, s->dnpc);} 
+    else if (rd == 0 && imm == 0) {call_trace(s->pc, s->dnpc);}
+   })
+   );
 
   INSTPAT("0000000 ????? ????? 101 ????? 00100 11", srli   , R, R(rd) = (int32_t)src1 >> BITS(imm, 5, 0));
   INSTPAT("0000000 ????? ????? 101 ????? 01100 11", srl    , R, R(rd) = src1 >> BITS(src2, 4, 0));

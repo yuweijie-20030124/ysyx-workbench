@@ -18,13 +18,13 @@
 #include "../local-include/reg.h"
 
 bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
-  int reg_num = ARRLEN(cpu.gpr);
+  int reg_num = (int)(sizeof(cpu.gpr) / sizeof(cpu.gpr[0]));
   for (int i = 0; i < reg_num; i++) {
-    if (ref_r->gpr[i] != cpu.gpr[i]) {
+    if (cpu.gpr[i] != ref_r->gpr[i]) {
       return false;
     }
   }
-  if (ref_r->pc != cpu.pc) {
+  if (cpu.pc != ref_r->pc) {
     return false;
   }
   return true;

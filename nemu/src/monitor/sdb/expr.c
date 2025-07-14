@@ -67,7 +67,7 @@
     int ret;
 
     for (i = 0; i < NR_REGEX; i ++) {
-      //int regcomp (regex_t *compiled, const char *pattern, int cflags)
+      //编译正则表达式
       ret = regcomp(&re[i], rules[i].regex, REG_EXTENDED);
       if (ret != 0) {
         //当执行regcomp 或者regexec 产生错误的时候，就可以调用这个函数而返回一个包含错误信息的字符串。

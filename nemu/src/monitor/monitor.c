@@ -15,6 +15,7 @@
 
 #include <isa.h>
 #include <memory/paddr.h>
+#include </home/yuweijie/ysyx-workbench/nemu/include/cpu/ftrace.h>
 
 void init_rand();
 void init_log(const char *log_file);
@@ -53,7 +54,7 @@ static long load_img() {
     Log("No image is given. Use the default build-in image.");
     return 4096; // built-in image size
   }
-
+  //printf ("%s!!!!!!!!!!\n",img_file);
   FILE *fp = fopen(img_file, "rb");//二进制读入imgfile
   Assert(fp, "Can not open '%s'", img_file);
 
@@ -115,6 +116,13 @@ void init_monitor(int argc, char *argv[]) {
 
   /* Parse arguments.通过getopt_long传进来的参数决定后面的行为 */
   parse_args(argc, argv);
+
+  /* parse elf file*/
+  //printf("%s!!",elf_file);
+  #ifdef CONFIG_FTRACE
+		parse_elf(elf_file);
+  #endif
+  parse_elf(elf_file);
 
   /* Set random seed. */
   init_rand();
