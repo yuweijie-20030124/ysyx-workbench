@@ -27,14 +27,14 @@ enum {
   TYPE_N, // none 
 };
 
-//看riscv指令对不同类型i u s j b 会进行处理
+
 #define src1R() do { *src1 = R(rs1); } while (0)
 #define src2R() do { *src2 = R(rs2); } while (0)
 #define immI() do { *imm = SEXT(BITS(i, 31, 20), 12); } while(0)
 #define immU() do { *imm = SEXT(BITS(i, 31, 12), 20) << 12; } while(0)
 #define immS() do { *imm = (SEXT(BITS(i, 31, 25), 7) << 5) | BITS(i, 11, 7); } while(0)
 #define immJ() do { *imm = SEXT(((BITS(i, 31, 31) << 19) | BITS(i, 30, 21) | (BITS(i, 20, 20) << 10) | (BITS(i, 19, 12) << 11)) << 1, 21);} while(0)
-#define immB() do { *imm = SEXT(BITS(i, 31, 31), 1) << 11 | ((SEXT(BITS(i, 7, 7), 1) << 63) >> 63) << 10 | ((SEXT(BITS(i, 30, 25), 6) << 58) >> 58) << 4 | ((SEXT(BITS(i, 11, 8), 4) << 60) >> 60); *imm = *imm << 1; } while (0)
+#define immB() do { *imm = SEXT(BITS(i, 31, 31), 1) << 11 | SEXT(BITS(i, 7, 7), 1) << 10 | SEXT(BITS(i, 30, 25), 6) << 4 | (SEXT(BITS(i, 11, 8), 4) & 0xF); *imm = *imm << 1; } while (0)
 
 static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_t *imm, int type) {
   uint32_t i = s->isa.inst;
@@ -163,9 +163,7 @@ static int decode_exec(Decode *s) {
   return 0;
 }
 
-//随着取指的过程修改s->snpc的值，使得从isa_exec_once函数返回时，s->snpc指向下一条指令
-//接下来代码将通过s->snpc来更新PC，这里的dnpc是"dynamic next PC"的意思
 int isa_exec_once(Decode *s) {
-  s->isa.inst = inst_fetch(&s->snpc, 4);//取指4
+  s->isa.inst = inst_fetch(&s->snpc, 4);
   return decode_exec(s);
 }

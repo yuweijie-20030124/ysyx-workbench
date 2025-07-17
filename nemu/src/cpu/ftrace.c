@@ -18,7 +18,7 @@ static uint32_t trace_func_call_flag = 0;
 
 void init_symtab_entrys(FILE *elf_file) {
 	if (elf_file == NULL) assert(0);
-	// Get ELF header
+
 	Elf32_Ehdr ehdr;
 	int result = fread(&ehdr, sizeof(Elf32_Ehdr), 1, elf_file);
 	assert(&ehdr != NULL && result == 1);
@@ -39,7 +39,7 @@ void init_symtab_entrys(FILE *elf_file) {
 	result = fread(shdrs, sizeof(Elf32_Shdr), ehdr.e_shnum, elf_file);//从文件中读取shnum个节头，每个节点的大小是sizeof elfshdr
 	assert(result != 0);
 
-    //遍历节头表，查找符号表，用偏移赋值给他
+    //遍历节头表，查找符号表和字符串表，用偏移赋值给他
 	Elf32_Shdr *symtab = NULL;
     Elf32_Shdr *strtab = NULL;
 	for (int i = 0; i < ehdr.e_shnum; i++) {
@@ -84,7 +84,6 @@ void init_symtab_entrys(FILE *elf_file) {
 		sym_entrys[i].size = (word_t) symbol_tables[i].st_size;
 	}
         
-	// Free ELF headers, Symbol Entrys structure arrays and str
 	free(shdrs);
 	free(symbol_tables);
 	free(str);
@@ -122,7 +121,7 @@ void call_trace(paddr_t pc, paddr_t target) {
 }
 
 void ret_trace(paddr_t pc) {
-	if (trace_func_call_flag == 0) return; //No elf file
+	if (trace_func_call_flag == 0) return;
 	char *name = get_function_name_by_addres(pc);
 	Log(FMT_PADDR ":%*sret [%s]\n",pc, call_depth , "", name);
 	--call_depth;
