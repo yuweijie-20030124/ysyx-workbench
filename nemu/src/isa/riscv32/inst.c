@@ -27,7 +27,6 @@ enum {
   TYPE_N, // none 
 };
 
-//看riscv指令对不同类型i u s j b 会进行处理
 #define src1R() do { *src1 = R(rs1); } while (0)
 #define src2R() do { *src2 = R(rs2); } while (0)
 #define immI() do { *imm = SEXT(BITS(i, 31, 20), 12); } while(0)
