@@ -3,6 +3,7 @@
 #include <../include/isa.h>
 #include "../include/common.h"
 #include "../include/monitor.h"
+#include "../include/utils.h"
 
 void init_rand();
 void init_log(const char *log_file);
