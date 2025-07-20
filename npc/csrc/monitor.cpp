@@ -4,6 +4,7 @@
 #include "../include/common.h"
 #include "../include/monitor.h"
 #include "../include/utils.h"
+#include "../include/debug.h"
 
 void init_rand();
 void init_log(const char *log_file);
@@ -51,7 +52,7 @@ static long load_img() {
   fseek(fp, 0, SEEK_SET);//将fp的指针移到文件最开头
   //size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream) 从给定流 stream 读取数据到 ptr 所指向的数组中。
   //如果fread读取成功就会返回nmemb，也就是“1”。
-  int ret = fread(guest_to_host(RESET_VECTOR), size, 1, fp);
+  int ret = fread(guest_to_host(CONFIG_MEM_BASE), size, 1, fp);
   //从文件指针 fp 指向的文件中读取二进制数据，并将其直接写入到客户机（Guest）物理内存的 RESET_VECTOR 地址处
   
   assert(ret == 1);

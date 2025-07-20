@@ -11,7 +11,7 @@ endif
 # Makefile for NPC simulation
 
 
-SRC_FILES = csrc/main.cpp csrc/monitor.cpp
+SRC_FILES = csrc/main.cpp csrc/monitor.cpp csrc/memory.cpp
 VERILOG_FILES = $(wildcard vsrc/*.v)
 VERILATOR = verilator
 
