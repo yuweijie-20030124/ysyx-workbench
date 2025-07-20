@@ -1,6 +1,5 @@
 include /home/yuweijie/required_software_ysyx/verilator/include/verilated.mk
 include ../Makefile
-include $(NPC_HOME)/scripts/config.mk
 
 ifeq ($(wildcard $(NPC_HOME)/csrc/main.cpp),) 
   $(error NPC_HOME=$(NPC_HOME) is not a NPC repo)
