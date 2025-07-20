@@ -17,7 +17,6 @@
 #define __UTILS_H__
 
 #include <common.h>
-#include <debug.h>
 
 // ----------- state -----------
 
@@ -25,7 +24,7 @@ enum { NEMU_RUNNING, NEMU_STOP, NEMU_END, NEMU_ABORT, NEMU_QUIT };
 
 typedef struct {
   int state;
-  uint32_t halt_pc;
+  paddr_t halt_pc;
   uint32_t halt_ret;
 } NEMUState;
 

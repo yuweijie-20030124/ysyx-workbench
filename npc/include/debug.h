@@ -17,8 +17,10 @@
 #define __DEBUG_H__
 
 #include <common.h>
-#include <stdio.h>
 #include <utils.h>
+#include <stdio.h>
+
+void _Log(const char *format, ...);
 
 #define Log(format, ...) \
     _Log(ANSI_FMT("[%s:%d %s] " format, ANSI_FG_BLUE) "\n", \

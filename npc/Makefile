@@ -19,7 +19,11 @@ NPC_IMG?= ##$(OBJ_PATH)matrix-mul-riscv64-npc.bin
 
 NPC_FLAGS?= -l $(OBJ_PATH)npc-log.txt -b
 
-VERILATOR_FLAGS = -Wall --cc --trace -CFLAGS  "-I /home/yuweijie/ysyx-workbench/npc/include -O2" --exe --build -Ivsrc --top-module ysyx_25060170_top
+VERILATOR_FLAGS = -Wall --cc --trace \
+					-CFLAGS  "-I /home/yuweijie/ysyx-workbench/npc/include -O2" \
+					 --exe --build \
+					 -Ivsrc \
+					 --top-module ysyx_25060170_top
 
 GTK = gtkwave
 
