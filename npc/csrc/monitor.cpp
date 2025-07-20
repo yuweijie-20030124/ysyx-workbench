@@ -17,7 +17,7 @@ static void welcome() {
         "to record the trace. This may lead to a large log file. "
         "If it is not necessary, you can disable it in menuconfig"));
   Log("Build time: %s, %s", __TIME__, __DATE__);
-  printf("Welcome to %s-NPC!\n", ANSI_FMT("riscv64", ANSI_FG_YELLOW ANSI_BG_RED));
+  printf("Welcome to %s-NPC!\n", ANSI_FMT("riscv32", ANSI_FG_YELLOW ANSI_BG_RED));
   printf("For help, type \"help\"\n");
   
 }
@@ -29,7 +29,7 @@ static char *img_file = NULL;
 static char *elf_file =NULL;
 static char *log_file = NULL;
 static int difftest_port = 1234;
-
+/*
 static long load_img() {
   if (img_file == NULL) {
     Log("No image is given. Use the default build-in image.");
@@ -55,7 +55,7 @@ static long load_img() {
   fclose(fp); //fopen之后一定要fclose
   return size;
 }
-
+*/
 //在这里开启是否批处理模式
 //批处理模式下，sdb_mainloop()不会被调用
 //而是直接执行cpu_exec(-1)来执行指令
@@ -72,7 +72,7 @@ static int parse_args(int argc, char *argv[]) {
   int o;
   while ( (o = getopt_long(argc, argv, "-bhl:d:p:f:e:", table, NULL)) != -1) {
     switch (o) {
-      case 'b': sdb_set_batch_mode(); break;
+      //case 'b': sdb_set_batch_mode(); break;
       case 'p': sscanf(optarg, "%d", &difftest_port); break;
       case 'l': log_file = optarg; break;
       case 'f': elf_file = optarg; break;

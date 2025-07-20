@@ -19,7 +19,7 @@ LLVM= -CFLAGS "-I/usr/lib/llvm-14/include -std=c++14   -fno-exceptions -D_GNU_SO
 # Makefile for NPC simulation
 
 ##SRC_FILES = $(wildcard csrc/*.cpp)
-SRC_FILES = csrc/main.cpp 
+SRC_FILES = csrc/main.cpp csrc/monitor.cpp
 VERILOG_FILES = $(wildcard vsrc/*.v)
 VERILATOR = verilator
 
