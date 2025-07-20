@@ -22,7 +22,7 @@ GTK = gtkwave
 clean:
 	rm -rf obj_dir waveform.vcd
 
-sim:
+sim: 
 	$(VERILATOR) $(VERILATOR_FLAGS) $(SRC_FILES) $(VERILOG_FILES)
 	$(call git commit, "sim RTL") # % DO NOT REMOVE THIS LINE!!!
 
