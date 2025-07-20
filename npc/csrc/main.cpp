@@ -92,6 +92,8 @@ int main(int argc, char** argv) {
 	tfp = new VerilatedVcdC;
 	rvcpu->trace(tfp,0);
 	tfp->open("obj_dir/rvcpu.vcd");
+    tfp->close();
+    delete tfp;
 #endif
 	*/
 	
@@ -103,9 +105,9 @@ int main(int argc, char** argv) {
 	//close_npc();
 	//is_exit_status_bad();
 
-    tfp->close();
+
     delete top;
-    delete tfp;
+
     delete contextp;
     return 0;
 }
