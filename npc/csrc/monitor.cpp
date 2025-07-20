@@ -113,10 +113,10 @@ void init_monitor(int argc, char *argv[]) {
  // parse_elf(elf_file);
 
   /* Set random seed. */
-  //init_rand();
+  init_rand();
 
   /* Open the log file. */
- // init_log(log_file);
+  //init_log(log_file);
 
   /* Initialize memory. */
   //init_mem();
