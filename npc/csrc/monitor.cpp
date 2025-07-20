@@ -11,6 +11,8 @@ void init_device();
 void init_sdb();
 void init_disasm(const char *triple);
 
+
+
 static void welcome() {
   Log("Trace: %s", MUXDEF(CONFIG_TRACE, ANSI_FMT("ON", ANSI_FG_GREEN), ANSI_FMT("OFF", ANSI_FG_RED)));
   IFDEF(CONFIG_TRACE, Log("If trace is enabled, a log file will be generated "
@@ -95,7 +97,7 @@ static int parse_args(int argc, char *argv[]) {
 void init_monitor(int argc, char *argv[]) {
 
   /* Parse arguments. */
-  //parse_args(argc, argv);
+  parse_args(argc, argv);
   
   /* Set random seed. */
   //init_rand();
