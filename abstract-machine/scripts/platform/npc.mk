@@ -16,6 +16,8 @@ LDFLAGS   += --gc-sections -e _start
 MAINARGS_MAX_LEN = 64
 MAINARGS_PLACEHOLDER = the_insert-arg_rule_in_Makefile_will_insert_mainargs_here
 CFLAGS += -DMAINARGS_MAX_LEN=$(MAINARGS_MAX_LEN) -DMAINARGS_PLACEHOLDER=$(MAINARGS_PLACEHOLDER)
+NPCFLAGS += -l $(shell dirname $(IMAGE).elf)/npc-log.txt -e $(IMAGE).elf -b
+NPCFLAGS += -f $(IMAGE).elf
 
 insert-arg: image
 	@python $(AM_HOME)/tools/insert-arg.py $(IMAGE).bin $(MAINARGS_MAX_LEN) $(MAINARGS_PLACEHOLDER) "$(mainargs)"
@@ -26,6 +28,9 @@ image: image-dep
 	@$(OBJCOPY) -S --set-section-flags .bss=alloc,contents -O binary $(IMAGE).elf $(IMAGE).bin
 
 run: insert-arg
-	echo "TODO: add command here to run simulation"
+	$(MAKE) -C $(NPC_HOME) run NPC_FLAGS="$(NPCFLAGS)" NPC_IMG=$(IMAGE).bin
+
+gdb: insert-arg
+	$(MAKE) -C $(NPC_HOME) ISA=$(ISA) gdb NPC_FLAGS="$(NPCFLAGS)" NPC_IMG=$(IMAGE).bin
 
 .PHONY: insert-arg
