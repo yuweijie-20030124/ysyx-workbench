@@ -5,6 +5,7 @@
 #include "../include/monitor.h"
 #include "../include/utils.h"
 #include "../include/debug.h"
+#include "../include/memory.h"
 
 void init_rand();
 void init_log(const char *log_file);

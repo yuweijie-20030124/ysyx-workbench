@@ -1,7 +1,8 @@
 #ifndef __ISA_H__
 #define __ISA_H__
 
-#include "common.h"
+#include <../include/common.h>
+
 typedef struct 
 {
   uint32_t gpr[32];
