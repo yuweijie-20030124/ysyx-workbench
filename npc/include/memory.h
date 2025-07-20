@@ -4,16 +4,17 @@
 #include <cstdint>
 #include "common.h"
 
-#define PMEM_LEFT  ((uint64_t)CONFIG_MEM_BASE)
-#define PMEM_RIGHT ((uint64_t)CONFIG_MEM_BASE + CONFIG_MSIZE - 1)
-uint64_t host_read(void *addr, int len);
+#define PMEM_LEFT  ((paddr_t)CONFIG_MEM_BASE)
+#define PMEM_RIGHT ((paddr_t)CONFIG_MEM_BASE + CONFIG_MSIZE - 1)
 
-void host_write(void *addr, int len, uint64_t data);
+paddr_t host_read(void *addr, int len);
 
-static inline bool in_pmem(uint64_t addr) {
+void host_write(void *addr, int len, paddr_t data);
+
+static inline bool in_pmem(paddr_t addr) {
   return addr - CONFIG_MEM_BASE < CONFIG_MSIZE;
 }
 
-uint8_t* guest_to_host(uint64_t addr);
+uint8_t* guest_to_host(paddr_t addr);
 
 #endif

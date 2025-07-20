@@ -1,5 +1,5 @@
 #include "memory.h"
-#include "isa.h"
+#include "common.h"
 
 paddr_t host_read(void *addr, int len) {
   switch (len) {
@@ -56,5 +56,5 @@ const static uint32_t img [] = {
 
 void init_mem() {
   /* Load built-in image. */
-  memcpy(gi_to_hi(0x80000000), img, sizeof(img));
+  memcpy(guest_to_host(0x80000000), img, sizeof(img));
  } 

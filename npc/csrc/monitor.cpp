@@ -104,7 +104,7 @@ void init_monitor(int argc, char *argv[]) {
   init_rand();
 
   /* init log*/
-  //init_log(log_file);
+  init_log(log_file);
 
   #ifdef CONFIG_FTRACE
   /* Open the elf file. */
@@ -112,10 +112,10 @@ void init_monitor(int argc, char *argv[]) {
   #endif
 
   /* Initialize memory. */
-  //init_mem();
+  init_mem();
   
   /* Initialize devices. */
-  IFDEF(CONFIG_DEVICE, init_device());
+  //IFDEF(CONFIG_DEVICE, init_device());
 
   /* Perform ISA dependent initialization. */
   //init_isa();
