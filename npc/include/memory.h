@@ -1,7 +1,7 @@
 #ifndef memory_H
 #define memory_H
 
-#include <../include/common.h>
+#include <common.h>
 
 uint8_t* guest_to_host(paddr_t paddr);
 

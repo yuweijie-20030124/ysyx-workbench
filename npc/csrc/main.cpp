@@ -4,8 +4,8 @@
 #include <verilated.h>
 #include "Vysyx_25060170_top.h"   //包含top模块的顶层类
 #include <verilated_vcd_c.h> //向VCD文件中写入文件
-#include <../include/common.h>
-#include <../include/monitor.h>
+#include <common.h>
+#include <monitor.h>
 
 #define MAX_SIM_TIME 300
 #define VERIF_START_TIME 7

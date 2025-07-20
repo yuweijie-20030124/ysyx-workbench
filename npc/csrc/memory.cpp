@@ -1,5 +1,5 @@
-#include "../include/memory.h"
-#include "../include/isa.h"
+#include "memory.h"
+#include "isa.h"
 
 uint8_t mem[CONFIG_MSIZE] = {0};
 //将客户机物理地址转换为主机虚拟地址。

@@ -1,7 +1,7 @@
 #ifndef __ISA_H__
 #define __ISA_H__
 
-#include <../include/common.h>
+#include <common.h>
 
 typedef struct 
 {

@@ -37,6 +37,7 @@ VM_PREFIX = Vysyx_25060170_top
 VM_MODPREFIX = Vysyx_25060170_top
 # User CFLAGS (from -CFLAGS on Verilator command line)
 VM_USER_CFLAGS = \
+	-I /home/yuweijie/ysyx-workbench/npc/include -O2 \
 
 # User LDLIBS (from -LDFLAGS on Verilator command line)
 VM_USER_LDLIBS = \

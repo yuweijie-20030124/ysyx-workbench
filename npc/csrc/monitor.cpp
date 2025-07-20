@@ -1,11 +1,13 @@
 #include <cstdlib>
 #include <getopt.h>
-#include <../include/isa.h>
-#include "../include/common.h"
-#include "../include/monitor.h"
-#include "../include/utils.h"
-#include "../include/debug.h"
-#include "../include/memory.h"
+#include <isa.h>
+#include "common.h"
+#include "monitor.h"
+#include "utils.h"
+#include "debug.h"
+#include "memory.h"
+#include "timer.h"
+
 
 void init_rand();
 void init_log(const char *log_file);
