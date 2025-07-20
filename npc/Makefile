@@ -11,9 +11,13 @@ endif
 # Makefile for NPC simulation
 
 
-SRC_FILES = csrc/main.cpp csrc/monitor.cpp csrc/memory.cpp
+SRC_FILES = csrc/main.cpp csrc/monitor.cpp csrc/memory.cpp csrc/sdb.cpp
 VERILOG_FILES = $(wildcard vsrc/*.v)
 VERILATOR = verilator
+
+NPC_IMG?= ##$(OBJ_PATH)matrix-mul-riscv64-npc.bin
+
+NPC_FLAGS?= -l $(OBJ_PATH)npc-log.txt -b
 
 VERILATOR_FLAGS = -Wall --cc --trace --exe --build -Ivsrc --top-module ysyx_25060170_top
 
@@ -22,9 +26,10 @@ GTK = gtkwave
 clean:
 	rm -rf obj_dir waveform.vcd
 
-sim: 
+run: 
 	$(VERILATOR) $(VERILATOR_FLAGS) $(SRC_FILES) $(VERILOG_FILES)
 	$(call git commit, "sim RTL") # % DO NOT REMOVE THIS LINE!!!
+	./obj_dir/Vysyx_25060170_top   $(NPC_FLAGS) $(NPC_IMG)
 
 gtk:	
 	$(GTK) waveform.vcd config.gtkw
