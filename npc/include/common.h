@@ -139,6 +139,18 @@
 
 
 //--------------------------------------------utils.h------------------------------//
+
+typedef MUXDEF(CONFIG_ISA64, uint64_t, uint32_t) word_t;
+typedef MUXDEF(CONFIG_ISA64, int64_t, int32_t)  sword_t;
+#define FMT_WORD MUXDEF(CONFIG_ISA64, "0x%016" PRIx64, "0x%08" PRIx32)
+
+typedef word_t vaddr_t;
+
+typedef MUXDEF(PMEM64, uint64_t, uint32_t) paddr_t;
+
+#define FMT_PADDR MUXDEF(PMEM64, "0x%016" PRIx64, "0x%08" PRIx32)
+typedef uint16_t ioaddr_t;
+
 // ----------- state -----------
 
 enum { NPC_RUNNING, NPC_STOP, NPC_END, NPC_ABORT, NPC_QUIT };
@@ -150,9 +162,6 @@ typedef struct{
 } NPC_State;
 
 extern NPC_State npc_state;
-
-#define FMT_WORD "0x%016lx"
-#define FMT_PADDR "0x%016lx"
 
 // ----------- timer -----------
 

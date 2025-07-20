@@ -5,16 +5,18 @@ ifeq ($(wildcard $(NPC_HOME)/csrc/main.cpp),)
   $(error NPC_HOME=$(NPC_HOME) is not a NPC repo)
 endif
 
+
 # Makefile for NPC simulation
 
 ##SRC_FILES = $(wildcard csrc/*.cpp)
-SRC_FILES = csrc/main.cpp csrc/monitor.cpp csrc/log.cpp
+SRC_FILES = csrc/main.cpp csrc/monitor.cpp csrc/log.cpp csrc/sdb.cpp csrc/timer.cpp csrc/memory.cpp
 VERILOG_FILES = $(wildcard vsrc/*.v)
 VERILATOR = verilator
 
 NPC_IMG?= ##$(OBJ_PATH)matrix-mul-riscv64-npc.bin
 
-NPC_FLAGS?= -l $(OBJ_PATH)npc-log.txt -b
+##NPC_FLAGS?= -l=$(NPC_HOME)/npc-log.txt -b
+NPC_FLAGS?= -l $(NPC_HOME)/npc-log.txt -b
 
 VERILATOR_FLAGS = -Wall --cc --trace \
 					-CFLAGS  "-I /home/yuweijie/ysyx-workbench/npc/include -O2" \

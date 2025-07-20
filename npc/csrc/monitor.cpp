@@ -5,6 +5,7 @@
 
 void init_log(const char *log_file);
 void init_ftrace(const char *elf_file);
+void init_rand();
 void init_mem();
 void init_difftest(char *ref_so_file, long img_size);
 void init_device();
@@ -74,7 +75,7 @@ static int parse_args(int argc, char *argv[]) {
   int o;
   while ( (o = getopt_long(argc, argv, "-bhl:d:p:f:e:", table, NULL)) != -1) {
     switch (o) {
-      //case 'b': sdb_set_batch_mode(); break;
+      case 'b': sdb_set_batch_mode(); break;
       case 'p': sscanf(optarg, "%d", &difftest_port); break;
       case 'l': log_file = optarg; break;
       case 'f': elf_file = optarg; break;
@@ -100,10 +101,10 @@ void init_monitor(int argc, char *argv[]) {
   parse_args(argc, argv);
   
   /* Set random seed. */
-  //init_rand();
+  init_rand();
 
   /* init log*/
-  //init_log(log_file);
+  init_log(log_file);
 
   #ifdef CONFIG_FTRACE
   /* Open the elf file. */
@@ -111,10 +112,10 @@ void init_monitor(int argc, char *argv[]) {
   #endif
 
   /* Initialize memory. */
-  //init_mem();
+  init_mem();
   
   /* Initialize devices. */
-  IFDEF(CONFIG_DEVICE, init_device());
+  //IFDEF(CONFIG_DEVICE, init_device());
 
   /* Perform ISA dependent initialization. */
   //init_isa();
@@ -126,7 +127,7 @@ void init_monitor(int argc, char *argv[]) {
   init_difftest(diff_so_file, img_size);
   #endif
   /* Initialize the simple debugger. */
-  //init_sdb();
+  init_sdb();
 #ifdef CONFIG_ITRACE
   init_disasm("riscv64-pc-linux-gnu");
 #endif
