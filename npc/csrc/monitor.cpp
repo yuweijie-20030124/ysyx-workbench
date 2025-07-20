@@ -5,6 +5,7 @@
 
 void init_log(const char *log_file);
 void init_ftrace(const char *elf_file);
+void init_rand();
 void init_mem();
 void init_difftest(char *ref_so_file, long img_size);
 void init_device();
@@ -100,7 +101,7 @@ void init_monitor(int argc, char *argv[]) {
   parse_args(argc, argv);
   
   /* Set random seed. */
-  //init_rand();
+  init_rand();
 
   /* init log*/
   //init_log(log_file);
