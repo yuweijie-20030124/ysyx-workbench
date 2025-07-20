@@ -2,9 +2,6 @@
 #include <getopt.h>
 #include <../include/isa.h>
 #include "../include/common.h"
-#include "../include/paddr.h"
-#include "../include/host.h"
-#include "../include/vaddr.h"
 #include "../include/monitor.h"
 
 void init_rand();
