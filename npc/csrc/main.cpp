@@ -4,9 +4,14 @@
 #include <verilated.h>
 #include "Vysyx_25060170_top.h"   //包含top模块的顶层类
 #include <verilated_vcd_c.h> //向VCD文件中写入文件
+#include <common.h>
 
 #define MAX_SIM_TIME 300
 #define VERIF_START_TIME 7
+
+void init_monitor(int argc, char *argv[]);
+
+//void init_monitor(int argc, char *argv[]);
 
 /*
 0000000 00000 00000 000 00000 0010011
@@ -38,6 +43,8 @@ extern "C" int addr_to_instruction(int addr) {
     if (idx < 0 || idx >= 5) return 0;
     return instruction[idx];
 }
+
+/*
 int main(int argc, char** argv) {
     VerilatedContext* contextp = new VerilatedContext;
     contextp->commandArgs(argc, argv);
@@ -76,32 +83,35 @@ int main(int argc, char** argv) {
     delete contextp;
     return 0;
 }
-/*
-int main(int argc, char** argv) {
-
-    VerilatedContext* contextp = new VerilatedContext;
-    contextp->commandArgs(argc, argv);
-    contextp->traceEverOn(true);//打开追踪功能
-    Vtop* top = new Vtop{contextp};
-    VerilatedVcdC *wave = new VerilatedVcdC;
-    top->trace(wave,0);
-    int PC = 0x80000000; //假设PC初始值为0x80000000
-    wave->open("waveform.vcd");
-    while (!contextp->gotFinish()) {
-         
-        top->a = a;
-        top->b = b;
-        top->eval();
-        printf("a = %d, b = %d, f = %d\n", a, b, top->f);
-        //assert(top->f == (a ^ b));//验证一下电路正确性，不对的话直接退出
-        wave->dump(contextp->time());
-        contextp->timeInc(1);//推动仿真时间
-      }
-    wave->close();
-    delete top;
-    delete contextp;
-    delete wave;
-    exit(EXIT_SUCCESS);
-    return 0;
-}    
 */
+int main(int argc, char** argv) {
+	VerilatedContext* contextp = new VerilatedContext;
+	contextp->commandArgs(argc,argv);
+	Vysyx_25060170_top* top = new Vysyx_25060170_top{contextp};
+
+
+    /*
+#ifdef CONFIG_GTK
+	Verilated::traceEverOn(true);
+	tfp = new VerilatedVcdC;
+	rvcpu->trace(tfp,0);
+	tfp->open("obj_dir/rvcpu.vcd");
+    tfp->close();
+    delete tfp;
+#endif
+	*/
+	
+	init_monitor(argc,argv);
+	//cpu_reset();
+	//sdb_mainloop();
+	
+	
+	//close_npc();
+	//is_exit_status_bad();
+
+
+    delete top;
+
+    delete contextp;
+    return 0;
+}
