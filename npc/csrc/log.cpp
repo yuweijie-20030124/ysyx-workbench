@@ -2,6 +2,7 @@
 #include <log.h>
 #include <cstdio>
 #include <debug.h>
+#include <utils.h>
 
 extern uint64_t g_nr_guest_inst;
 

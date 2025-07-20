@@ -17,6 +17,7 @@
 #define __UTILS_H__
 
 #include <common.h>
+#include <debug.h>
 
 // ----------- state -----------
 
@@ -66,6 +67,7 @@ uint64_t get_time();
     } \
   } while (0) \
 )
+
 
 #define _Log(...) \
   do { \
