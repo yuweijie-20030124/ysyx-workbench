@@ -1,12 +1,6 @@
 #include "memory.h"
 #include "isa.h"
 
-uint8_t mem[CONFIG_MSIZE] = {0};
-//将客户机物理地址转换为主机虚拟地址。
-uint8_t* guest_to_host(paddr_t paddr) { return mem + paddr - CONFIG_MEM_BASE; }
-//将主机虚拟地址转换回客户机物理地址。
-paddr_t host_to_guest(uint8_t *haddr) { return haddr - mem + CONFIG_MEM_BASE; }
-
 uint64_t host_read(void *addr, int len) {
   switch (len) {
     case 1: return *(uint8_t  *)addr;
@@ -27,6 +21,11 @@ void host_write(void *addr, int len, uint64_t data) {
     IFDEF(CONFIG_RT_CHECK, default: assert(0));
   }
 }
+
+
+uint8_t mem[CONFIG_MSIZE] = {0};
+// Memory transfer
+uint8_t* gi_to_hi(uint64_t addr) { return mem + (addr - CONFIG_MEM_BASE); }
 
 const static uint32_t img [] = {
   0x00130393,  // addi t1 t0,1
@@ -57,5 +56,5 @@ const static uint32_t img [] = {
 
 void init_mem() {
   /* Load built-in image. */
-  memcpy(guest_to_host(0x80000000), img, sizeof(img));
+  memcpy(gi_to_hi(0x80000000), img, sizeof(img));
  } 

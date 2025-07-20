@@ -15,7 +15,7 @@
 
 #ifndef __MACRO_H__
 #define __MACRO_H__
-#include <common.h>
+
 #include <string.h>
 
 // macro stringizing
