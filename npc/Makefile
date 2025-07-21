@@ -1,15 +1,15 @@
 include /home/yuweijie/required_software_ysyx/verilator/include/verilated.mk
 include ../Makefile
 
-ifeq ($(wildcard $(NPC_HOME)/csrc/main.cpp),) 
+ifeq ($(wildcard $(NPC_HOME)/csrc/main.c),) 
   $(error NPC_HOME=$(NPC_HOME) is not a NPC repo)
 endif
 
 
 # Makefile for NPC simulation
 
-##SRC_FILES = $(wildcard csrc/*.cpp)
-SRC_FILES = csrc/main.cpp csrc/monitor.cpp csrc/log.cpp csrc/sdb.cpp csrc/timer.cpp csrc/memory.cpp
+##SRC_FILES = $(wildcard csrc/*.c)
+SRC_FILES = csrc/main.c csrc/monitor.c csrc/log.c csrc/sdb.c csrc/timer.c csrc/memory.c
 VERILOG_FILES = $(wildcard vsrc/*.v)
 VERILATOR = verilator
 

@@ -1,4 +1,5 @@
 `include "Reg.v"
+//`include "MuxKeyInternal.v"
 
 module ysyx_25060170_IFU (
     input clk,
