@@ -7,6 +7,8 @@ endif
 
 
 # Makefile for NPC simulation
+# 检查语法可以用
+TEST_MODULE = ysyx_25060170_IFU
 
 ##SRC_FILES = $(wildcard csrc/*.c)
 SRC_FILES = csrc/main.c csrc/monitor.c csrc/log.c csrc/sdb.c csrc/timer.c csrc/memory.c
@@ -41,3 +43,15 @@ all:
 	$(VERILATOR) $(VERILATOR_FLAGS) $(SRC_FILES) $(VERILOG_FILES)
 	$(call git commit, "build RTL") # % DO NOT REMOVE THIS LINE!!!
 	$(GTK) waveform.vcd config.gtkw
+
+check all:
+	$(VERILATOR) --lint-only -Wall \
+		-I$(NPC_HOME)/vsrc \
+		--top-module ysyx_25060170_top \
+		$(VERILOG_FILES)
+
+check one:
+	verilator --lint-only -Wall \
+    -I/home/yuweijie/ysyx-workbench/npc/vsrc \
+    --top-module $(TEST_MODULE) \
+    vsrc/$(TEST_MODULE)
