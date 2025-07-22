@@ -44,6 +44,7 @@ extern "C" int addr_to_instruction(int addr) {
     return instruction[idx];
 }
 
+
 /*
 int main(int argc, char** argv) {
     VerilatedContext* contextp = new VerilatedContext;
@@ -84,13 +85,15 @@ int main(int argc, char** argv) {
     return 0;
 }
 */
+
+
 int main(int argc, char** argv) {
 	VerilatedContext* contextp = new VerilatedContext;
 	contextp->commandArgs(argc,argv);
 	Vysyx_25060170_top* top = new Vysyx_25060170_top{contextp};
 
 
-    /*
+    
 #ifdef CONFIG_GTK
 	Verilated::traceEverOn(true);
 	tfp = new VerilatedVcdC;
@@ -99,7 +102,7 @@ int main(int argc, char** argv) {
     tfp->close();
     delete tfp;
 #endif
-	*/
+	
 	
 	init_monitor(argc,argv);
 	//cpu_reset();

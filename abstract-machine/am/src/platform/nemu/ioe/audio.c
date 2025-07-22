@@ -37,6 +37,6 @@ void __am_audio_play(AM_AUDIO_PLAY_T *ctl) {
     ab[sbuf_pos] = audio_data[i];   //拷贝数据
     sbuf_pos = (sbuf_pos + 1) % sbuf_size;    //更新地址
   }
-  outl(AUDIO_COUNT_ADDR, inl(AUDIO_COUNT_ADDR) + len); //更新reg_count
+  outl(AUDIO_COUNT_ADDR, inl(AUDIO_COUNT_ADDR) + len); //更新count
 }
 

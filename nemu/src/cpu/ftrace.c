@@ -105,7 +105,6 @@ char *get_function_name_by_addres(paddr_t addr) {
 		if (ELF32_ST_TYPE(sym_entrys[i].info) == STT_FUNC) {
 			if (addr >= sym_entrys[i].address && addr < 
                 (sym_entrys[i].size + sym_entrys[i].address)) {
-                    //确保地址落在函数起始结束地址之间。
 				return sym_entrys[i].name;
 			}
 		}
