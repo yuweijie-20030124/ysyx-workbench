@@ -8,13 +8,15 @@ module ysyx_25060170_GPR (
     input [4:0]  waddr,
     input        wen,
     // 读端口
-    input [4:0]  raddr1,
-    input [4:0]  raddr2,
+    input  [4:0]  raddr1,
+    input  [4:0]  raddr2,
     output [31:0] rdata1,
     output [31:0] rdata2,
     input        ready_i,
     output       ready_o
 );
+
+    assign ready_o = ready_i;
 
     // 32个32位寄存器（x0硬连线为0）
     wire [31:0] rf [0:31];
@@ -39,6 +41,7 @@ module ysyx_25060170_GPR (
     assign rdata2 = (raddr2 == 0) ? 32'b0 :
                     (wen && (waddr == raddr2)) ? wdata : rf[raddr2];
 
-    assign ready_o = ready_i;
+    
 
 endmodule
+
