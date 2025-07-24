@@ -12,6 +12,11 @@ PCx1-jalr处理信号，若为jalr则将x1+offset的值写入PC；
 
 
 module ysyx_25060170_WBU(
+    input rst,
+
+    //from MEM
+    input [31:0] mem_data_i,    //DataMem读取的数据
+
     //from exu
     input [31:0] exu_result_i,   // EXU计算结果
 
@@ -23,6 +28,7 @@ module ysyx_25060170_WBU(
 
     //from ControlUnit
     input [1:0] regS,
+    input RegW,                     //寄存器堆写使能信号
 
 
     output [31:0] reg_write_data_o, // 写回寄存器的数据
@@ -33,12 +39,16 @@ module ysyx_25060170_WBU(
     
     //assign reg_write_data_o = exu_result_i;
     assign reg_write_data_o = (regS == 0) ? exu_result_i :  //0-来源于ALU
-                              (regS == 1) ? exu_result_i :  //1-来源于DataMem 感觉可以在exu和他搞成一样的
+                              (regS == 1) ? mem_data_i :  //1-来源于DataMem 感觉可以在exu和他搞成一样的
                               (regS == 2) ? pc_i + 4 :      //2-来源于PC+4；
                               32'b0;
 
     assign reg_write_addr_o = rd_i;
-    assign reg_write_en_o   = (rd_i != 0); // x0不写
+    assign reg_write_en_o = !rst && RegW && (rd_i != 0); // x0不写
+
+    always @(*) begin
+        if (regS == 2'b11) $display("Warning: Invalid regS value!");
+    end
 
 endmodule
 
