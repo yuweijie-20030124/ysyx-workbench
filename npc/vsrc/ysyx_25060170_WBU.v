@@ -49,6 +49,7 @@ module ysyx_25060170_WBU(
     always @(*) begin
         if (regS == 2'b11) $display("Warning: Invalid regS value!");
     end
-
+ 
+ 
 endmodule
 
