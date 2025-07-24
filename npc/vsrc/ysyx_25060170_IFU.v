@@ -6,7 +6,7 @@ module ysyx_25060170_IFU (
     input rst,
     input [31:0] Jump_addr,
     input Jump_en,
-    output [31:0] pc,     
+    output [31:0] pc_o,     
     input        ready_i,
     output       ready_o
 );
@@ -21,7 +21,7 @@ module ysyx_25060170_IFU (
         .clk(clk),
         .rst(rst),
         .din(pc_plus_or_jump),
-        .dout(pc),
+        .dout(pc_o),
         .wen(ready_i)
     );
 

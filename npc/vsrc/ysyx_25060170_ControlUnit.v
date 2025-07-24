@@ -10,16 +10,21 @@ RegW-寄存器堆写使能；
 PCx1-jalr处理信号，若为jalr则将x1+offset的值写入PC；
 */
 module ysyx_25060170_ControlUnit(
+    //from IDU
     input [6:0] opcode,
-    input [6:0] func6,
+    input [6:0] func7,
     input [2:0] func3,
-    output reg jal,
-    output reg branch,
-    output reg brlt,
-    output reg [1:0] regS,
+
+    //to EXU
     output reg [3:0] ALUop,
     output reg MemWr,
     output reg ALUsrc,
+
+    //to WBU
+    output reg jal,
+    output reg branch,
+    output reg brlt,    
+    output reg [1:0] regS,
     output reg RegW,
     output reg PCx1
 );
@@ -38,8 +43,8 @@ module ysyx_25060170_ControlUnit(
 
         case(opcode)
             7'b0110011: begin // add/sub
-           if   (func6 == 7'b0000000) ALUop = 0;
-           else if(func6 == 7'b0100000) ALUop = 1;
+           if   (func7 == 7'b0000000) ALUop = 0;
+           else if(func7 == 7'b0100000) ALUop = 1;
                 RegW = 1;
             end
     

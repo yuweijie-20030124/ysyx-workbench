@@ -8,7 +8,7 @@ endif
 
 # Makefile for NPC simulation
 # 检查语法可以用
-TEST_MODULE = ysyx_25060170_ControlUnit
+TEST_MODULE = ysyx_25060170_WBU
 
 ##SRC_FILES = $(wildcard csrc/*.c)
 SRC_FILES = csrc/main.c csrc/monitor.c csrc/log.c csrc/sdb.c csrc/timer.c csrc/memory.c
@@ -24,7 +24,7 @@ VERILATOR_FLAGS = -Wall --cc --trace \
 					-CFLAGS  "-I /home/yuweijie/ysyx-workbench/npc/include -O2" \
 					 --exe --build \
 					 -Ivsrc \
-					 --top-module ysyx_25060170_top
+					 --top-module ysyx_25060170_MEM
 
 GTK = gtkwave
 
@@ -55,3 +55,5 @@ checkone:
     -I/home/yuweijie/ysyx-workbench/npc/vsrc \
     --top-module $(TEST_MODULE) \
     vsrc/$(TEST_MODULE)
+
+cyuyan:
