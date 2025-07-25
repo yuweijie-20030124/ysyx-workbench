@@ -8,14 +8,16 @@ endif
 
 # Makefile for NPC simulation
 # 检查语法可以用
-TEST_MODULE = ysyx_25060170_GPR
+TEST_MODULE = ysyx_25060170_EXU
 
 ##SRC_FILES = $(wildcard csrc/*.c)
 SRC_FILES = csrc/main.c csrc/monitor.c csrc/log.c csrc/sdb.c csrc/timer.c csrc/memory.c
+##TEST_FILES = csrc/main.c csrc/monitor.c csrc/log.c csrc/sdb.c csrc/timer.c csrc/memory.c
+
 VERILOG_FILES = $(wildcard vsrc/*.v)
 VERILATOR = verilator
 
-NPC_IMG?= ##$(OBJ_PATH)matrix-mul-riscv64-npc.bin
+NPC_IMG?= 
 
 ##NPC_FLAGS?= -l=$(NPC_HOME)/npc-log.txt -b
 NPC_FLAGS?= -l $(NPC_HOME)/npc-log.txt -b
@@ -30,6 +32,7 @@ GTK = gtkwave
 
 clean:
 	rm -rf obj_dir waveform.vcd
+	rm test
 
 run: 
 	$(VERILATOR) $(VERILATOR_FLAGS) $(SRC_FILES) $(VERILOG_FILES) 
@@ -57,3 +60,4 @@ checkone:
     vsrc/$(TEST_MODULE)
 
 cyuyan:
+

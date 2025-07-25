@@ -32,7 +32,7 @@ module ysyx_25060170_IDU(
 // op_4: JAL/JALR 的固定增量 (4)
 
     //output reg_we_o,                // 写通用寄存器标志
-    output [31:0] imm_o,        // 立即数
+    output [31:0] imm_o,            // 立即数
     output [31:0] rs1_data_o,       // 源寄存器1数据
     output [31:0] rs2_data_o,       // 源寄存器2数据
 
@@ -63,7 +63,7 @@ module ysyx_25060170_IDU(
     assign rs1_data_o = reg1_rdata_i;
     assign rs2_data_o = reg2_rdata_i;
 
-    //wire is_jump = (opcode == 7'b1100111 || opcode == 7'b1101111);
+    wire is_jump = (opcode == 7'b1100111 || opcode == 7'b1101111);
 
     //高级写法 立即数处理
     assign imm = 32'h0 | 

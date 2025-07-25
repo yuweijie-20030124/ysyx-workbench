@@ -1,21 +1,40 @@
-`include "Reg.v"
-import "DPI-C" function void npc_trap();
 
 module ysyx_25060170_EXU(
-
-    input rst,
-    input [31:0] reg1_rdata_i,     // rs1数据
-    input [31:0] imm_i,            // 立即数（建议用32位，便于符号扩展）
-    input [6:0] opcode_i,
-    input [2:0] funct3_i,
-    input [6:0] funct7_i,			//目前只要addi，先注释掉，后面再来改
-    input [4:0] rd_i,              // 目的寄存器号
+    input [31:0] sr1,     // rs1数据
+    input [31:0] sr2,     // rs2数据
+    input [31:0] imm_i,            // 立即数woji
+    input [3:0] opc,
+    input [31:0] rd2,
+    input ALUsrc,
     input ready_i,
-    output ready_o,
-    output [31:0] alu_result_o,    // ALU结果输出
-    output [4:0] rd_o              // 目的寄存器号输出
+
+    output zero,
+    output less,
+    output reg [31:0] res,
+    output reg [31:0] data,
+    output ready_o
 );
 
+    always @(*) begin
+        if(ALUsrc) data = imm_i;
+         else data = rd2;
+    end
+
+    assign ready_o = ready_i;
+
+    assign zero = (res == 0)? 1:0;
+    assign less = res[31];
+
+    always@(*) begin
+        case(opc)
+           0: res = sr1 + sr2;
+           1: res = sr1 - sr2;
+           2: res = sr1 | sr2;
+           3: res = sr1 & sr2;
+           4: res = (sr1 == sr2)? 1:0;
+           5: res = (sr1 < sr2)? 1:0;
+        endcase
+    end
 
 endmodule
 

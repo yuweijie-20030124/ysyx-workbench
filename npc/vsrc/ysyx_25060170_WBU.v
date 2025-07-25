@@ -15,7 +15,7 @@ module ysyx_25060170_WBU(
     input rst,
 
     //from MEM
-    input [31:0] mem_data_i,    //DataMem读取的数据
+    input [31:0] mem_data_i,    //IFU出来的rs1和offset经过EXU计算之后的DataMem读取的数据 
 
     //from exu
     input [31:0] exu_result_i,   // EXU计算结果
@@ -50,6 +50,6 @@ module ysyx_25060170_WBU(
         if (regS == 2'b11) $display("Warning: Invalid regS value!");
     end
  
- 
+
 endmodule
 

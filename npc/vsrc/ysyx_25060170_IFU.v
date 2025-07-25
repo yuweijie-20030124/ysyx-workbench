@@ -34,9 +34,10 @@ module ysyx_25060170_IFU (
         1'b1, Jump_addr
     });
 
+
     always @(posedge clk) begin
         if (Jump_en && ready_i) 
             $display("IFU: Jump to 0x%h at cycle %t", Jump_addr, $time);
     end
-
+    
 endmodule
