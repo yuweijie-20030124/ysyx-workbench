@@ -21,6 +21,7 @@ module ysyx_25060170_IDU(
     input [31:0] inst_i,            // 指令输入
 
     //from regs
+    input GPR_ready_i,
     input [31:0] reg1_rdata_i,      // 通用寄存器1输入数据
     input [31:0] reg2_rdata_i,      // 通用寄存器2输入数据
 
@@ -30,7 +31,7 @@ module ysyx_25060170_IDU(
 
     //to EXU
     output reg [3:0] ALUop,
-    output reg MemWr,
+    //output reg MemWr,
     output reg ALUsrc,
     output [4:0] rd_addr,           //目标寄存器rd索引
     output [31:0] pc_o,
@@ -55,7 +56,7 @@ module ysyx_25060170_IDU(
     //wire is_jump = (opcode == 7'b1100111 || opcode == 7'b1101111);
     //localparam PC_INCR = 32'd4;  // 添加在模块开头
 
-    assign IDU_ready_o = IDU_ready_i;
+    assign IDU_ready_o = IDU_ready_i & GPR_ready_i;
 
     wire [6:0] opcode;
     wire [6:0] func7;
@@ -65,7 +66,7 @@ module ysyx_25060170_IDU(
     // 寄存器文件声明 现在就只有i和u
     assign rs1_raddr_o = inst_i[19:15];  // 源寄存器1地址
     assign rs2_raddr_o = inst_i[24:20];  // 源寄存器2地址
-    assign opcode = inst_i[6:0];      // 操作码
+    assign opcode = inst_i[6:0];         // 操作码
     assign func3 = inst_i[14:12];      
     assign func7 = inst_i[31:25];
     assign rd_addr = inst_i[11:7];
@@ -139,7 +140,7 @@ module ysyx_25060170_IDU(
         brlt = 0;
         regS = 0;
         ALUop = 0;
-        MemWr = 0;
+        //MemWr = 0;
         ALUsrc = 0;
         RegW = 0;
         PCx1 = 0;
@@ -169,7 +170,7 @@ module ysyx_25060170_IDU(
             end
     
             7'b0100011: begin // sw
-                MemWr = 1;
+                //MemWr = 1;
                 ALUsrc = 1;
             end
     

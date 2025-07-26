@@ -5,7 +5,6 @@ module ysyx_25060170_GPR (
     input rst,
     input [4:0] GPR_r1,
     input [4:0] GPR_r2,
-    input [4:0] GPR_r3,
     input GPR_we,
     input [4:0] GPR_writer,//目标寄存器
     input [31:0] GPR_wd,
@@ -13,8 +12,7 @@ module ysyx_25060170_GPR (
 
     output GPR_ready_o,
     output [31:0] GPR_rd1,//下面是读出的数据
-    output [31:0] GPR_rd2,
-    output [31:0] GPR_rd3
+    output [31:0] GPR_rd2
 );
 
     assign GPR_ready_o = GPR_ready_i;  
@@ -37,7 +35,6 @@ module ysyx_25060170_GPR (
 
     assign GPR_rd1 = rf[GPR_r1];
     assign GPR_rd2 = rf[GPR_r2];
-    assign GPR_rd3 = rf[GPR_r3];
 
 
     
