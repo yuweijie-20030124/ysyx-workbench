@@ -4,20 +4,20 @@
 module ysyx_25060170_IFU (
     input  clk,
     input  rst,
+    
     input  [31:0] PCin,
     input  [31:0] imm,
-    input  [31:0] res,
-    input  br, isx,
+    input  [31:0] res,      //执行单元结果，（用于JALR等指令时更新PC）。
+    input  br, isx,         //跳转或分支的标志位
     input  ready_i,
+
+    //to IDU
     output ready_o,
-    output reg [31:0] PCout,
-    output [31:0] PC_imm,
-    output [31:0] PC4
+    output reg [31:0] PCout
+
 );
     parameter RESET_PC = 32'h8000_0000;
 
-    assign PC_imm = PCin + imm;
-    assign PC4 = PCin + 4;
     assign ready_o = ready_i;
 
     wire [31:0] PC_temp;
@@ -38,7 +38,7 @@ module ysyx_25060170_IFU (
 /*
     always @(posedge clk) begin
         if (Jump_en && ready_i) 
-            $display("IFU: Jump to 0x%h at cycle %t", Jump_addr, $time);
+            $display("IFU: Jump to 0x%h at cycle %t", PCout, $time);
     end
 */  
 

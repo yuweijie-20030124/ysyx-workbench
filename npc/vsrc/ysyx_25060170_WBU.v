@@ -22,14 +22,11 @@ module ysyx_25060170_WBU(
 
     //from IDU
     input [4:0]  rd_i,           // 目的寄存器号
-
-    //from IFU
-    input [31:0] pc_i,
-
-    //from ControlUnit
     input [1:0] regS,
     input RegW,                     //寄存器堆写使能信号
 
+    //from IFU
+    input [31:0] pc_i,
 
     output [31:0] reg_write_data_o, // 写回寄存器的数据
     output [4:0]  reg_write_addr_o, // 写回寄存器的地址
