@@ -16,21 +16,27 @@ module ysyx_25060170_EXU(
     input [31:0] exu_op_1,             //exu执行的第一个数
     input [31:0] exu_op_2,             //exu执行的第二个数
     input exu_is_jalr,
-
-    input exu_ready_i,
+    input exu_is_jal,
+    input [31:0] imm,
     
     //to WBU
     output reg [31:0] exu_res1, //ALU运算结果
-    output exu_ready_o
+
+
+    //to IFU
+    output [31:0] jump_Addr
 );
+    wire [31:0] jumpaddr;
+    
+    assign exu_res1 = 32'h0 | 
+                    //addi  i-type
+                    ({32{ALUop == 4'd0}} & { exu_op_1 + exu_op_2 }) |
+                    ({32{ALUop == 4'd1}} & { exu_op_1 - exu_op_2 }) ;
 
-    wire [31:0] temp;
+    assign jumpaddr = imm + exu_op_1;
 
-    assign temp = ALUop ? exu_op_1 - exu_op_2 : exu_op_1 + exu_op_2;
-
-    assign exu_ready_o = exu_ready_i;
-
-    assign exu_res1 = exu_is_jalr ? {temp[31:1],1'b0} : temp ;
+    assign jump_Addr = exu_is_jalr ? {jumpaddr[31:1],1'b0} :
+                       exu_is_jal  ?  jumpaddr : 32'b0;
 
 endmodule
 

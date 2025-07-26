@@ -26,13 +26,12 @@ VERILATOR_FLAGS = -Wall --cc --trace \
 					-CFLAGS  "-I /home/yuweijie/ysyx-workbench/npc/include -O2" \
 					 --exe --build \
 					 -Ivsrc \
-					 --top-module ysyx_25060170_MEM
+					 --top-module ysyx_25060170_top
 
 GTK = gtkwave
 
 clean:
 	rm -rf obj_dir waveform.vcd
-	rm test
 
 run: 
 	$(VERILATOR) $(VERILATOR_FLAGS) $(SRC_FILES) $(VERILOG_FILES) 

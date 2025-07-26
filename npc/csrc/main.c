@@ -31,18 +31,6 @@ extern "C" void npc_trap() {
     Verilated::gotFinish(true); // 通知 Verilator 结束仿真
 }
 
-extern "C" int addr_to_instruction(int addr) {
-    int instruction[5] = {
-        0x00100093,
-        0x00108113,
-        0x00110193,
-        0x00118213,
-        0x00100073 // ebreak
-    };
-    int idx = (addr - 0x80000000) / 4;
-    if (idx < 0 || idx >= 5) return 0;
-    return instruction[idx];
-}
 
 
 /*

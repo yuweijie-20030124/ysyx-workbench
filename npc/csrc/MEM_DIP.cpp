@@ -1,6 +1,6 @@
 #include <cstdint>
 #include <map>
-#include "Vmem_dpi.h"  // 由 Verilator 生成
+#include "Vysyx_25060170_top_Dpi.h"  // 由 Verilator 生成
 
 class AddiMemory {
 private:

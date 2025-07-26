@@ -14,6 +14,7 @@ void Vysyx_25060170_top___024root___eval_ico(Vysyx_25060170_top___024root* vlSel
     // Body
     if ((1ULL & vlSelfRef.__VicoTriggered.word(0U))) {
         Vysyx_25060170_top___024root___ico_sequent__TOP__0(vlSelf);
+        vlSelfRef.__Vm_traceActivity[1U] = 1U;
     }
 }
 
@@ -22,7 +23,11 @@ VL_INLINE_OPT void Vysyx_25060170_top___024root___ico_sequent__TOP__0(Vysyx_2506
     Vysyx_25060170_top__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
     auto& vlSelfRef = std::ref(*vlSelf).get();
     // Body
-    vlSelfRef.ready_o = vlSelfRef.ready_i;
+    vlSelfRef.ysyx_25060170_top__DOT__reg_write_en_o 
+        = ((~ (IData)(vlSelfRef.rst)) & ((IData)(vlSelfRef.ysyx_25060170_top__DOT__RegW) 
+                                         & (0U != (0x1fU 
+                                                   & (vlSelfRef.ysyx_25060170_top__DOT__MEM_inst_o 
+                                                      >> 7U)))));
 }
 
 void Vysyx_25060170_top___024root___eval_triggers__ico(Vysyx_25060170_top___024root* vlSelf);
@@ -57,7 +62,7 @@ void Vysyx_25060170_top___024root___eval_nba(Vysyx_25060170_top___024root* vlSel
     // Body
     if ((1ULL & vlSelfRef.__VnbaTriggered.word(0U))) {
         Vysyx_25060170_top___024root___nba_sequent__TOP__0(vlSelf);
-        vlSelfRef.__Vm_traceActivity[1U] = 1U;
+        vlSelfRef.__Vm_traceActivity[2U] = 1U;
     }
 }
 
@@ -176,7 +181,5 @@ void Vysyx_25060170_top___024root___eval_debug_assertions(Vysyx_25060170_top___0
         Verilated::overWidthError("clk");}
     if (VL_UNLIKELY(((vlSelfRef.rst & 0xfeU)))) {
         Verilated::overWidthError("rst");}
-    if (VL_UNLIKELY(((vlSelfRef.ready_i & 0xfeU)))) {
-        Verilated::overWidthError("ready_i");}
 }
 #endif  // VL_DEBUG

@@ -6,14 +6,6 @@
 #include "Vysyx_25060170_top__Syms.h"
 #include "Vysyx_25060170_top___024unit.h"
 
-extern "C" void npc_trap();
-
-VL_INLINE_OPT void Vysyx_25060170_top___024unit____Vdpiimwrap_npc_trap_TOP____024unit() {
-    VL_DEBUG_IF(VL_DBG_MSGF("+        Vysyx_25060170_top___024unit____Vdpiimwrap_npc_trap_TOP____024unit\n"); );
-    // Body
-    npc_trap();
-}
-
 extern "C" int addr_to_instruction(int addr);
 
 VL_INLINE_OPT void Vysyx_25060170_top___024unit____Vdpiimwrap_addr_to_instruction_TOP____024unit(IData/*31:0*/ addr, IData/*31:0*/ &addr_to_instruction__Vfuncrtn) {

@@ -16,10 +16,8 @@ extern "C" {
 
 
     // DPI IMPORTS
-    // DPI import at vsrc/ysyx_25060170_MEM.v:4:29
+    // DPI import at vsrc/ysyx_25060170_MEM.v:3:29
     extern int addr_to_instruction(int addr);
-    // DPI import at vsrc/ysyx_25060170_EXU.v:2:30
-    extern void npc_trap();
 
 #ifdef __cplusplus
 }
