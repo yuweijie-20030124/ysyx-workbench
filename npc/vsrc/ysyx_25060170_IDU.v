@@ -48,14 +48,14 @@ module ysyx_25060170_IDU(
     output reg RegW,
     output reg PCx1,
 
-    input  ready_i,
-    output ready_o
+    input  IDU_ready_i,
+    output IDU_ready_o
 
 );
     //wire is_jump = (opcode == 7'b1100111 || opcode == 7'b1101111);
     //localparam PC_INCR = 32'd4;  // 添加在模块开头
 
-    assign ready_o = ready_i;
+    assign IDU_ready_o = IDU_ready_i;
 
     wire [6:0] opcode;
     wire [6:0] func7;

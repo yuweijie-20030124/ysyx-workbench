@@ -19,6 +19,7 @@ module ysyx_25060170_WBU(
 
     //from exu
     input [31:0] exu_result_i,   // EXU计算结果
+    input WBU_ready_i,
 
     //from IFU
     input [31:0] PC_i,
@@ -30,6 +31,7 @@ module ysyx_25060170_WBU(
 
     //to IFU
     output [31:0] PC_o,
+    output WBU_ready_o,
 
     //to GPR
     output [31:0] reg_write_data_o, // 写回寄存器的数据
@@ -37,7 +39,7 @@ module ysyx_25060170_WBU(
     output        reg_write_en_o    // 写回使能
 );
 
-    
+    assign WBU_ready_o = WBU_ready_i;
     //assign reg_write_data_o = exu_result_i;
     assign reg_write_data_o = (regS == 0) ? exu_result_i :  //0-来源于ALU
                               //(regS == 1) ? mem_data_i :    //1-来源于DataMem 感觉可以在exu和他搞成一样的

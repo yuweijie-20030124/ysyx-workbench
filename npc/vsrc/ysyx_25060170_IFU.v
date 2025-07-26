@@ -6,16 +6,16 @@ module ysyx_25060170_IFU (
     input  [31:0] imm,
     input  [31:0] res,      //执行单元结果，（用于JALR等指令时更新PC）。
     input  br, isx,         //跳转或分支的标志位
-    input  ready_i,
+    input  IFU_ready_i,
 
     //to IDU
-    output ready_o,
+    output IFU_ready_o,
     output reg [31:0] PCout
 
 );
     parameter RESET_PC = 32'h8000_0000;
 
-    assign ready_o = ready_i;
+    assign IFU_ready_o = IFU_ready_i;
 
     wire [31:0] PC_temp;
 
@@ -25,7 +25,7 @@ module ysyx_25060170_IFU (
         .rst(rst),
         .din(PC_temp),
         .dout(PCout),
-        .wen(ready_i)
+        .wen(IFU_ready_i)
     );
 
     assign PC_temp = (isx) ?     res      :  
