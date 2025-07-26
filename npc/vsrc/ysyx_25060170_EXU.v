@@ -8,6 +8,7 @@ module ysyx_25060170_EXU(
     //from IDU
     input [31:0] op_1,             //exu执行的第一个数
     input [31:0] op_2,             //exu执行的第二个数
+    input is_jalr,
 
     input ready_i,
     
@@ -18,7 +19,7 @@ module ysyx_25060170_EXU(
 
     assign ready_o = ready_i;
 
-    assign res1 = op_1 + op_2 ;
+    assign res1 = is_jalr ? ((op_1 + op_2) & ~1) : op_1 + op_2 ;
 
 endmodule
 
