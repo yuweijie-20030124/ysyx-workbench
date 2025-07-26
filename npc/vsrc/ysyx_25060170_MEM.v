@@ -1,5 +1,4 @@
 // 导入 DPI-C 函数
-`include "Reg.v"
 
 import "DPI-C" function int addr_to_instruction(int addr);
 

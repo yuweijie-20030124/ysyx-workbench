@@ -1,5 +1,3 @@
-`include "Reg.v"
-
 /*
 jal-判断该指令是否为jal；
 branch-判断指令是否为beq；

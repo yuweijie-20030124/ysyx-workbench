@@ -21,7 +21,7 @@ module ysyx_25060170_WBU(
     input [31:0] exu_result_i,   // EXU计算结果
 
     //from IFU
-    input [31:0] PC_i
+    input [31:0] PC_i,
 
     //from IDU
     input [4:0]  rd_i,           // 目的寄存器号
@@ -41,7 +41,7 @@ module ysyx_25060170_WBU(
     //assign reg_write_data_o = exu_result_i;
     assign reg_write_data_o = (regS == 0) ? exu_result_i :  //0-来源于ALU
                               //(regS == 1) ? mem_data_i :    //1-来源于DataMem 感觉可以在exu和他搞成一样的
-                              (regS == 2) ? pc_i + 4 :      //2-来源于PC+4；
+                              (regS == 2) ? PC_i + 4 :      //2-来源于PC+4；
                               32'b0;
 
     assign reg_write_addr_o = rd_i;
