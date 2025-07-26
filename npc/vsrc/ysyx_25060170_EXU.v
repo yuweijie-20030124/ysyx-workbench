@@ -17,9 +17,13 @@ module ysyx_25060170_EXU(
     output ready_o
 );
 
+    wire [31:0] temp;
+
+    assign temp = op_1 + op_2;
+
     assign ready_o = ready_i;
 
-    assign res1 = is_jalr ? ((op_1 + op_2) & ~1) : op_1 + op_2 ;
+    assign res1 = is_jalr ? {temp[31:1],1'b0} : temp ;
 
 endmodule
 
