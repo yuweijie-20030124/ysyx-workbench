@@ -6,11 +6,20 @@
 #include <verilated_vcd_c.h> //向VCD文件中写入文件
 #include <common.h>
 #include <memory.h>
+#include "isa.h"
 
 #define MAX_SIM_TIME 300
 #define VERIF_START_TIME 7
 
+void close_npc();
 void init_monitor(int argc, char *argv[]);
+void cpu_reset();
+
+Vysyx_25060170_top* top;
+VerilatedContext* contextp;
+#ifdef CONFIG_GTK
+VerilatedVcdC* tfp;
+#endif
 
 /**************************** DPI-C *******************************/
 
@@ -85,35 +94,64 @@ int main(int argc, char** argv) {
 }
 */
 
-
 int main(int argc, char** argv) {
-	VerilatedContext* contextp = new VerilatedContext;
+
+    contextp = new VerilatedContext;
 	contextp->commandArgs(argc,argv);
-	Vysyx_25060170_top* top = new Vysyx_25060170_top{contextp};
+	top = new Vysyx_25060170_top{contextp};
 
-
-    
-#ifdef CONFIG_GTK
-	Verilated::traceEverOn(true);
-	tfp = new VerilatedVcdC;
-	rvcpu->trace(tfp,0);
-	tfp->open("obj_dir/rvcpu.vcd");
-    tfp->close();
-    delete tfp;
-#endif
-	
-	
 	init_monitor(argc,argv);
-	//cpu_reset();
+	cpu_reset();
 	//sdb_mainloop();
 	
 	
-	//close_npc();
 	//is_exit_status_bad();
 
 
-    delete top;
-
-    delete contextp;
+    close_npc();
     return 0;
+}
+
+void isa_exec_once(){
+  top-> clk = 0;
+  top -> eval();
+#ifdef CONFIG_GTK
+  tfp -> dump(main_time++);
+#endif  
+
+  top -> clk = 1;
+  top -> eval();
+#ifdef CONFIG_GTK
+  tfp -> dump(main_time++);
+#endif
+
+}
+
+void close_npc(){
+#ifdef CONFIG_GTK
+	tfp->close() ;
+#endif
+	delete top ;
+	delete contextp ;
+	exit(0) ;
+	
+}
+
+void cpu_reset(){
+  top -> clk = 0;
+  top -> rst = 1;  
+  top -> eval();
+#ifdef CONFIG_GTK
+  tfp -> dump(main_time++);
+#endif  
+
+  top -> clk = 1;
+  top -> rst = 1;
+  top -> eval();
+#ifdef CONFIG_GTK
+  tfp -> dump(main_time++);
+#endif  
+
+  top -> rst = 0;
+
 }

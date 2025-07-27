@@ -10,9 +10,9 @@ endif
 # 检查语法可以用
 TEST_MODULE = ysyx_25060170_WBU
 
-##SRC_FILES = $(wildcard csrc/*.c)
-SRC_FILES = csrc/main.c csrc/monitor.c csrc/log.c csrc/sdb.c csrc/timer.c csrc/memory.c \
-			csrc/init.c
+SRC_FILES = $(wildcard csrc/*.c)
+##SRC_FILES = csrc/main.c csrc/monitor.c csrc/log.c csrc/sdb.c csrc/timer.c csrc/memory.c \
+			csrc/init.c csrc/cpu-
 ##TEST_FILES = csrc/main.c csrc/monitor.c csrc/log.c csrc/sdb.c csrc/timer.c csrc/memory.c
 
 VERILOG_FILES = $(wildcard vsrc/*.v)
@@ -59,5 +59,8 @@ checkone:
     --top-module $(TEST_MODULE) \
     vsrc/$(TEST_MODULE)
 
-cyuyan:
+valgrind:
+	rm -rf obj_dir waveform.vcd
+	$(VERILATOR) $(VERILATOR_FLAGS) $(SRC_FILES) $(VERILOG_FILES) 
+	valgrind --leak-check=full obj_dir/Vysyx_25060170_top 
 

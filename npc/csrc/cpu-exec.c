@@ -2,9 +2,13 @@
 #include "isa.h"
 #include "common.h"
 
+void isa_exec_once();
+
 NPC_reg cpu = { .pc =0x80000000};
 Decode s;
 NPC_State npc_state = { .state = NPC_QUIT };
+
+#define MAX_INST_TO_PRINT 10
 
 uint64_t g_nr_guest_inst = 0;
 static uint64_t g_timer = 0; // unit: us
@@ -15,7 +19,7 @@ int flag = 0;
 static void exec_once(Decode *s, vaddr_t pc) {
   s->pc = pc;//当前指令地址
   s->snpc = pc;//静态下一条指令地址，默认为pc+4
-  isa_exec_once(s);
+  isa_exec_once();
   cpu.pc = s->dnpc;//动态下一条指令，可能跳转或者分支改变
 #ifdef CONFIG_ITRACE//如果启用了 CONFIG_ITRACE，会记录指令的详细信息到日志缓冲区 s->logbuf：
   char *p = s->logbuf;
@@ -53,7 +57,7 @@ static void execute(uint64_t n) {
   for (;n > 0; n --) {
     exec_once(&s, cpu.pc);
     g_nr_guest_inst ++;
-    trace_and_difftest(&s, cpu.pc);
+    //trace_and_difftest(&s, cpu.pc);
     if (npc_state.state != NPC_RUNNING) break;
     IFDEF(CONFIG_DEVICE, device_update());
   }/*条件编译宏，如果CONFIG_DEVICE被定义，则调用device_update函数，如果 CONFIG_DEVICE 没有被定义，
@@ -76,4 +80,35 @@ static void statistic() {
 void assert_fail_msg() {//输出错误信息
   //isa_reg_display();
   statistic();
+}
+
+void cpu_exec(uint64_t n) {
+  g_print_step = (n < MAX_INST_TO_PRINT);//一次执行太多步就不打印了，bool类型的gprintstep就赋值为false
+  switch (npc_state.state) {
+    case NPC_END: case NPC_ABORT: case NPC_QUIT:
+      printf("Program execution has ended. To restart the program, exit NPC and run again.\n");
+      return;//如果状态是结束了，出错了，退出了就打印“退出nemu”。
+    default: npc_state.state = NPC_RUNNING;//默认running
+  }
+
+  uint64_t timer_start = get_time();//获取执行指令前的时间
+
+  execute(n);
+
+  uint64_t timer_end = get_time();//获取执行指令后的时间
+  g_timer += timer_end - timer_start; //看执行了多久。
+
+  switch (npc_state.state) { 
+    case NPC_RUNNING: npc_state.state = NPC_STOP; break;
+
+    case NPC_END: case NPC_ABORT:
+      Log("nemu: %s at pc = " FMT_WORD,
+        //nemu出错或者异常退出就用红色打印，正常退出就绿色打印。  
+        (npc_state.state == NPC_ABORT ? ANSI_FMT("ABORT", ANSI_FG_RED) :
+           (npc_state.halt_ret == 0 ? ANSI_FMT("HIT GOOD TRAP", ANSI_FG_GREEN) :
+            ANSI_FMT("HIT BAD TRAP", ANSI_FG_RED))),
+          npc_state.halt_pc);
+      // fall through
+    case NPC_QUIT: statistic();
+  }
 }

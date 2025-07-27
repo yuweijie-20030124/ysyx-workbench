@@ -9,6 +9,9 @@
 
 static int is_batch_mode = false;
 
+void init_regex();
+void init_wp_pool();
+
 void sdb_set_batch_mode() {
   is_batch_mode = true;
 }
