@@ -3,21 +3,16 @@
 module ysyx_25060170_GPR (
     input clk,
     input rst,
-    // 写端口
-    input [31:0] wdata,
-    input [4:0]  waddr,
-    input        wen,
-    // 读端口
-    input  [4:0]  raddr1,
-    input  [4:0]  raddr2,
-    output [31:0] rdata1,
-    output [31:0] rdata2,
-    input        ready_i,
-    output       ready_o
+    input [4:0] GPR_r1,
+    //input [4:0] GPR_r2,     
+    input GPR_we,          //写回使能
+    input [4:0] GPR_writer,//写回地址
+    input [31:0] GPR_wd,    //写回数据
+
+    output [31:0] GPR_rd1//下面是读出的数据
+    //output [31:0] GPR_rd2
 );
-
-    assign ready_o = ready_i;
-
+ 
     // 32个32位寄存器（x0硬连线为0）
     wire [31:0] rf [0:31];
 
@@ -27,19 +22,17 @@ module ysyx_25060170_GPR (
             Reg #(32, 0) reg_x (
                 .clk(clk),
                 .rst(rst),
-                .din(wdata),
+                .din(GPR_wd),
                 .dout(rf[i]),
-                .wen(wen & (waddr == i))
+                .wen(GPR_we & (GPR_writer == i))
             );
         end
     endgenerate
     assign rf[0] = 32'b0;
 
-    // 读端口，带前递
-    assign rdata1 = (raddr1 == 0) ? 32'b0 :
-                    (wen && (waddr == raddr1)) ? wdata : rf[raddr1];
-    assign rdata2 = (raddr2 == 0) ? 32'b0 :
-                    (wen && (waddr == raddr2)) ? wdata : rf[raddr2];
+    assign GPR_rd1 = rf[GPR_r1];
+    //assign GPR_rd2 = rf[GPR_r2];
+
 
     
 

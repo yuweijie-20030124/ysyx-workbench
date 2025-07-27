@@ -1,46 +1,42 @@
-`include "Reg.v"
-import "DPI-C" function void npc_trap();
+/*
+jal-判断该指令是否为jal；
+branch-判断指令是否为beq；
+brlt-判断指令是否为blt；
+regS-写回数据的选择信号，0-来源于ALU，1-来源于DataMem，2-来源于PC+4；
+ALUop-ALU控制信号，0对应+，1对应-；
+MemWr-DataMem写使能；
+ALUsrc-操作数选择信号，0-选择寄存器，1-选择立即数；
+RegW-寄存器堆写使能；
+PCx1-jalr处理信号，若为jalr则将x1+offset的值写入PC；
+*/
+module ysyx_25060170_EXU(  
 
-module ysyx_25060170_EXU(
+    //from IDU
+    input [3:0] ALUop,
+    input [31:0] exu_op_1,             //exu执行的第一个数
+    input [31:0] exu_op_2,             //exu执行的第二个数
+    input exu_is_jalr,
+    input exu_is_jal,
+    input [31:0] imm,
+    
+    //to WBU
+    output reg [31:0] exu_res1, //ALU运算结果
 
-    input rst,
-    input [31:0] reg1_rdata_i,     // rs1数据
-    input [31:0] imm_i,            // 立即数（建议用32位，便于符号扩展）
-    input [6:0] opcode_i,
-    input [2:0] funct3_i,
-    input [6:0] funct7_i,			//目前只要addi，先注释掉，后面再来改
-    input [4:0] rd_i,              // 目的寄存器号
-    input ready_i,
-    output ready_o,
-    output [31:0] alu_result_o,    // ALU结果输出
-    output [4:0] rd_o              // 目的寄存器号输出
+
+    //to IFU
+    output [31:0] jump_Addr
 );
+    wire [31:0] jumpaddr;
+    
+    assign exu_res1 = 32'h0 | 
+                    //addi  i-type
+                    ({32{ALUop == 4'd0}} & { exu_op_1 + exu_op_2 }) |
+                    ({32{ALUop == 4'd1}} & { exu_op_1 - exu_op_2 }) ;
 
-    // 只实现addi指令
-    wire is_addi = (opcode_i == 7'b0010011) && (funct3_i == 3'b000);
+    assign jumpaddr = imm + exu_op_1;
 
-    wire [31:0] alu_result;
-    assign alu_result = is_addi ? (reg1_rdata_i + imm_i) : 32'b0;
-
-    // 用Reg模板寄存ALU结果
-    Reg #(32, 0) alu_result_reg (
-        .clk(clk),
-        .rst(rst),
-        .din(alu_result),
-        .dout(alu_result_o),
-        .wen(ready_i)
-    );
-
-	always @(*) begin
-    if (opcode_i == 7'b1110011 && funct3_i == 3'b000 && imm_i[11:0] == 12'b1) begin // ebreak
-        npc_trap();
-    end
-end
-
-    // 传递rd号
-    assign rd_o = rd_i;
-
-    assign ready_o = ready_i;
+    assign jump_Addr = exu_is_jalr ? {jumpaddr[31:1],1'b0} :
+                       exu_is_jal  ?  jumpaddr : 32'b0;
 
 endmodule
 

@@ -28,15 +28,13 @@ VM_CLASSES_FAST += \
 	Vysyx_25060170_top \
 	Vysyx_25060170_top___024root__DepSet_h28022adc__0 \
 	Vysyx_25060170_top___024root__DepSet_hcf322213__0 \
-	Vysyx_25060170_top___024unit__DepSet_h263698e8__0 \
 
 # Generated module classes, non-fast-path, compile with low/medium optimization
 VM_CLASSES_SLOW += \
+	Vysyx_25060170_top__ConstPool_0 \
 	Vysyx_25060170_top___024root__Slow \
 	Vysyx_25060170_top___024root__DepSet_h28022adc__0__Slow \
 	Vysyx_25060170_top___024root__DepSet_hcf322213__0__Slow \
-	Vysyx_25060170_top___024unit__Slow \
-	Vysyx_25060170_top___024unit__DepSet_hd11d9007__0__Slow \
 
 # Generated support classes, fast-path, compile with highest optimization
 VM_SUPPORT_FAST += \

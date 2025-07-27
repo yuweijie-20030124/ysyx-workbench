@@ -15,7 +15,6 @@
 
 // INCLUDE MODULE CLASSES
 #include "Vysyx_25060170_top___024root.h"
-#include "Vysyx_25060170_top___024unit.h"
 
 // DPI TYPES for DPI Export callbacks (Internal use)
 
@@ -31,7 +30,6 @@ class alignas(VL_CACHE_LINE_BYTES)Vysyx_25060170_top__Syms final : public Verila
 
     // MODULE INSTANCE STATE
     Vysyx_25060170_top___024root   TOP;
-    Vysyx_25060170_top___024unit   TOP____024unit;
 
     // CONSTRUCTORS
     Vysyx_25060170_top__Syms(VerilatedContext* contextp, const char* namep, Vysyx_25060170_top* modelp);

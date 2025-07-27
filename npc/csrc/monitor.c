@@ -2,6 +2,7 @@
 #include <getopt.h>
 #include "common.h"
 #include "memory.h"
+#include "stdio.h"
 
 void init_log(const char *log_file);
 void init_ftrace(const char *elf_file);
@@ -11,6 +12,7 @@ void init_difftest(char *ref_so_file, long img_size);
 void init_device();
 void init_sdb();
 void init_disasm(const char *triple);
+void init_isa();
 
 
 
@@ -32,7 +34,8 @@ static char *img_file = NULL;
 static char *elf_file =NULL;
 static char *log_file = NULL;
 static int difftest_port = 1234;
-/*
+
+
 static long load_img() {
   if (img_file == NULL) {
     Log("No image is given. Use the default build-in image.");
@@ -58,7 +61,7 @@ static long load_img() {
   fclose(fp); //fopen之后一定要fclose
   return size;
 }
-*/
+
 //在这里开启是否批处理模式
 //批处理模式下，sdb_mainloop()不会被调用
 //而是直接执行cpu_exec(-1)来执行指令
@@ -80,7 +83,7 @@ static int parse_args(int argc, char *argv[]) {
       case 'l': log_file = optarg; break;
       case 'f': elf_file = optarg; break;
       case 'd': diff_so_file = optarg; break;
-      case 'e': img_file = optarg; break;
+      //case 'e': img_file = optarg; break;
       case 1: img_file = optarg; return 0;
       default:
         printf("***%c***",o);
@@ -120,7 +123,7 @@ void init_monitor(int argc, char *argv[]) {
   //IFDEF(CONFIG_DEVICE, init_device());
 
   /* Perform ISA dependent initialization. */
-  //init_isa();
+  init_isa();
 
   /* Load the image to memory. This will overwrite the built-in image. */
   //long img_size = load_img();

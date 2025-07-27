@@ -1,95 +1,114 @@
 module ysyx_25060170_top (
     input clk,
-    input rst,
-    input ready_i,
-    output ready_o
+    input rst
 );
 
-    // IFU
-    wire [31:0] pc;
-    wire        ifu_ready_o;
-    ysyx_25060170_IFU u_ifu (
-        .clk(clk),
-        .rst(rst),
-        .pc(pc),
-        .ready_i(ready_i),
-        .ready_o(ifu_ready_o)
-    );
+// outports wire
+wire [31:0] 	PCout;
+wire [4:0]  	rs1_raddr_o;
+//wire [4:0]  	rs2_raddr_o;
+wire [3:0]  	ALUop;
+//wire        	MemWr;
+wire [4:0]  	rd_addr;
+wire [31:0] 	op_1;
+wire [31:0] 	op_2;
+wire [31:0] 	imm_o;
+wire        	jal;
+wire        	branch;
+//wire        	brlt;
+wire [1:0]  	regS;
+wire        	RegW;
+wire        	PCx1;
+wire [31:0] 	exu_res1;
+wire [31:0] 	MEM_inst_o;
+wire [31:0] 	GPR_rd1;
+//wire [31:0] 	GPR_rd2;
+//wire [31:0] 	WBU_PC_o;
+wire [31:0] 	reg_write_data_o;
+wire [4:0]  	reg_write_addr_o;
+wire        	reg_write_en_o;
+wire [31:0]     EXU_PC;
 
-    // MEM
-    wire [31:0] inst;
-    wire        mem_ready_o;
-    ysyx_25060170_MEM u_mem (
-        .clk(clk),
-        .rst(rst),
-        .addr(pc),
-        .data_out(inst),
-        .ready_i(ifu_ready_o),
-        .ready_o(mem_ready_o)
-    );
+ysyx_25060170_IFU #(
+	.RESET_PC 	( 8000_0000  ))
+u_ysyx_25060170_IFU(
+	.clk         	( clk          ),
+	.rst         	( rst          ),
+	.PCin        	( EXU_PC     ),
+	.imm         	( imm_o        ),
+	.res         	( exu_res1     ),
+	.br          	( branch       ),
+	.isx         	( PCx1         ),
+	.PCout       	( PCout        )
+);
 
-    // 立即数提取（只支持addi）
-    wire [31:0] imm = {{20{inst[31]}}, inst[31:20]};
 
-    // GPR
-    wire [31:0] gpr_rdata1;
-    wire [31:0] gpr_rdata2_unused; // 用于消除未连接警告
-    wire        gpr_ready_o;
-    ysyx_25060170_GPR u_gpr (
-        .clk(clk),
-        .rst(rst),
-        .wdata(wbu_reg_write_data),
-        .waddr(wbu_reg_write_addr),
-        .wen(wbu_reg_write_en),
-        .raddr1(inst[19:15]),
-        .raddr2(inst[24:20]),
-        .rdata1(gpr_rdata1),
-        .rdata2(gpr_rdata2_unused), // 用未用信号连接
-        .ready_i(mem_ready_o),
-        .ready_o(gpr_ready_o)
-    );
+ysyx_25060170_IDU u_ysyx_25060170_IDU(
+	.pc_i         	( PCout         ),
+	.inst_i       	( MEM_inst_o    ),
+	.reg1_rdata_i 	( GPR_rd1  ),
+	//.reg2_rdata_i 	( GPR_rd2  ),
+	.rs1_raddr_o  	( rs1_raddr_o   ),
+	//.rs2_raddr_o  	( rs2_raddr_o   ),
+	.ALUop        	( ALUop         ),
+	//.MemWr        	( MemWr         ),
+	.rd_addr      	( rd_addr       ),
+	.op_1         	( op_1          ),
+	.op_2         	( op_2          ),
+	.imm_o        	( imm_o         ),
+	.jal          	( jal           ),
+	.branch       	( branch        ),
+	//.brlt         	( brlt          ),
+	.regS         	( regS          ),
+	.RegW         	( RegW          ),
+	.PCx1         	( PCx1          )
+);
 
-    // 译码信号
-    wire [31:0] rs1_data = gpr_rdata1;
-    wire [6:0]  opcode   = inst[6:0];
-    wire [2:0]  funct3   = inst[14:12];
-    wire [4:0]  rd       = inst[11:7];
 
-    // EXU
-    wire [31:0] alu_result;
-    wire [4:0]  exu_rd;
-    wire        exu_ready_o;
-    ysyx_25060170_EXU u_exu (
-        .clk(clk),
-        .rst(rst),
-        .reg1_rdata_i(rs1_data),
-        .imm_i(imm),
-        .opcode_i(opcode),
-        .funct3_i(funct3),
-        .rd_i(rd),
-        .ready_i(gpr_ready_o),
-        .ready_o(exu_ready_o),
-        .alu_result_o(alu_result),
-        .rd_o(exu_rd)
-    );
+ysyx_25060170_GPR u_ysyx_25060170_GPR(
+	.clk         	( clk          ),
+	.rst         	( rst          ),
+	.GPR_r1      	( rs1_raddr_o       ),
+	//.GPR_r2      	( rs2_raddr_o       ),
+	.GPR_we      	( reg_write_en_o       ),
+	.GPR_writer  	( reg_write_addr_o   ),
+	.GPR_wd      	( reg_write_data_o       ),
+	.GPR_rd1     	( GPR_rd1      )
+	//.GPR_rd2     	( GPR_rd2      )
+);
 
-    // WBU
-    wire [31:0] wbu_reg_write_data;
-    wire [4:0]  wbu_reg_write_addr;
-    wire        wbu_reg_write_en;
-    wire        wbu_ready_o;
-    ysyx_25060170_WBU u_wbu (
-        .alu_result_i(alu_result),
-        .rd_i(exu_rd),
-        .ready_i(exu_ready_o),
-        .ready_o(wbu_ready_o),
-        .reg_write_data_o(wbu_reg_write_data),
-        .reg_write_addr_o(wbu_reg_write_addr),
-        .reg_write_en_o(wbu_reg_write_en)
-    );
 
-    // ready信号直通
-    assign ready_o = wbu_ready_o;
+ysyx_25060170_MEM u_ysyx_25060170_MEM(
+	.addr_i      	( PCout        ),
+	.inst_o      	( MEM_inst_o   )
+);
+
+
+ysyx_25060170_EXU u_ysyx_25060170_EXU(
+    .ALUop          ( ALUop    ),
+	.exu_op_1    	( op_1     ),
+	.exu_op_2    	( op_2     ),
+	.exu_is_jalr 	( PCx1           ),   
+    .exu_is_jal    (  jal),
+    .imm            ( imm_o),
+	.exu_res1    	( exu_res1     ),
+    .jump_Addr      ( EXU_PC)
+);
+
+
+
+ysyx_25060170_WBU u_ysyx_25060170_WBU(
+	.rst              	( rst               ),
+	.exu_result_i     	( exu_res1      ),
+	.PC_i             	( PCout              ),
+	.rd_i             	( rd_addr              ),
+	.regS             	( regS              ),
+	.RegW             	( RegW              ),
+	.reg_write_data_o 	( reg_write_data_o  ),
+	.reg_write_addr_o 	( reg_write_addr_o  ),
+	.reg_write_en_o   	( reg_write_en_o    )
+);
+
 
 endmodule
 
