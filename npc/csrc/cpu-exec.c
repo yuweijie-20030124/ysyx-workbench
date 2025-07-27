@@ -2,11 +2,14 @@
 #include "isa.h"
 #include "common.h"
 
+NPC_reg cpu = { .pc =0x80000000};
+Decode s;
+NPC_State npc_state = { .state = NPC_QUIT };
 
-NPC_reg cpu = {};
 uint64_t g_nr_guest_inst = 0;
 static uint64_t g_timer = 0; // unit: us
 static bool g_print_step = false;
+int flag = 0;
 
 
 static void exec_once(Decode *s, vaddr_t pc) {
