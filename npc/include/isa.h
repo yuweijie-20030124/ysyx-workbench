@@ -12,6 +12,7 @@ typedef struct {
 typedef struct Decode {
   word_t pc;
   word_t snpc; // static next pc
+  word_t dnpc;
   word_t val;
   IFDEF(CONFIG_ITRACE, char logbuf[128]);
 } Decode;
