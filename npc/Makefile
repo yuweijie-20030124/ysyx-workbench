@@ -11,7 +11,8 @@ endif
 TEST_MODULE = ysyx_25060170_WBU
 
 ##SRC_FILES = $(wildcard csrc/*.c)
-SRC_FILES = csrc/main.c csrc/monitor.c csrc/log.c csrc/sdb.c csrc/timer.c csrc/memory.c
+SRC_FILES = csrc/main.c csrc/monitor.c csrc/log.c csrc/sdb.c csrc/timer.c csrc/memory.c \
+			csrc/init.c
 ##TEST_FILES = csrc/main.c csrc/monitor.c csrc/log.c csrc/sdb.c csrc/timer.c csrc/memory.c
 
 VERILOG_FILES = $(wildcard vsrc/*.v)

@@ -40,6 +40,8 @@
 
 //#define CONFIG_DEVICE 1
 
+
+
 #ifdef CONFIG_DEVICE
 #define CONFIG_HAS_SERIAL 1
 #define CONFIG_SERIAL_MMIO 0xa00003f8
@@ -152,6 +154,8 @@ typedef MUXDEF(PMEM64, uint64_t, uint32_t) paddr_t;
 typedef uint16_t ioaddr_t;
 
 // ----------- state -----------
+
+#define RESET_VECTOR 0x80000000
 
 enum { NPC_RUNNING, NPC_STOP, NPC_END, NPC_ABORT, NPC_QUIT };
 
