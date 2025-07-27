@@ -444,6 +444,7 @@ VL_ATTR_COLD void Vysyx_25060170_top___024root__trace_init_sub__TOP__0(Vysyx_250
     tracep->pushPrefix("u_ysyx_25060170_MEM", VerilatedTracePrefixType::SCOPE_MODULE);
     tracep->declBus(c+33,0,"addr_i",-1, VerilatedTraceSigDirection::INPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1, 31,0);
     tracep->declBus(c+46,0,"inst_o",-1, VerilatedTraceSigDirection::OUTPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1, 31,0);
+    tracep->declBus(c+123,0,"rlen",-1, VerilatedTraceSigDirection::NONE, VerilatedTraceSigKind::VAR, VerilatedTraceSigType::LOGIC, false,-1, 7,0);
     tracep->popPrefix();
     tracep->pushPrefix("u_ysyx_25060170_WBU", VerilatedTracePrefixType::SCOPE_MODULE);
     tracep->declBit(c+118,0,"rst",-1, VerilatedTraceSigDirection::INPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1);
@@ -505,6 +506,7 @@ VL_ATTR_COLD void Vysyx_25060170_top___024root__trace_const_0_sub_0(Vysyx_250601
     bufp->fullIData(oldp+120,(0U),32);
     bufp->fullIData(oldp+121,(0x4c4b400U),32);
     bufp->fullBit(oldp+122,(1U));
+    bufp->fullCData(oldp+123,(4U),8);
 }
 
 VL_ATTR_COLD void Vysyx_25060170_top___024root__trace_full_0_sub_0(Vysyx_25060170_top___024root* vlSelf, VerilatedVcd::Buffer* bufp);

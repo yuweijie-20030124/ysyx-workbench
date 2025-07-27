@@ -5,11 +5,28 @@
 #include "Vysyx_25060170_top.h"   //包含top模块的顶层类
 #include <verilated_vcd_c.h> //向VCD文件中写入文件
 #include <common.h>
+#include <memory.h>
 
 #define MAX_SIM_TIME 300
 #define VERIF_START_TIME 7
 
 void init_monitor(int argc, char *argv[]);
+
+/**************************** DPI-C *******************************/
+
+extern "C" void pmem_read(paddr_t raddr, paddr_t* rdata, int rlen){
+
+  if (raddr < CONFIG_MEM_BASE) return;
+  if (likely(in_pmem(raddr))) {
+    *rdata = host_read(guest_to_host(raddr),rlen);
+#ifdef CONFIG_MTRACE
+      Log("Read from memory at %#.4dx for %d bytes,content is %#.4dx.",raddr,rlen,*rdata);
+#endif
+    return;
+    }
+   IFDEF(CONFIG_DEVICE, *rdata = mmio_read(raddr, rlen); /*printf("%lx\n",raddr);*/return);
+   return;
+}
 
 //void init_monitor(int argc, char *argv[]);
 
@@ -26,12 +43,6 @@ rd = 00000 (x0)
 
 opcode = 0010011 (I-type 指令的操作码)
 */
-
-extern "C" void npc_trap() {
-    Verilated::gotFinish(true); // 通知 Verilator 结束仿真
-}
-
-
 
 /*
 int main(int argc, char** argv) {

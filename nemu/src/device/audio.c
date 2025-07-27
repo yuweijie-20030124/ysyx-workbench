@@ -28,7 +28,7 @@ enum {
 };
 
 static uint32_t sbuf_pos = 0; //标记当前读取位置
-static uint8_t *sbuf = NULL;  //hi一个循环使用的音频缓冲区
+static uint8_t *sbuf = NULL;  //循环使用的音频缓冲区
 static uint32_t *audio_base = NULL;
 
 void sdl_audio_callback(void *userdata, uint8_t *stream, int len){
@@ -75,7 +75,7 @@ int init_sound() {
 */
 
 static void audio_io_handler(uint32_t offset, int len, bool is_write) {
-  if(audio_base[reg_init]==1){
+  if(audio_base[reg_init] == 1){
     init_sound();
     audio_base[reg_init] = 0;
   }

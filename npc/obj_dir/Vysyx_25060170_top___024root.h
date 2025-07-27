@@ -6,15 +6,12 @@
 #define VERILATED_VYSYX_25060170_TOP___024ROOT_H_  // guard
 
 #include "verilated.h"
-class Vysyx_25060170_top___024unit;
 
 
 class Vysyx_25060170_top__Syms;
 
 class alignas(VL_CACHE_LINE_BYTES) Vysyx_25060170_top___024root final : public VerilatedModule {
   public:
-    // CELLS
-    Vysyx_25060170_top___024unit* __PVT____024unit;
 
     // DESIGN SPECIFIC STATE
     VL_IN8(clk,0,0);
@@ -72,7 +69,7 @@ class alignas(VL_CACHE_LINE_BYTES) Vysyx_25060170_top___024root final : public V
     IData/*31:0*/ ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT____Vcellout__reg_gen__BRA__30__KET____DOT__reg_x__dout;
     IData/*31:0*/ ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT____Vcellout__reg_gen__BRA__31__KET____DOT__reg_x__dout;
     IData/*31:0*/ ysyx_25060170_top__DOT__u_ysyx_25060170_EXU__DOT__jumpaddr;
-    IData/*31:0*/ __Vfunc_addr_to_instruction__0__Vfuncout;
+    IData/*31:0*/ __Vtask_ysyx_25060170_top__DOT__u_ysyx_25060170_MEM__DOT__pmem_read__0__rdata;
     IData/*31:0*/ __VactIterCount;
     VlUnpacked<IData/*31:0*/, 32> ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT__rf;
     VlUnpacked<CData/*0:0*/, 3> __Vm_traceActivity;
