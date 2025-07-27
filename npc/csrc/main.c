@@ -14,6 +14,7 @@
 void close_npc();
 void init_monitor(int argc, char *argv[]);
 void cpu_reset();
+void sdb_mainloop();
 
 Vysyx_25060170_top* top;
 VerilatedContext* contextp;
@@ -96,12 +97,14 @@ int main(int argc, char** argv) {
 
 int main(int argc, char** argv) {
 
-    contextp = new VerilatedContext;
+  contextp = new VerilatedContext;
 	contextp->commandArgs(argc,argv);
 	top = new Vysyx_25060170_top{contextp};
 
 	init_monitor(argc,argv);
 	cpu_reset();
+
+  sdb_mainloop();
 	//sdb_mainloop();
 	
 	
