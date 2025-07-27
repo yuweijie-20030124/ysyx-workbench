@@ -132,10 +132,13 @@ void init_monitor(int argc, char *argv[]) {
   init_difftest(diff_so_file, img_size);
   #endif
   /* Initialize the simple debugger. */
-  //init_sdb();
+  init_sdb();
+
 #ifdef CONFIG_ITRACE
   init_disasm("riscv64-pc-linux-gnu");
 #endif
+
   /* Display welcome message. */
+  
   welcome();
 }
