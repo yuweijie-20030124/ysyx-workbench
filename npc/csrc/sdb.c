@@ -34,7 +34,6 @@ static char* rl_gets() {
     free(line_read);
     line_read = NULL;
   }
-  //printf("****%c***\n", *line_read);
   line_read = readline("(npc) ");
 
   if (line_read && *line_read) {

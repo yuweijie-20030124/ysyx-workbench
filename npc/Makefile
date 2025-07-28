@@ -26,6 +26,7 @@ NPC_FLAGS?= -l $(NPC_HOME)/npc-log.txt -b
 VERILATOR_FLAGS = -Wall --cc --trace \
 					-CFLAGS  "-I /home/yuweijie/ysyx-workbench/npc/include -O2" \
 					 --exe --build \
+					 -LDFLAGS "-lreadline" \
 					 -Ivsrc \
 					 --top-module ysyx_25060170_top
 
