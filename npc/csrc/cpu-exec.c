@@ -1,12 +1,14 @@
 #include <locale.h>
 #include "isa.h"
 #include "common.h"
+#include <locale.h>
+#include "stdlib.h"
 
 void isa_exec_once();
 
 NPC_reg cpu = { .pc =0x80000000};
 Decode s;
-NPC_State npc_state = { .state = NPC_QUIT };
+NPC_State npc_state = { .state = NPC_STOP };
 
 #define MAX_INST_TO_PRINT 10
 
@@ -18,6 +20,7 @@ int flag = 0;
 
 static void exec_once(Decode *s, vaddr_t pc) {
   s->pc = pc;//当前指令地址
+  printf("0x%08x\n",pc);
   s->snpc = pc;//静态下一条指令地址，默认为pc+4
   isa_exec_once();
   cpu.pc = s->dnpc;//动态下一条指令，可能跳转或者分支改变
@@ -52,7 +55,6 @@ static void exec_once(Decode *s, vaddr_t pc) {
 }
 
 static void execute(uint64_t n) {
-  Decode s;
   //initBuffer(&cb); // 初始化环形缓冲区，大小为BUFFER_SIZE
   for (;n > 0; n --) {
     exec_once(&s, cpu.pc);
@@ -86,6 +88,7 @@ void cpu_exec(uint64_t n) {
   g_print_step = (n < MAX_INST_TO_PRINT);//一次执行太多步就不打印了，bool类型的gprintstep就赋值为false
   switch (npc_state.state) {
     case NPC_END: case NPC_ABORT: case NPC_QUIT:
+      //printf("%d\n",npc_state.state);
       printf("Program execution has ended. To restart the program, exit NPC and run again.\n");
       return;//如果状态是结束了，出错了，退出了就打印“退出nemu”。
     default: npc_state.state = NPC_RUNNING;//默认running
@@ -111,4 +114,11 @@ void cpu_exec(uint64_t n) {
       // fall through
     case NPC_QUIT: statistic();
   }
+}
+
+
+int is_exit_status_bad() {
+  int good = (npc_state.state == NPC_END && npc_state.halt_ret == 0) ||
+    (npc_state.state == NPC_QUIT);
+  return !good;
 }

@@ -21,11 +21,19 @@ VERILATOR = verilator
 NPC_IMG?= 
 
 ##NPC_FLAGS?= -l=$(NPC_HOME)/npc-log.txt -b
-NPC_FLAGS?= -l $(NPC_HOME)/npc-log.txt -b
+NPC_FLAGS?= -l $(NPC_HOME)/npc-log.txt
+
+#VERILATOR_FLAGS = -Wall --cc --trace \
+					-CFLAGS  "-g -I /home/yuweijie/ysyx-workbench/npc/include -O2" \
+					 --exe --build \
+					 -LDFLAGS "-g -lreadline" \
+					 -Ivsrc \
+					 --top-module ysyx_25060170_top
 
 VERILATOR_FLAGS = -Wall --cc --trace \
-					-CFLAGS  "-I /home/yuweijie/ysyx-workbench/npc/include -O2" \
+					-CFLAGS  " -I /home/yuweijie/ysyx-workbench/npc/include -O2" \
 					 --exe --build \
+					 -LDFLAGS " -lreadline" \
 					 -Ivsrc \
 					 --top-module ysyx_25060170_top
 
@@ -58,6 +66,10 @@ checkone:
     -I/home/yuweijie/ysyx-workbench/npc/vsrc \
     --top-module $(TEST_MODULE) \
     vsrc/$(TEST_MODULE)
+
+gdb:
+	$(VERILATOR) $(VERILATOR_FLAGS) $(SRC_FILES) $(VERILOG_FILES) 
+	gdb ./obj_dir/Vysyx_25060170_top
 
 valgrind:
 	rm -rf obj_dir waveform.vcd
