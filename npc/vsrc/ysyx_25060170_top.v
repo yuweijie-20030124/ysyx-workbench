@@ -30,7 +30,7 @@ wire        	reg_write_en_o;
 wire [31:0]     EXU_PC;
 
 ysyx_25060170_IFU #(
-	.RESET_PC 	( 8000_0000  ))
+	.RESET_PC 	( 32'h8000_0000  ))
 u_ysyx_25060170_IFU(
 	.clk         	( clk          ),
 	.rst         	( rst          ),

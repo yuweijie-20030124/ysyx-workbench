@@ -4,7 +4,7 @@
 #include <common.h>
 
 typedef struct {
-  word_t gpr[MUXDEF(CONFIG_RVE, 16, 32)];
+  word_t gpr[32];
   vaddr_t pc;
 } NPC_reg;
 
@@ -12,7 +12,6 @@ typedef struct {
 typedef struct Decode {
   word_t pc;
   word_t snpc; // static next pc
-  word_t dnpc;
   word_t val;
   IFDEF(CONFIG_ITRACE, char logbuf[128]);
 } Decode;

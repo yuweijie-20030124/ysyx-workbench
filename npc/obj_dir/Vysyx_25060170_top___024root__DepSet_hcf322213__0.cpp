@@ -111,7 +111,7 @@ VL_INLINE_OPT void Vysyx_25060170_top___024root___nba_sequent__TOP__0(Vysyx_2506
         vlSelfRef.ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT____Vcellout__reg_gen__BRA__29__KET____DOT__reg_x__dout = 0U;
         vlSelfRef.ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT____Vcellout__reg_gen__BRA__30__KET____DOT__reg_x__dout = 0U;
         vlSelfRef.ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT____Vcellout__reg_gen__BRA__31__KET____DOT__reg_x__dout = 0U;
-        vlSelfRef.ysyx_25060170_top__DOT__PCout = 0x4c4b400U;
+        vlSelfRef.ysyx_25060170_top__DOT__PCout = 0x80000000U;
     } else {
         if (((IData)(vlSelfRef.ysyx_25060170_top__DOT__reg_write_en_o) 
              & (0x80U == (0xf80U & vlSelfRef.ysyx_25060170_top__DOT__MEM_inst_o)))) {
@@ -341,8 +341,12 @@ VL_INLINE_OPT void Vysyx_25060170_top___024root___nba_sequent__TOP__0(Vysyx_2506
         = vlSelfRef.ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT____Vcellout__reg_gen__BRA__30__KET____DOT__reg_x__dout;
     vlSelfRef.ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT__rf[0x1fU] 
         = vlSelfRef.ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT____Vcellout__reg_gen__BRA__31__KET____DOT__reg_x__dout;
+    VL_WRITEF_NX("PC = 0x%08x\n",0,32,vlSelfRef.ysyx_25060170_top__DOT__PCout);
     Vysyx_25060170_top___024root____Vdpiimwrap_ysyx_25060170_top__DOT__u_ysyx_25060170_MEM__DOT__pmem_read_TOP(vlSelfRef.ysyx_25060170_top__DOT__PCout, vlSelfRef.__Vtask_ysyx_25060170_top__DOT__u_ysyx_25060170_MEM__DOT__pmem_read__0__rdata, 4U);
     vlSelfRef.ysyx_25060170_top__DOT__MEM_inst_o = vlSelfRef.__Vtask_ysyx_25060170_top__DOT__u_ysyx_25060170_MEM__DOT__pmem_read__0__rdata;
+    VL_WRITEF_NX("raddr = 0x%08x\ninst_o = 0x%08x\n",0,
+                 32,vlSelfRef.ysyx_25060170_top__DOT__PCout,
+                 32,vlSelfRef.ysyx_25060170_top__DOT__MEM_inst_o);
     vlSelfRef.ysyx_25060170_top__DOT__op_1 = (((- (IData)(
                                                           (0x13U 
                                                            == 

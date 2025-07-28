@@ -19,11 +19,11 @@ int flag = 0;
 
 
 static void exec_once(Decode *s, vaddr_t pc) {
+  //printf("0x%08x\n",pc);
   s->pc = pc;//当前指令地址
-  printf("0x%08x\n",pc);
+  //printf("0x%08x\n",pc);
   s->snpc = pc;//静态下一条指令地址，默认为pc+4
   isa_exec_once();
-  cpu.pc = s->dnpc;//动态下一条指令，可能跳转或者分支改变
 #ifdef CONFIG_ITRACE//如果启用了 CONFIG_ITRACE，会记录指令的详细信息到日志缓冲区 s->logbuf：
   char *p = s->logbuf;
   //snprintf() 是一个 C 语言标准库函数，用于格式化输出字符串，并将结果写入到指定的缓冲区，
