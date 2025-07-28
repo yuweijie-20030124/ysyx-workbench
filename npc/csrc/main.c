@@ -15,6 +15,7 @@ void close_npc();
 void init_monitor(int argc, char *argv[]);
 void cpu_reset();
 void sdb_mainloop();
+int is_exit_status_bad();
 
 Vysyx_25060170_top* top;
 VerilatedContext* contextp;
@@ -110,9 +111,9 @@ int main(int argc, char** argv) {
 	
 	//is_exit_status_bad();
 
-
     close_npc();
-    return 0;
+
+    return is_exit_status_bad();
 }
 
 void isa_exec_once(){

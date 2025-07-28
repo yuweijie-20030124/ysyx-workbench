@@ -65,6 +65,7 @@ static int cmd_si(char *args) {
 }
 
 static int cmd_q(char *args) {
+  //printf("%d",NPC_QUIT);
   npc_state.state = NPC_QUIT;
   return -1;
 }
@@ -88,7 +89,7 @@ static struct {
   //{ "p", "expression evaluation", cmd_p },
   //{ "w", "creat watchpoint", cmd_w },
   //{ "d", "delete watchpoint", cmd_d },
-  //{ "q", "Exit NEMU", cmd_q },
+  { "q", "Exit NEMU", cmd_q },
   /* TODO: Add more commands cmd_d*/
 };
 
@@ -119,6 +120,7 @@ static int cmd_help(char *args) {
 
 void sdb_mainloop() {
   if (is_batch_mode) {
+    //printf("fuck npc\n");
     cmd_c(NULL);
     return;
   }
