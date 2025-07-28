@@ -10,8 +10,8 @@ import "DPI-C" function void pmem_read(input int raddr, output int rdata, input 
 reg [7:0] rlen = 8'd4;
 always @(*) begin
     pmem_read(addr_i,inst_o,rlen);
-    $display("raddr = 0x%08x", addr_i);
-    $display("inst_o = 0x%08x", inst_o);
+    //$display("addr_i = 0x%08x", addr_i);
+    //$display("inst_o = 0x%08x", inst_o);
 end
 
 

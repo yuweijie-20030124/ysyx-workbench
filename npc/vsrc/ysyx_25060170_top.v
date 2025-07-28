@@ -14,7 +14,7 @@ wire [31:0] 	op_1;
 wire [31:0] 	op_2;
 wire [31:0] 	imm_o;
 wire        	jal;
-wire        	branch;
+//wire        	branch;
 //wire        	brlt;
 wire [1:0]  	regS;
 wire        	RegW;
@@ -28,17 +28,15 @@ wire [31:0] 	reg_write_data_o;
 wire [4:0]  	reg_write_addr_o;
 wire        	reg_write_en_o;
 wire [31:0]     EXU_PC;
+wire 			jump_en;
 
 ysyx_25060170_IFU #(
 	.RESET_PC 	( 32'h8000_0000  ))
 u_ysyx_25060170_IFU(
 	.clk         	( clk          ),
 	.rst         	( rst          ),
-	.PCin        	( EXU_PC     ),
-	.imm         	( imm_o        ),
-	.res         	( exu_res1     ),
-	.br          	( branch       ),
-	.isx         	( PCx1         ),
+	.jump_addr		( EXU_PC	   ),
+	.jump_en		( jump_en),
 	.PCout       	( PCout        )
 );
 
@@ -57,11 +55,12 @@ ysyx_25060170_IDU u_ysyx_25060170_IDU(
 	.op_2         	( op_2          ),
 	.imm_o        	( imm_o         ),
 	.jal          	( jal           ),
-	.branch       	( branch        ),
+	//.branch       	( branch        ),
 	//.brlt         	( brlt          ),
 	.regS         	( regS          ),
 	.RegW         	( RegW          ),
-	.PCx1         	( PCx1          )
+	.PCx1         	( PCx1          ),
+	.jump_en		( jump_en)
 );
 
 

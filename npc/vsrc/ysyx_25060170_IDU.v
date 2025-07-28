@@ -35,16 +35,17 @@ module ysyx_25060170_IDU(
     
     //to WBU
     output reg jal,
-    output reg branch,
+    //output reg branch,
     //output reg brlt,    
     output reg [1:0] regS,
     output reg RegW,
-    output reg PCx1
+    output reg PCx1,
+    output jump_en
 
 );
     //wire is_jump = (opcode == 7'b1100111 || opcode == 7'b1101111);
     //localparam PC_INCR = 32'd4;  // 添加在模块开头
-
+    assign jump_en = PCx1 | jal;
     wire [6:0] opcode;
     wire [6:0] func7;
     //wire [2:0] func3;
@@ -121,7 +122,7 @@ module ysyx_25060170_IDU(
     always @(*) begin
         // 默认值
         jal = 0;
-        branch = 0;
+        //branch = 0;
         //brlt = 0;
         regS = 0;
         ALUop = 0;
@@ -179,4 +180,9 @@ module ysyx_25060170_IDU(
         endcase
     end
     
+    always @(*) begin
+    $display("PC = 0x%08x", pc_i);
+    $display("inst = 0x%08x", inst_i);
+end
+
     endmodule

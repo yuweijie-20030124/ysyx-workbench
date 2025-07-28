@@ -1,12 +1,8 @@
 module ysyx_25060170_IFU (
     input  clk,
     input  rst,
-    
-    input  [31:0] PCin,
-    input  [31:0] imm,
-    input  [31:0] res,      //执行单元结果，（用于JALR等指令时更新PC）。
-    input  br, isx,         //跳转或分支的标志位
-
+    input  [31:0] jump_addr,      //执行单元结果，（用于JALR等指令时更新PC）。
+    input  jump_en,         //跳转或分支的标志位
     //to IDU
     output reg [31:0] PCout
 
@@ -24,9 +20,8 @@ module ysyx_25060170_IFU (
         .wen(1'b1)
     );
 
-    assign PC_temp = (isx) ?     res      :  
-                     (br)  ? (PCin + imm) : 
-                                 PCin + 4 ;
+    assign PC_temp = jump_en ? jump_addr : PCout + 4;
+
 
 /*
     always @(posedge clk) begin
@@ -36,7 +31,7 @@ module ysyx_25060170_IFU (
 */  
 
 always @(*) begin
-    $display("PC = 0x%08x", PCout);
+    //$display("PC* = 0x%08x", PCout);
 end
 
 

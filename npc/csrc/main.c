@@ -30,7 +30,9 @@ extern "C" void pmem_read(paddr_t raddr, paddr_t* rdata, int rlen){
   if (raddr < CONFIG_MEM_BASE) return;
   if (likely(in_pmem(raddr))) {
     *rdata = host_read(guest_to_host(raddr),rlen);
-    //printf("rdata = 08x%08x******\n",*rdata);
+    //printf("C:raddr = 0x%08x\n",raddr);
+    //printf("C:rdata1 = 0x%08x\n",*rdata);
+    //printf("C:rdata2 = 0x%08x\n",*(uint32_t *)guest_to_host(0x80000000));
     return;
     }
    //IFDEF(CONFIG_DEVICE, *rdata = mmio_read(raddr, rlen); /*printf("%lx\n",raddr);*/return);
@@ -148,12 +150,6 @@ void cpu_reset(){
   tfp -> dump(main_time++);
 #endif  
 
-  top -> clk = 1;
-  top -> rst = 1;
-  top -> eval();
-  top -> clk = 0;
-  top -> rst = 1;  
-  top -> eval();
   top -> clk = 1;
   top -> rst = 1;
   top -> eval();

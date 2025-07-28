@@ -25,7 +25,7 @@ module ysyx_25060170_WBU(
 
     //from IDU
     input [4:0]  rd_i,              // 目的寄存器号
-    input [1:0] regS,
+    input [1:0]  regS,
     input RegW,                     //寄存器堆写使能信号
 
     //to GPR
