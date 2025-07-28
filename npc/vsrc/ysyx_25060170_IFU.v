@@ -35,5 +35,10 @@ module ysyx_25060170_IFU (
     end
 */  
 
+always @(*) begin
+    $display("PC = 0x%08x", PCout);
+end
+
+
 endmodule
 

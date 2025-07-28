@@ -30,12 +30,10 @@ extern "C" void pmem_read(paddr_t raddr, paddr_t* rdata, int rlen){
   if (raddr < CONFIG_MEM_BASE) return;
   if (likely(in_pmem(raddr))) {
     *rdata = host_read(guest_to_host(raddr),rlen);
-#ifdef CONFIG_MTRACE
-      Log("Read from memory at %#.4dx for %d bytes,content is %#.4dx.",raddr,rlen,*rdata);
-#endif
+    //printf("rdata = 08x%08x******\n",*rdata);
     return;
     }
-   IFDEF(CONFIG_DEVICE, *rdata = mmio_read(raddr, rlen); /*printf("%lx\n",raddr);*/return);
+   //IFDEF(CONFIG_DEVICE, *rdata = mmio_read(raddr, rlen); /*printf("%lx\n",raddr);*/return);
    return;
 }
 
@@ -145,10 +143,17 @@ void cpu_reset(){
   top -> clk = 0;
   top -> rst = 1;  
   top -> eval();
+  printf("***reset***\n");
 #ifdef CONFIG_GTK
   tfp -> dump(main_time++);
 #endif  
 
+  top -> clk = 1;
+  top -> rst = 1;
+  top -> eval();
+  top -> clk = 0;
+  top -> rst = 1;  
+  top -> eval();
   top -> clk = 1;
   top -> rst = 1;
   top -> eval();

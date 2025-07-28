@@ -504,7 +504,7 @@ VL_ATTR_COLD void Vysyx_25060170_top___024root__trace_const_0_sub_0(Vysyx_250601
     // Body
     bufp->fullIData(oldp+119,(0x20U),32);
     bufp->fullIData(oldp+120,(0U),32);
-    bufp->fullIData(oldp+121,(0x4c4b400U),32);
+    bufp->fullIData(oldp+121,(0x80000000U),32);
     bufp->fullBit(oldp+122,(1U));
     bufp->fullCData(oldp+123,(4U),8);
 }
