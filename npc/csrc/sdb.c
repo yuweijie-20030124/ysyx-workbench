@@ -172,6 +172,23 @@ static int cmd_x(char *args){
   return 0;
 } 
 
+static int cmd_w(char *args) {
+  char *EXPR  = strtok(NULL, " ");
+  if(EXPR==NULL){
+    Log(" error expression\n");
+    return 0;
+  }
+  bool flag=true;
+  word_t addr = expr(EXPR,&flag);
+  if(flag==false){
+    Log("error expression\n");
+    return 0;
+  }
+  add_watch(EXPR,addr);
+  return 0;
+}
+
+
 static int cmd_help(char *args);
 
 static struct {
@@ -185,7 +202,7 @@ static struct {
   { "info", "use 'info r' to show register status ***and*** use 'info w' to show watch point message", cmd_info },
   { "x", "scan memory", cmd_x },
   { "p", "expression evaluation", cmd_p },
-  //{ "w", "creat watchpoint", cmd_w },
+  { "w", "creat watchpoint", cmd_w },
   //{ "d", "delete watchpoint", cmd_d },
   { "q", "Exit NEMU", cmd_q },
   /* TODO: Add more commands cmd_d*/
