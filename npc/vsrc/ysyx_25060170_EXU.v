@@ -37,6 +37,13 @@ module ysyx_25060170_EXU(
 
     assign jump_Addr = exu_is_jalr ? {jumpaddr[31:1],1'b0} :
                        exu_is_jal  ?  jumpaddr : 32'b0;
+    
+    always @(*) begin
+        //$display("jump_Addr   = 0x%08x", jump_Addr);
+        //$display("exu_is_jalr   = %d", exu_is_jalr);
+        //$display("exu_is_jal   = %d", exu_is_jal);
+        
+    end
 
 endmodule
 

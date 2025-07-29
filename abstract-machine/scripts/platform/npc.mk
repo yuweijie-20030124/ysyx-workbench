@@ -16,7 +16,7 @@ LDFLAGS   += --gc-sections -e _start
 MAINARGS_MAX_LEN = 64
 MAINARGS_PLACEHOLDER = the_insert-arg_rule_in_Makefile_will_insert_mainargs_here
 CFLAGS += -DMAINARGS_MAX_LEN=$(MAINARGS_MAX_LEN) -DMAINARGS_PLACEHOLDER=$(MAINARGS_PLACEHOLDER)
-NPCFLAGS += -l $(shell dirname $(IMAGE).elf)/npc-log.txt -e $(IMAGE).elf -b
+NPCFLAGS += -l $(shell dirname $(IMAGE).elf)/npc-log.txt -f $(IMAGE).elf -b
 NPCFLAGS += -f $(IMAGE).elf
 
 insert-arg: image
