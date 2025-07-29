@@ -112,13 +112,14 @@ static int cmd_x(char *args){
       return 0;
   }
   bool success = true;
-  // vaddr_t addr = expr(EXPR,&success);
-  vaddr_t addr = 1;
+  //vaddr_t addr = expr(EXPR,&success);
+  vaddr_t addr = 0x80000000;
   if (success!=true){
       printf("ERRO!!\n");
       return 0;
   }
   if(addr>=0x80000000 && addr<= 0x87ffffff){
+    //printf("我进来咯~");
   for(int i = 0 ; i < n ; i++){
       uint32_t data = vaddr_read(addr + i * 4,4);
       printf("0x%08x  " , addr + i * 4 );
