@@ -1,6 +1,7 @@
 #include "memory.h"
 #include "common.h"
 #include "reg.h"
+#include "svdpi.h"
 
 paddr_t host_read(void *addr, int len) {
   switch (len) {
@@ -95,3 +96,15 @@ void init_mem() {
   memcpy(guest_to_host(0x80000000), img, sizeof(img));
   //printf("Memory at 0x80000000: 0x%08x\n", *(uint32_t *)guest_to_host(0x80000000));
  } 
+
+
+ extern "C" void IFU_SEND_INST(word_t *);
+ 
+ int get_inst(){
+  const svScope scope = svGetScopeFromName("TOP.ysyx_25060170_top.u_ysyx_25060170_IDU");
+  assert(scope);
+  svSetScope(scope);
+  word_t inst;
+  IFU_SEND_INST(&inst);
+  return inst;
+ }

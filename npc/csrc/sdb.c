@@ -7,6 +7,7 @@
 #include <readline/history.h>
 #include "reg.h"
 
+
 #define MAX_ENTRIES 1000  // 假设最多1000组数据
 #define MAX_BUF_LEN 512   // 每行buf的最大长度
 
@@ -77,6 +78,8 @@ static int cmd_c(char *args) {
 
 static int cmd_si(char *args) {
   if (args == NULL) {
+    // int inst = get_inst();
+    // printf("inst = 0x%08x\n",inst);
     cpu_exec(1);
     return 0;
   }

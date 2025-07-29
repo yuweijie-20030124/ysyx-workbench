@@ -29,4 +29,6 @@ static inline bool in_pmem(paddr_t addr) {
 
 uint8_t* guest_to_host(paddr_t addr);
 
+int get_inst();
+
 #endif

@@ -6,6 +6,20 @@
 #include "verilated_dpi.h"
 
 
+void Vysyx_25060170_top::IFU_SEND_INST(int* c_inst) {
+    VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_top___024root::IFU_SEND_INST\n"); );
+    // Init
+    IData/*31:0*/ c_inst__Vcvt;
+    c_inst__Vcvt = 0;
+    // Body
+    static int __Vfuncnum = -1;
+    if (VL_UNLIKELY(__Vfuncnum == -1)) __Vfuncnum = Verilated::exportFuncNum("IFU_SEND_INST");
+    const VerilatedScope* __Vscopep = Verilated::dpiScope();
+    Vysyx_25060170_top__Vcb_IFU_SEND_INST_t __Vcb = (Vysyx_25060170_top__Vcb_IFU_SEND_INST_t)(VerilatedScope::exportFind(__Vscopep, __Vfuncnum));
+    (*__Vcb)((Vysyx_25060170_top__Syms*)(__Vscopep->symsp()), c_inst__Vcvt);
+    for (size_t c_inst__Vidx = 0; c_inst__Vidx < 1; ++c_inst__Vidx) *c_inst = c_inst__Vcvt;
+}
+
 void Vysyx_25060170_top::GPR_SEND_VALUE(int* r1, int* r2, int* r3, int* r4, int* r5, int* r6, int* r7, int* r8, int* r9, int* r10, int* r11, int* r12, int* r13, int* r14, int* r15, int* r16, int* r17, int* r18, int* r19, int* r20, int* r21, int* r22, int* r23, int* r24, int* r25, int* r26, int* r27, int* r28, int* r29, int* r30, int* r31) {
     VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_top___024root::GPR_SEND_VALUE\n"); );
     // Init

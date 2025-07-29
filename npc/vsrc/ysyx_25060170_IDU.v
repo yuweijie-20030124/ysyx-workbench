@@ -181,6 +181,8 @@ module ysyx_25060170_IDU(
     end
     
 
+/***************************************DPI-C*******************************************/
+
 import "DPI-C" function void set_npc_exit(int pc, int halt_ret);
     always @(*) begin
     //$display("PC = 0x%08x", pc_i);
@@ -190,6 +192,14 @@ import "DPI-C" function void set_npc_exit(int pc, int halt_ret);
     end
 end
 
-    
+export "DPI-C" task IFU_SEND_INST;
+
+task IFU_SEND_INST(
+    output int c_inst
+);
+
+    c_inst = inst_i;
+
+endtask    
 
     endmodule
