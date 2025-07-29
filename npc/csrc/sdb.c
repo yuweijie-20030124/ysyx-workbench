@@ -62,7 +62,7 @@ static int cmd_info(char *args) {
     isa_reg_display();
   } 
   else if(strcmp(args, "p") == 0){
-    //display_watch();
+    display_watch();
   }
     else{
     printf("print r or p, not'%s'\n", args);
@@ -188,6 +188,12 @@ static int cmd_w(char *args) {
   return 0;
 }
 
+static int cmd_d(char *args) {
+  char *NUM  = strtok(NULL, " ");
+  int num = atoi(NUM);
+  remove_watch(num);
+  return 0;
+}
 
 static int cmd_help(char *args);
 
@@ -203,7 +209,7 @@ static struct {
   { "x", "scan memory", cmd_x },
   { "p", "expression evaluation", cmd_p },
   { "w", "creat watchpoint", cmd_w },
-  //{ "d", "delete watchpoint", cmd_d },
+  { "d", "delete watchpoint", cmd_d },
   { "q", "Exit NEMU", cmd_q },
   /* TODO: Add more commands cmd_d*/
 };
