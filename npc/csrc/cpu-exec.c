@@ -122,3 +122,5 @@ int is_exit_status_bad() {
     (npc_state.state == NPC_QUIT);
   return !good;
 }
+
+

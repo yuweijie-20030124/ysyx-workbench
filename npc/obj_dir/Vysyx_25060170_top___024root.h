@@ -67,7 +67,7 @@ class alignas(VL_CACHE_LINE_BYTES) Vysyx_25060170_top___024root final : public V
     IData/*31:0*/ ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT____Vcellout__reg_gen__BRA__30__KET____DOT__reg_x__dout;
     IData/*31:0*/ ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT____Vcellout__reg_gen__BRA__31__KET____DOT__reg_x__dout;
     IData/*31:0*/ ysyx_25060170_top__DOT__u_ysyx_25060170_EXU__DOT__jumpaddr;
-    IData/*31:0*/ __Vtask_ysyx_25060170_top__DOT__u_ysyx_25060170_MEM__DOT__pmem_read__0__rdata;
+    IData/*31:0*/ __Vtask_ysyx_25060170_top__DOT__u_ysyx_25060170_MEM__DOT__pmem_read__1__rdata;
     IData/*31:0*/ __VactIterCount;
     VlUnpacked<IData/*31:0*/, 32> ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT__rf;
     VlUnpacked<CData/*0:0*/, 3> __Vm_traceActivity;
