@@ -1,5 +1,7 @@
 #include "memory.h"
 #include "common.h"
+#include "reg.h"
+#include "svdpi.h"
 
 paddr_t host_read(void *addr, int len) {
   switch (len) {
@@ -22,6 +24,56 @@ void host_write(void *addr, int len, paddr_t data) {
   }
 }
 
+static word_t pmem_read(paddr_t addr, int len) {
+  word_t ret = host_read(guest_to_host(addr), len);
+  return ret;
+}
+
+static void pmem_write(paddr_t addr, int len, word_t data) {
+  host_write(guest_to_host(addr), len, data);
+}
+
+static void out_of_bound(paddr_t addr) {
+  panic("address = " FMT_PADDR " is out of bound of pmem [" FMT_PADDR ", " FMT_PADDR "] at pc = " FMT_WORD,
+      addr, PMEM_LEFT, PMEM_RIGHT, cpu.pc);
+}
+
+//读物理地址
+word_t paddr_read(paddr_t addr, int len) {
+  if (likely(in_pmem(addr))) {  
+    IFDEF(CONFIG_MTRACE, Log("read in address = " FMT_PADDR ", len = %d\n", addr, len));
+    return pmem_read(addr, len);
+  }
+  IFDEF(CONFIG_DEVICE, return mmio_read(addr, len));
+  //printf("");
+  out_of_bound(addr);
+  return 0;
+}
+
+//写物理地址
+void paddr_write(paddr_t addr, int len, word_t data) {
+  if (likely(in_pmem(addr))) { 
+    pmem_write(addr, len, data);
+    IFDEF(CONFIG_MTRACE, Log("write in address = " FMT_PADDR ", len = %d, data = " FMT_WORD "\n", addr, len, data));
+    return; }
+  
+  IFDEF(CONFIG_DEVICE, mmio_write(addr, len, data); return);
+  out_of_bound(addr);
+  //Log("weiwei");
+}
+
+word_t vaddr_ifetch(vaddr_t addr, int len) {
+  return paddr_read(addr, len);
+}
+
+//读地址 == 取指
+word_t vaddr_read(vaddr_t addr, int len) {
+  return paddr_read(addr, len);
+}
+//写地址
+void vaddr_write(vaddr_t addr, int len, word_t data) {
+  paddr_write(addr, len, data);
+}
 
 uint8_t mem[CONFIG_MSIZE] = {0};
 // Memory transfer
@@ -44,3 +96,15 @@ void init_mem() {
   memcpy(guest_to_host(0x80000000), img, sizeof(img));
   //printf("Memory at 0x80000000: 0x%08x\n", *(uint32_t *)guest_to_host(0x80000000));
  } 
+
+
+ extern "C" void IFU_SEND_INST(word_t *);
+ 
+ int get_inst(){
+  const svScope scope = svGetScopeFromName("TOP.ysyx_25060170_top.u_ysyx_25060170_IDU");
+  assert(scope);
+  svSetScope(scope);
+  word_t inst;
+  IFU_SEND_INST(&inst);
+  return inst;
+ }

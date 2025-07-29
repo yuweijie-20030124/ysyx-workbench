@@ -22,3 +22,11 @@ void GPR_SEND_VALUE(int* r1, int* r2, int* r3, int* r4, int* r5, int* r6, int* r
 }
 #endif
 
+#ifndef VL_DPIDECL_IFU_SEND_INST_
+#define VL_DPIDECL_IFU_SEND_INST_
+void IFU_SEND_INST(int* c_inst) {
+    // DPI export at vsrc/ysyx_25060170_IDU.v:197:6
+    return Vysyx_25060170_top::IFU_SEND_INST(c_inst);
+}
+#endif
+
