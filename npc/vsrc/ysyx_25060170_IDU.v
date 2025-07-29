@@ -182,10 +182,9 @@ module ysyx_25060170_IDU(
     
 
 import "DPI-C" function void set_npc_exit(int pc, int halt_ret);
-
     always @(*) begin
-    $display("PC = 0x%08x", pc_i);
-    $display("inst = 0x%08x", inst_i);
+    //$display("PC = 0x%08x", pc_i);
+    //$display("inst = 0x%08x", inst_i);
     if(inst_i == 32'b0000_0000_0001_0000_0000_0000_0111_0011) begin
         set_npc_exit(pc_i,0);
     end

@@ -18,6 +18,74 @@ VL_INLINE_OPT void Vysyx_25060170_top___024root____Vdpiimwrap_ysyx_25060170_top_
     set_npc_exit(pc__Vcvt, halt_ret__Vcvt);
 }
 
+void Vysyx_25060170_top___024root____Vdpiexp_ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT__GPR_SEND_VALUE_TOP(Vysyx_25060170_top__Syms* __restrict vlSymsp, IData/*31:0*/ &r1, IData/*31:0*/ &r2, IData/*31:0*/ &r3, IData/*31:0*/ &r4, IData/*31:0*/ &r5, IData/*31:0*/ &r6, IData/*31:0*/ &r7, IData/*31:0*/ &r8, IData/*31:0*/ &r9, IData/*31:0*/ &r10, IData/*31:0*/ &r11, IData/*31:0*/ &r12, IData/*31:0*/ &r13, IData/*31:0*/ &r14, IData/*31:0*/ &r15, IData/*31:0*/ &r16, IData/*31:0*/ &r17, IData/*31:0*/ &r18, IData/*31:0*/ &r19, IData/*31:0*/ &r20, IData/*31:0*/ &r21, IData/*31:0*/ &r22, IData/*31:0*/ &r23, IData/*31:0*/ &r24, IData/*31:0*/ &r25, IData/*31:0*/ &r26, IData/*31:0*/ &r27, IData/*31:0*/ &r28, IData/*31:0*/ &r29, IData/*31:0*/ &r30, IData/*31:0*/ &r31) {
+    VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_top___024root____Vdpiexp_ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT__GPR_SEND_VALUE_TOP\n"); );
+    // Init
+    // Body
+    r1 = vlSymsp->TOP.ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT__rf
+        [1U];
+    r2 = vlSymsp->TOP.ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT__rf
+        [2U];
+    r3 = vlSymsp->TOP.ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT__rf
+        [3U];
+    r4 = vlSymsp->TOP.ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT__rf
+        [4U];
+    r5 = vlSymsp->TOP.ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT__rf
+        [5U];
+    r6 = vlSymsp->TOP.ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT__rf
+        [6U];
+    r7 = vlSymsp->TOP.ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT__rf
+        [7U];
+    r8 = vlSymsp->TOP.ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT__rf
+        [8U];
+    r9 = vlSymsp->TOP.ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT__rf
+        [9U];
+    r10 = vlSymsp->TOP.ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT__rf
+        [0xaU];
+    r11 = vlSymsp->TOP.ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT__rf
+        [0xbU];
+    r12 = vlSymsp->TOP.ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT__rf
+        [0xcU];
+    r13 = vlSymsp->TOP.ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT__rf
+        [0xdU];
+    r14 = vlSymsp->TOP.ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT__rf
+        [0xeU];
+    r15 = vlSymsp->TOP.ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT__rf
+        [0xfU];
+    r16 = vlSymsp->TOP.ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT__rf
+        [0x10U];
+    r17 = vlSymsp->TOP.ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT__rf
+        [0x11U];
+    r18 = vlSymsp->TOP.ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT__rf
+        [0x12U];
+    r19 = vlSymsp->TOP.ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT__rf
+        [0x13U];
+    r20 = vlSymsp->TOP.ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT__rf
+        [0x14U];
+    r21 = vlSymsp->TOP.ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT__rf
+        [0x15U];
+    r22 = vlSymsp->TOP.ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT__rf
+        [0x16U];
+    r23 = vlSymsp->TOP.ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT__rf
+        [0x17U];
+    r24 = vlSymsp->TOP.ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT__rf
+        [0x18U];
+    r25 = vlSymsp->TOP.ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT__rf
+        [0x19U];
+    r26 = vlSymsp->TOP.ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT__rf
+        [0x1aU];
+    r27 = vlSymsp->TOP.ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT__rf
+        [0x1bU];
+    r28 = vlSymsp->TOP.ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT__rf
+        [0x1cU];
+    r29 = vlSymsp->TOP.ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT__rf
+        [0x1dU];
+    r30 = vlSymsp->TOP.ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT__rf
+        [0x1eU];
+    r31 = vlSymsp->TOP.ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT__rf
+        [0x1fU];
+}
+
 extern "C" void pmem_read(int raddr, int* rdata, char rlen);
 
 VL_INLINE_OPT void Vysyx_25060170_top___024root____Vdpiimwrap_ysyx_25060170_top__DOT__u_ysyx_25060170_MEM__DOT__pmem_read_TOP(IData/*31:0*/ raddr, IData/*31:0*/ &rdata, CData/*7:0*/ rlen) {

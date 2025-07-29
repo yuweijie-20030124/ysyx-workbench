@@ -18,4 +18,6 @@ static inline const char* reg_name(int idx) {
 
 word_t isa_reg_str2val(const char *s, bool *success);
 
+//void get_reg_value(int data);
+
 #endif

@@ -14,3 +14,11 @@
 #include "Vysyx_25060170_top__Dpi.h"
 #include "Vysyx_25060170_top.h"
 
+#ifndef VL_DPIDECL_GPR_SEND_VALUE_
+#define VL_DPIDECL_GPR_SEND_VALUE_
+void GPR_SEND_VALUE(int* r1, int* r2, int* r3, int* r4, int* r5, int* r6, int* r7, int* r8, int* r9, int* r10, int* r11, int* r12, int* r13, int* r14, int* r15, int* r16, int* r17, int* r18, int* r19, int* r20, int* r21, int* r22, int* r23, int* r24, int* r25, int* r26, int* r27, int* r28, int* r29, int* r30, int* r31) {
+    // DPI export at vsrc/ysyx_25060170_GPR.v:75:6
+    return Vysyx_25060170_top::GPR_SEND_VALUE(r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, r16, r17, r18, r19, r20, r21, r22, r23, r24, r25, r26, r27, r28, r29, r30, r31);
+}
+#endif
+

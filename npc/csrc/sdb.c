@@ -5,11 +5,13 @@
 #include "memory.h"
 #include <readline/readline.h>
 #include <readline/history.h>
+#include "reg.h"
 
 #define MAX_ENTRIES 1000  // 假设最多1000组数据
 #define MAX_BUF_LEN 512   // 每行buf的最大长度
 
 static int is_batch_mode = false;
+
 
 void init_regex();
 void init_wp_pool();
@@ -17,7 +19,7 @@ void add_watch(char *expr,word_t addr);
 void display_watch();
 void remove_watch(int num);
 void cpu_exec(uint64_t n);
-
+void isa_reg_display();
 
 typedef struct {
     int result;
@@ -26,6 +28,10 @@ typedef struct {
 
 ResultEntry entries[MAX_ENTRIES];  // 存储所有结果的数组
 int entry_count = 0;               // 当前存储的条目数
+
+void sdb_set_batch_mode() {
+  is_batch_mode = true;
+}
 
 static char* rl_gets() {
   static char *line_read = NULL;
@@ -41,6 +47,25 @@ static char* rl_gets() {
   }
 
   return line_read;
+}
+
+static int cmd_info(char *args) {
+  if (args == NULL) {
+    printf("print r to see register status\n");
+    printf("print p to see watchpoint\n");
+    return 0;
+  }
+
+  if (strcmp(args, "r") == 0) {
+    isa_reg_display();
+  } 
+  else if(strcmp(args, "p") == 0){
+    //display_watch();
+  }
+    else{
+    printf("print r or p, not'%s'\n", args);
+    }
+  return 0;
 }
 
 static int cmd_c(char *args) {
@@ -70,9 +95,6 @@ static int cmd_q(char *args) {
   return -1;
 }
 
-void sdb_set_batch_mode() {
-  is_batch_mode = true;
-}
 
 static int cmd_help(char *args);
 
@@ -84,7 +106,7 @@ static struct {
   { "help", "Display information about all supported commands", cmd_help },
   { "c", "Continue the execution of the program", cmd_c },
   { "si", "execute one step", cmd_si },
-  //{ "info", "use 'info r' to show register status ***and*** use 'info w' to show watch point message", cmd_info },
+  { "info", "use 'info r' to show register status ***and*** use 'info w' to show watch point message", cmd_info },
   //{ "x", "scan memory", cmd_x },
   //{ "p", "expression evaluation", cmd_p },
   //{ "w", "creat watchpoint", cmd_w },
