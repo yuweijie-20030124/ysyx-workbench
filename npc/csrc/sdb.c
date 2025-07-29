@@ -95,6 +95,43 @@ static int cmd_q(char *args) {
   return -1;
 }
 
+static int cmd_x(char *args){
+  if(args == NULL){
+      printf("too few parameter! \n");
+      return 1;
+  } 
+  char *arg = strtok(args," ");
+  if(arg == NULL){
+      printf("too few parameter!! \n");
+      return 0;
+  }
+  int  n = atoi(arg);
+  char *EXPR = strtok(NULL," ");
+  if(EXPR == NULL){                                                                                                                                          
+      printf("too few parameter!!! \n");
+      return 0;
+  }
+  bool success = true;
+  // vaddr_t addr = expr(EXPR,&success);
+  vaddr_t addr = 1;
+  if (success!=true){
+      printf("ERRO!!\n");
+      return 0;
+  }
+  if(addr>=0x80000000 && addr<= 0x87ffffff){
+  for(int i = 0 ; i < n ; i++){
+      uint32_t data = vaddr_read(addr + i * 4,4);
+      printf("0x%08x  " , addr + i * 4 );
+      for(int j =0 ; j < 4 ; j++){
+          printf("0x%02x " , data & 0xff);
+          data = data >> 8 ;
+      }
+      printf("\n");
+  }
+}
+  else printf("you are out of bound\n");     
+  return 0;
+} 
 
 static int cmd_help(char *args);
 
@@ -107,7 +144,7 @@ static struct {
   { "c", "Continue the execution of the program", cmd_c },
   { "si", "execute one step", cmd_si },
   { "info", "use 'info r' to show register status ***and*** use 'info w' to show watch point message", cmd_info },
-  //{ "x", "scan memory", cmd_x },
+  { "x", "scan memory", cmd_x },
   //{ "p", "expression evaluation", cmd_p },
   //{ "w", "creat watchpoint", cmd_w },
   //{ "d", "delete watchpoint", cmd_d },

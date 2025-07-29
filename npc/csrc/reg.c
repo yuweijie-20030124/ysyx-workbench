@@ -4,6 +4,7 @@
 #include "svdpi.h"
 #include "assert.h"
 
+
 //这个 C 告诉编译器以C类型进行编译
 
 extern "C" void GPR_SEND_VALUE(word_t *, word_t *, word_t *, word_t *,
