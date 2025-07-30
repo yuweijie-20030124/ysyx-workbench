@@ -20,8 +20,9 @@ int is_exit_status_bad();
 Vysyx_25060170_top* top;
 VerilatedContext* contextp;
 #ifdef CONFIG_GTK
-VerilatedVcdC* tfp;
+VerilatedVcdC* tfp = new VerilatedVcdC(); //导出vcd波形需要加此语句
 #endif
+vluint64_t main_time = 0;
 
 /**************************** DPI-C *******************************/
 
@@ -106,7 +107,13 @@ int main(int argc, char** argv) {
 
   contextp = new VerilatedContext;
 	contextp->commandArgs(argc,argv);
+  Verilated::traceEverOn(true);
 	top = new Vysyx_25060170_top{contextp};
+
+  #ifdef CONFIG_GTK
+    top->trace(tfp, 0);
+    tfp->open("waveform.vcd");
+  #endif  
 
 	init_monitor(argc,argv);
 	cpu_reset();
@@ -143,6 +150,11 @@ void close_npc(){
 #endif
 	delete top ;
 	delete contextp ;
+      
+#ifdef CONFIG_GTK
+  delete tfp;
+#endif
+  
 	exit(0) ;
 	
 }
