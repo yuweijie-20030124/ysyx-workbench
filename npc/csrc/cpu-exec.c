@@ -3,6 +3,7 @@
 #include "common.h"
 #include <locale.h>
 #include "stdlib.h"
+#include "memory.h"
 
 void isa_exec_once();
 
@@ -20,21 +21,21 @@ int flag = 0;
 //void device_update();
 int update_watchpoint(void);
 
-/*
+
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
-#ifdef CONFIG_ITRACE_COND
-  if (ITRACE_COND) { log_write("%s\n", _this->logbuf); } //感觉在这里是输出指令的日志
+#ifdef CONFIG_ITRACE
+  log_write("%s\n", _this->logbuf); //感觉在这里是输出指令的日志
 #endif
   //一次执行十条以下的指令gps就会赋值为true。
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }
-  IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
+  //IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
   #ifdef CONFIG_WATCHPOINT
     if (update_watchpoint() > 0) {
         nemu_state.state = NEMU_STOP;
     }
 #endif
 }
-*/
+
 
 static void exec_once(Decode *s, vaddr_t pc) {
   //printf("0x%08x\n",pc);
@@ -52,7 +53,9 @@ static void exec_once(Decode *s, vaddr_t pc) {
   p += snprintf(p, sizeof(s->logbuf), FMT_WORD ":", s->pc);//FMT_WORD：格式化字符串（如 "0x%08x"），用于输出 PC 地址。
   int ilen = s->snpc - s->pc; //计算指令长度
   int i;
-  uint8_t *inst = (uint8_t *)&s->isa.inst;
+  //uint8_t *inst = (uint8_t *)&s->isa.inst;
+  uint8_t *inst = (uint8_t *)get_inst();
+  //printf("inst = 0x%08x",cpu.pc);
   for (i = ilen - 1; i >= 0; i --) {//riscv是大段，从高地址开始打印
     p += snprintf(p, 4, " %02x", inst[i]); //把指令打印出来
   }
@@ -62,13 +65,13 @@ static void exec_once(Decode *s, vaddr_t pc) {
   space_len = space_len * 3 + 1;
   memset(p, ' ', space_len);
   p += space_len;
-
+  /*
   void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);//反汇编指令
   disassemble(p, s->logbuf + sizeof(s->logbuf) - p,   //将反汇编指令出来后传到logbuf里面
       MUXDEF(CONFIG_ISA_x86, s->snpc, s->pc), (uint8_t *)&s->isa.inst, ilen);
             //muxdef，有点像  ？：，
   enqueue(&cb, s->logbuf);
-
+  */
 #endif
 }
 
@@ -77,7 +80,7 @@ static void execute(uint64_t n) {
   for (;n > 0; n --) {
     exec_once(&s, cpu.pc);
     g_nr_guest_inst ++;
-    //trace_and_difftest(&s, cpu.pc);
+    trace_and_difftest(&s, cpu.pc);
     if (npc_state.state != NPC_RUNNING) break;
     IFDEF(CONFIG_DEVICE, device_update());
   }/*条件编译宏，如果CONFIG_DEVICE被定义，则调用device_update函数，如果 CONFIG_DEVICE 没有被定义，

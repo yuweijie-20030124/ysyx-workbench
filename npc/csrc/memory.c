@@ -98,13 +98,24 @@ void init_mem() {
  } 
 
 
- extern "C" void IFU_SEND_INST(word_t *);
+ extern "C" void IDU_SEND_INST(word_t *);
  
  int get_inst(){
   const svScope scope = svGetScopeFromName("TOP.ysyx_25060170_top.u_ysyx_25060170_IDU");
   assert(scope);
   svSetScope(scope);
   word_t inst;
-  IFU_SEND_INST(&inst);
+  IDU_SEND_INST(&inst);
   return inst;
+ }
+
+  extern "C" void IDU_SEND_PC(word_t *);
+ 
+ int get_pc(){
+  const svScope scope = svGetScopeFromName("TOP.ysyx_25060170_top.u_ysyx_25060170_IDU");
+  assert(scope);
+  svSetScope(scope);
+  word_t pc;
+  IDU_SEND_PC(&pc);
+  return pc;
  }

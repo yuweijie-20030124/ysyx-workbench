@@ -31,4 +31,6 @@ uint8_t* guest_to_host(paddr_t addr);
 
 int get_inst();
 
+ int get_pc();
+
 #endif
