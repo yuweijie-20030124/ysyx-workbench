@@ -30,8 +30,11 @@ NPC_FLAGS?= --log=$(NPC_HOME)/npc-log.txt
 					 -Ivsrc \
 					 --top-module ysyx_25060170_top
 
+
+
 VERILATOR_FLAGS = -Wall --cc --trace \
 					-CFLAGS  " -I /home/yuweijie/ysyx-workbench/npc/include -O2" \
+					-CFLAGS  " -I /home/yuweijie/ysyx-workbench/nemu/tools/capstone/repo/include -O2" \
 					 --exe --build \
 					 -LDFLAGS " -lreadline" \
 					 -Ivsrc \

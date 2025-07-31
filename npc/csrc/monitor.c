@@ -11,7 +11,7 @@ void init_mem();
 void init_difftest(char *ref_so_file, long img_size);
 void init_device();
 void init_sdb();
-void init_disasm(const char *triple);
+void init_disasm();
 void init_isa();
 
 
@@ -134,9 +134,7 @@ void init_monitor(int argc, char *argv[]) {
   /* Initialize the simple debugger. */
   init_sdb();
 
-#ifdef CONFIG_ITRACE
-  //init_disasm("riscv64-pc-linux-gnu");
-#endif
+  IFDEF(CONFIG_ITRACE, init_disasm());
 
   /* Display welcome message. */
   

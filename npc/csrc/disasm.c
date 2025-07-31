@@ -13,62 +13,80 @@
 // * See the Mulan PSL v2 for more details.
 // ***************************************************************************************/
 
-// #include <dlfcn.h>
-// #include </home/yuweijie/ysyx-workbench/nemu/tools/capstone/repo/include/capstone/capstone.h>
-// #include <common.h>
+#include <dlfcn.h>
+#include </home/yuweijie/ysyx-workbench/nemu/tools/capstone/repo/include/capstone/capstone.h>
+#include <common.h>
 
-// static size_t (*cs_disasm_dl)(csh handle, const uint8_t *code,
-//     size_t code_size, uint64_t address, size_t count, cs_insn **insn);
-// static void (*cs_free_dl)(cs_insn *insn, size_t count);
+static size_t (*cs_disasm_dl)(csh handle, const uint8_t *code,
+    size_t code_size, uint64_t address, size_t count, cs_insn **insn);
+static void (*cs_free_dl)(cs_insn *insn, size_t count);
 
-// static csh handle;
+static csh handle;
 
-// void init_disasm() {
-//   void *dl_handle;
-//   dl_handle = dlopen("/home/yuweijie/ysyx-workbench/nemu/tools/capstone/repo/libcapstone.so.5", RTLD_LAZY);
-//   assert(dl_handle);
+void init_disasm() {
+  void *dl_handle;
+  dl_handle = dlopen("/home/yuweijie/ysyx-workbench/nemu/tools/capstone/repo/libcapstone.so.5", RTLD_LAZY);
+  assert(dl_handle);
 
-//   cs_err (*cs_open_dl)(cs_arch arch, cs_mode mode, csh *handle) = NULL;
-//   cs_open_dl = dlsym(dl_handle, "cs_open");
-//   assert(cs_open_dl);
+  // 显式转换 dlsym 返回的 void* 为函数指针类型
+  cs_err (*cs_open_dl)(cs_arch, cs_mode, csh*) = 
+      (cs_err (*)(cs_arch, cs_mode, csh*))dlsym(dl_handle, "cs_open");
+  assert(cs_open_dl);
 
-//   cs_disasm_dl = dlsym(dl_handle, "cs_disasm");
-//   assert(cs_disasm_dl);
+  cs_disasm_dl = (size_t (*)(csh, const uint8_t*, size_t, uint64_t, size_t, cs_insn**))
+      dlsym(dl_handle, "cs_disasm");
+  assert(cs_disasm_dl);
 
-//   cs_free_dl = dlsym(dl_handle, "cs_free");
-//   assert(cs_free_dl);
+  cs_free_dl = (void (*)(cs_insn*, size_t))dlsym(dl_handle, "cs_free");
+  assert(cs_free_dl);
 
-//   cs_arch arch = MUXDEF(CONFIG_ISA_x86,      CS_ARCH_X86,
-//                    MUXDEF(CONFIG_ISA_mips32, CS_ARCH_MIPS,
-//                    MUXDEF(CONFIG_ISA_riscv,  CS_ARCH_RISCV,
-//                    MUXDEF(CONFIG_ISA_loongarch32r,  CS_ARCH_LOONGARCH, -1))));
-//   cs_mode mode = MUXDEF(CONFIG_ISA_x86,      CS_MODE_32,
-//                    MUXDEF(CONFIG_ISA_mips32, CS_MODE_MIPS32,
-//                    MUXDEF(CONFIG_ISA_riscv,  MUXDEF(CONFIG_ISA64, CS_MODE_RISCV64, CS_MODE_RISCV32) | CS_MODE_RISCVC,
-//                    MUXDEF(CONFIG_ISA_loongarch32r,  CS_MODE_LOONGARCH32, -1))));
-// 	int ret = cs_open_dl(arch, mode, &handle);
-//   assert(ret == CS_ERR_OK);
+  cs_arch arch = CS_ARCH_RISCV;
+  
 
-// #ifdef CONFIG_ISA_x86
-//   cs_err (*cs_option_dl)(csh handle, cs_opt_type type, size_t value) = NULL;
-//   cs_option_dl = dlsym(dl_handle, "cs_option");
-//   assert(cs_option_dl);
+  cs_mode mode = static_cast<cs_mode>(
+    MUXDEF(CONFIG_ISA64, CS_MODE_RISCV64, CS_MODE_RISCV32) | 
+    CS_MODE_RISCVC
+  );
 
-//   ret = cs_option_dl(handle, CS_OPT_SYNTAX, CS_OPT_SYNTAX_ATT);
-//   assert(ret == CS_ERR_OK);
-// #endif
-// }
+    printf("Initializing Capstone: arch=%d, mode=%d\n", arch, mode); 
 
-// //将指令进行反汇编
-// // str: 存储反汇编结果的字符串
-// // size: str 的大小
-// // pc: 指令的地址
-// // code: 指令的机器码
-// // nbyte: 指令的字节数
+  int ret = cs_open_dl(arch, mode, &handle);
+  assert(ret == CS_ERR_OK);
+}
+
+//将指令进行反汇编
+// str: 存储反汇编结果的字符串
+// size: str 的大小
+// pc: 指令的地址
+// code: 指令的机器码
+// nbyte: 指令的字节数
+
+void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte) {
+	cs_insn *insn;
+	size_t count = cs_disasm_dl(handle, code, nbyte, pc, 0, &insn);
+  assert(count == 1);
+  int ret = snprintf(str, size, "%s", insn->mnemonic);
+  if (insn->op_str[0] != '\0') {
+    snprintf(str + ret, size - ret, "\t%s", insn->op_str);
+  }
+  cs_free_dl(insn, count);
+}
+
 // void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte) {
-// 	cs_insn *insn;
-// 	size_t count = cs_disasm_dl(handle, code, nbyte, pc, 0, &insn);
-//   assert(count == 1);
+//   cs_insn *insn;
+//   size_t count = cs_disasm_dl(handle, code, nbyte, pc, 0, &insn);
+  
+//   if (count != 1) {
+//     if (count == 0) {
+//       snprintf(str, size, "invalid (raw: %02x %02x %02x %02x)", 
+//                code[0], code[1], code[2], code[3]);
+//     } else {
+//       snprintf(str, size, "multi-insn (count=%zu)", count);
+//       cs_free_dl(insn, count);
+//     }
+//     return;
+//   }
+
 //   int ret = snprintf(str, size, "%s", insn->mnemonic);
 //   if (insn->op_str[0] != '\0') {
 //     snprintf(str + ret, size - ret, "\t%s", insn->op_str);

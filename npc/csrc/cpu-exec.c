@@ -38,10 +38,12 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 
 
 static void exec_once(Decode *s, vaddr_t pc) {
-  //printf("0x%08x\n",pc);
+  // printf("0x%08x\n",pc);
   s->pc = get_pc();//当前指令地址
-  //printf("0x%08x\n",pc);
-  s->snpc = get_pc();//静态下一条指令地址，默认为pc+4
+  // printf("0x%08x\n",pc);
+  s->snpc = get_pc()+4 ;//静态下一条指令地址，默认为pc+4
+  int inst_from_verilog = get_inst();
+  //printf("instformverilog is 0x%08x\n", inst_from_verilog);
   isa_exec_once();
 #ifdef CONFIG_ITRACE//如果启用了 CONFIG_ITRACE，会记录指令的详细信息到日志缓冲区 s->logbuf：
   char *p = s->logbuf;
@@ -52,10 +54,11 @@ static void exec_once(Decode *s, vaddr_t pc) {
   //format -- 格式化字符串。    ... -- 可变参数，可变数量的参数根据 format 中的格式化指令进行格式化。
   p += snprintf(p, sizeof(s->logbuf), FMT_WORD ":", s->pc);//FMT_WORD：格式化字符串（如 "0x%08x"），用于输出 PC 地址。
   int ilen = s->snpc - s->pc; //计算指令长度
+  //int ilen = 4;
   int i;
   //uint8_t *inst = (uint8_t *)&s->isa.inst;
-  uint8_t *inst = (uint8_t *)get_inst();
-  //printf("inst = 0x%08x",cpu.pc);
+  uint8_t *inst = (uint8_t *)&inst_from_verilog;
+  // printf("inst ========= 0x%08x\n", *inst);
   for (i = ilen - 1; i >= 0; i --) {//riscv是大段，从高地址开始打印
     p += snprintf(p, 4, " %02x", inst[i]); //把指令打印出来
   }
@@ -65,13 +68,12 @@ static void exec_once(Decode *s, vaddr_t pc) {
   space_len = space_len * 3 + 1;
   memset(p, ' ', space_len);
   p += space_len;
-  /*
+  
   void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);//反汇编指令
-  disassemble(p, s->logbuf + sizeof(s->logbuf) - p,   //将反汇编指令出来后传到logbuf里面
-      MUXDEF(CONFIG_ISA_x86, s->snpc, s->pc), (uint8_t *)&s->isa.inst, ilen);
+  disassemble(p, s->logbuf + sizeof(s->logbuf) - p, s->pc, inst, ilen);
             //muxdef，有点像  ？：，
-  enqueue(&cb, s->logbuf);
-  */
+  //enqueue(&cb, s->logbuf);
+  
 #endif
 }
 
