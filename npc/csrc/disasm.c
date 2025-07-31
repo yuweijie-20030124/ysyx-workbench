@@ -40,8 +40,22 @@ void init_disasm() {
   cs_free_dl = (void (*)(cs_insn*, size_t))dlsym(dl_handle, "cs_free");
   assert(cs_free_dl);
 
-  cs_arch arch = CS_ARCH_RISCV;
+  //cs_arch arch = CS_ARCH_RISCV;
+
+  cs_mode mode = static_cast<cs_mode>(
+    MUXDEF(CONFIG_ISA64, CS_MODE_RISCV64, CS_MODE_RISCV32) | 
+    CS_MODE_RISCVC
+);
+
   cs_mode mode = CS_MODE_RISCV32;
+                   
+
+//   cs_arch arch = CS_ARCH_RISCV;
+
+//   cs_mode mode = CS_MODE_RISCV32 | CS_MODE_RISCVC;
+
+    printf("Initializing Capstone: arch=%d, mode=%d\n", arch, mode); 
+
   int ret = cs_open_dl(arch, mode, &handle);
   assert(ret == CS_ERR_OK);
 }
