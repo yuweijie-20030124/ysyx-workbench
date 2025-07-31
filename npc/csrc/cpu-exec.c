@@ -53,7 +53,8 @@ static void exec_once(Decode *s, vaddr_t pc) {
   //str -- 目标字符串，用于存储格式化后的字符串的字符数组的指针。   size -- 字符数组的大小。
   //format -- 格式化字符串。    ... -- 可变参数，可变数量的参数根据 format 中的格式化指令进行格式化。
   p += snprintf(p, sizeof(s->logbuf), FMT_WORD ":", s->pc);//FMT_WORD：格式化字符串（如 "0x%08x"），用于输出 PC 地址。
-  int ilen = s->snpc - s->pc; //计算指令长度
+  //int ilen = s->snpc - s->pc; //计算指令长度
+  int ilen = 4;
   int i;
   //uint8_t *inst = (uint8_t *)&s->isa.inst;
   uint8_t *inst = (uint8_t *)&inst_from_verilog;
