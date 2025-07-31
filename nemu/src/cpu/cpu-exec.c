@@ -85,7 +85,7 @@ static void exec_once(Decode *s, vaddr_t pc) {
 
   void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);//反汇编指令
   disassemble(p, s->logbuf + sizeof(s->logbuf) - p,   //将反汇编指令出来后传到logbuf里面
-      MUXDEF(CONFIG_ISA_x86, s->snpc, s->pc), inst, ilen);
+      MUXDEF(CONFIG_ISA_x86, s->snpc, s->pc), (uint8_t *)&s->isa.inst, ilen);
             //muxdef，有点像  ？：，
   enqueue(&cb, s->logbuf);
 
