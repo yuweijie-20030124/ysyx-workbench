@@ -7,6 +7,7 @@ FILE *log_fp = NULL;
 
 void init_log(const char *log_file) {
   //stdout是标准输出，即如果用户没有明确指定日志输出的目标文件，那么会打印到terminal上。
+  //printf("%s**********!!!!!!!",log_file);
   log_fp = stdout;
   if (log_file != NULL) {
     FILE *fp = fopen(log_file, "w");

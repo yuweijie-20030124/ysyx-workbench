@@ -135,7 +135,7 @@ void init_monitor(int argc, char *argv[]) {
   init_sdb();
 
 #ifdef CONFIG_ITRACE
-  init_disasm("riscv64-pc-linux-gnu");
+  //init_disasm("riscv64-pc-linux-gnu");
 #endif
 
   /* Display welcome message. */

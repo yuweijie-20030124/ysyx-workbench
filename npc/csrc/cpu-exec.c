@@ -3,6 +3,7 @@
 #include "common.h"
 #include <locale.h>
 #include "stdlib.h"
+#include "memory.h"
 
 void isa_exec_once();
 
@@ -52,7 +53,8 @@ static void exec_once(Decode *s, vaddr_t pc) {
   p += snprintf(p, sizeof(s->logbuf), FMT_WORD ":", s->pc);//FMT_WORD：格式化字符串（如 "0x%08x"），用于输出 PC 地址。
   int ilen = s->snpc - s->pc; //计算指令长度
   int i;
-  uint8_t *inst = (uint8_t *)&s->isa.inst;
+  //uint8_t *inst = (uint8_t *)&s->isa.inst;
+  uint8_t *inst = (uint8_t *)get_inst();
   for (i = ilen - 1; i >= 0; i --) {//riscv是大段，从高地址开始打印
     p += snprintf(p, 4, " %02x", inst[i]); //把指令打印出来
   }
@@ -62,13 +64,13 @@ static void exec_once(Decode *s, vaddr_t pc) {
   space_len = space_len * 3 + 1;
   memset(p, ' ', space_len);
   p += space_len;
-
+  /*
   void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);//反汇编指令
   disassemble(p, s->logbuf + sizeof(s->logbuf) - p,   //将反汇编指令出来后传到logbuf里面
       MUXDEF(CONFIG_ISA_x86, s->snpc, s->pc), (uint8_t *)&s->isa.inst, ilen);
             //muxdef，有点像  ？：，
   enqueue(&cb, s->logbuf);
-
+  */
 #endif
 }
 
