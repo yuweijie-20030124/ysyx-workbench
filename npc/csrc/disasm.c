@@ -43,19 +43,10 @@ void init_disasm() {
   cs_arch arch = CS_ARCH_RISCV;
   
 
-//   cs_mode mode = static_cast<cs_mode>(
-//     MUXDEF(CONFIG_ISA64, CS_MODE_RISCV64, CS_MODE_RISCV32) | 
-//     CS_MODE_RISCVC
-// );
-
-   cs_mode mode = MUXDEF(CONFIG_ISA64, CS_MODE_RISCV64, CS_MODE_RISCV32) | CS_MODE_RISCVC;
-
-//   cs_mode mode = CS_MODE_RISCV32;
-                   
-
-//   cs_arch arch = CS_ARCH_RISCV;
-
-//   cs_mode mode = CS_MODE_RISCV32 | CS_MODE_RISCVC;
+  cs_mode mode = static_cast<cs_mode>(
+    MUXDEF(CONFIG_ISA64, CS_MODE_RISCV64, CS_MODE_RISCV32) | 
+    CS_MODE_RISCVC
+  );
 
     printf("Initializing Capstone: arch=%d, mode=%d\n", arch, mode); 
 
@@ -70,35 +61,40 @@ void init_disasm() {
 // code: 指令的机器码
 // nbyte: 指令的字节数
 
-// void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte) {
-// 	cs_insn *insn;
-// 	size_t count = cs_disasm_dl(handle, code, nbyte, pc, 0, &insn);
-//   assert(count == 1);
-//   int ret = snprintf(str, size, "%s", insn->mnemonic);
-//   if (insn->op_str[0] != '\0') {
-//     snprintf(str + ret, size - ret, "\t%s", insn->op_str);
-//   }
-//   cs_free_dl(insn, count);
-// }
-
 void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte) {
-  cs_insn *insn;
-  size_t count = cs_disasm_dl(handle, code, nbyte, pc, 0, &insn);
-  
-  if (count != 1) {
-    if (count == 0) {
-      snprintf(str, size, "invalid (raw: %02x %02x %02x %02x)", 
-               code[0], code[1], code[2], code[3]);
-    } else {
-      snprintf(str, size, "multi-insn (count=%zu)", count);
-      cs_free_dl(insn, count);
+	cs_insn *insn;
+    printf("pc : 0x%016x, nbyte : %d\n", pc, nbyte);
+    for(int i = 0; i< nbyte; i++){
+        printf("%02x ", code[i]);
     }
-    return;
-  }
-
+    printf("\n");
+	size_t count = cs_disasm_dl(handle, code, nbyte, pc, 0, &insn);
+  assert(count == 1);
   int ret = snprintf(str, size, "%s", insn->mnemonic);
   if (insn->op_str[0] != '\0') {
     snprintf(str + ret, size - ret, "\t%s", insn->op_str);
   }
   cs_free_dl(insn, count);
 }
+
+// void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte) {
+//   cs_insn *insn;
+//   size_t count = cs_disasm_dl(handle, code, nbyte, pc, 0, &insn);
+  
+//   if (count != 1) {
+//     if (count == 0) {
+//       snprintf(str, size, "invalid (raw: %02x %02x %02x %02x)", 
+//                code[0], code[1], code[2], code[3]);
+//     } else {
+//       snprintf(str, size, "multi-insn (count=%zu)", count);
+//       cs_free_dl(insn, count);
+//     }
+//     return;
+//   }
+
+//   int ret = snprintf(str, size, "%s", insn->mnemonic);
+//   if (insn->op_str[0] != '\0') {
+//     snprintf(str + ret, size - ret, "\t%s", insn->op_str);
+//   }
+//   cs_free_dl(insn, count);
+// }
