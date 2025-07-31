@@ -21,7 +21,7 @@ VERILATOR = verilator
 NPC_IMG?= 
 
 ##NPC_FLAGS?= -l=$(NPC_HOME)/npc-log.txt -b
-NPC_FLAGS?= -l $(NPC_HOME)/npc-log.txt
+NPC_FLAGS?= --log=$(NPC_HOME)/npc-log.txt
 
 #VERILATOR_FLAGS = -Wall --cc --trace \
 					-CFLAGS  "-g -I /home/yuweijie/ysyx-workbench/npc/include -O2" \

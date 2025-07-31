@@ -18,8 +18,6 @@ NPCFLAGS += -f $(IMAGE).elf
 MAINARGS_MAX_LEN = 64
 MAINARGS_PLACEHOLDER = the_insert-arg_rule_in_Makefile_will_insert_mainargs_here
 CFLAGS += -DMAINARGS_MAX_LEN=$(MAINARGS_MAX_LEN) -DMAINARGS_PLACEHOLDER=$(MAINARGS_PLACEHOLDER)
-NPCFLAGS += -l $(shell dirname $(IMAGE).elf)/npc-log.txt -f $(IMAGE).elf -b
-NPCFLAGS += -f $(IMAGE).elf
 
 insert-arg: image
 	@python $(AM_HOME)/tools/insert-arg.py $(IMAGE).bin $(MAINARGS_MAX_LEN) $(MAINARGS_PLACEHOLDER) "$(mainargs)"
