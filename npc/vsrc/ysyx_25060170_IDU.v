@@ -212,4 +212,26 @@ task IDU_SEND_PC(
 
 endtask 
 
+/********************************FTRACE****************************************/
+
+export "DPI-C" task IDU_SEND_CALL_FLAG;
+
+task IDU_SEND_CALL_FLAG(
+    output byte call_flag
+);
+
+    call_flag = pc_i;
+
+endtask
+
+export "DPI-C" task IDU_SEND_RET_FLAG;
+
+task IDU_SEND_RET_FLAG(
+    output byte ret_flag
+);
+
+    ret_flag = pc_i;
+
+endtask
+
     endmodule
