@@ -21,27 +21,27 @@ int flag = 0;
 //void device_update();
 int update_watchpoint(void);
 
-/*
+
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
-#ifdef CONFIG_ITRACE_COND
-  if (ITRACE_COND) { log_write("%s\n", _this->logbuf); } //感觉在这里是输出指令的日志
+#ifdef CONFIG_ITRACE
+  log_write("%s\n", _this->logbuf); //感觉在这里是输出指令的日志
 #endif
   //一次执行十条以下的指令gps就会赋值为true。
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }
-  IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
+  //IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
   #ifdef CONFIG_WATCHPOINT
     if (update_watchpoint() > 0) {
         nemu_state.state = NEMU_STOP;
     }
 #endif
 }
-*/
+
 
 static void exec_once(Decode *s, vaddr_t pc) {
   //printf("0x%08x\n",pc);
-  s->pc = pc;//当前指令地址
+  s->pc = get_pc();//当前指令地址
   //printf("0x%08x\n",pc);
-  s->snpc = pc;//静态下一条指令地址，默认为pc+4
+  s->snpc = get_pc();//静态下一条指令地址，默认为pc+4
   isa_exec_once();
 #ifdef CONFIG_ITRACE//如果启用了 CONFIG_ITRACE，会记录指令的详细信息到日志缓冲区 s->logbuf：
   char *p = s->logbuf;
@@ -55,6 +55,7 @@ static void exec_once(Decode *s, vaddr_t pc) {
   int i;
   //uint8_t *inst = (uint8_t *)&s->isa.inst;
   uint8_t *inst = (uint8_t *)get_inst();
+  //printf("inst = 0x%08x",cpu.pc);
   for (i = ilen - 1; i >= 0; i --) {//riscv是大段，从高地址开始打印
     p += snprintf(p, 4, " %02x", inst[i]); //把指令打印出来
   }
@@ -79,7 +80,7 @@ static void execute(uint64_t n) {
   for (;n > 0; n --) {
     exec_once(&s, cpu.pc);
     g_nr_guest_inst ++;
-    //trace_and_difftest(&s, cpu.pc);
+    trace_and_difftest(&s, cpu.pc);
     if (npc_state.state != NPC_RUNNING) break;
     IFDEF(CONFIG_DEVICE, device_update());
   }/*条件编译宏，如果CONFIG_DEVICE被定义，则调用device_update函数，如果 CONFIG_DEVICE 没有被定义，

@@ -38,10 +38,8 @@ int update_watchpoint(void);
 
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #ifdef CONFIG_ITRACE_COND
-  if (ITRACE_COND) { 
-    printf("caosinidema***********\n");
-    log_write("%s\n", _this->logbuf); 
-  } //感觉在这里是输出指令的日志
+//开了itrace就进去这个if里面
+  if (ITRACE_COND) { log_write("%s\n", _this->logbuf); } //感觉在这里是输出指令的日志
 #endif
   //一次执行十条以下的指令gps就会赋值为true。
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }

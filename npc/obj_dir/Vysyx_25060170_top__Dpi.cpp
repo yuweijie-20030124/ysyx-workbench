@@ -22,11 +22,19 @@ void GPR_SEND_VALUE(int* r1, int* r2, int* r3, int* r4, int* r5, int* r6, int* r
 }
 #endif
 
-#ifndef VL_DPIDECL_IFU_SEND_INST_
-#define VL_DPIDECL_IFU_SEND_INST_
-void IFU_SEND_INST(int* c_inst) {
+#ifndef VL_DPIDECL_IDU_SEND_INST_
+#define VL_DPIDECL_IDU_SEND_INST_
+void IDU_SEND_INST(int* c_inst) {
     // DPI export at vsrc/ysyx_25060170_IDU.v:197:6
-    return Vysyx_25060170_top::IFU_SEND_INST(c_inst);
+    return Vysyx_25060170_top::IDU_SEND_INST(c_inst);
+}
+#endif
+
+#ifndef VL_DPIDECL_IDU_SEND_PC_
+#define VL_DPIDECL_IDU_SEND_PC_
+void IDU_SEND_PC(int* c_pc) {
+    // DPI export at vsrc/ysyx_25060170_IDU.v:207:6
+    return Vysyx_25060170_top::IDU_SEND_PC(c_pc);
 }
 #endif
 

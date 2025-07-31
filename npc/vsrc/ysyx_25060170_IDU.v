@@ -192,14 +192,24 @@ import "DPI-C" function void set_npc_exit(int pc, int halt_ret);
     end
 end
 
-export "DPI-C" task IFU_SEND_INST;
+export "DPI-C" task IDU_SEND_INST;
 
-task IFU_SEND_INST(
+task IDU_SEND_INST(
     output int c_inst
 );
 
     c_inst = inst_i;
 
 endtask    
+
+export "DPI-C" task IDU_SEND_PC;
+
+task IDU_SEND_PC(
+    output int c_pc
+);
+
+    c_pc = pc_i;
+
+endtask 
 
     endmodule

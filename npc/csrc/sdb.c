@@ -80,6 +80,8 @@ static int cmd_si(char *args) {
   if (args == NULL) {
     // int inst = get_inst();
     // printf("inst = 0x%08x\n",inst);
+    // int pc = get_pc();
+    // printf("pc = 0x%08x\n",pc);
     cpu_exec(1);
     return 0;
   }
