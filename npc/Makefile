@@ -15,6 +15,8 @@ SRC_FILES = $(wildcard csrc/*.c)
 			csrc/init.c csrc/cpu-
 ##TEST_FILES = csrc/main.c csrc/monitor.c csrc/log.c csrc/sdb.c csrc/timer.c csrc/memory.c
 
+LLVM= -CFLAGS "-I/usr/lib/llvm-14/include -std=c++14   -fno-exceptions -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS   -D__STDC_LIMIT_MACROS -fPIE"
+
 VERILOG_FILES = $(wildcard vsrc/*.v)
 VERILATOR = verilator
 
@@ -30,8 +32,11 @@ NPC_FLAGS?= --log=$(NPC_HOME)/npc-log.txt
 					 -Ivsrc \
 					 --top-module ysyx_25060170_top
 
+
+
 VERILATOR_FLAGS = -Wall --cc --trace \
 					-CFLAGS  " -I /home/yuweijie/ysyx-workbench/npc/include -O2" \
+					-CFLAGS  " -I /home/yuweijie/ysyx-workbench/nemu/tools/capstone/repo/include -O2" \
 					 --exe --build \
 					 -LDFLAGS " -lreadline" \
 					 -Ivsrc \

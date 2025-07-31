@@ -38,12 +38,12 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 
 
 static void exec_once(Decode *s, vaddr_t pc) {
-  //printf("0x%08x\n",pc);
+  // printf("0x%08x\n",pc);
   s->pc = get_pc();//当前指令地址
-  //printf("0x%08x\n",pc);
+  // printf("0x%08x\n",pc);
   s->snpc = get_pc();//静态下一条指令地址，默认为pc+4
   int inst_from_verilog = get_inst();
-  // printf("instformverilog is 0x%08x\n", inst_from_verilog);
+  //printf("instformverilog is 0x%08x\n", inst_from_verilog);
   isa_exec_once();
 #ifdef CONFIG_ITRACE//如果启用了 CONFIG_ITRACE，会记录指令的详细信息到日志缓冲区 s->logbuf：
   char *p = s->logbuf;
