@@ -15,7 +15,8 @@ SRC_FILES = $(wildcard csrc/*.c)
 			csrc/init.c csrc/cpu-
 ##TEST_FILES = csrc/main.c csrc/monitor.c csrc/log.c csrc/sdb.c csrc/timer.c csrc/memory.c
 
-#LLVM= -CFLAGS "-I/usr/lib/llvm-14/include -std=c++14   -fno-exceptions -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS   -D__STDC_LIMIT_MACROS -fPIE"
+LIBCAPSTONE = /home/yuweijie/ysyx-workbench/nemu/tools/capstone/repo/libcapstone.so.5
+/home/yuweijie/ysyx-workbench/npc/csrc/disasm.c: $(LIBCAPSTONE)
 
 VERILOG_FILES = $(wildcard vsrc/*.v)
 VERILATOR = verilator
