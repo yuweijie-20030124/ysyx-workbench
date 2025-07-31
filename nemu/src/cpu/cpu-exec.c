@@ -54,8 +54,6 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 static void exec_once(Decode *s, vaddr_t pc) {
   s->pc = pc;//当前指令地址
   s->snpc = pc;//静态下一条指令地址，默认为pc+4
-  printf("0x%08x\n",s->pc);
-  printf("0x%08x\n",s->snpc);
   isa_exec_once(s);
   cpu.pc = s->dnpc;//动态下一条指令，可能跳转或者分支改变
 #ifdef CONFIG_ITRACE//如果启用了 CONFIG_ITRACE，会记录指令的详细信息到日志缓冲区 s->logbuf：
@@ -66,6 +64,8 @@ static void exec_once(Decode *s, vaddr_t pc) {
   //str -- 目标字符串，用于存储格式化后的字符串的字符数组的指针。   size -- 字符数组的大小。
   //format -- 格式化字符串。    ... -- 可变参数，可变数量的参数根据 format 中的格式化指令进行格式化。
   p += snprintf(p, sizeof(s->logbuf), FMT_WORD ":", s->pc);//FMT_WORD：格式化字符串（如 "0x%08x"），用于输出 PC 地址。
+  printf("0x%08x\n",s->pc);
+  printf("0x%08x\n",s->snpc);
   int ilen = s->snpc - s->pc; //计算指令长度
   int i;
   uint8_t *inst = (uint8_t *)&s->isa.inst;
