@@ -49,6 +49,7 @@ VM_USER_CLASSES = \
 	cpu-exec \
 	disasm \
 	expr \
+	ftrace \
 	init \
 	log \
 	main \
@@ -79,6 +80,8 @@ cpu-exec.o: csrc/cpu-exec.c
 disasm.o: csrc/disasm.c 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
 expr.o: csrc/expr.c 
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
+ftrace.o: csrc/ftrace.c 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
 init.o: csrc/init.c 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<

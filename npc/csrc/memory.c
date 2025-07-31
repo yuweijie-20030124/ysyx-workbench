@@ -40,7 +40,9 @@ static void out_of_bound(paddr_t addr) {
 
 //读物理地址
 word_t paddr_read(paddr_t addr, int len) {
-  if (likely(in_pmem(addr))) {  
+  //printf("进来了\n"); 
+  if (likely(in_pmem(addr))) { 
+    //printf("进来了\n"); 
     IFDEF(CONFIG_MTRACE, Log("read in address = " FMT_PADDR ", len = %d\n", addr, len));
     return pmem_read(addr, len);
   }
