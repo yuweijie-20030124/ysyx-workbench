@@ -43,7 +43,7 @@ static void exec_once(Decode *s, vaddr_t pc) {
   //printf("0x%08x\n",pc);
   s->snpc = get_pc();//静态下一条指令地址，默认为pc+4
   int inst_from_verilog = get_inst();
-  printf("instformverilog is 0x%08x\n", inst_from_verilog);
+  // printf("instformverilog is 0x%08x\n", inst_from_verilog);
   isa_exec_once();
 #ifdef CONFIG_ITRACE//如果启用了 CONFIG_ITRACE，会记录指令的详细信息到日志缓冲区 s->logbuf：
   char *p = s->logbuf;
@@ -57,7 +57,7 @@ static void exec_once(Decode *s, vaddr_t pc) {
   int i;
   //uint8_t *inst = (uint8_t *)&s->isa.inst;
   uint8_t *inst = (uint8_t *)&inst_from_verilog;
-  printf("inst ========= 0x%08x\n", *inst);
+  // printf("inst ========= 0x%08x\n", *inst);
   for (i = ilen - 1; i >= 0; i --) {//riscv是大段，从高地址开始打印
     p += snprintf(p, 4, " %02x", inst[i]); //把指令打印出来
   }
@@ -69,7 +69,7 @@ static void exec_once(Decode *s, vaddr_t pc) {
   p += space_len;
   
   void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);//反汇编指令
-  //disassemble(p, s->logbuf + sizeof(s->logbuf) - p, s->pc, (uint8_t *)inst, ilen);
+  disassemble(p, s->logbuf + sizeof(s->logbuf) - p, s->pc, inst, ilen);
             //muxdef，有点像  ？：，
   //enqueue(&cb, s->logbuf);
   

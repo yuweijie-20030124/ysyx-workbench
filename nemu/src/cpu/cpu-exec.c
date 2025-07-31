@@ -67,8 +67,8 @@ static void exec_once(Decode *s, vaddr_t pc) {
   int ilen = s->snpc - s->pc; //计算指令长度
   int i;
   uint8_t *inst = (uint8_t *)&s->isa.inst;
-  printf("inst = 0x%08x\n",s->isa.inst);
-  printf("inst ***= 0x%08x\n", *inst);
+  // printf("inst = 0x%08x\n",s->isa.inst);
+  // printf("inst ***= 0x%08x\n", *inst);
 #ifdef CONFIG_ISA_x86
   for (i = 0; i < ilen; i ++) { //x86是小段，从低地址开始打印
 #else
@@ -85,7 +85,7 @@ static void exec_once(Decode *s, vaddr_t pc) {
 
   void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);//反汇编指令
   disassemble(p, s->logbuf + sizeof(s->logbuf) - p,   //将反汇编指令出来后传到logbuf里面
-      MUXDEF(CONFIG_ISA_x86, s->snpc, s->pc), (uint8_t *)&s->isa.inst, ilen);
+      MUXDEF(CONFIG_ISA_x86, s->snpc, s->pc), inst, ilen);
             //muxdef，有点像  ？：，
   enqueue(&cb, s->logbuf);
 
