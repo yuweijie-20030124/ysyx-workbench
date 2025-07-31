@@ -15,9 +15,6 @@ SRC_FILES = $(wildcard csrc/*.c)
 			csrc/init.c csrc/cpu-
 ##TEST_FILES = csrc/main.c csrc/monitor.c csrc/log.c csrc/sdb.c csrc/timer.c csrc/memory.c
 
-LIBCAPSTONE = /home/yuweijie/ysyx-workbench/nemu/tools/capstone/repo/libcapstone.so.5
-/home/yuweijie/ysyx-workbench/npc/csrc/disasm.c: $(LIBCAPSTONE)
-
 VERILOG_FILES = $(wildcard vsrc/*.v)
 VERILATOR = verilator
 

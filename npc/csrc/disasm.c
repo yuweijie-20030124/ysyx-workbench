@@ -41,11 +41,14 @@ void init_disasm() {
   assert(cs_free_dl);
 
   cs_arch arch = CS_ARCH_RISCV;
+  
 
-  cs_mode mode = static_cast<cs_mode>(
-    MUXDEF(CONFIG_ISA64, CS_MODE_RISCV64, CS_MODE_RISCV32) | 
-    CS_MODE_RISCVC
-);
+//   cs_mode mode = static_cast<cs_mode>(
+//     MUXDEF(CONFIG_ISA64, CS_MODE_RISCV64, CS_MODE_RISCV32) | 
+//     CS_MODE_RISCVC
+// );
+
+   cs_mode mode = MUXDEF(CONFIG_ISA64, CS_MODE_RISCV64, CS_MODE_RISCV32) | CS_MODE_RISCVC;
 
 //   cs_mode mode = CS_MODE_RISCV32;
                    
