@@ -212,4 +212,26 @@ task IDU_SEND_PC(
 
 endtask 
 
+/********************************FTRACE****************************************/
+
+export "DPI-C" task IDU_SEND_CALL_FLAG;
+
+task IDU_SEND_CALL_FLAG(
+    output byte call_flag
+);
+
+    call_flag = (rd_addr == 1 & jump_en == 1) | (rd_addr == 0 & imm == 0 & PCx1 == 1);
+
+endtask
+
+export "DPI-C" task IDU_SEND_RET_FLAG;
+
+task IDU_SEND_RET_FLAG(
+    output byte ret_flag
+);
+
+    ret_flag = isa.inst == 0x00008067
+
+endtask
+
     endmodule
