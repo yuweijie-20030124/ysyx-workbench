@@ -62,10 +62,10 @@ static void exec_once(Decode *s, vaddr_t pc) {
   if(call_flag){
     call_trace(ftrace_pc , ftrace_dnpc);
   }
+  
   else if(ret_flag){
     ret_trace(ftrace_pc);
   }
-  else printf("no call or return\n");
   
   // printf("0x%08x\n",pc);
   s->pc = get_pc();//当前指令地址

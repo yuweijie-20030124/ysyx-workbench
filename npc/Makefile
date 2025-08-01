@@ -31,12 +31,14 @@ NPC_FLAGS?= --log=$(NPC_HOME)/npc-log.txt
 					 --top-module ysyx_25060170_top
 
 
+#-LDFLAGS " $(NEMU_HOME)/build -lriscv32-nemu-interpreter" 
 
 VERILATOR_FLAGS = -Wall --cc --trace \
 					-CFLAGS  " -I /home/yuweijie/ysyx-workbench/npc/include -O2" \
 					-CFLAGS  " -I /home/yuweijie/ysyx-workbench/nemu/tools/capstone/repo/include -O2" \
 					 --exe --build \
 					 -LDFLAGS " -lreadline" \
+					 
 					 -Ivsrc \
 					 --top-module ysyx_25060170_top
 
