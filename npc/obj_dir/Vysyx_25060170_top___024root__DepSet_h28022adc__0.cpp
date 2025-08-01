@@ -32,6 +32,31 @@ void Vysyx_25060170_top___024root____Vdpiexp_ysyx_25060170_top__DOT__u_ysyx_2506
     c_pc = vlSymsp->TOP.ysyx_25060170_top__DOT__PCout;
 }
 
+void Vysyx_25060170_top___024root____Vdpiexp_ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__IDU_SEND_CALL_FLAG_TOP(Vysyx_25060170_top__Syms* __restrict vlSymsp, IData/*31:0*/ &call_flag, IData/*31:0*/ &pc, IData/*31:0*/ &dnpc) {
+    VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_top___024root____Vdpiexp_ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__IDU_SEND_CALL_FLAG_TOP\n"); );
+    // Init
+    // Body
+    call_flag = (((IData)(((0x80U == (0xf80U & vlSymsp->TOP.ysyx_25060170_top__DOT__MEM_inst_o)) 
+                           & (IData)(vlSymsp->TOP.ysyx_25060170_top__DOT__jump_en))) 
+                  | ((IData)(((0U == (0xf80U & vlSymsp->TOP.ysyx_25060170_top__DOT__MEM_inst_o)) 
+                              & (0U == vlSymsp->TOP.ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__imm))) 
+                     & (IData)(vlSymsp->TOP.ysyx_25060170_top__DOT__PCx1)))
+                  ? 1U : 0U);
+    dnpc = (vlSymsp->TOP.ysyx_25060170_top__DOT__PCout 
+            + vlSymsp->TOP.ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__imm);
+}
+
+void Vysyx_25060170_top___024root____Vdpiexp_ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__IDU_SEND_RET_FLAG_TOP(Vysyx_25060170_top__Syms* __restrict vlSymsp, IData/*31:0*/ &ret_flag, IData/*31:0*/ &pc) {
+    VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_top___024root____Vdpiexp_ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__IDU_SEND_RET_FLAG_TOP\n"); );
+    // Init
+    // Body
+    ret_flag = ((0x8067U == vlSymsp->TOP.ysyx_25060170_top__DOT__MEM_inst_o)
+                 ? 1U : 0U);
+    pc = ((IData)(vlSymsp->TOP.ysyx_25060170_top__DOT__PCx1)
+           ? (0xfffffffeU & vlSymsp->TOP.ysyx_25060170_top__DOT__PCout)
+           : vlSymsp->TOP.ysyx_25060170_top__DOT__PCout);
+}
+
 void Vysyx_25060170_top___024root____Vdpiexp_ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT__GPR_SEND_VALUE_TOP(Vysyx_25060170_top__Syms* __restrict vlSymsp, IData/*31:0*/ &r1, IData/*31:0*/ &r2, IData/*31:0*/ &r3, IData/*31:0*/ &r4, IData/*31:0*/ &r5, IData/*31:0*/ &r6, IData/*31:0*/ &r7, IData/*31:0*/ &r8, IData/*31:0*/ &r9, IData/*31:0*/ &r10, IData/*31:0*/ &r11, IData/*31:0*/ &r12, IData/*31:0*/ &r13, IData/*31:0*/ &r14, IData/*31:0*/ &r15, IData/*31:0*/ &r16, IData/*31:0*/ &r17, IData/*31:0*/ &r18, IData/*31:0*/ &r19, IData/*31:0*/ &r20, IData/*31:0*/ &r21, IData/*31:0*/ &r22, IData/*31:0*/ &r23, IData/*31:0*/ &r24, IData/*31:0*/ &r25, IData/*31:0*/ &r26, IData/*31:0*/ &r27, IData/*31:0*/ &r28, IData/*31:0*/ &r29, IData/*31:0*/ &r30, IData/*31:0*/ &r31) {
     VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_top___024root____Vdpiexp_ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT__GPR_SEND_VALUE_TOP\n"); );
     // Init

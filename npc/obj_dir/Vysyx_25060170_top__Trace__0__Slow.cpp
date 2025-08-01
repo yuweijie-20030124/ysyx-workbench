@@ -595,7 +595,7 @@ VL_ATTR_COLD void Vysyx_25060170_top___024root__trace_full_0_sub_0(Vysyx_2506017
                                        >> 7U))),5);
     bufp->fullIData(oldp+37,(vlSelfRef.ysyx_25060170_top__DOT__op_1),32);
     bufp->fullIData(oldp+38,(vlSelfRef.ysyx_25060170_top__DOT__op_2),32);
-    bufp->fullIData(oldp+39,(vlSelfRef.ysyx_25060170_top__DOT__imm_o),32);
+    bufp->fullIData(oldp+39,(vlSelfRef.ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__imm),32);
     bufp->fullBit(oldp+40,(vlSelfRef.ysyx_25060170_top__DOT__jal));
     bufp->fullCData(oldp+41,(vlSelfRef.ysyx_25060170_top__DOT__regS),2);
     bufp->fullBit(oldp+42,(vlSelfRef.ysyx_25060170_top__DOT__RegW));
@@ -616,8 +616,7 @@ VL_ATTR_COLD void Vysyx_25060170_top___024root__trace_full_0_sub_0(Vysyx_2506017
                                : ((IData)(vlSelfRef.ysyx_25060170_top__DOT__jal)
                                    ? vlSelfRef.ysyx_25060170_top__DOT__u_ysyx_25060170_EXU__DOT__jumpaddr
                                    : 0U))),32);
-    bufp->fullBit(oldp+49,(((IData)(vlSelfRef.ysyx_25060170_top__DOT__PCx1) 
-                            | (IData)(vlSelfRef.ysyx_25060170_top__DOT__jal))));
+    bufp->fullBit(oldp+49,(vlSelfRef.ysyx_25060170_top__DOT__jump_en));
     bufp->fullIData(oldp+50,(vlSelfRef.ysyx_25060170_top__DOT__u_ysyx_25060170_EXU__DOT__jumpaddr),32);
     bufp->fullIData(oldp+51,(vlSelfRef.ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT__rf[0]),32);
     bufp->fullIData(oldp+52,(vlSelfRef.ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT__rf[1]),32);
@@ -685,8 +684,7 @@ VL_ATTR_COLD void Vysyx_25060170_top___024root__trace_full_0_sub_0(Vysyx_2506017
     bufp->fullCData(oldp+114,((0x7fU & vlSelfRef.ysyx_25060170_top__DOT__MEM_inst_o)),7);
     bufp->fullCData(oldp+115,((vlSelfRef.ysyx_25060170_top__DOT__MEM_inst_o 
                                >> 0x19U)),7);
-    bufp->fullIData(oldp+116,((((IData)(vlSelfRef.ysyx_25060170_top__DOT__PCx1) 
-                                | (IData)(vlSelfRef.ysyx_25060170_top__DOT__jal))
+    bufp->fullIData(oldp+116,(((IData)(vlSelfRef.ysyx_25060170_top__DOT__jump_en)
                                 ? ((IData)(vlSelfRef.ysyx_25060170_top__DOT__PCx1)
                                     ? (0xfffffffeU 
                                        & vlSelfRef.ysyx_25060170_top__DOT__u_ysyx_25060170_EXU__DOT__jumpaddr)

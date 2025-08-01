@@ -51,6 +51,7 @@ module ysyx_25060170_IDU(
     //wire [2:0] func3;
     wire [31:0] imm;
 
+    
     // 寄存器文件声明 现在就只有i和u
     assign rs1_raddr_o = inst_i[19:15];  // 源寄存器1地址
     //assign rs2_raddr_o = inst_i[24:20];  // 源寄存器2地址
@@ -60,6 +61,8 @@ module ysyx_25060170_IDU(
     assign func7 = inst_i[31:25];
     /* lint_on */
     assign rd_addr = inst_i[11:7];
+
+
 
 
 
@@ -178,6 +181,7 @@ module ysyx_25060170_IDU(
                 //todo
             end
         endcase
+        $display("opcode = %7b", opcode);
     end
     
 
@@ -217,20 +221,32 @@ endtask
 export "DPI-C" task IDU_SEND_CALL_FLAG;
 
 task IDU_SEND_CALL_FLAG(
-    output byte call_flag
+    output int call_flag,
+    output int pc,
+    output int dnpc
 );
 
-    call_flag = pc_i;
+    call_flag = ((rd_addr == 1 && jump_en == 1) || (rd_addr == 0 && imm == 0 && PCx1 == 1)) ? 1 : 0;
+    // $display("rd_addr = 0x%08x", rd_addr);
+    // $display("jump_en = %d", jump_en);
+    // $display("jalr = %d", PCx1);
+    // $display("jal = %d", jal);
+    // $display("imm = 0x%08x", imm);
+    // $display("PCx1 = %d", PCx1);
+    dnpc =  pc_i + imm;
 
 endtask
 
 export "DPI-C" task IDU_SEND_RET_FLAG;
 
 task IDU_SEND_RET_FLAG(
-    output byte ret_flag
+    output int ret_flag,
+    output int pc
 );
 
-    ret_flag = pc_i;
+    ret_flag = inst_i == 32'h00008067 ? 1 : 0;
+    //pc  = pc_i;
+    pc = PCx1 ? {pc_i[31:1],1'b0} : pc_i ;
 
 endtask
 

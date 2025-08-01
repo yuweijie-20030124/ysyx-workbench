@@ -1,4 +1,3 @@
-#include <device/map.h>
 #include <fcntl.h>
 #include <elf.h>
 #include <unistd.h>
@@ -31,8 +30,7 @@ void init_symtab_entrys(FILE *elf_file) {
         printf("Not a ELF file\n");
         exit(0);
     }
-
-	Elf32_Shdr *shdrs = malloc(sizeof(Elf32_Shdr) * ehdr.e_shnum);//申请节头表的内存空间
+    Elf32_Shdr *shdrs = (Elf32_Shdr*)malloc(sizeof(Elf32_Shdr) * ehdr.e_shnum);//申请节头表的内存空间
     assert(shdrs != 0);
 	result = fseek(elf_file, ehdr.e_shoff, SEEK_SET); //根据文件的开头和偏移跳转到段表
 	assert(result == 0);
@@ -61,15 +59,15 @@ void init_symtab_entrys(FILE *elf_file) {
 
 
 	//把符号表的内容读取到symbol tables中，从 ELF 文件中读取 entry_num 个符号，存入 symbol_tables 数组中。
-	Elf32_Sym *symbol_tables = malloc(sizeof(Elf32_Sym) * entry_num);
+	Elf32_Sym *symbol_tables = (Elf32_Sym*)malloc(sizeof(Elf32_Sym) * entry_num);
 	result = fseek(elf_file, offset, SEEK_SET);
 	assert(result == 0);
 	result = fread(symbol_tables, sizeof(Elf32_Sym), entry_num, elf_file);
 	assert(result != 0);
 
 	// 初始化自定义符号表
-	sym_entrys = malloc(sizeof(SymbolEntry) * entry_num);
-    char *str = malloc(strtab -> sh_size);
+	sym_entrys = (SymbolEntry*)malloc(sizeof(SymbolEntry) * entry_num);
+    char *str = (char*)malloc(strtab -> sh_size);
     int str_result = fseek(elf_file, strtab -> sh_offset, SEEK_SET);
     assert(str_result == 0);
     str_result = fread(str, 1, strtab -> sh_size, elf_file);

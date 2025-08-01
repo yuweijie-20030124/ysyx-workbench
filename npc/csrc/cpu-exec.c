@@ -4,8 +4,15 @@
 #include <locale.h>
 #include "stdlib.h"
 #include "memory.h"
+#include "svdpi.h"
 
 void isa_exec_once();
+
+extern "C" void IDU_SEND_CALL_FLAG(int * ,int *, int*);
+extern "C" void IDU_SEND_RET_FLAG(int *, int *);
+
+void call_trace(paddr_t pc, paddr_t target);
+void ret_trace(paddr_t pc);
 
 NPC_reg cpu = { .pc =0x80000000};
 Decode s;
@@ -38,6 +45,25 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 
 
 static void exec_once(Decode *s, vaddr_t pc) {
+  
+  /***********************************FTRACE**************************************/
+  const svScope scope = svGetScopeFromName("TOP.ysyx_25060170_top.u_ysyx_25060170_IDU");
+  svSetScope(scope);  // 设置当前 DPI 作用域
+  int ftrace_pc;
+  int ftrace_dnpc;
+  int call_flag;
+  int ret_flag;
+  IDU_SEND_CALL_FLAG(&call_flag, &ftrace_pc, &ftrace_dnpc);
+  IDU_SEND_RET_FLAG(&ret_flag, &ftrace_pc); 
+  //printf("pc = %08x, dnpc = %08x ,callflag = %d, retflag = %d\n",ftrace_pc,ftrace_dnpc,call_flag,ret_flag);  
+  if(call_flag){
+    call_trace(ftrace_pc , ftrace_dnpc);
+  }
+  else if(ret_flag){
+    ret_trace(ftrace_pc);
+  }
+  else printf("no call or return\n");
+  
   // printf("0x%08x\n",pc);
   s->pc = get_pc();//当前指令地址
   // printf("0x%08x\n",pc);
@@ -68,7 +94,7 @@ static void exec_once(Decode *s, vaddr_t pc) {
   space_len = space_len * 3 + 1;
   memset(p, ' ', space_len);
   p += space_len;
-  
+  /***********************************ITRACE**************************************/
   void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);//反汇编指令
   disassemble(p, s->logbuf + sizeof(s->logbuf) - p, s->pc, inst, ilen);
             //muxdef，有点像  ？：，
