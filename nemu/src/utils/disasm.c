@@ -65,9 +65,11 @@ void init_disasm() {
 // pc: 指令的地址
 // code: 指令的机器码
 // nbyte: 指令的字节数
+
 void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte) {
 	cs_insn *insn;
 	size_t count = cs_disasm_dl(handle, code, nbyte, pc, 0, &insn);
+  // printf("%ld*******\n",count);
   assert(count == 1);
   int ret = snprintf(str, size, "%s", insn->mnemonic);
   if (insn->op_str[0] != '\0') {

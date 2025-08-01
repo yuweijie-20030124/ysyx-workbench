@@ -38,6 +38,7 @@ int update_watchpoint(void);
 
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #ifdef CONFIG_ITRACE_COND
+//开了itrace就进去这个if里面
   if (ITRACE_COND) { log_write("%s\n", _this->logbuf); } //感觉在这里是输出指令的日志
 #endif
   //一次执行十条以下的指令gps就会赋值为true。
@@ -63,9 +64,13 @@ static void exec_once(Decode *s, vaddr_t pc) {
   //str -- 目标字符串，用于存储格式化后的字符串的字符数组的指针。   size -- 字符数组的大小。
   //format -- 格式化字符串。    ... -- 可变参数，可变数量的参数根据 format 中的格式化指令进行格式化。
   p += snprintf(p, sizeof(s->logbuf), FMT_WORD ":", s->pc);//FMT_WORD：格式化字符串（如 "0x%08x"），用于输出 PC 地址。
+  //printf("0x%08x\n",s->pc);
+  //printf("0x%08x\n",s->snpc);
   int ilen = s->snpc - s->pc; //计算指令长度
   int i;
   uint8_t *inst = (uint8_t *)&s->isa.inst;
+  // printf("inst = 0x%08x\n",s->isa.inst);
+  // printf("inst ***= 0x%08x\n", *inst);
 #ifdef CONFIG_ISA_x86
   for (i = 0; i < ilen; i ++) { //x86是小段，从低地址开始打印
 #else
@@ -124,6 +129,7 @@ void assert_fail_msg() {//输出错误信息
 /* Simulate how the CPU works. */
 void cpu_exec(uint64_t n) {
   g_print_step = (n < MAX_INST_TO_PRINT);//一次执行太多步就不打印了，bool类型的gprintstep就赋值为false
+  printf("%d\n",nemu_state.state);
   switch (nemu_state.state) {
     case NEMU_END: case NEMU_ABORT: case NEMU_QUIT:
       printf("Program execution has ended. To restart the program, exit NEMU and run again.\n");

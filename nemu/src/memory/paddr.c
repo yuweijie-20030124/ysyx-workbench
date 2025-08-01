@@ -71,6 +71,7 @@ void init_mem() {
 
 //读物理地址
 word_t paddr_read(paddr_t addr, int len) {
+  //printf("进来了\n"); 
   if (likely(in_pmem(addr))) {  
     IFDEF(CONFIG_MTRACE, Log("read in address = " FMT_PADDR ", len = %d\n", addr, len));
     return pmem_read(addr, len);
