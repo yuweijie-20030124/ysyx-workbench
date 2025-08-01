@@ -48,7 +48,9 @@ static void exec_once(Decode *s, vaddr_t pc) {
   
   /***********************************FTRACE**************************************/
   const svScope scope = svGetScopeFromName("TOP.ysyx_25060170_top.u_ysyx_25060170_IDU");
+  assert(scope);
   svSetScope(scope);  // 设置当前 DPI 作用域
+
   int ftrace_pc;
   int ftrace_dnpc;
   int call_flag;
@@ -56,6 +58,7 @@ static void exec_once(Decode *s, vaddr_t pc) {
   IDU_SEND_CALL_FLAG(&call_flag, &ftrace_pc, &ftrace_dnpc);
   IDU_SEND_RET_FLAG(&ret_flag, &ftrace_pc); 
   //printf("pc = %08x, dnpc = %08x ,callflag = %d, retflag = %d\n",ftrace_pc,ftrace_dnpc,call_flag,ret_flag);  
+  
   if(call_flag){
     call_trace(ftrace_pc , ftrace_dnpc);
   }
