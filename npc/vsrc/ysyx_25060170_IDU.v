@@ -230,7 +230,7 @@ task IDU_SEND_RET_FLAG(
     output byte ret_flag
 );
 
-    ret_flag = isa.inst == 0x00008067
+    ret_flag = inst_i == 32'h00008067 ? 1 : 0;
 
 endtask
 

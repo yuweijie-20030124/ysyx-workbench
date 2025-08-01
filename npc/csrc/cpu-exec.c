@@ -6,7 +6,8 @@
 #include "memory.h"
 
 void isa_exec_once();
-
+extern "C" void IDU_SEND_INST(word_t *);
+extern "C" void IDU_SEND_INST(word_t *);
 NPC_reg cpu = { .pc =0x80000000};
 Decode s;
 NPC_State npc_state = { .state = NPC_STOP };
