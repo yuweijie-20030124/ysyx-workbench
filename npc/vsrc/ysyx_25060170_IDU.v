@@ -181,7 +181,7 @@ module ysyx_25060170_IDU(
                 //todo
             end
         endcase
-        $display("opcode = %7b", opcode);
+        //$display("opcode = %7b", opcode);
     end
     
 
