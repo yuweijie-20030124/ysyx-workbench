@@ -6,8 +6,11 @@
 #include "memory.h"
 
 void isa_exec_once();
-extern "C" void IDU_SEND_INST(word_t *);
-extern "C" void IDU_SEND_INST(word_t *);
+extern "C" void IDU_SEND_CALL_FLAG(int * ,int *, int*);
+extern "C" void IDU_SEND_RET_FLAG(int *, int *);
+void call_trace(paddr_t pc, paddr_t target);
+void ret_trace(paddr_t pc);
+
 NPC_reg cpu = { .pc =0x80000000};
 Decode s;
 NPC_State npc_state = { .state = NPC_STOP };
@@ -73,6 +76,20 @@ static void exec_once(Decode *s, vaddr_t pc) {
   void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);//反汇编指令
   disassemble(p, s->logbuf + sizeof(s->logbuf) - p, s->pc, inst, ilen);
             //muxdef，有点像  ？：，
+
+/***********************************FTRACE**************************************/
+  int ftrace_pc,ftrace_dnpc,call_flag,ret_flag;
+  IDU_SEND_CALL_FLAG(&call_flag, &ftrace_pc, &ftrace_dnpc);
+  IDU_SEND_RET_FLAG(&ret_flag, &ftrace_pc); 
+  printf("pc = %08x, dnpc = %08x ,callflag = %d, retflag = %d\n");  
+  if(call_flag){
+    call_trace(ftrace_pc , ftrace_dnpc);
+  }
+  else if(ret_flag){
+    ret_trace(ftrace_pc);
+  }
+  else printf("no call or return\n");
+
   //enqueue(&cb, s->logbuf);
   
 #endif

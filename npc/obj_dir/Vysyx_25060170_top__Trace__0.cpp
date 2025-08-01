@@ -130,7 +130,7 @@ void Vysyx_25060170_top___024root__trace_chg_0_sub_0(Vysyx_25060170_top___024roo
                                           >> 7U))),5);
         bufp->chgIData(oldp+36,(vlSelfRef.ysyx_25060170_top__DOT__op_1),32);
         bufp->chgIData(oldp+37,(vlSelfRef.ysyx_25060170_top__DOT__op_2),32);
-        bufp->chgIData(oldp+38,(vlSelfRef.ysyx_25060170_top__DOT__imm_o),32);
+        bufp->chgIData(oldp+38,(vlSelfRef.ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__imm),32);
         bufp->chgBit(oldp+39,(vlSelfRef.ysyx_25060170_top__DOT__jal));
         bufp->chgCData(oldp+40,(vlSelfRef.ysyx_25060170_top__DOT__regS),2);
         bufp->chgBit(oldp+41,(vlSelfRef.ysyx_25060170_top__DOT__RegW));
@@ -152,8 +152,7 @@ void Vysyx_25060170_top___024root__trace_chg_0_sub_0(Vysyx_25060170_top___024roo
                                   : ((IData)(vlSelfRef.ysyx_25060170_top__DOT__jal)
                                       ? vlSelfRef.ysyx_25060170_top__DOT__u_ysyx_25060170_EXU__DOT__jumpaddr
                                       : 0U))),32);
-        bufp->chgBit(oldp+48,(((IData)(vlSelfRef.ysyx_25060170_top__DOT__PCx1) 
-                               | (IData)(vlSelfRef.ysyx_25060170_top__DOT__jal))));
+        bufp->chgBit(oldp+48,(vlSelfRef.ysyx_25060170_top__DOT__jump_en));
         bufp->chgIData(oldp+49,(vlSelfRef.ysyx_25060170_top__DOT__u_ysyx_25060170_EXU__DOT__jumpaddr),32);
         bufp->chgIData(oldp+50,(vlSelfRef.ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT__rf[0]),32);
         bufp->chgIData(oldp+51,(vlSelfRef.ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT__rf[1]),32);
@@ -221,8 +220,7 @@ void Vysyx_25060170_top___024root__trace_chg_0_sub_0(Vysyx_25060170_top___024roo
         bufp->chgCData(oldp+113,((0x7fU & vlSelfRef.ysyx_25060170_top__DOT__MEM_inst_o)),7);
         bufp->chgCData(oldp+114,((vlSelfRef.ysyx_25060170_top__DOT__MEM_inst_o 
                                   >> 0x19U)),7);
-        bufp->chgIData(oldp+115,((((IData)(vlSelfRef.ysyx_25060170_top__DOT__PCx1) 
-                                   | (IData)(vlSelfRef.ysyx_25060170_top__DOT__jal))
+        bufp->chgIData(oldp+115,(((IData)(vlSelfRef.ysyx_25060170_top__DOT__jump_en)
                                    ? ((IData)(vlSelfRef.ysyx_25060170_top__DOT__PCx1)
                                        ? (0xfffffffeU 
                                           & vlSelfRef.ysyx_25060170_top__DOT__u_ysyx_25060170_EXU__DOT__jumpaddr)

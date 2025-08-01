@@ -34,6 +34,43 @@ void Vysyx_25060170_top::IDU_SEND_PC(int* c_pc) {
     for (size_t c_pc__Vidx = 0; c_pc__Vidx < 1; ++c_pc__Vidx) *c_pc = c_pc__Vcvt;
 }
 
+void Vysyx_25060170_top::IDU_SEND_CALL_FLAG(int* call_flag, int* pc, int* dnpc) {
+    VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_top___024root::IDU_SEND_CALL_FLAG\n"); );
+    // Init
+    IData/*31:0*/ call_flag__Vcvt;
+    call_flag__Vcvt = 0;
+    IData/*31:0*/ pc__Vcvt;
+    pc__Vcvt = 0;
+    IData/*31:0*/ dnpc__Vcvt;
+    dnpc__Vcvt = 0;
+    // Body
+    static int __Vfuncnum = -1;
+    if (VL_UNLIKELY(__Vfuncnum == -1)) __Vfuncnum = Verilated::exportFuncNum("IDU_SEND_CALL_FLAG");
+    const VerilatedScope* __Vscopep = Verilated::dpiScope();
+    Vysyx_25060170_top__Vcb_IDU_SEND_CALL_FLAG_t __Vcb = (Vysyx_25060170_top__Vcb_IDU_SEND_CALL_FLAG_t)(VerilatedScope::exportFind(__Vscopep, __Vfuncnum));
+    (*__Vcb)((Vysyx_25060170_top__Syms*)(__Vscopep->symsp()), call_flag__Vcvt, pc__Vcvt, dnpc__Vcvt);
+    for (size_t call_flag__Vidx = 0; call_flag__Vidx < 1; ++call_flag__Vidx) *call_flag = call_flag__Vcvt;
+    for (size_t pc__Vidx = 0; pc__Vidx < 1; ++pc__Vidx) *pc = pc__Vcvt;
+    for (size_t dnpc__Vidx = 0; dnpc__Vidx < 1; ++dnpc__Vidx) *dnpc = dnpc__Vcvt;
+}
+
+void Vysyx_25060170_top::IDU_SEND_RET_FLAG(int* ret_flag, int* pc) {
+    VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_top___024root::IDU_SEND_RET_FLAG\n"); );
+    // Init
+    IData/*31:0*/ ret_flag__Vcvt;
+    ret_flag__Vcvt = 0;
+    IData/*31:0*/ pc__Vcvt;
+    pc__Vcvt = 0;
+    // Body
+    static int __Vfuncnum = -1;
+    if (VL_UNLIKELY(__Vfuncnum == -1)) __Vfuncnum = Verilated::exportFuncNum("IDU_SEND_RET_FLAG");
+    const VerilatedScope* __Vscopep = Verilated::dpiScope();
+    Vysyx_25060170_top__Vcb_IDU_SEND_RET_FLAG_t __Vcb = (Vysyx_25060170_top__Vcb_IDU_SEND_RET_FLAG_t)(VerilatedScope::exportFind(__Vscopep, __Vfuncnum));
+    (*__Vcb)((Vysyx_25060170_top__Syms*)(__Vscopep->symsp()), ret_flag__Vcvt, pc__Vcvt);
+    for (size_t ret_flag__Vidx = 0; ret_flag__Vidx < 1; ++ret_flag__Vidx) *ret_flag = ret_flag__Vcvt;
+    for (size_t pc__Vidx = 0; pc__Vidx < 1; ++pc__Vidx) *pc = pc__Vcvt;
+}
+
 void Vysyx_25060170_top::GPR_SEND_VALUE(int* r1, int* r2, int* r3, int* r4, int* r5, int* r6, int* r7, int* r8, int* r9, int* r10, int* r11, int* r12, int* r13, int* r14, int* r15, int* r16, int* r17, int* r18, int* r19, int* r20, int* r21, int* r22, int* r23, int* r24, int* r25, int* r26, int* r27, int* r28, int* r29, int* r30, int* r31) {
     VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_top___024root::GPR_SEND_VALUE\n"); );
     // Init
