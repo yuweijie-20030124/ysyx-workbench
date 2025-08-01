@@ -48,7 +48,7 @@ void init_disasm() {
     CS_MODE_RISCVC
   );
 
-    printf("Initializing Capstone: arch=%d, mode=%d\n", arch, mode); 
+    //printf("Initializing Capstone: arch=%d, mode=%d\n", arch, mode); 
 
   int ret = cs_open_dl(arch, mode, &handle);
   assert(ret == CS_ERR_OK);

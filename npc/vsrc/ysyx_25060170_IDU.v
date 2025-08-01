@@ -181,6 +181,7 @@ module ysyx_25060170_IDU(
                 //todo
             end
         endcase
+        $display("opcode = %7b", opcode);
     end
     
 
@@ -226,6 +227,12 @@ task IDU_SEND_CALL_FLAG(
 );
 
     call_flag = ((rd_addr == 1 && jump_en == 1) || (rd_addr == 0 && imm == 0 && PCx1 == 1)) ? 1 : 0;
+    // $display("rd_addr = 0x%08x", rd_addr);
+    // $display("jump_en = %d", jump_en);
+    // $display("jalr = %d", PCx1);
+    // $display("jal = %d", jal);
+    // $display("imm = 0x%08x", imm);
+    // $display("PCx1 = %d", PCx1);
     dnpc =  pc_i + imm;
 
 endtask
@@ -238,7 +245,8 @@ task IDU_SEND_RET_FLAG(
 );
 
     ret_flag = inst_i == 32'h00008067 ? 1 : 0;
-    pc  = pc_i;
+    //pc  = pc_i;
+    pc = PCx1 ? {pc_i[31:1],1'b0} : pc_i ;
 
 endtask
 
