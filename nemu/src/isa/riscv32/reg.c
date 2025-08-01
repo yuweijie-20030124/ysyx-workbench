@@ -44,3 +44,5 @@ word_t isa_reg_str2val(const char *s, bool *success) {
   }
   return gpr(idx);
 }
+
+//void diff_get_regs(Decode )
