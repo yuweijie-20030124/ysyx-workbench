@@ -114,7 +114,7 @@ void init_mem() {
   extern "C" void IDU_SEND_PC(word_t *);
  
  int get_pc(){
-  const svScope scope = svGetScopeFromName("TOP.ysyx_25060170_top.u_ysyx_25060170_IDU");
+  const svScope scope = svGetScopeFromName("TOP.ysyx_25060170_top.u_ysyx_25060170_IFU");
   assert(scope);
   svSetScope(scope);
   word_t pc;

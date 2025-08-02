@@ -39,6 +39,7 @@ class alignas(VL_CACHE_LINE_BYTES)Vysyx_25060170_top__Syms final : public Verila
     // SCOPE NAMES
     VerilatedScope __Vscope_ysyx_25060170_top__u_ysyx_25060170_GPR;
     VerilatedScope __Vscope_ysyx_25060170_top__u_ysyx_25060170_IDU;
+    VerilatedScope __Vscope_ysyx_25060170_top__u_ysyx_25060170_IFU;
 
     // CONSTRUCTORS
     Vysyx_25060170_top__Syms(VerilatedContext* contextp, const char* namep, Vysyx_25060170_top* modelp);

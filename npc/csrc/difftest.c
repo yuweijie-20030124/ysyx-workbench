@@ -25,6 +25,7 @@ void (*ref_difftest_memcpy)(paddr_t addr, void *buf, size_t n, bool direction) =
 void (*ref_difftest_regcpy)(void *dut, bool direction) = NULL;
 void (*ref_difftest_exec)(uint64_t n) = NULL;
 void (*ref_difftest_raise_intr)(uint64_t NO) = NULL;
+int get_pc();
 
 void isa_reg_display();
 
@@ -107,6 +108,8 @@ void init_difftest(char *ref_so_file, long img_size, int port) {
 bool isa_difftest_checkregs(NPC_reg *ref_r, vaddr_t pc) {
   int reg_num = (int)(sizeof(cpu.gpr) / sizeof(cpu.gpr[0]));
   
+  cpu.pc = get_pc();
+
   const svScope scope = svGetScopeFromName("TOP.ysyx_25060170_top.u_ysyx_25060170_GPR");
   assert(scope);
   svSetScope(scope);
@@ -124,13 +127,17 @@ bool isa_difftest_checkregs(NPC_reg *ref_r, vaddr_t pc) {
 
   for (int i = 0; i < reg_num; i++) {
     if (cpu.gpr[i] != ref_r->gpr[i]) {
-        printf("i = %d\n",i);
-        printf("cpu.gpr = %d\n",cpu.gpr[i]);
-        printf("ref_r->gpr[i] = %d\n",ref_r->gpr[i]);
+        // printf("进来啦!!!!!!!!!\n");
+        // printf("i = %d\n",i);
+        // printf("cpu.gpr = %d\n",cpu.gpr[i]);
+        // printf("ref_r->gpr[i] = %d\n",ref_r->gpr[i]);
       return false;
     }
   }
   if (cpu.pc != ref_r->pc) {
+    //printf("进来啦!!!!!!!!!\n");
+        // printf("cpu.pc = 0x%08x\n",cpu.pc);
+        // printf("ref_r->pc = 0x%08x\n",ref_r->pc);
     return false;
   }
   return true;

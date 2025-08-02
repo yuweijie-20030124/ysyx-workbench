@@ -23,6 +23,11 @@ module ysyx_25060170_IFU (
     assign PC_temp = jump_en ? jump_addr : PCout + 4;
 
 
+
+
+
+
+
 /*
     always @(posedge clk) begin
         if (Jump_en && ready_i) 
@@ -30,10 +35,20 @@ module ysyx_25060170_IFU (
     end
 */  
 
+/***************************************DPI-C*******************************************/
 
+export "DPI-C" task IDU_SEND_PC;
+
+task IDU_SEND_PC(
+    output int c_pc
+);
+
+    c_pc = PCout;
+    //$display("verilog_PC = 0x%08x", c_pc);
+endtask 
 
 always @(*) begin
-    //$display("PC* = 0x%08x", PCout);
+    //$display("verilog!!!!PC* = 0x%08x", PCout);
 end
 
 

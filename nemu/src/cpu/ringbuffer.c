@@ -29,7 +29,7 @@ void enqueue(CircularBuffer *cb, const char *logbuf) {
 
 void printBuffer(CircularBuffer *cb) {
     if (cb->count == 0) {
-        printf("缓冲区为空\n");
+        //printf("缓冲区为空\n");
         return;
     }
     int idx = (cb->head + IRINGBUF_SIZE - cb->count) % IRINGBUF_SIZE;
