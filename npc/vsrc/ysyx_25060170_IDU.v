@@ -44,7 +44,9 @@ module ysyx_25060170_IDU(
 
 );
 
-//import "DPI-C" function void set_npc_exit(int pc, int halt_ret);
+import "DPI-C" function void set_npc_exit(int pc, int halt_ret);
+import "DPI-C" function int paddr_read(int addr, int len);
+import "DPI-C" function void paddr_write(int addr, int len, int data);
 
 
     //wire is_jump = (opcode == 7'b1100111 || opcode == 7'b1101111);
@@ -149,7 +151,7 @@ module ysyx_25060170_IDU(
             end
     
             7'b0010111: begin // auipc
-                regS = 3;
+                regS = 0;
                 RegW = 1;
             end
     
@@ -191,7 +193,7 @@ module ysyx_25060170_IDU(
 
 /***************************************DPI-C*******************************************/
 
-import "DPI-C" function void set_npc_exit(int pc, int halt_ret);
+
     always @(*) begin
     //$display("PC = 0x%08x", pc_i);
     //$display("inst = 0x%08x", inst_i);
