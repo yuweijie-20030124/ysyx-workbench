@@ -8,7 +8,7 @@ void init_log(const char *log_file);
 void init_ftrace(const char *elf_file);
 void init_rand();
 void init_mem();
-void init_difftest(char *ref_so_file, long img_size);
+void init_difftest(char *ref_so_file, long img_size, int port);
 void init_device();
 void init_sdb();
 void init_disasm();
@@ -129,7 +129,9 @@ void init_monitor(int argc, char *argv[]) {
   long img_size = load_img();
  #ifdef CONFIG_DIFFTEST
   /* Initialize differential testing. */
-  init_difftest(diff_so_file, img_size);
+  init_difftest(diff_so_file, img_size, 0);
+  //printf("diff_so_file = %s\n",diff_so_file);
+  //printf("img_size = %ld\n",img_size);
   #endif
   /* Initialize the simple debugger. */
   init_sdb();

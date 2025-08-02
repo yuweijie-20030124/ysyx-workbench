@@ -30,7 +30,6 @@ class alignas(VL_CACHE_LINE_BYTES) Vysyx_25060170_top___024root final : public V
     SData/*8:0*/ __Vtableidx1;
     IData/*31:0*/ ysyx_25060170_top__DOT__PCout;
     IData/*31:0*/ ysyx_25060170_top__DOT__op_1;
-    IData/*31:0*/ ysyx_25060170_top__DOT__op_2;
     IData/*31:0*/ ysyx_25060170_top__DOT__MEM_inst_o;
     IData/*31:0*/ ysyx_25060170_top__DOT__reg_write_data_o;
     IData/*31:0*/ ysyx_25060170_top__DOT__u_ysyx_25060170_IFU__DOT__PC_temp;

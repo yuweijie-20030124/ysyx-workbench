@@ -206,16 +206,6 @@ task IDU_SEND_INST(
 
 endtask    
 
-export "DPI-C" task IDU_SEND_PC;
-
-task IDU_SEND_PC(
-    output int c_pc
-);
-
-    c_pc = pc_i;
-
-endtask 
-
 /********************************FTRACE****************************************/
 
 export "DPI-C" task IDU_SEND_CALL_FLAG;

@@ -13,6 +13,7 @@ extern "C" void IDU_SEND_RET_FLAG(int *, int *);
 
 void call_trace(paddr_t pc, paddr_t target);
 void ret_trace(paddr_t pc);
+void difftest_step(vaddr_t pc, vaddr_t npc);
 
 NPC_reg cpu = { .pc =0x80000000};
 Decode s;
@@ -35,7 +36,7 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #endif
   //一次执行十条以下的指令gps就会赋值为true。
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }
-  //IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
+  IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
   #ifdef CONFIG_WATCHPOINT
     if (update_watchpoint() > 0) {
         nemu_state.state = NEMU_STOP;
@@ -69,7 +70,7 @@ static void exec_once(Decode *s, vaddr_t pc) {
   
   // printf("0x%08x\n",pc);
   s->pc = get_pc();//当前指令地址
-  // printf("0x%08x\n",pc);
+   //printf("0x%08x\n",s->pc);
   s->snpc = get_pc()+4 ;//静态下一条指令地址，默认为pc+4
   int inst_from_verilog = get_inst();
   //printf("instformverilog is 0x%08x\n", inst_from_verilog);

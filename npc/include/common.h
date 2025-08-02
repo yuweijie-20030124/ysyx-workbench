@@ -34,6 +34,7 @@
 #define CONFIG_TRACE_START 0
 #define CONFIG_ITRACE 1
 #define CONFIG_MTRACE 1
+#define CONFIG_DIFFTEST 1
 /*
 
 #ifdef CONFIG_TRACE

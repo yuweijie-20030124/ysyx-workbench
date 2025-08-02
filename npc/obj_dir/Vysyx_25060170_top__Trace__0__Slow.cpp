@@ -594,18 +594,79 @@ VL_ATTR_COLD void Vysyx_25060170_top___024root__trace_full_0_sub_0(Vysyx_2506017
     bufp->fullCData(oldp+36,((0x1fU & (vlSelfRef.ysyx_25060170_top__DOT__MEM_inst_o 
                                        >> 7U))),5);
     bufp->fullIData(oldp+37,(vlSelfRef.ysyx_25060170_top__DOT__op_1),32);
-    bufp->fullIData(oldp+38,(vlSelfRef.ysyx_25060170_top__DOT__op_2),32);
+    bufp->fullIData(oldp+38,(((((- (IData)((0x13U == 
+                                            (0x7fU 
+                                             & vlSelfRef.ysyx_25060170_top__DOT__MEM_inst_o)))) 
+                                | ((- (IData)((0x17U 
+                                               == (0x7fU 
+                                                   & vlSelfRef.ysyx_25060170_top__DOT__MEM_inst_o)))) 
+                                   | ((- (IData)((3U 
+                                                  == 
+                                                  (0x7fU 
+                                                   & vlSelfRef.ysyx_25060170_top__DOT__MEM_inst_o)))) 
+                                      | ((- (IData)(
+                                                    (0x23U 
+                                                     == 
+                                                     (0x7fU 
+                                                      & vlSelfRef.ysyx_25060170_top__DOT__MEM_inst_o)))) 
+                                         | (- (IData)(
+                                                      (0x63U 
+                                                       == 
+                                                       (0x7fU 
+                                                        & vlSelfRef.ysyx_25060170_top__DOT__MEM_inst_o)))))))) 
+                               & vlSelfRef.ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__imm) 
+                              | (4U & ((- (IData)((0x67U 
+                                                   == 
+                                                   (0x7fU 
+                                                    & vlSelfRef.ysyx_25060170_top__DOT__MEM_inst_o)))) 
+                                       | (- (IData)(
+                                                    (0x6fU 
+                                                     == 
+                                                     (0x7fU 
+                                                      & vlSelfRef.ysyx_25060170_top__DOT__MEM_inst_o)))))))),32);
     bufp->fullIData(oldp+39,(vlSelfRef.ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__imm),32);
     bufp->fullBit(oldp+40,(vlSelfRef.ysyx_25060170_top__DOT__jal));
     bufp->fullCData(oldp+41,(vlSelfRef.ysyx_25060170_top__DOT__regS),2);
     bufp->fullBit(oldp+42,(vlSelfRef.ysyx_25060170_top__DOT__RegW));
     bufp->fullBit(oldp+43,(vlSelfRef.ysyx_25060170_top__DOT__PCx1));
     bufp->fullIData(oldp+44,((((- (IData)((0U == (IData)(vlSelfRef.ysyx_25060170_top__DOT__ALUop)))) 
-                               & (vlSelfRef.ysyx_25060170_top__DOT__op_1 
-                                  + vlSelfRef.ysyx_25060170_top__DOT__op_2)) 
-                              | ((- (IData)((1U == (IData)(vlSelfRef.ysyx_25060170_top__DOT__ALUop)))) 
-                                 & (vlSelfRef.ysyx_25060170_top__DOT__op_1 
-                                    - vlSelfRef.ysyx_25060170_top__DOT__op_2)))),32);
+                               | (- (IData)((1U == (IData)(vlSelfRef.ysyx_25060170_top__DOT__ALUop))))) 
+                              & (vlSelfRef.ysyx_25060170_top__DOT__op_1 
+                                 - ((((- (IData)((0x13U 
+                                                  == 
+                                                  (0x7fU 
+                                                   & vlSelfRef.ysyx_25060170_top__DOT__MEM_inst_o)))) 
+                                      | ((- (IData)(
+                                                    (0x17U 
+                                                     == 
+                                                     (0x7fU 
+                                                      & vlSelfRef.ysyx_25060170_top__DOT__MEM_inst_o)))) 
+                                         | ((- (IData)(
+                                                       (3U 
+                                                        == 
+                                                        (0x7fU 
+                                                         & vlSelfRef.ysyx_25060170_top__DOT__MEM_inst_o)))) 
+                                            | ((- (IData)(
+                                                          (0x23U 
+                                                           == 
+                                                           (0x7fU 
+                                                            & vlSelfRef.ysyx_25060170_top__DOT__MEM_inst_o)))) 
+                                               | (- (IData)(
+                                                            (0x63U 
+                                                             == 
+                                                             (0x7fU 
+                                                              & vlSelfRef.ysyx_25060170_top__DOT__MEM_inst_o)))))))) 
+                                     & vlSelfRef.ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__imm) 
+                                    | (4U & ((- (IData)(
+                                                        (0x67U 
+                                                         == 
+                                                         (0x7fU 
+                                                          & vlSelfRef.ysyx_25060170_top__DOT__MEM_inst_o)))) 
+                                             | (- (IData)(
+                                                          (0x6fU 
+                                                           == 
+                                                           (0x7fU 
+                                                            & vlSelfRef.ysyx_25060170_top__DOT__MEM_inst_o)))))))))),32);
     bufp->fullIData(oldp+45,(vlSelfRef.ysyx_25060170_top__DOT__MEM_inst_o),32);
     bufp->fullIData(oldp+46,(vlSelfRef.ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT__rf
                              [(0x1fU & (vlSelfRef.ysyx_25060170_top__DOT__MEM_inst_o 
