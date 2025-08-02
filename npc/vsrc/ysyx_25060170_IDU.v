@@ -43,6 +43,10 @@ module ysyx_25060170_IDU(
     output jump_en
 
 );
+
+//import "DPI-C" function void set_npc_exit(int pc, int halt_ret);
+
+
     //wire is_jump = (opcode == 7'b1100111 || opcode == 7'b1101111);
     //localparam PC_INCR = 32'd4;  // 添加在模块开头
     assign jump_en = PCx1 | jal;
@@ -239,5 +243,9 @@ task IDU_SEND_RET_FLAG(
     pc = PCx1 ? {pc_i[31:1],1'b0} : pc_i ;
 
 endtask
+
+
+
+
 
     endmodule
