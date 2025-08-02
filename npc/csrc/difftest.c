@@ -39,6 +39,13 @@ extern "C" void GPR_SEND_VALUE(word_t *, word_t *, word_t *, word_t *,
                            word_t *, word_t *, word_t *
                           );
 
+const char *nemu_regs[] = {
+  "$0", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
+  "s0", "s1", "a0", "a1", "a2", "a3", "a4", "a5",
+  "a6", "a7", "s2", "s3", "s4", "s5", "s6", "s7",
+  "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"
+};
+                          
 #ifdef CONFIG_DIFFTEST
 
 static bool is_skip_ref = false;
@@ -130,7 +137,13 @@ bool isa_difftest_checkregs(NPC_reg *ref_r, vaddr_t pc) {
         // printf("进来啦!!!!!!!!!\n");
         // printf("i = %d\n",i);
         // printf("cpu.gpr = %d\n",cpu.gpr[i]);
+        //printf("error register is %s \n");
         // printf("ref_r->gpr[i] = %d\n",ref_r->gpr[i]);
+        printf("       nemu reg:\n");
+        for(int j = 0; j < reg_num; j++){
+          printf("%s\t0x%08x\t%d\n", nemu_regs[j], ref_r->gpr[j], ref_r->gpr[j]);
+        }
+        printf("\n");
       return false;
     }
   }
@@ -148,7 +161,7 @@ static void checkregs(NPC_reg *ref, vaddr_t pc) {
   if (!isa_difftest_checkregs(ref, pc)) {
     npc_state.state = NPC_ABORT;
     npc_state.halt_pc = pc;
-    printf("npc reg:\n");
+    printf("       npc reg:\n");
     
     isa_reg_display();
   }
