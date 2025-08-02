@@ -62,8 +62,9 @@ void difftest_skip_dut(int nr_ref, int nr_dut) {
 }
 
 void init_difftest(char *ref_so_file, long img_size, int port) {
+  printf("diff_so_file = %s\n",ref_so_file);
+  printf("img_size = %ld\n",img_size);
   assert(ref_so_file != NULL);
-
   void *handle;
   handle = dlopen(ref_so_file, RTLD_LAZY);//打开传入的动态库文件 ref_so_file
   assert(handle);
