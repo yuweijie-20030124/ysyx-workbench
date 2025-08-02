@@ -122,4 +122,29 @@ void init_mem() {
   return pc;
  }
 
+
+//  extern "C" word_t paddr_read(paddr_t addr, int len) {
+//   //printf("进来了\n"); 
+//   if (likely(in_pmem(addr))) { 
+//     //printf("进来了\n"); 
+//     IFDEF(CONFIG_MTRACE, Log("read in address = " FMT_PADDR ", len = %d\n", addr, len));
+//     return pmem_read(addr, len);
+//   }
+//   IFDEF(CONFIG_DEVICE, return mmio_read(addr, len));
+//   //printf("");
+//   out_of_bound(addr);
+//   return 0;
+// }
+
+// //写物理地址
+// extern "C" void paddr_write(paddr_t addr, int len, word_t data) {
+//   if (likely(in_pmem(addr))) { 
+//     pmem_write(addr, len, data);
+//     IFDEF(CONFIG_MTRACE, Log("write in address = " FMT_PADDR ", len = %d, data = " FMT_WORD "\n", addr, len, data));
+//     return; }
+  
+//   IFDEF(CONFIG_DEVICE, mmio_write(addr, len, data); return);
+//   out_of_bound(addr);
+//   //Log("weiwei");
+// }
  

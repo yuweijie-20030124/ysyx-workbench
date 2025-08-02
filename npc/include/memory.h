@@ -11,9 +11,20 @@ paddr_t host_read(void *addr, int len);
 
 void host_write(void *addr, int len, paddr_t data);
 
-word_t paddr_read(paddr_t addr, int len);
 
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+word_t paddr_read(paddr_t addr, int len);
 void paddr_write(paddr_t addr, int len, word_t data);
+
+#ifdef __cplusplus
+}
+#endif
+
+
 
 word_t vaddr_ifetch(vaddr_t addr, int len);
 
