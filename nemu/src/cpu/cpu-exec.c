@@ -19,6 +19,7 @@
 #include <locale.h>
 #include <cpu/watchpoint.h>
 #include <cpu/ringbuffer.h>
+//#include "/home/yuweijie/ysyx-workbench/nemu/src/isa/riscv32/include/isa-def.h"
 /* The assembly code of instructions executed is only output to the screen
  * when the number of instructions executed is less than this value.
  * This is useful when you use the `si' command.
