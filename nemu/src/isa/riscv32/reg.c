@@ -45,4 +45,4 @@ word_t isa_reg_str2val(const char *s, bool *success) {
   return gpr(idx);
 }
 
-//void diff_get_regs(Decode )
+//void diff_get_regs(cpu)  //riscv32_CPU_state
