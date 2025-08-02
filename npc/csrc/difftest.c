@@ -19,7 +19,7 @@
 #include <common.h>
 #include <memory.h>
 #include <difftest.h>
-
+#include "svdpi.h"
 
 void (*ref_difftest_memcpy)(paddr_t addr, void *buf, size_t n, bool direction) = NULL;
 void (*ref_difftest_regcpy)(void *dut, bool direction) = NULL;
@@ -27,6 +27,16 @@ void (*ref_difftest_exec)(uint64_t n) = NULL;
 void (*ref_difftest_raise_intr)(uint64_t NO) = NULL;
 
 void isa_reg_display();
+
+extern "C" void GPR_SEND_VALUE(word_t *, word_t *, word_t *, word_t *,
+                           word_t *, word_t *, word_t *, word_t *, 
+                           word_t *, word_t *, word_t *, word_t *, 
+                           word_t *, word_t *, word_t *, word_t *, 
+                           word_t *, word_t *, word_t *, word_t *, 
+                           word_t *, word_t *, word_t *, word_t *, 
+                           word_t *, word_t *, word_t *, word_t *, 
+                           word_t *, word_t *, word_t *
+                          );
 
 #ifdef CONFIG_DIFFTEST
 
@@ -96,8 +106,27 @@ void init_difftest(char *ref_so_file, long img_size, int port) {
 
 bool isa_difftest_checkregs(NPC_reg *ref_r, vaddr_t pc) {
   int reg_num = (int)(sizeof(cpu.gpr) / sizeof(cpu.gpr[0]));
+  
+  const svScope scope = svGetScopeFromName("TOP.ysyx_25060170_top.u_ysyx_25060170_GPR");
+  assert(scope);
+  svSetScope(scope);
+
+  GPR_SEND_VALUE(
+               &cpu.gpr[1] , &cpu.gpr[2] , &cpu.gpr[3] , &cpu.gpr[4] , 
+               &cpu.gpr[5] , &cpu.gpr[6] , &cpu.gpr[7] , &cpu.gpr[8] , 
+               &cpu.gpr[9] , &cpu.gpr[10], &cpu.gpr[11], &cpu.gpr[12], 
+               &cpu.gpr[13], &cpu.gpr[14], &cpu.gpr[15], &cpu.gpr[16], 
+               &cpu.gpr[17], &cpu.gpr[18], &cpu.gpr[19], &cpu.gpr[20], 
+               &cpu.gpr[21], &cpu.gpr[22], &cpu.gpr[23], &cpu.gpr[24], 
+               &cpu.gpr[25], &cpu.gpr[26], &cpu.gpr[27], &cpu.gpr[28], 
+               &cpu.gpr[29], &cpu.gpr[30], &cpu.gpr[31]
+              );
+
   for (int i = 0; i < reg_num; i++) {
     if (cpu.gpr[i] != ref_r->gpr[i]) {
+        printf("i = %d\n",i);
+        printf("cpu.gpr = %d\n",cpu.gpr[i]);
+        printf("ref_r->gpr[i] = %d\n",ref_r->gpr[i]);
       return false;
     }
   }
@@ -108,6 +137,7 @@ bool isa_difftest_checkregs(NPC_reg *ref_r, vaddr_t pc) {
 }
 
 static void checkregs(NPC_reg *ref, vaddr_t pc) {
+    //printf("进来啦!!!!!!!!!\n");
   if (!isa_difftest_checkregs(ref, pc)) {
     npc_state.state = NPC_ABORT;
     npc_state.halt_pc = pc;
@@ -117,6 +147,8 @@ static void checkregs(NPC_reg *ref, vaddr_t pc) {
 
 void difftest_step(vaddr_t pc, vaddr_t npc) {
   NPC_reg ref_r;
+  
+  //printf("进来啦!!!!!!!!!\n");
 
   if (skip_dut_nr_inst > 0) {
     ref_difftest_regcpy(&ref_r, DIFFTEST_TO_DUT);
