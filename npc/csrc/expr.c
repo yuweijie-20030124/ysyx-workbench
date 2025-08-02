@@ -272,7 +272,7 @@
         case TK_AND: return val1&&val2;
         case TK_OR: return val1||val2;
         case TK_NOT: return ~val2;
-        //case TK_DEREF: return paddr_read(val2,4);     解引用，等后面再来写
+        case TK_DEREF: return paddr_read(val2,4);  
         case TK_NEG: return -val2;
         default: panic("wrong operator");;
       }
