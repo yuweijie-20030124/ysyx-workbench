@@ -18,6 +18,9 @@
 #include <difftest-def.h>
 #include <memory/paddr.h>
 #include <assert.h>
+#include "/home/yuweijie/ysyx-workbench/nemu/src/isa/riscv32/include/isa-def.h"
+
+void diff_get_regs(riscv32_CPU_state *diff_context);
 
 __EXPORT void difftest_memcpy(paddr_t addr, void *buf, size_t n, bool direction) {
   //assert(0);
@@ -27,7 +30,7 @@ __EXPORT void difftest_regcpy(void *dut, bool direction) {
   if (direction == DIFFTEST_TO_REF) {
     assert(0);
   } else {
-    //diff_get_regs(dut);
+    diff_get_regs(dut);
     //制作一个函数把nemu的regs传给npc
   }
 }
