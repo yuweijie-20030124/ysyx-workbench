@@ -4,6 +4,7 @@
 #include <locale.h>
 #include "stdlib.h"
 #include "memory.h"
+#include <ringbuffer.h>
 #include "svdpi.h"
 
 void isa_exec_once();
@@ -14,6 +15,8 @@ extern "C" void IDU_SEND_RET_FLAG(int *, int *);
 void call_trace(paddr_t pc, paddr_t target);
 void ret_trace(paddr_t pc);
 void difftest_step(vaddr_t pc, vaddr_t npc);
+
+CircularBuffer cb;
 
 NPC_reg cpu = { .pc =0x80000000};
 Decode s;
@@ -102,13 +105,13 @@ static void exec_once(Decode *s, vaddr_t pc) {
   void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);//反汇编指令
   disassemble(p, s->logbuf + sizeof(s->logbuf) - p, s->pc, inst, ilen);
             //muxdef，有点像  ？：，
-  //enqueue(&cb, s->logbuf);
+  enqueue(&cb, s->logbuf);
   
 #endif
 }
 
 static void execute(uint64_t n) {
-  //initBuffer(&cb); // 初始化环形缓冲区，大小为BUFFER_SIZE
+  initBuffer(&cb); // 初始化环形缓冲区，大小为BUFFER_SIZE
   for (;n > 0; n --) {
     exec_once(&s, cpu.pc);
     g_nr_guest_inst ++;
@@ -117,7 +120,7 @@ static void execute(uint64_t n) {
     IFDEF(CONFIG_DEVICE, device_update());
   }/*条件编译宏，如果CONFIG_DEVICE被定义，则调用device_update函数，如果 CONFIG_DEVICE 没有被定义，
   这一行什么都不会生成（等价于被注释掉）。*/
-  //printBuffer(&cb);
+  printBuffer(&cb);
 }
 
 //如果退出就执行statistic

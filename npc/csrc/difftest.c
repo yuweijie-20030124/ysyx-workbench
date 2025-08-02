@@ -73,8 +73,8 @@ void difftest_skip_dut(int nr_ref, int nr_dut) {
 }
 
 void init_difftest(char *ref_so_file, long img_size, int port) {
-//   printf("diff_so_file = %s\n",ref_so_file);
-//   printf("img_size = %ld\n",img_size);
+  // printf("diff_so_file = %s\n",ref_so_file);
+  // printf("img_size = %ld\n",img_size);
   assert(ref_so_file != NULL);
   void *handle;
   handle = dlopen(ref_so_file, RTLD_LAZY);//打开传入的动态库文件 ref_so_file
@@ -148,6 +148,8 @@ static void checkregs(NPC_reg *ref, vaddr_t pc) {
   if (!isa_difftest_checkregs(ref, pc)) {
     npc_state.state = NPC_ABORT;
     npc_state.halt_pc = pc;
+    printf("npc reg:\n");
+    
     isa_reg_display();
   }
 }

@@ -57,6 +57,7 @@ VM_USER_CLASSES = \
 	memory \
 	monitor \
 	reg \
+	ringbuffer \
 	sdb \
 	timer \
 	watchpoint \
@@ -97,6 +98,8 @@ memory.o: csrc/memory.c
 monitor.o: csrc/monitor.c 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
 reg.o: csrc/reg.c 
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
+ringbuffer.o: csrc/ringbuffer.c 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
 sdb.o: csrc/sdb.c 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
