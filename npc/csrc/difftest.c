@@ -149,6 +149,7 @@ static void checkregs(NPC_reg *ref, vaddr_t pc) {
     npc_state.state = NPC_ABORT;
     npc_state.halt_pc = pc;
     printf("npc reg:\n");
+    
     isa_reg_display();
   }
 }

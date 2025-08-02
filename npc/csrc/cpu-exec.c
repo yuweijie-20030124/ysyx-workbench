@@ -4,6 +4,7 @@
 #include <locale.h>
 #include "stdlib.h"
 #include "memory.h"
+#include <ringbuffer.h>
 #include "svdpi.h"
 
 void isa_exec_once();
@@ -108,7 +109,7 @@ static void exec_once(Decode *s, vaddr_t pc) {
 }
 
 static void execute(uint64_t n) {
-  //initBuffer(&cb); // 初始化环形缓冲区，大小为BUFFER_SIZE
+  initBuffer(&cb); // 初始化环形缓冲区，大小为BUFFER_SIZE
   for (;n > 0; n --) {
     exec_once(&s, cpu.pc);
     g_nr_guest_inst ++;
@@ -117,7 +118,7 @@ static void execute(uint64_t n) {
     IFDEF(CONFIG_DEVICE, device_update());
   }/*条件编译宏，如果CONFIG_DEVICE被定义，则调用device_update函数，如果 CONFIG_DEVICE 没有被定义，
   这一行什么都不会生成（等价于被注释掉）。*/
-  //printBuffer(&cb);
+  printBuffer(&cb);
 }
 
 //如果退出就执行statistic
