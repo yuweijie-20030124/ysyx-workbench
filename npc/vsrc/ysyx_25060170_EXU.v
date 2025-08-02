@@ -30,7 +30,7 @@ module ysyx_25060170_EXU(
     
     assign exu_res1 = 32'h0 | 
                     //addi  i-type
-                    ({32{ALUop == 4'd0}} & { exu_op_1 - exu_op_2 }) |
+                    ({32{ALUop == 4'd0}} & { exu_op_1 + exu_op_2 }) |
                     ({32{ALUop == 4'd1}} & { exu_op_1 - exu_op_2 }) ;
 
     assign jumpaddr = imm + exu_op_1;
