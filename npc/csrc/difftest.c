@@ -139,7 +139,8 @@ bool isa_difftest_checkregs(NPC_reg *ref_r, vaddr_t pc) {
         // printf("cpu.gpr = %d\n",cpu.gpr[i]);
         //printf("error register is %s \n");
         // printf("ref_r->gpr[i] = %d\n",ref_r->gpr[i]);
-        printf("       nemu reg:\n");
+        printf("\n");
+        printf("        nemu reg:\n");
         for(int j = 0; j < reg_num; j++){
           printf("%s\t0x%08x\t%d\n", nemu_regs[j], ref_r->gpr[j], ref_r->gpr[j]);
         }
@@ -161,7 +162,7 @@ static void checkregs(NPC_reg *ref, vaddr_t pc) {
   if (!isa_difftest_checkregs(ref, pc)) {
     npc_state.state = NPC_ABORT;
     npc_state.halt_pc = pc;
-    printf("       npc reg:\n");
+    printf("        npc reg:\n");
     
     isa_reg_display();
   }
