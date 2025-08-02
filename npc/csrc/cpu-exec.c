@@ -70,7 +70,7 @@ static void exec_once(Decode *s, vaddr_t pc) {
   
   // printf("0x%08x\n",pc);
   s->pc = get_pc();//当前指令地址
-   printf("0x%08x\n",s->pc);
+   //printf("0x%08x\n",s->pc);
   s->snpc = get_pc()+4 ;//静态下一条指令地址，默认为pc+4
   int inst_from_verilog = get_inst();
   //printf("instformverilog is 0x%08x\n", inst_from_verilog);
