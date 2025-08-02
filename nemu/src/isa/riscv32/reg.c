@@ -47,9 +47,9 @@ word_t isa_reg_str2val(const char *s, bool *success) {
 }
 
 //riscv32_CPU_state
-void diff_get_regs(riscv32_CPU_state *diff_context){
-  for (int i = 0; i < 32; i++) {
-    diff_context->gpr[i] = cpu.gpr[i];
-  }
-  diff_context -> pc = cpu.pc;
-}  
+// void diff_get_regs(riscv32_CPU_state *diff_context){
+//   for (int i = 0; i < 32; i++) {
+//     diff_context->gpr[i] = cpu.gpr[i];
+//   }
+//   diff_context -> pc = cpu.pc;
+// }  
