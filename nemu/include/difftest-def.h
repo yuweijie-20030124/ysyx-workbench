@@ -21,6 +21,9 @@
 #include <generated/autoconf.h>
 
 #define __EXPORT __attribute__((visibility("default")))
+// 编写大型程序时，可用-fvisibility=hidden设置符号默认隐藏，针对特定变量和函数，
+// 在代码中使用__attribute__ ((visibility("default")))另该符号外部可见，这种方
+//法可用有效避免so之间的符号冲突。
 enum { DIFFTEST_TO_DUT, DIFFTEST_TO_REF };
 
 #if defined(CONFIG_ISA_x86)

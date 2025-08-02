@@ -144,7 +144,8 @@ void init_monitor(int argc, char *argv[]) {
 
   /* Initialize differential testing. */
   init_difftest(diff_so_file, img_size, difftest_port);
-
+  // printf("diff_so_file = %s\n",diff_so_file);
+  // printf("img_size = %ld\n",img_size);
   /* Initialize the simple debugger. */
   init_sdb();
 

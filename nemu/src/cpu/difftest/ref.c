@@ -29,6 +29,7 @@ __EXPORT void difftest_memcpy(paddr_t addr, void *buf, size_t n, bool direction)
     paddr_write(addr + i, 1, *((uint8_t*)buf + i));
       }
     }
+    else assert(0);
 }
 
 // __EXPORT void difftest_regcpy(void *dut, bool direction) {
@@ -40,11 +41,16 @@ __EXPORT void difftest_memcpy(paddr_t addr, void *buf, size_t n, bool direction)
     
 //   }
 // }
-
 __EXPORT void difftest_regcpy(void *dut, bool direction) {
+    
     if (direction == DIFFTEST_TO_REF) {
-    assert(0);
-  } 
+    //printf("%lx\n",cpu.pc);
+    cpu.pc = ((CPU_state *)dut)->pc;
+    //printf("%lx\n",cpu.pc);
+    for (int i = 0; i < 32; ++i) {
+      cpu.gpr[i] = ((CPU_state *)dut)->gpr[i];
+    }
+  }
     else if(direction == DIFFTEST_TO_DUT) {
   	//printf("%lx\n",cpu.pc);
     ((CPU_state *)dut)->pc = cpu.pc;
