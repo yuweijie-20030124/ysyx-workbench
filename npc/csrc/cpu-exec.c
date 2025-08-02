@@ -16,6 +16,8 @@ void call_trace(paddr_t pc, paddr_t target);
 void ret_trace(paddr_t pc);
 void difftest_step(vaddr_t pc, vaddr_t npc);
 
+CircularBuffer cb;
+
 NPC_reg cpu = { .pc =0x80000000};
 Decode s;
 NPC_State npc_state = { .state = NPC_STOP };
@@ -103,7 +105,7 @@ static void exec_once(Decode *s, vaddr_t pc) {
   void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);//反汇编指令
   disassemble(p, s->logbuf + sizeof(s->logbuf) - p, s->pc, inst, ilen);
             //muxdef，有点像  ？：，
-  //enqueue(&cb, s->logbuf);
+  enqueue(&cb, s->logbuf);
   
 #endif
 }
