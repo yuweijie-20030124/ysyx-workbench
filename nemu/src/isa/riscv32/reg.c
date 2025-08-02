@@ -15,6 +15,7 @@
 
 #include <isa.h>
 #include "local-include/reg.h"
+#include "/home/yuweijie/ysyx-workbench/nemu/src/isa/riscv32/include/isa-def.h"
 int i = 0;
 const char *regs[] = {
   "$0", "ra", "sp", "gp", "tp", "haox", "t1", "t2",
@@ -44,3 +45,11 @@ word_t isa_reg_str2val(const char *s, bool *success) {
   }
   return gpr(idx);
 }
+
+//riscv32_CPU_state
+void diff_get_regs(riscv32_CPU_state *diff_context){
+  for (int i = 0; i < 32; i++) {
+    diff_context->gpr[i] = cpu.gpr[i];
+  }
+  diff_context -> pc = cpu.pc;
+}  
