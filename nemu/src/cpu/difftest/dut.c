@@ -60,7 +60,7 @@ void difftest_skip_dut(int nr_ref, int nr_dut) {
 }
 
 void init_difftest(char *ref_so_file, long img_size, int port) {
-  printf("ref_so_file = %c!!!!!!!!!!!!!!!!!!!!!!\n", *ref_so_file);
+  //printf("ref_so_file = %c!!!!!!!!!!!!!!!!!!!!!!\n", *ref_so_file);
   assert(ref_so_file != NULL);
 
   void *handle;
