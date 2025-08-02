@@ -23,7 +23,7 @@ NPC_IMG?=
 ##NPC_FLAGS?= -l=$(NPC_HOME)/npc-log.txt -b
 NPC_FLAGS ?= --log=$(NPC_HOME)/npc-log.txt
 NPC_FLAGS += -b
-NPC_FLAGS += --diff=/home/yuweijie/ysyx-workbench/nemu/build/obj-riscv32-nemu-interpreter-so
+NPC_FLAGS += --diff=/home/yuweijie/ysyx-workbench/nemu/build/riscv32-nemu-interpreter-so
 
 
 #VERILATOR_FLAGS = -Wall --cc --trace \
