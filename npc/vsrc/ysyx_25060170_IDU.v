@@ -104,6 +104,8 @@ import "DPI-C" function void set_npc_exit(int pc, int halt_ret);
     assign op_1 = 32'h0 |
                     //addi  i-type
                     ({32{opcode == 7'b0010011}} & {reg1_rdata_i}) |
+                    //add  i-type
+                    ({32{opcode == 7'b0010011}} & {reg1_rdata_i}) |
                     //auipc u-type
                     ({32{opcode == 7'b0010111}} & {pc_i}) |
                     //lw i-type
@@ -144,8 +146,8 @@ import "DPI-C" function void set_npc_exit(int pc, int halt_ret);
         MemWr = 0;
         RegW = 0;
         PCx1 = 0;
-        $display("op_1 = 0x%08x", op_1);
-        $display("op_2 = 0x%08x", op_2);
+        // $display("op_1 = 0x%08x", op_1);
+        // $display("op_2 = 0x%08x", op_2);
         case(opcode)
             7'b0110011: begin // add/sub
            if   (func7 == 7'b0000000) ALUop = 0;
