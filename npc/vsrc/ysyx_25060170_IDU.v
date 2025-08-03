@@ -144,7 +144,8 @@ import "DPI-C" function void set_npc_exit(int pc, int halt_ret);
         MemWr = 0;
         RegW = 0;
         PCx1 = 0;
-
+        $display("op_1 = 0x%08x", op_1);
+        $display("op_2 = 0x%08x", op_2);
         case(opcode)
             7'b0110011: begin // add/sub
            if   (func7 == 7'b0000000) ALUop = 0;
@@ -200,9 +201,9 @@ import "DPI-C" function void set_npc_exit(int pc, int halt_ret);
     
 assign memory_lenth = 32'b0 |
                         //lw
-                        ({32{func7 == 7'b0000011}} & {32{func3 == 3'b010}} & { 32'd4 }) |
+                        ({32{opcode == 7'b0000011}} & {32{func3 == 3'b010}} & { 32'd4 }) |
                         //sw
-                        ({32{func7 == 7'b0100011}} & {32{func3 == 3'b010}} & { 32'd4 }) ;
+                        ({32{opcode == 7'b0100011}} & {32{func3 == 3'b010}} & { 32'd4 }) ;
 
 /***************************************DPI-C*******************************************/
 

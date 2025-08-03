@@ -132,13 +132,13 @@ void Vysyx_25060170_top___024root__trace_chg_0_sub_0(Vysyx_25060170_top___024roo
         bufp->chgIData(oldp+37,((4U & (((- (IData)(
                                                    (3U 
                                                     == 
-                                                    (vlSelfRef.ysyx_25060170_top__DOT__MEM_inst_o 
-                                                     >> 0x19U)))) 
+                                                    (0x7fU 
+                                                     & vlSelfRef.ysyx_25060170_top__DOT__MEM_inst_o)))) 
                                         | (- (IData)(
                                                      (0x23U 
                                                       == 
-                                                      (vlSelfRef.ysyx_25060170_top__DOT__MEM_inst_o 
-                                                       >> 0x19U))))) 
+                                                      (0x7fU 
+                                                       & vlSelfRef.ysyx_25060170_top__DOT__MEM_inst_o))))) 
                                        & (- (IData)(
                                                     (2U 
                                                      == 
