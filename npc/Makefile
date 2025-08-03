@@ -76,7 +76,7 @@ checkone:
 
 gdb:
 	$(VERILATOR) $(VERILATOR_FLAGS) $(SRC_FILES) $(VERILOG_FILES) 
-	gdb ./obj_dir/Vysyx_25060170_top
+	gdb -s --args ./obj_dir/Vysyx_25060170_top
 
 valgrind:
 	rm -rf obj_dir waveform.vcd

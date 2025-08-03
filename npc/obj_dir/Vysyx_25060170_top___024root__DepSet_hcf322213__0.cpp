@@ -632,8 +632,7 @@ VL_INLINE_OPT void Vysyx_25060170_top___024root___nba_sequent__TOP__0(Vysyx_2506
                                                                  == (IData)(vlSelfRef.ysyx_25060170_top__DOT__ALUop)))) 
                                                      & (vlSelfRef.ysyx_25060170_top__DOT__op_1 
                                                         - vlSelfRef.ysyx_25060170_top__DOT__op_2)));
-    if (VL_UNLIKELY((vlSelfRef.ysyx_25060170_top__DOT__MemWr))) {
-        VL_WRITEF_NX("exu_result_i = %08x\n",0,32,vlSelfRef.ysyx_25060170_top__DOT__exu_res1);
+    if (vlSelfRef.ysyx_25060170_top__DOT__MemWr) {
         Vysyx_25060170_top___024root____Vdpiimwrap_ysyx_25060170_top__DOT__u_ysyx_25060170_WBU__DOT__paddr_write_TOP(vlSelfRef.ysyx_25060170_top__DOT__exu_res1, 
                                                                                 (4U 
                                                                                 & (((- (IData)(
