@@ -234,11 +234,9 @@ void Vysyx_25060170_top___024root__trace_chg_0_sub_0(Vysyx_25060170_top___024roo
         bufp->chgIData(oldp+115,(vlSelfRef.ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT____Vcellout__reg_gen__BRA__8__KET____DOT__reg_x__dout),32);
         bufp->chgIData(oldp+116,(vlSelfRef.ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT____Vcellout__reg_gen__BRA__9__KET____DOT__reg_x__dout),32);
         bufp->chgCData(oldp+117,((0x7fU & vlSelfRef.ysyx_25060170_top__DOT__MEM_inst_o)),7);
-        bufp->chgCData(oldp+118,((vlSelfRef.ysyx_25060170_top__DOT__MEM_inst_o 
-                                  >> 0x19U)),7);
-        bufp->chgCData(oldp+119,((7U & (vlSelfRef.ysyx_25060170_top__DOT__MEM_inst_o 
+        bufp->chgCData(oldp+118,((7U & (vlSelfRef.ysyx_25060170_top__DOT__MEM_inst_o 
                                         >> 0xcU))),3);
-        bufp->chgIData(oldp+120,(((IData)(vlSelfRef.ysyx_25060170_top__DOT__jump_en)
+        bufp->chgIData(oldp+119,(((IData)(vlSelfRef.ysyx_25060170_top__DOT__jump_en)
                                    ? ((IData)(vlSelfRef.ysyx_25060170_top__DOT__PCx1)
                                        ? (0xfffffffeU 
                                           & vlSelfRef.ysyx_25060170_top__DOT__u_ysyx_25060170_EXU__DOT__jumpaddr)
@@ -246,10 +244,10 @@ void Vysyx_25060170_top___024root__trace_chg_0_sub_0(Vysyx_25060170_top___024roo
                                            ? vlSelfRef.ysyx_25060170_top__DOT__u_ysyx_25060170_EXU__DOT__jumpaddr
                                            : 0U)) : 
                                   ((IData)(4U) + vlSelfRef.ysyx_25060170_top__DOT__PCout))),32);
-        bufp->chgIData(oldp+121,(vlSelfRef.ysyx_25060170_top__DOT__u_ysyx_25060170_WBU__DOT__l_memdata),32);
+        bufp->chgIData(oldp+120,(vlSelfRef.ysyx_25060170_top__DOT__u_ysyx_25060170_WBU__DOT__l_memdata),32);
     }
-    bufp->chgBit(oldp+122,(vlSelfRef.clk));
-    bufp->chgBit(oldp+123,(vlSelfRef.rst));
+    bufp->chgBit(oldp+121,(vlSelfRef.clk));
+    bufp->chgBit(oldp+122,(vlSelfRef.rst));
 }
 
 void Vysyx_25060170_top___024root__trace_cleanup(void* voidSelf, VerilatedVcd* /*unused*/) {

@@ -58,7 +58,7 @@ import "DPI-C" function void set_npc_exit(int pc, int halt_ret);
     //localparam PC_INCR = 32'd4;  // 添加在模块开头
     assign jump_en = PCx1 | jal;
     wire [6:0] opcode;
-    wire [6:0] func7;
+    //wire [6:0] func7;
     wire [2:0] func3;
     wire [31:0] imm;
 
@@ -70,7 +70,7 @@ import "DPI-C" function void set_npc_exit(int pc, int halt_ret);
     assign opcode = inst_i[6:0];         // 操作码
     assign func3 = inst_i[14:12];      
     /* lint_off */
-    assign func7 = inst_i[31:25];
+    //assign func7 = inst_i[31:25];
     /* lint_on */
     assign rd_addr = inst_i[11:7];
 
@@ -105,7 +105,7 @@ import "DPI-C" function void set_npc_exit(int pc, int halt_ret);
                     //addi  i-type
                     ({32{opcode == 7'b0010011}} & {reg1_rdata_i}) |
                     //add  i-type
-                    ({32{opcode == 7'b0010011}} & {reg1_rdata_i}) |
+                    //({32{opcode == 7'b0110011}} & {reg1_rdata_i}) |
                     //auipc u-type
                     ({32{opcode == 7'b0010111}} & {pc_i}) |
                     //lw i-type
@@ -122,6 +122,8 @@ import "DPI-C" function void set_npc_exit(int pc, int halt_ret);
     assign op_2 = 32'h0 |
                     //addi  i-type
                     ({32{opcode == 7'b0010011}} & {imm}) |
+                    //add  i-type
+                    //({32{opcode == 7'b0110011}} & {reg2_rdata_i}) |
                     //auipc u-type
                     ({32{opcode == 7'b0010111}} & {imm}) |
                     //lw i-type
@@ -136,6 +138,8 @@ import "DPI-C" function void set_npc_exit(int pc, int halt_ret);
                     //({32{opcode == 7'b1101111}} & {imm[31:1], 1'b0});
                     ({32{opcode == 7'b1101111}} & {32'd4});
 
+
+    //用来控制EXU和WBU的控制信号
     always @(*) begin
         // 默认值
         jal = 0;
@@ -146,15 +150,19 @@ import "DPI-C" function void set_npc_exit(int pc, int halt_ret);
         MemWr = 0;
         RegW = 0;
         PCx1 = 0;
-        // $display("op_1 = 0x%08x", op_1);
-        // $display("op_2 = 0x%08x", op_2);
+        $display("op_1 = 0x%08x", op_1);
+        $display("op_2 = 0x%08x", op_2);
         case(opcode)
-            7'b0110011: begin // add/sub
-           if   (func7 == 7'b0000000) ALUop = 0;
-           else if(func7 == 7'b0100000) ALUop = 1;
-                RegW = 1;
-            end
-    
+            // 7'b0110011: begin // add/sub
+            //     if   (func7 == 7'b0000000) begin
+            //             ALUop = 0;
+            //             RegW = 1;
+            //     end
+            //     else if(func7 == 7'b0100000) begin
+            //             ALUop = 1;
+            //             RegW = 1;
+            //         end
+            // end
             7'b0010011: begin // addi
                 RegW = 1;
             end
