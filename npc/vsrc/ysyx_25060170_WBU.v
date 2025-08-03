@@ -25,22 +25,46 @@ module ysyx_25060170_WBU(
 
     //from IDU
     input [4:0]  rd_i,              // 目的寄存器号
-    input [1:0]  regS,
+    input [1:0]  regS,              // 写回数据的选择信号，0-来源于ALU，1-来源于DataMem，2-来源于PC+4；
     input RegW,                     //寄存器堆写使能信号
-
+    input MemWr,                    //表示数据要load store到内存中 
+    input [31:0] reg2_rdata,
+    input [31:0]  memory_lenth,             //load store 的字节的大小（配合paddrwrite和paddrread使用）
     //to GPR
     output [31:0] reg_write_data_o, // 写回寄存器的数据
     output [4:0]  reg_write_addr_o, // 写回寄存器的地址
     output        reg_write_en_o    // 写回使能
 );
+
+/********************************DPI-C****************************************/
+    import "DPI-C" function void paddr_write(int addr, int len, int data);
+    import "DPI-C" function int paddr_read(int addr, int len);
+
+/********************************DPI-C END  ****************************************/
+
+    wire [31:0] l_memdata;
+    //assign l_memdata = paddr_read(exu_result_i,memory_lenth);
+    assign l_memdata = (regS == 1) ? paddr_read(exu_result_i,memory_lenth) : 0 ;
+    
+    always @(*) begin
+        if(MemWr)begin
+            paddr_write(exu_result_i,memory_lenth,reg2_rdata);
+        end
+    end
+    
+
     //assign reg_write_data_o = exu_result_i;
     assign reg_write_data_o = (regS == 0) ? exu_result_i :  //0-来源于ALU
-                              //(regS == 1) ? mem_data_i :    //1-来源于DataMem 感觉可以在exu和他搞成一样的
+                              (regS == 1) ? l_memdata :    //1-来源于DataMem 感觉可以在exu和他搞成一样的
                               (regS == 2) ? PC_i + 4 :      //2-来源于PC+4；
                               32'b0;
 
     assign reg_write_addr_o = rd_i;
     assign reg_write_en_o = !rst && RegW && (rd_i != 0); // x0不写
+
+    // always @(*)begin
+    //     if (regS == 1)
+    // end
 
     /*
     always @(*) begin

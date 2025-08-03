@@ -19,21 +19,23 @@ module ysyx_25060170_IDU(
 
     //from GPR
     input [31:0] reg1_rdata_i,      // 通用寄存器1输入数据
-    //input [31:0] reg2_rdata_i,      // 通用寄存器2输入数据 暂时还没得用
+    input [31:0] reg2_rdata_i,      // 通用寄存器2输入数据 暂时还没得用
 
     //to GPR 
     output [4:0] rs1_raddr_o,     //读通用寄存器1地址
-    //output [4:0] rs2_raddr_o,     //读通用寄存器2地址
+    output [4:0] rs2_raddr_o,     //读通用寄存器2地址
 
     //to EXU
     output reg [3:0] ALUop,
-    //output reg MemWr,
     output [4:0] rd_addr,           //目标寄存器rd索引    
     output [31:0] op_1,             //exu执行的第一个数
     output [31:0] op_2,             //exu执行的第二个数
     output [31:0] imm_o,             // 立即数
     
     //to WBU
+    output reg [31:0] reg2_rdata_o,
+    output reg [31:0] memory_lenth,
+    output reg MemWr,
     output reg jal,
     //output reg branch,
     //output reg brlt,    
@@ -43,26 +45,30 @@ module ysyx_25060170_IDU(
     output jump_en
 
 );
-
+/********************************DPI-C START****************************************/
 import "DPI-C" function void set_npc_exit(int pc, int halt_ret);
-import "DPI-C" function int paddr_read(int addr, int len);
-import "DPI-C" function void paddr_write(int addr, int len, int data);
 
+
+
+/********************************DPI-C END  ****************************************/
+
+    
 
     //wire is_jump = (opcode == 7'b1100111 || opcode == 7'b1101111);
     //localparam PC_INCR = 32'd4;  // 添加在模块开头
     assign jump_en = PCx1 | jal;
     wire [6:0] opcode;
     wire [6:0] func7;
-    //wire [2:0] func3;
+    wire [2:0] func3;
     wire [31:0] imm;
 
     
     // 寄存器文件声明 现在就只有i和u
     assign rs1_raddr_o = inst_i[19:15];  // 源寄存器1地址
-    //assign rs2_raddr_o = inst_i[24:20];  // 源寄存器2地址
+    assign rs2_raddr_o = inst_i[24:20];  // 源寄存器2地址
+    assign reg2_rdata_o = reg2_rdata_i;
     assign opcode = inst_i[6:0];         // 操作码
-    //assign func3 = inst_i[14:12];      
+    assign func3 = inst_i[14:12];      
     /* lint_off */
     assign func7 = inst_i[31:25];
     /* lint_on */
@@ -78,11 +84,11 @@ import "DPI-C" function void paddr_write(int addr, int len, int data);
 
     //高级写法 立即数处理
     assign imm = 32'h0 | 
-                    //addi  i-type
+                    //addi slti sltiu xori ori  i-type
                     ({32{opcode == 7'b0010011}} & {{20{inst_i[31]}},inst_i[31:20]}) |
                     //auipc u-type
                     ({32{opcode == 7'b0010111}} & {inst_i[31:12],12'b0}) |
-                    //lw i-type
+                    //lb lh lw lbu lhu i-type
                     ({32{opcode == 7'b0000011}} & {{20{inst_i[31]}},inst_i[31:20]}) |
                     //sw s-type
                     ({32{opcode == 7'b0100011}} & {{20{inst_i[31]}},inst_i[31:25],inst_i[11:7]}) |
@@ -135,7 +141,7 @@ import "DPI-C" function void paddr_write(int addr, int len, int data);
         //brlt = 0;
         regS = 0;
         ALUop = 0;
-        //MemWr = 0;
+        MemWr = 0;
         RegW = 0;
         PCx1 = 0;
 
@@ -161,7 +167,7 @@ import "DPI-C" function void paddr_write(int addr, int len, int data);
             end
     
             7'b0100011: begin // sw
-                //MemWr = 1;
+                MemWr = 1;
                 ALUop = 0;
             end
     /*
@@ -186,11 +192,17 @@ import "DPI-C" function void paddr_write(int addr, int len, int data);
 
             default: begin   
                 //todo
+                $display("add more instructions please!");
             end
         endcase
         //$display("opcode = %7b", opcode);
     end
     
+assign memory_lenth = 32'b0 |
+                        //lw
+                        ({32{func7 == 7'b0000011}} & {32{func3 == 3'b010}} & { 32'd4 }) |
+                        //sw
+                        ({32{func7 == 7'b0100011}} & {32{func3 == 3'b010}} & { 32'd4 }) ;
 
 /***************************************DPI-C*******************************************/
 
