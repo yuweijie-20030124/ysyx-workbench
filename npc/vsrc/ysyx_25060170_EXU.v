@@ -9,6 +9,7 @@ ALUsrc-操作数选择信号，0-选择寄存器，1-选择立即数；
 RegW-寄存器堆写使能；
 PCx1-jalr处理信号，若为jalr则将x1+offset的值写入PC；
 */
+
 module ysyx_25060170_EXU(  
 
     //from IDU
@@ -26,6 +27,8 @@ module ysyx_25060170_EXU(
     //to IFU
     output [31:0] jump_Addr
 );
+
+
     wire [31:0] jumpaddr;
     
     assign exu_res1 = 32'h0 | 

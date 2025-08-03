@@ -167,3 +167,27 @@ int isa_exec_once(Decode *s) {
   s->isa.inst = inst_fetch(&s->snpc, 4);
   return decode_exec(s);
 }
+
+
+/*
+7'b0000011: begin // lw
+                regS = 1;
+                RegW = 1;
+            end
+    
+            7'b0100011: begin // sw
+                MemWr = 1;
+                ALUop = 0;
+            end
+
+jal-判断该指令是否为jal；
+branch-判断指令是否为beq；
+brlt-判断指令是否为blt；
+regS-写回数据的选择信号，0-来源于ALU，1-来源于DataMem，2-来源于PC+4；
+ALUop-ALU控制信号，0对应+，1对应-；
+MemWr-DataMem写使能；
+ALUsrc-操作数选择信号，0-选择寄存器，1-选择立即数；
+RegW-寄存器堆写使能；
+PCx1-jalr处理信号，若为jalr则将x1+offset的值写入PC；
+
+*/
