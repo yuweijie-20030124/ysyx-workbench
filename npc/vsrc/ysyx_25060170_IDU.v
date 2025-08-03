@@ -27,7 +27,7 @@ module ysyx_25060170_IDU(
 
     //to EXU
     output reg [3:0] ALUop,
-    //output reg MemWr,
+    output reg MemWr,
     output [4:0] rd_addr,           //目标寄存器rd索引    
     output [31:0] op_1,             //exu执行的第一个数
     output [31:0] op_2,             //exu执行的第二个数
@@ -161,7 +161,8 @@ import "DPI-C" function void paddr_write(int addr, int len, int data);
             end
     
             7'b0100011: begin // sw
-                //MemWr = 1;
+                MemWr = 1;
+                ALUop = 0
             end
     /*
             7'b1100011: begin // beq/blt
