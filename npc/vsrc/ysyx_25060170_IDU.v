@@ -162,6 +162,7 @@ import "DPI-C" function void paddr_write(int addr, int len, int data);
     
             7'b0100011: begin // sw
                 //MemWr = 1;
+                ALUop = 0;
             end
     /*
             7'b1100011: begin // beq/blt
