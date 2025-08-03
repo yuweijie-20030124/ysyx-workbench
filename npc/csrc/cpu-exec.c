@@ -15,7 +15,7 @@ extern "C" void IDU_SEND_RET_FLAG(int *, int *);
 void call_trace(paddr_t pc, paddr_t target);
 void ret_trace(paddr_t pc);
 void difftest_step(vaddr_t pc, vaddr_t npc);
-
+void isa_reg_display();
 #ifdef CONFIG_ITRACE_IRINGBUF
 CircularBuffer cb;
 #endif
@@ -147,7 +147,7 @@ static void statistic() {
 }
 
 void assert_fail_msg() {//输出错误信息
-  //isa_reg_display();
+  isa_reg_display();
   statistic();
 }
 

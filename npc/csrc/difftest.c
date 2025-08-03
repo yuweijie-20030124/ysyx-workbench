@@ -131,16 +131,16 @@ bool isa_difftest_checkregs(NPC_reg *ref_r, vaddr_t pc) {
                &cpu.gpr[25], &cpu.gpr[26], &cpu.gpr[27], &cpu.gpr[28], 
                &cpu.gpr[29], &cpu.gpr[30], &cpu.gpr[31]
               );
-
+  // printf("进来啦!!!!!!!!!\n");
   for (int i = 0; i < reg_num; i++) {
     if (cpu.gpr[i] != ref_r->gpr[i]) {
-        // printf("进来啦!!!!!!!!!\n");
-        // printf("i = %d\n",i);
-        // printf("cpu.gpr = %d\n",cpu.gpr[i]);
-        //printf("error register is %s \n");
-        // printf("ref_r->gpr[i] = %d\n",ref_r->gpr[i]);
-        printf("\n");
-        printf("        nemu reg:\n");
+        //  printf("进来啦!!!!!!!!!\n");
+        //  printf("i = %d\n",i);
+        //  printf("cpu.gpr = %d\n",cpu.gpr[i]);
+        //  printf("error register is %s \n");
+        //  printf("ref_r->gpr[i] = %d\n",ref_r->gpr[i]);
+         printf("\n");
+         printf("        nemu reg:\n");
         for(int j = 0; j < reg_num; j++){
           printf("%s\t0x%08x\t%d\n", nemu_regs[j], ref_r->gpr[j], ref_r->gpr[j]);
         }
@@ -149,9 +149,15 @@ bool isa_difftest_checkregs(NPC_reg *ref_r, vaddr_t pc) {
     }
   }
   if (cpu.pc != ref_r->pc) {
-    //printf("进来啦!!!!!!!!!\n");
+        //printf("进来啦!!!!!!!!!\n");
         // printf("cpu.pc = 0x%08x\n",cpu.pc);
         // printf("ref_r->pc = 0x%08x\n",ref_r->pc);
+        printf("\n");
+         printf("        nemu reg:\n");
+        for(int j = 0; j < reg_num; j++){
+          printf("%s\t0x%08x\t%d\n", nemu_regs[j], ref_r->gpr[j], ref_r->gpr[j]);
+        }
+        printf("\n");
     return false;
   }
   return true;
@@ -160,6 +166,7 @@ bool isa_difftest_checkregs(NPC_reg *ref_r, vaddr_t pc) {
 static void checkregs(NPC_reg *ref, vaddr_t pc) {
     //printf("进来啦!!!!!!!!!\n");
   if (!isa_difftest_checkregs(ref, pc)) {
+    // printf("!!!!!!!!!************\n");
     npc_state.state = NPC_ABORT;
     npc_state.halt_pc = pc;
     printf("        npc reg:\n");

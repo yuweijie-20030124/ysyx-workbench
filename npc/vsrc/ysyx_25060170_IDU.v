@@ -52,13 +52,11 @@ import "DPI-C" function void set_npc_exit(int pc, int halt_ret);
 
 /********************************DPI-C END  ****************************************/
 
-    
-
-    //wire is_jump = (opcode == 7'b1100111 || opcode == 7'b1101111);
+//wire is_jump = (opcode == 7'b1100111 || opcode == 7'b1101111);
     //localparam PC_INCR = 32'd4;  // 添加在模块开头
     assign jump_en = PCx1 | jal;
     wire [6:0] opcode;
-    //wire [6:0] func7;
+    wire [6:0] func7;
     wire [2:0] func3;
     wire [31:0] imm;
 
@@ -70,19 +68,93 @@ import "DPI-C" function void set_npc_exit(int pc, int halt_ret);
     assign opcode = inst_i[6:0];         // 操作码
     assign func3 = inst_i[14:12];      
     /* lint_off */
-    //assign func7 = inst_i[31:25];
+    assign func7 = inst_i[31:25];
     /* lint_on */
     assign rd_addr = inst_i[11:7];
 
+/********************************识别是哪一条指令****************************/
+//U type
+wire auipc;
+wire lui;
 
+//I type
+wire srli;
+wire slli;
+wire srai;
+wire lbu;
+wire addi;
+wire sltiu;
+wire lb;
+wire lh;
+wire lhu;
+wire lw;
+wire andi;
+wire xori;
+wire ori;
+wire jalr;
 
+//S type
+wire sw;
+wire sh;
+wire sb;
+wire sd;
 
+//R type
+wire srli;
+wire srl ;
+wire add ;
+wire sll ;
+wire slt ;
+wire sltu;
+wire npcxor ;
+wire npcor  ;
+wire npcand ;
+wire sra ;
+wire sub ;
+wire mul ;
+wire mulh  ;
+wire mulhsu;
+wire mulhu ;
+wire div   ;
+wire divu  ;
+wire rem   ;
+wire remu  ;
 
-    //assign inst_o = inst_i;
+//B type
+wire beq ;
+wire bne ;
+wire blt ;
+wire bge ;
+wire bltu;
+wire bgeu;
 
-    
+//U type
+assign auipc    =   1'b0 | opcode == 7'b0010111;
+assign lui      =   1'b0 | opcode == 7'b0110111;
 
-    //高级写法 立即数处理
+//I type
+assign srli     =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b101) & (inst_i[31:26] == 6'b000000);
+assign slli     =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b001) & (func7 == 7'b0000000);
+assign srai     =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b101) & (func7 == 7'b0100000);
+assign lbu      =   1'b0 | (opcode == 7'b0000011) & (func3 == 3'b100);
+assign addi     =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b000);
+assign sltiu    =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b101);
+assign lb       =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b000);
+assign lh       =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b001);
+assign lhu      =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b101);
+assign lw       =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b010);
+assign andi     =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b111);
+assign xori     =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b110);
+assign ori      =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b010);
+assign jalr     =   1'b0 | (opcode == 7'b1101111);
+
+//S type
+assing sw;
+assing sh;
+assing sb;
+assing sd;
+
+    //高级写法 立即数处理 R-type并不需要立即数处理
     assign imm = 32'h0 | 
                     //addi slti sltiu xori ori  i-type
                     ({32{opcode == 7'b0010011}} & {{20{inst_i[31]}},inst_i[31:20]}) |
@@ -105,11 +177,11 @@ import "DPI-C" function void set_npc_exit(int pc, int halt_ret);
                     //addi  i-type
                     ({32{opcode == 7'b0010011}} & {reg1_rdata_i}) |
                     //add  i-type
-                    //({32{opcode == 7'b0110011}} & {reg1_rdata_i}) |
-                    //auipc u-type
-                    ({32{opcode == 7'b0010111}} & {pc_i}) |
+                    ({32{opcode == 7'b0110011}} & {reg1_rdata_i}) |
                     //lw i-type
                     ({32{opcode == 7'b0000011}} & {reg1_rdata_i}) |
+                    //auipc u-type
+                    ({32{opcode == 7'b0010111}} & {pc_i}) |
                     //sw s-type
                     ({32{opcode == 7'b0100011}} & {reg1_rdata_i}) |
                     //beq blt b-type
@@ -117,13 +189,15 @@ import "DPI-C" function void set_npc_exit(int pc, int halt_ret);
                     //jalr i-type 4
                     ({32{opcode == 7'b1100111}} & {pc_i}) |
                     //jal j-type 4
-                    ({32{opcode == 7'b1101111}} & {pc_i}) ;
+                    ({32{opcode == 7'b1101111}} & {pc_i}) |
+                    //all r-type page160
+                    ({32{opcode == 7'b0110011}} & {reg1_rdata_i}) ;
 	
     assign op_2 = 32'h0 |
                     //addi  i-type
                     ({32{opcode == 7'b0010011}} & {imm}) |
                     //add  i-type
-                    //({32{opcode == 7'b0110011}} & {reg2_rdata_i}) |
+                    ({32{opcode == 7'b0110011}} & {reg2_rdata_i}) |
                     //auipc u-type
                     ({32{opcode == 7'b0010111}} & {imm}) |
                     //lw i-type
@@ -136,7 +210,9 @@ import "DPI-C" function void set_npc_exit(int pc, int halt_ret);
                     ({32{opcode == 7'b1100111}} & {32'd4}) |
                     //jal j-type 4
                     //({32{opcode == 7'b1101111}} & {imm[31:1], 1'b0});
-                    ({32{opcode == 7'b1101111}} & {32'd4});
+                    ({32{opcode == 7'b1101111}} & {32'd4}) |
+                    //all r-type page160
+                    ({32{opcode == 7'b0110011}} & {reg2_rdata_i}) ;
 
 
     //用来控制EXU和WBU的控制信号
@@ -150,19 +226,66 @@ import "DPI-C" function void set_npc_exit(int pc, int halt_ret);
         MemWr = 0;
         RegW = 0;
         PCx1 = 0;
-        $display("op_1 = 0x%08x", op_1);
-        $display("op_2 = 0x%08x", op_2);
+        // $display("op_1 = 0x%08x", op_1);
+        // $display("op_2 = 0x%08x", op_2);
         case(opcode)
-            // 7'b0110011: begin // add/sub
-            //     if   (func7 == 7'b0000000) begin
-            //             ALUop = 0;
-            //             RegW = 1;
-            //     end
-            //     else if(func7 == 7'b0100000) begin
-            //             ALUop = 1;
-            //             RegW = 1;
-            //         end
-            // end
+            7'b0110011: begin //Rtype
+                if   (func7 == 7'b0000000) begin
+                        if(func3 == 3'b000)begin        //add
+                            ALUop = 0;
+                            RegW = 1;
+                        end
+                        else if(func3 == 3'b001)begin   //sll
+
+                        end
+                        else if(func3 == 3'b010)begin   //slt
+
+                        end
+                        else if(func3 == 3'b011)begin   //Rsltu
+
+                        end
+                        else if(func3 == 3'b100)begin   //xor
+
+                        end
+                        else if(func3 == 3'b101)begin   //srl
+
+                        end
+                        else if(func3 == 3'b110)begin   //or
+
+                        end
+                        else begin  //func3 == 3'b111   //and
+
+                        end
+                        
+                end
+                else if   (func7 == 7'b0100000) begin
+                        if(func3 == 3'b000)begin  //sub
+                            ALUop = 1;
+                            RegW = 1;
+                        end
+                        else if(func3 == 3'b101)begin   //sra
+
+                        end                
+                end
+                else if   (func7 == 7'b0000001) begin  
+                        if(func3 == 3'b000)begin  //mul
+                            
+                        end
+                        else begin
+                            $display("add more instructions please!");
+                        end                
+                end
+            end
+            7'b0010111:begin    //I type
+
+            end
+            7'b0000011:begin    //I type
+
+            end
+            7'b0010011:begin    //I type
+
+            end
+            /*
             7'b0010011: begin // addi
                 RegW = 1;
             end
@@ -189,6 +312,7 @@ import "DPI-C" function void set_npc_exit(int pc, int halt_ret);
                 else if (func3 == 3'b100) brlt = 1;
             end
     */
+    /*
             7'b1100111: begin // jalr
                 regS = 2;
                 RegW = 1;
@@ -200,7 +324,7 @@ import "DPI-C" function void set_npc_exit(int pc, int halt_ret);
                 regS = 2;
                 RegW = 1;
             end
-
+            */
             default: begin   
                 //todo
                 $display("add more instructions please!");
@@ -214,6 +338,8 @@ assign memory_lenth = 32'b0 |
                         ({32{opcode == 7'b0000011}} & {32{func3 == 3'b010}} & { 32'd4 }) |
                         //sw
                         ({32{opcode == 7'b0100011}} & {32{func3 == 3'b010}} & { 32'd4 }) ;
+
+assign 
 
 /***************************************DPI-C*******************************************/
 
