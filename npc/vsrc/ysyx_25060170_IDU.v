@@ -82,7 +82,7 @@ wire is_Utype;//
 wire srli;//
 wire [5:0] shamt;
 assign shamt = inst_i[31:26];
-wire slli;
+wire slli;//
 wire srai;
 wire lbu;
 wire addi;
