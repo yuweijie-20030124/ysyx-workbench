@@ -3,7 +3,7 @@ jal-判断该指令是否为jal；
 branch-判断指令是否为beq；
 brlt-判断指令是否为blt；
 regS-写回数据的选择信号，0-来源于ALU，1-来源于DataMem，2-来源于PC+4；
-ALUop-ALU控制信号，0对应+，1对应-；
+ALUop-ALU控制信号，0对应+，1对应-,2对应*，3对应÷；
 MemWr-DataMem写使能；
 ALUsrc-操作数选择信号，0-选择寄存器，1-选择立即数；
 RegW-寄存器堆写使能；
@@ -76,9 +76,12 @@ import "DPI-C" function void set_npc_exit(int pc, int halt_ret);
 //U type
 wire auipc;
 wire lui;
+wire is_Utype;
 
 //I type
 wire srli;
+wire [5:0] shamt;
+assign shamt = inst_i[31:26];
 wire slli;
 wire srai;
 wire lbu;
@@ -92,15 +95,16 @@ wire andi;
 wire xori;
 wire ori;
 wire jalr;
+wire is_Itype;
 
 //S type
 wire sw;
 wire sh;
 wire sb;
 wire sd;
+wire is_Stype;
 
 //R type
-wire srli;
 wire srl ;
 wire add ;
 wire sll ;
@@ -119,6 +123,7 @@ wire div   ;
 wire divu  ;
 wire rem   ;
 wire remu  ;
+wire is_Rtype;
 
 //B type
 wire beq ;
@@ -127,11 +132,16 @@ wire blt ;
 wire bge ;
 wire bltu;
 wire bgeu;
+wire is_Btype;
+
+//J type
+wire jal;
+wire is_Jtype;
 
 //U type
 assign auipc    =   1'b0 | opcode == 7'b0010111;
 assign lui      =   1'b0 | opcode == 7'b0110111;
-
+assign is_Utype =   auipc | lui;
 //I type
 assign srli     =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b101) & (inst_i[31:26] == 6'b000000);
 assign slli     =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b001) & (func7 == 7'b0000000);
@@ -147,41 +157,77 @@ assign andi     =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b111);
 assign xori     =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b110);
 assign ori      =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b010);
 assign jalr     =   1'b0 | (opcode == 7'b1101111);
+assign is_Itype =   srli | slli | srai | lbu | addi | sltiu | lb | lh | lhu | lw | andi | xori | ori | jalr;
 
 //S type
-assing sw;
-assing sh;
-assing sb;
-assing sd;
+assign sw       =   1'b0 | (opcode == 7'b0100011) & (func3 == 3'b010);
+assign sh       =   1'b0 | (opcode == 7'b0100011) & (func3 == 3'b001);
+assign sb       =   1'b0 | (opcode == 7'b0100011) & (func3 == 3'b000);
+assign sd       =   1'b0 | (opcode == 7'b0100011) & (func3 == 3'b011);
+assign is_Stype =   sw | sh | sb | sd;
 
-    //高级写法 立即数处理 R-type并不需要立即数处理
-    assign imm = 32'h0 | 
-                    //addi slti sltiu xori ori  i-type
-                    ({32{opcode == 7'b0010011}} & {{20{inst_i[31]}},inst_i[31:20]}) |
-                    //auipc u-type
-                    ({32{opcode == 7'b0010111}} & {inst_i[31:12],12'b0}) |
-                    //lb lh lw lbu lhu i-type
-                    ({32{opcode == 7'b0000011}} & {{20{inst_i[31]}},inst_i[31:20]}) |
-                    //sw s-type
-                    ({32{opcode == 7'b0100011}} & {{20{inst_i[31]}},inst_i[31:25],inst_i[11:7]}) |
-                    //beq blt b-type
-                    ({32{opcode == 7'b1100011}} & {{20{inst_i[31]}},inst_i[7],inst_i[30:25],inst_i[11:8],1'b0}) |
-                    //jalr i-type
-                    ({32{opcode == 7'b1100111}} & {{20{inst_i[31]}}, inst_i[30:20],1'b0}) |
-                    //jal j-type
-                    ({32{opcode == 7'b1101111}} & {{12{inst_i[31]}}, inst_i[19:12], inst_i[20], inst_i[30:21], 1'b0});
+//R type
+assign srli     =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b101) & (func7 == 7'b0000000);
+assign srl      =   1'b0 | (opcode == 7'b0110011) & (func3 == 3'b101) & (func7 == 7'b0000000);
+assign add      =   1'b0 | (opcode == 7'b0110011) & (func3 == 3'b000) & (func7 == 7'b0000000);
+assign sll      =   1'b0 | (opcode == 7'b0110011) & (func3 == 3'b001) & (func7 == 7'b0000000);
+assign slt      =   1'b0 | (opcode == 7'b0110011) & (func3 == 3'b010) & (func7 == 7'b0000000);
+assign sltu     =   1'b0 | (opcode == 7'b0110011) & (func3 == 3'b011) & (func7 == 7'b0000000);
+assign npcxor   =   1'b0 | (opcode == 7'b0110011) & (func3 == 3'b100) & (func7 == 7'b0000000);
+assign npcor    =   1'b0 | (opcode == 7'b0110011) & (func3 == 3'b110) & (func7 == 7'b0000000);
+assign npcand   =   1'b0 | (opcode == 7'b0110011) & (func3 == 3'b111) & (func7 == 7'b0000000);
+assign sra      =   1'b0 | (opcode == 7'b0110011) & (func3 == 3'b101) & (func7 == 7'b0100000);
+assign sub      =   1'b0 | (opcode == 7'b0110011) & (func3 == 3'b000) & (func7 == 7'b0100000);
+assign mul      =   1'b0 | (opcode == 7'b0110011) & (func3 == 3'b000) & (func7 == 7'b0000001);
+assign mulh     =   1'b0 | (opcode == 7'b0110011) & (func3 == 3'b001) & (func7 == 7'b0000001);
+assign mulhsu   =   1'b0 | (opcode == 7'b0110011) & (func3 == 3'b010) & (func7 == 7'b0000001);
+assign mulhu    =   1'b0 | (opcode == 7'b0110011) & (func3 == 3'b011) & (func7 == 7'b0000001);
+assign div      =   1'b0 | (opcode == 7'b0110011) & (func3 == 3'b100) & (func7 == 7'b0000001);
+assign divu     =   1'b0 | (opcode == 7'b0110011) & (func3 == 3'b101) & (func7 == 7'b0000001);
+assign rem      =   1'b0 | (opcode == 7'b0110011) & (func3 == 3'b110) & (func7 == 7'b0000001);
+assign remu     =   1'b0 | (opcode == 7'b0110011) & (func3 == 3'b111) & (func7 == 7'b0000001);
+assign is_Rtype =   srli | srl | add | sll | slt | sltu | npcxor | npcor | npcand | sra | sub | mul | mulh | mulhsu | mulhu | div | divu | rem | remu;
 
-    assign imm_o = imm;
+//B type
+assign beq      =   1'b0 | (opcode == 7'b1100011) & (func3 == 3'b000);
+assign bne      =   1'b0 | (opcode == 7'b1100011) & (func3 == 3'b001);
+assign blt      =   1'b0 | (opcode == 7'b1100011) & (func3 == 3'b100);
+assign bge      =   1'b0 | (opcode == 7'b1100011) & (func3 == 3'b101);
+assign bltu     =   1'b0 | (opcode == 7'b1100011) & (func3 == 3'b110);
+assign bgeu     =   1'b0 | (opcode == 7'b1100011) & (func3 == 3'b111);
+assign is_Btype =   beq | bne | blt | bge | bltu | bgeu;
 
+//J type
+assign jal      =   1'b0 | opcode == 7'b1101111;
+assign is_Jtype = jal;
+
+//选择器模板 立即数处理 R-type并不需要立即数处理
+assign imm = 32'h0 |    
+                    //U type
+                    ({32{is_Utype == 1'b1}} & {inst_i[31:12],12'b0}) |
+                    //I type
+                    ({32{is_Itype == 1'b1}} & {{20{inst_i[31]}},inst_i[31:20]}) |
+                    //S type
+                    ({32{is_Stype == 1'b1}} & {{20{inst_i[31]}},inst_i[31:25],inst_i[11:7]}) |
+                    //B type
+                    ({32{is_Btype == 1'b1}} & {{20{inst_i[31]}},inst_i[7],inst_i[30:25],inst_i[11:8],1'b0}) |
+                    //J type
+                    ({32{is_Jtype == 1'b1}} & {{12{inst_i[31]}}, inst_i[19:12], inst_i[20], inst_i[30:21], 1'b0});
+
+assign imm_o = imm;
+
+/*************************************2025 . 8 . 03 (todo)*************************************************/
     assign op_1 = 32'h0 |
+                    //auipc u-type
+                    ({32{auipc == 1'b1}} & {pc_i}) |
+                    //lui   u-type
+                    ({32{lui == 1'b1}} & {imm}) |
                     //addi  i-type
                     ({32{opcode == 7'b0010011}} & {reg1_rdata_i}) |
                     //add  i-type
                     ({32{opcode == 7'b0110011}} & {reg1_rdata_i}) |
                     //lw i-type
                     ({32{opcode == 7'b0000011}} & {reg1_rdata_i}) |
-                    //auipc u-type
-                    ({32{opcode == 7'b0010111}} & {pc_i}) |
                     //sw s-type
                     ({32{opcode == 7'b0100011}} & {reg1_rdata_i}) |
                     //beq blt b-type
@@ -194,6 +240,10 @@ assing sd;
                     ({32{opcode == 7'b0110011}} & {reg1_rdata_i}) ;
 	
     assign op_2 = 32'h0 |
+                    //auipc u-type
+                    ({32{auipc == 1'b1}} & {imm}) |
+                    //lui   u-type
+                    ({32{lui == 1'b1}} & {0}) |
                     //addi  i-type
                     ({32{opcode == 7'b0010011}} & {imm}) |
                     //add  i-type
@@ -214,7 +264,12 @@ assing sd;
                     //all r-type page160
                     ({32{opcode == 7'b0110011}} & {reg2_rdata_i}) ;
 
+    assign ALUop = 4'b0 |
+                    //auipc u-type
+                    ({4{auipc == 1'b1}} & {4'd0}) ;
 
+    assign regS = 2'b0 |
+                    ({2{auipc == 1'b1}} & {4'd0}) ;
     //用来控制EXU和WBU的控制信号
     always @(*) begin
         // 默认值
