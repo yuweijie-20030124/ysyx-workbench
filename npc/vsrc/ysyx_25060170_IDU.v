@@ -222,7 +222,7 @@ assign imm_o = imm;
                     //lui   U-type
                     ({32{lui == 1'b1}} & {imm}) |
                     //srli  I-type
-                    
+                    ({32{srli == 1'b1}} & {imm}) |
                     //addi  i-type
                     ({32{opcode == 7'b0010011}} & {reg1_rdata_i}) |
                     //add  i-type
