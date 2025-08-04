@@ -143,7 +143,7 @@ assign auipc    =   1'b0 | opcode == 7'b0010111;
 assign lui      =   1'b0 | opcode == 7'b0110111;
 assign is_Utype =   auipc | lui;
 //I type
-assign srli     =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b101) & (inst_i[31:26] == 6'b000000);
+assign srli     =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b101) & (func7 == 6'b000000);
 assign slli     =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b001) & (func7 == 7'b0000000);
 assign srai     =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b101) & (func7 == 7'b0100000);
 assign lbu      =   1'b0 | (opcode == 7'b0000011) & (func3 == 3'b100);
