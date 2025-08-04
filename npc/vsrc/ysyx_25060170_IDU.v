@@ -217,9 +217,9 @@ assign imm_o = imm;
 
 /*************************************2025 . 8 . 03 (todo)*************************************************/
     assign op_1 = 32'h0 |
-                    //auipc u-type
+                    //auipc U-type
                     ({32{auipc == 1'b1}} & {pc_i}) |
-                    //lui   u-type
+                    //lui   U-type
                     ({32{lui == 1'b1}} & {imm}) |
                     //srli  I-type
                     //addi  i-type
