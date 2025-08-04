@@ -8,7 +8,7 @@ endif
 
 # Makefile for NPC simulation
 # 检查语法可以用
-TEST_MODULE = ysyx_25060170_IFU
+TEST_MODULE = ysyx_25060170_IDU
 
 SRC_FILES = $(wildcard csrc/*.c)
 ##SRC_FILES = csrc/main.c csrc/monitor.c csrc/log.c csrc/sdb.c csrc/timer.c csrc/memory.c \
@@ -44,6 +44,14 @@ VERILATOR_FLAGS = -Wall --cc --trace \
 					 -Ivsrc \
 					 --top-module ysyx_25060170_top
 
+GDBVERILATOR_FLAGS = -Wall --cc --trace \
+    -CFLAGS "-g -I /home/yuweijie/ysyx-workbench/npc/include -O2" \
+    -CFLAGS "-I /home/yuweijie/ysyx-workbench/nemu/tools/capstone/repo/include -O2" \
+    --exe --build \
+    -LDFLAGS "-g -lreadline" \
+    -Ivsrc \
+    --top-module ysyx_25060170_top
+
 GTK = gtkwave
 
 clean:
@@ -75,8 +83,8 @@ checkone:
     vsrc/$(TEST_MODULE)
 
 gdb:
-	$(VERILATOR) $(VERILATOR_FLAGS) $(SRC_FILES) $(VERILOG_FILES) 
-	gdb ./obj_dir/Vysyx_25060170_top
+	$(VERILATOR) $(GDBVERILATOR_FLAGS) $(SRC_FILES) $(VERILOG_FILES) 
+	gdb --args ./obj_dir/Vysyx_25060170_top $(NPC_FLAGS) $(NPC_IMG)
 
 valgrind:
 	rm -rf obj_dir waveform.vcd
