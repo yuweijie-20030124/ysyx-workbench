@@ -167,7 +167,6 @@ assign sd       =   1'b0 | (opcode == 7'b0100011) & (func3 == 3'b011);
 assign is_Stype =   sw | sh | sb | sd;
 
 //R type
-assign srli     =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b101) & (func7 == 7'b0000000);
 assign srl      =   1'b0 | (opcode == 7'b0110011) & (func3 == 3'b101) & (func7 == 7'b0000000);
 assign add      =   1'b0 | (opcode == 7'b0110011) & (func3 == 3'b000) & (func7 == 7'b0000000);
 assign sll      =   1'b0 | (opcode == 7'b0110011) & (func3 == 3'b001) & (func7 == 7'b0000000);
