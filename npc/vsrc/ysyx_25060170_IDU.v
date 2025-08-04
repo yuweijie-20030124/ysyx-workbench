@@ -74,12 +74,12 @@ import "DPI-C" function void set_npc_exit(int pc, int halt_ret);
 
 /********************************识别是哪一条指令****************************/
 //U type
-wire auipc;
-wire lui;
-wire is_Utype;
+wire auipc;//
+wire lui;//
+wire is_Utype;//
 
 //I type
-wire srli;
+wire srli;//
 wire [5:0] shamt;
 assign shamt = inst_i[31:26];
 wire slli;
