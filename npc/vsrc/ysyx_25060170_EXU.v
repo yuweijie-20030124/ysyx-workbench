@@ -26,6 +26,7 @@ module ysyx_25060170_EXU(
     input is_bge,
     input is_bltu,
     input is_bgeu,
+    input is_sltiu,
     input [31:0] imm,
 
     //to WBU
@@ -35,6 +36,7 @@ module ysyx_25060170_EXU(
     output reg bge_flag,        //bge前置条件生效
     output reg bltu_flag,       //bltu前置条件生效
     output reg bgeu_flag,       //bgeu前置条件生效
+    output reg sltiu_flag,      //sltiu前置条件生效
     output reg [31:0] exu_res1, //ALU运算结果
     //to IFU
     output [31:0] jump_Addr
@@ -54,6 +56,7 @@ assign bne_flag = is_bne & ~sub_zero;         // !=
 // 无符号比较（需额外处理）
 wire [32:0] reg1_ext = {1'b0, reg1_rdata_i};  // 扩展1位防止溢出
 wire [32:0] reg2_ext = {1'b0, reg2_rdata_i};
+
 //用这个方法可以取消 对未用信号的报警
 /* verilator lint_off UNUSEDSIGNAL */
 wire [32:0] sub_unsigned = reg1_ext - reg2_ext;
@@ -63,7 +66,7 @@ wire subu_carry = sub_unsigned[32];  // 借位标志（1表示 reg1 < reg2）
 
 assign bltu_flag = is_bltu & subu_carry;      // 无符号 <
 assign bgeu_flag = is_bgeu & ~subu_carry;     // 无符号 >=  
-    
+assign sltiu_flag = is_sltiu & subu_carry;    // 无符号 <  < (结果负且非零)
     //+0 -1 *2 /3 &4 |5 ^6 单目7 左移8 右移9 %余10
     assign exu_res1 = 32'h0 | 
                     //addi  i-type
@@ -77,7 +80,9 @@ assign bgeu_flag = is_bgeu & ~subu_carry;     // 无符号 >=
                     ({32{ALUop == 4'd7}}  & { exu_op_1             }) |
                     ({32{ALUop == 4'd8}}  & { exu_op_1 << exu_op_2 }) |
                     ({32{ALUop == 4'd9}}  & { exu_op_1 >> exu_op_2 }) |
-                    ({32{ALUop == 4'd10}} & { exu_op_1 %  exu_op_2 }) ;
+                    ({32{ALUop == 4'd10}} & { exu_op_1 %  exu_op_2 }) |
+                    ({32{ALUop == 4'd15}} & {32{sltiu_flag == 1}} & { 32'b1 }) ;
+
 
 
     assign jumpaddr = imm + exu_op_1;

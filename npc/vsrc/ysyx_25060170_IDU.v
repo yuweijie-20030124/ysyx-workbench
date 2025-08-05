@@ -36,6 +36,7 @@ module ysyx_25060170_IDU(
     output reg is_bge,              //是否为bge
     output reg is_bltu,             //是否为bltu
     output reg is_bgeu,             //是否为bgeu
+    output reg is_sltiu,            //是否为sltiu
     
     //to WBU
     output reg [31:0] reg1_rdata_o,
@@ -138,11 +139,11 @@ assign slli     =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b001) & (func7 =
 assign srai     =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b101) & (func7 == 7'b0100000);
 assign lbu      =   1'b0 | (opcode == 7'b0000011) & (func3 == 3'b100);
 assign addi     =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b000);
-assign sltiu    =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b101);
-assign lb       =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b000);
-assign lh       =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b001);
-assign lhu      =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b101);
-assign lw       =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b010);
+assign sltiu    =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b011);
+assign lb       =   1'b0 | (opcode == 7'b0000011) & (func3 == 3'b000);
+assign lh       =   1'b0 | (opcode == 7'b0000011) & (func3 == 3'b001);
+assign lhu      =   1'b0 | (opcode == 7'b0000011) & (func3 == 3'b101);
+assign lw       =   1'b0 | (opcode == 7'b0000011) & (func3 == 3'b010);
 assign andi     =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b111);
 assign xori     =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b110);
 assign ori      =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b010);
@@ -189,6 +190,10 @@ assign is_Btype =   beq | bne | blt | bge | bltu | bgeu;
 //J type
 assign jal      =   1'b0 | opcode == 7'b1101111;
 assign is_Jtype = jal;
+
+// always@(sltiu)begin
+//     $display("sltiu = %d", sltiu);
+// end
 
 //选择器模板 立即数处理 R-type并不需要立即数处理
 assign imm = 32'h0 |    
@@ -395,12 +400,12 @@ assign imm_o = imm;
                     
 /***********************************************ALU控制信号************************************************/
     
-    //ALUop是决定要 +0 -1 *2 /3 &4 |5 ^6 单目7 左移8 右移9 %余10
+    //ALUop是决定要 +0 -1 *2 /3 &4 |5 ^6 单目7 左移8 右移9 %余10        none 15
     assign ALUop = 4'b0 |   //auipc 
                     ({4{lui == 1'b1}} & {4'd7}) |
                     ({4{srli == 1'b1}} & {4'd8}) |
                     ({4{slli == 1'b1}} & {4'd9}) |
-                    ({4{sltiu == 1'b1}} & {4'd1}) |
+                    ({4{sltiu == 1'b1}} & {4'd15}) |
                     ({4{andi == 1'b1}} & {4'd4}) |
                     ({4{xori == 1'b1}} & {4'd6}) |
                     ({4{ori == 1'b1}} & {4'd5}) |
@@ -430,6 +435,15 @@ assign imm_o = imm;
                      ({2{lhu == 1'b1}} & {2'd1}) |
                      ({2{jal == 1'b1}} & {2'd2}) |
                      ({2{jalr == 1'b1}} & {2'd2}) ;
+
+    // always @(*)begin
+    // $display("lb  = %d",lb );
+    // $display("lh  = %d",lh );
+    // $display("lw  = %d",lw );
+    // $display("lbu = %d",lbu);
+    // $display("lhu = %d",lhu);
+    // end
+
     //MemWr-DataMem写使能；
     assign MemWr = 1'b0 |
                     ({{is_Stype == 1'b1}} & {1'b1});
@@ -469,6 +483,8 @@ assign imm_o = imm;
     assign is_bltu = bltu;
     //判断指令是否为bgeu
     assign is_bgeu = bgeu;
+    //判断指令是否为sltiu
+    assign is_sltiu = sltiu;
 
 
 /***************************************DPI-C*******************************************/

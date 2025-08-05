@@ -24,6 +24,7 @@ module ysyx_25060170_WBU(
     input bge_flag, 
     input bltu_flag,
     input bgeu_flag,
+    input sltiu_flag,
     input [31:0] exu_result_i,   // EXU计算结果
 
     //from IFU
@@ -36,6 +37,7 @@ module ysyx_25060170_WBU(
     input is_bge,
     input is_bltu,
     input is_bgeu,
+    input is_sltiu,
     input [4:0]   rd_i,              // 目的寄存器号
     input [1:0]   regS,              // 写回数据的选择信号，0-来源于ALU，1-来源于DataMem，2-来源于PC+4；
     input RegW,                     //寄存器堆写使能信号
@@ -55,14 +57,20 @@ module ysyx_25060170_WBU(
 /********************************DPI-C END  ****************************************/
     wire tiaojian;
     assign tiaojian = 1'b0 |
-                    ({is_beq  == 1'b1}  & { beq_flag  == 1'b0 }) | 
-                    ({is_blt  == 1'b1}  & { blt_flag  == 1'b0 }) |
-                    ({is_bne  == 1'b1}  & { bne_flag  == 1'b0 }) |
-                    ({is_bge  == 1'b1}  & { bge_flag  == 1'b0 }) |
-                    ({is_bltu == 1'b1}  & { bltu_flag == 1'b0 }) |
-                    ({is_bgeu == 1'b1}  & { bgeu_flag == 1'b0 }) ;
+                    ({is_beq  == 1'b1}   & { beq_flag  == 1'b0  }) | 
+                    ({is_blt  == 1'b1}   & { blt_flag  == 1'b0  }) |
+                    ({is_bne  == 1'b1}   & { bne_flag  == 1'b0  }) |
+                    ({is_bge  == 1'b1}   & { bge_flag  == 1'b0  }) |
+                    ({is_bltu == 1'b1}   & { bltu_flag == 1'b0  }) |
+                    ({is_bgeu == 1'b1}   & { bgeu_flag == 1'b0  }) |
+                    ({is_sltiu == 1'b1}  & { sltiu_flag == 1'b0 }) ;
 
     wire [31:0] l_memdata;
+
+    always @(*)begin
+    //$display("regS = %d",regS);
+    end
+    
     //assign l_memdata = paddr_read(exu_result_i,memory_lenth);
     assign l_memdata = (regS == 1) ? paddr_read(exu_result_i,memory_lenth) : 0 ;
     
