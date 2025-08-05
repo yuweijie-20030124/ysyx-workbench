@@ -38,9 +38,10 @@ void Vysyx_25060170_top___024root____Vdpiexp_ysyx_25060170_top__DOT__u_ysyx_2506
     // Body
     call_flag = (((IData)(((0x80U == (0xf80U & vlSymsp->TOP.ysyx_25060170_top__DOT__MEM_inst_o)) 
                            & ((0x6fU == (0x7fU & vlSymsp->TOP.ysyx_25060170_top__DOT__MEM_inst_o)) 
-                              | (0x6fU == (0x7fU & vlSymsp->TOP.ysyx_25060170_top__DOT__MEM_inst_o))))) 
-                  | (IData)(((0x6fU == (0xfffU & vlSymsp->TOP.ysyx_25060170_top__DOT__MEM_inst_o)) 
-                             & (0U == vlSymsp->TOP.ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__imm))))
+                              | (IData)(vlSymsp->TOP.ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__jalr)))) 
+                  | ((IData)(((0U == (0xf80U & vlSymsp->TOP.ysyx_25060170_top__DOT__MEM_inst_o)) 
+                              & (0U == vlSymsp->TOP.ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__imm))) 
+                     & (IData)(vlSymsp->TOP.ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__jalr)))
                   ? 1U : 0U);
     dnpc = (vlSymsp->TOP.ysyx_25060170_top__DOT__PCout 
             + vlSymsp->TOP.ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__imm);
@@ -52,7 +53,7 @@ void Vysyx_25060170_top___024root____Vdpiexp_ysyx_25060170_top__DOT__u_ysyx_2506
     // Body
     ret_flag = ((0x8067U == vlSymsp->TOP.ysyx_25060170_top__DOT__MEM_inst_o)
                  ? 1U : 0U);
-    pc = ((0x6fU == (0x7fU & vlSymsp->TOP.ysyx_25060170_top__DOT__MEM_inst_o))
+    pc = ((IData)(vlSymsp->TOP.ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__jalr)
            ? (0xfffffffeU & vlSymsp->TOP.ysyx_25060170_top__DOT__PCout)
            : vlSymsp->TOP.ysyx_25060170_top__DOT__PCout);
 }

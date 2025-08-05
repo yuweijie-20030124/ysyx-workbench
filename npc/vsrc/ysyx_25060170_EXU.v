@@ -90,6 +90,11 @@ assign sltiu_flag = is_sltiu & subu_carry;    // 无符号 <  < (结果负且非
     assign jump_Addr = exu_is_jalr ? {jumpaddr[31:1],1'b0} :
                        exu_is_jal  ?  jumpaddr : 32'b0;
     
+    // always @(posedge exu_is_jalr) begin
+    //     $display("jump_Addr   = 0x%08x", jump_Addr); 
+    //     $display("exu_is_jalr   = %d", exu_is_jalr);       
+    // end
+
     always @(*) begin
         //$display("jump_Addr   = 0x%08x", jump_Addr);
         //$display("exu_is_jalr   = %d", exu_is_jalr);

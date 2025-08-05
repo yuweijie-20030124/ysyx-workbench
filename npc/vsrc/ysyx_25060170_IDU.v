@@ -147,7 +147,7 @@ assign lw       =   1'b0 | (opcode == 7'b0000011) & (func3 == 3'b010);
 assign andi     =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b111);
 assign xori     =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b110);
 assign ori      =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b010);
-assign jalr     =   1'b0 | (opcode == 7'b1101111);
+assign jalr     =   1'b0 | (opcode == 7'b1100111) & (func3 == 3'b000);
 assign is_Itype =   srli | slli | srai | lbu | addi | sltiu | lb | lh | lhu | lw | andi | xori | ori | jalr;
 
 //S type
@@ -303,8 +303,6 @@ assign imm_o = imm;
                     //jal   J-type      下一条指令pc+4存入rd寄存器中，并且让pc = pc + imm
                     ({32{jal == 1'b1}} & {pc_i}) ;
                     
-
-
 	
     assign op_2 = 32'h0 |
                     //auipc u-type
@@ -397,7 +395,11 @@ assign imm_o = imm;
                     ({32{bgeu == 1'b1}} & {imm}) |
                     //jal   J-type
                     ({32{jal == 1'b1}} & {imm}) ;
-                    
+
+// always @(posedge jalr)begin
+//         $display("op1   = 0x%08x", op_1); 
+//         $display("op2   = 0x%08x", op_2);  
+// end                  
 /***********************************************ALU控制信号************************************************/
     
     //ALUop是决定要 +0 -1 *2 /3 &4 |5 ^6 单目7 左移8 右移9 %余10        none 15
