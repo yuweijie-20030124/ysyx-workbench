@@ -26,6 +26,7 @@ module ysyx_25060170_EXU(
     input is_bge,
     input is_bltu,
     input is_bgeu,
+
     input is_sltiu,
     input is_sltu,
     input [31:0] imm,
@@ -37,8 +38,6 @@ module ysyx_25060170_EXU(
     output reg bge_flag,        //bge前置条件生效
     output reg bltu_flag,       //bltu前置条件生效
     output reg bgeu_flag,       //bgeu前置条件生效
-    output reg sltiu_flag,      //sltiu前置条件生效
-    output reg sltu_flag,
     output reg [31:0] exu_res1, //ALU运算结果
     //to IFU
     output [31:0] jump_Addr
@@ -48,6 +47,8 @@ module ysyx_25060170_EXU(
 wire [31:0] reg1_sub_reg2 = reg1_rdata_i - reg2_rdata_i;
 wire sub_sign = reg1_sub_reg2[31];  // 减法结果的符号位
 wire sub_zero = (reg1_sub_reg2 == 0); // 结果是否为0
+wire sltiu_flag;
+wire sltu_flag;
 
 // 有符号比较
 assign beq_flag = is_beq & sub_zero;          // ==
@@ -73,9 +74,13 @@ assign sltu_flag  = is_sltu  & subu_carry;    // 无符号 <  < (结果负且非
 
 always @(posedge is_sltu) begin
         $display("is_sltu       = %d", is_sltu); 
-        $display("sltu_flag     = %d", sltu_flag);       
+        $display("sltu_flag     = %d", sltu_flag);
+        $display("reg1_rdata_i  = 0x%08x", reg1_rdata_i);
+        $display("reg2_rdata_i  = 0x%08x", reg2_rdata_i);
+        $display("ALUop         = %d", ALUop); 
+        $display("exu_res1      = 0x%08x", exu_res1);       
     end
-    //+0 -1 *2 /3 &4 |5 ^6 单目7 左移8 右移9 %余10
+    //+0 -1 *2 /3 &4 |5 ^6 单目7 左移8 右移9 %余10 补符号位左移11，补符号位右移12  none 15
     assign exu_res1 = 32'h0 | 
                     //addi  i-type
                     ({32{ALUop == 4'd0}}  & { exu_op_1 + exu_op_2  }) |
@@ -89,8 +94,11 @@ always @(posedge is_sltu) begin
                     ({32{ALUop == 4'd8}}  & { exu_op_1 << exu_op_2 }) |
                     ({32{ALUop == 4'd9}}  & { exu_op_1 >> exu_op_2 }) |
                     ({32{ALUop == 4'd10}} & { exu_op_1 %  exu_op_2 }) |
+                    ({32{ALUop == 4'd11}} & { exu_op_1 <<< exu_op_2 }) |
+                    ({32{ALUop == 4'd12}} & { $signed(exu_op_1) >>> exu_op_2 }) |
                     ({32{ALUop == 4'd15}} & {32{sltiu_flag == 1}} & { 32'b1 }) |
-                    ({32{ALUop == 4'd15}} & {32{sltu_flag == 1}}  & { 32'b1 }) ;
+                    ({32{ALUop == 4'd15}} & {32{sltu_flag == 1}}  & { 32'b1 }) |
+                    ({32{ALUop == 4'd15}} & {32{sltu_flag == 0}}  & { 32'b0 }) ;
 
 
 
@@ -98,19 +106,22 @@ always @(posedge is_sltu) begin
 
     assign jump_Addr = exu_is_jalr ? {jumpaddr[31:1],1'b0} :
                        exu_is_jal  ?  jumpaddr : 
-                       bne_flag    ?  exu_res1 : 32'b0;
+                       bne_flag    ?  exu_res1 : 
+                       bge_flag    ?  exu_res1 : 
+                       blt_flag    ?  exu_res1 :32'b0;
+                       
     
     // always @(posedge exu_is_jalr) begin
     //     $display("jump_Addr   = 0x%08x", jump_Addr); 
     //     $display("exu_is_jalr   = %d", exu_is_jalr);       
     // end
 
-    always @(*) begin
-        //$display("jump_Addr   = 0x%08x", jump_Addr);
-        //$display("exu_is_jalr   = %d", exu_is_jalr);
-        //$display("exu_is_jal   = %d", exu_is_jal);
+    // always @(*) begin
+    //     //$display("jump_Addr   = 0x%08x", jump_Addr);
+    //     //$display("exu_is_jalr   = %d", exu_is_jalr);
+    //     //$display("exu_is_jal   = %d", exu_is_jal);
         
-    end
+    // end
 
 endmodule
 

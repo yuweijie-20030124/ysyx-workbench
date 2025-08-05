@@ -27,9 +27,9 @@ class alignas(VL_CACHE_LINE_BYTES) Vysyx_25060170_top___024root final : public V
         CData/*0:0*/ ysyx_25060170_top__DOT__is_bltu;
         CData/*0:0*/ ysyx_25060170_top__DOT__is_bgeu;
         CData/*0:0*/ ysyx_25060170_top__DOT__is_sltiu;
+        CData/*0:0*/ ysyx_25060170_top__DOT__blt_flag;
         CData/*0:0*/ ysyx_25060170_top__DOT__bne_flag;
-        CData/*0:0*/ ysyx_25060170_top__DOT__sltiu_flag;
-        CData/*0:0*/ ysyx_25060170_top__DOT__sltu_flag;
+        CData/*0:0*/ ysyx_25060170_top__DOT__bge_flag;
         CData/*1:0*/ ysyx_25060170_top__DOT__regS;
         CData/*0:0*/ ysyx_25060170_top__DOT__reg_write_en_o;
         CData/*0:0*/ ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__is_Utype;
@@ -127,6 +127,7 @@ class alignas(VL_CACHE_LINE_BYTES) Vysyx_25060170_top___024root final : public V
         IData/*31:0*/ ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT____Vcellout__reg_gen__BRA__31__KET____DOT__reg_x__dout;
         IData/*31:0*/ ysyx_25060170_top__DOT__u_ysyx_25060170_EXU__DOT__jumpaddr;
         IData/*31:0*/ ysyx_25060170_top__DOT__u_ysyx_25060170_EXU__DOT__reg1_sub_reg2;
+        IData/*31:0*/ ysyx_25060170_top__DOT__u_ysyx_25060170_EXU__DOT____VdfgRegularize_h08aa94b0_0_1;
         IData/*31:0*/ ysyx_25060170_top__DOT__u_ysyx_25060170_WBU__DOT__l_memdata;
         IData/*31:0*/ __Vtask_ysyx_25060170_top__DOT__u_ysyx_25060170_MEM__DOT__pmem_read__1__rdata;
         IData/*31:0*/ __Vfunc_ysyx_25060170_top__DOT__u_ysyx_25060170_WBU__DOT__paddr_read__2__Vfuncout;
