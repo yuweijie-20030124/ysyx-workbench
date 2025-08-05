@@ -26,6 +26,8 @@ class alignas(VL_CACHE_LINE_BYTES) Vysyx_25060170_top___024root final : public V
         CData/*0:0*/ ysyx_25060170_top__DOT__is_bltu;
         CData/*0:0*/ ysyx_25060170_top__DOT__is_bgeu;
         CData/*0:0*/ ysyx_25060170_top__DOT__is_sltiu;
+        CData/*0:0*/ ysyx_25060170_top__DOT__is_sltu;
+        CData/*0:0*/ ysyx_25060170_top__DOT__bne_flag;
         CData/*0:0*/ ysyx_25060170_top__DOT__sltiu_flag;
         CData/*1:0*/ ysyx_25060170_top__DOT__regS;
         CData/*0:0*/ ysyx_25060170_top__DOT__reg_write_en_o;
@@ -52,7 +54,6 @@ class alignas(VL_CACHE_LINE_BYTES) Vysyx_25060170_top___024root final : public V
         CData/*0:0*/ ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__add;
         CData/*0:0*/ ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__sll;
         CData/*0:0*/ ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__slt;
-        CData/*0:0*/ ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__sltu;
         CData/*0:0*/ ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__npcxor;
         CData/*0:0*/ ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__npcor;
         CData/*0:0*/ ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__npcand;
@@ -79,9 +80,9 @@ class alignas(VL_CACHE_LINE_BYTES) Vysyx_25060170_top___024root final : public V
         CData/*0:0*/ __VicoFirstIteration;
         CData/*0:0*/ __Vtrigprevexpr___TOP__clk__0;
         CData/*0:0*/ __VactContinue;
-        IData/*31:0*/ ysyx_25060170_top__DOT__PCout;
     };
     struct {
+        IData/*31:0*/ ysyx_25060170_top__DOT__PCout;
         IData/*31:0*/ ysyx_25060170_top__DOT__op_1;
         IData/*31:0*/ ysyx_25060170_top__DOT__op_2;
         IData/*31:0*/ ysyx_25060170_top__DOT__exu_res1;

@@ -24,6 +24,7 @@ wire   			is_bge;
 wire   			is_bltu;
 wire   			is_bgeu;
 wire			is_sltiu;
+wire			is_sltu;
 //wire        	branch;
 //wire        	brlt;
 wire			beq_flag;
@@ -33,6 +34,7 @@ wire			bge_flag;
 wire			bltu_flag;
 wire			bgeu_flag;
 wire 			sltiu_flag;
+wire			sltu_flag;
 wire [1:0]  	regS;
 wire        	RegW;
 wire        	jalr;
@@ -47,7 +49,7 @@ wire        	reg_write_en_o;
 wire [31:0]     EXU_PC;
 wire			jump_en;
 
-assign jump_en = jalr | jal;
+assign jump_en = jalr | jal | bne_flag ;
  
 ysyx_25060170_IFU #(
 	.RESET_PC 	( 32'h8000_0000  ))
@@ -79,6 +81,7 @@ ysyx_25060170_IDU u_ysyx_25060170_IDU(
 	.is_bltu		( is_bltu		),
 	.is_bgeu		( is_bgeu		),
 	.is_sltiu		( is_sltiu		),
+	.is_sltu 		( is_sltu		),
 	.reg1_rdata_o	( reg1_rdata	),
 	.reg2_rdata_o	( reg2_rdata	),
 	.memory_lenth	( memory_lenth	),
@@ -126,6 +129,7 @@ ysyx_25060170_EXU u_ysyx_25060170_EXU(
 	.is_bltu		(is_bltu	),
 	.is_bgeu		(is_bgeu	),
 	.is_sltiu		(is_sltiu	),
+	.is_sltu		(is_sltu	),
     .imm            ( imm_o		),
 	.beq_flag		(beq_flag   ),
 	.blt_flag		(blt_flag   ),
@@ -134,6 +138,7 @@ ysyx_25060170_EXU u_ysyx_25060170_EXU(
 	.bltu_flag		(bltu_flag  ),
 	.bgeu_flag		(bgeu_flag  ),
 	.sltiu_flag		(sltiu_flag	),
+	.sltu_flag		(sltu_flag  ),
 	.exu_res1    	( exu_res1	),
     .jump_Addr      ( EXU_PC	)
 );
@@ -148,7 +153,8 @@ ysyx_25060170_WBU u_ysyx_25060170_WBU(
 	.bge_flag 			( bge_flag 			),
 	.bltu_flag			( bltu_flag			),
 	.bgeu_flag			( bgeu_flag			),
-	.sltiu_flag			( sltiu_flag),
+	.sltiu_flag			( sltiu_flag		),
+	.sltu_flag			( sltu_flag			),
 	.exu_result_i     	( exu_res1			),
 	.PC_i             	( PCout				),
 	.is_beq 			( is_beq 			),
@@ -158,6 +164,7 @@ ysyx_25060170_WBU u_ysyx_25060170_WBU(
 	.is_bltu			( is_bltu			),
 	.is_bgeu			( is_bgeu			),
 	.is_sltiu			( is_sltiu			),
+	.is_sltu			( is_sltu			),
 	.rd_i             	( rd_addr			),
 	.regS             	( regS              ),
 	.RegW             	( RegW              ),

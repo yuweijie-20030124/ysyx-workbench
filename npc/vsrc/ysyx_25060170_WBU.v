@@ -25,6 +25,7 @@ module ysyx_25060170_WBU(
     input bltu_flag,
     input bgeu_flag,
     input sltiu_flag,
+    input sltu_flag,
     input [31:0] exu_result_i,   // EXU计算结果
 
     //from IFU
@@ -38,6 +39,7 @@ module ysyx_25060170_WBU(
     input is_bltu,
     input is_bgeu,
     input is_sltiu,
+    input is_sltu,
     input [4:0]   rd_i,              // 目的寄存器号
     input [1:0]   regS,              // 写回数据的选择信号，0-来源于ALU，1-来源于DataMem，2-来源于PC+4；
     input RegW,                     //寄存器堆写使能信号
@@ -63,7 +65,8 @@ module ysyx_25060170_WBU(
                     ({is_bge  == 1'b1}   & { bge_flag  == 1'b0  }) |
                     ({is_bltu == 1'b1}   & { bltu_flag == 1'b0  }) |
                     ({is_bgeu == 1'b1}   & { bgeu_flag == 1'b0  }) |
-                    ({is_sltiu == 1'b1}  & { sltiu_flag == 1'b0 }) ;
+                    ({is_sltiu == 1'b1}  & { sltiu_flag == 1'b0 }) |
+                    ({is_sltu == 1'b1}   & { sltu_flag  == 1'b0 }) ;
 
     wire [31:0] l_memdata;
 

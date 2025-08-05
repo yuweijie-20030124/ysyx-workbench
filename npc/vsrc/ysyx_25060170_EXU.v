@@ -27,6 +27,7 @@ module ysyx_25060170_EXU(
     input is_bltu,
     input is_bgeu,
     input is_sltiu,
+    input is_sltu,
     input [31:0] imm,
 
     //to WBU
@@ -37,6 +38,7 @@ module ysyx_25060170_EXU(
     output reg bltu_flag,       //bltu前置条件生效
     output reg bgeu_flag,       //bgeu前置条件生效
     output reg sltiu_flag,      //sltiu前置条件生效
+    output reg sltu_flag,
     output reg [31:0] exu_res1, //ALU运算结果
     //to IFU
     output [31:0] jump_Addr
@@ -67,6 +69,7 @@ wire subu_carry = sub_unsigned[32];  // 借位标志（1表示 reg1 < reg2）
 assign bltu_flag = is_bltu & subu_carry;      // 无符号 <
 assign bgeu_flag = is_bgeu & ~subu_carry;     // 无符号 >=  
 assign sltiu_flag = is_sltiu & subu_carry;    // 无符号 <  < (结果负且非零)
+assign sltu_flag  = is_sltu  & subu_carry;    // 无符号 <  < (结果负且非零)
     //+0 -1 *2 /3 &4 |5 ^6 单目7 左移8 右移9 %余10
     assign exu_res1 = 32'h0 | 
                     //addi  i-type
@@ -88,7 +91,8 @@ assign sltiu_flag = is_sltiu & subu_carry;    // 无符号 <  < (结果负且非
     assign jumpaddr = imm + exu_op_1;
 
     assign jump_Addr = exu_is_jalr ? {jumpaddr[31:1],1'b0} :
-                       exu_is_jal  ?  jumpaddr : 32'b0;
+                       exu_is_jal  ?  jumpaddr : 
+                       bne_flag    ?  exu_res1 : 32'b0;
     
     // always @(posedge exu_is_jalr) begin
     //     $display("jump_Addr   = 0x%08x", jump_Addr); 

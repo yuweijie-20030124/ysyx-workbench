@@ -37,6 +37,7 @@ module ysyx_25060170_IDU(
     output reg is_bltu,             //是否为bltu
     output reg is_bgeu,             //是否为bgeu
     output reg is_sltiu,            //是否为sltiu
+    output reg is_sltu,             //是否为sltu
     
     //to WBU
     output reg [31:0] reg1_rdata_o,
@@ -487,6 +488,8 @@ assign imm_o = imm;
     assign is_bgeu = bgeu;
     //判断指令是否为sltiu
     assign is_sltiu = sltiu;
+    //判断指令是否为sltu
+    assign is_sltu = sltu;
 
 
 /***************************************DPI-C*******************************************/
