@@ -17,6 +17,7 @@ class alignas(VL_CACHE_LINE_BYTES) Vysyx_25060170_top___024root final : public V
     // Anonymous structures to workaround compiler member-count bugs
     struct {
         VL_IN8(clk,0,0);
+        CData/*0:0*/ ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__sltu;
         VL_IN8(rst,0,0);
         CData/*3:0*/ ysyx_25060170_top__DOT__ALUop;
         CData/*0:0*/ ysyx_25060170_top__DOT__is_beq;
@@ -26,9 +27,9 @@ class alignas(VL_CACHE_LINE_BYTES) Vysyx_25060170_top___024root final : public V
         CData/*0:0*/ ysyx_25060170_top__DOT__is_bltu;
         CData/*0:0*/ ysyx_25060170_top__DOT__is_bgeu;
         CData/*0:0*/ ysyx_25060170_top__DOT__is_sltiu;
-        CData/*0:0*/ ysyx_25060170_top__DOT__is_sltu;
         CData/*0:0*/ ysyx_25060170_top__DOT__bne_flag;
         CData/*0:0*/ ysyx_25060170_top__DOT__sltiu_flag;
+        CData/*0:0*/ ysyx_25060170_top__DOT__sltu_flag;
         CData/*1:0*/ ysyx_25060170_top__DOT__regS;
         CData/*0:0*/ ysyx_25060170_top__DOT__reg_write_en_o;
         CData/*0:0*/ ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__is_Utype;
@@ -67,6 +68,7 @@ class alignas(VL_CACHE_LINE_BYTES) Vysyx_25060170_top___024root final : public V
         CData/*0:0*/ ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__divu;
         CData/*0:0*/ ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__rem;
         CData/*0:0*/ ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__remu;
+        CData/*0:0*/ ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__is_Rtype;
         CData/*0:0*/ ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT____VdfgRegularize_h93622925_0_2;
         CData/*0:0*/ ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT____VdfgRegularize_h93622925_0_15;
         CData/*0:0*/ ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT____VdfgRegularize_h93622925_0_16;
@@ -76,12 +78,14 @@ class alignas(VL_CACHE_LINE_BYTES) Vysyx_25060170_top___024root final : public V
         CData/*0:0*/ ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT____VdfgRegularize_h93622925_0_20;
         CData/*0:0*/ ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT____VdfgRegularize_h93622925_0_21;
         CData/*0:0*/ ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT____VdfgRegularize_h93622925_0_22;
+        CData/*0:0*/ ysyx_25060170_top__DOT__u_ysyx_25060170_WBU__DOT__tiaojian;
         CData/*0:0*/ __VstlFirstIteration;
-        CData/*0:0*/ __VicoFirstIteration;
-        CData/*0:0*/ __Vtrigprevexpr___TOP__clk__0;
-        CData/*0:0*/ __VactContinue;
     };
     struct {
+        CData/*0:0*/ __VicoFirstIteration;
+        CData/*0:0*/ __Vtrigprevexpr___TOP__clk__0;
+        CData/*0:0*/ __Vtrigprevexpr___TOP__ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__sltu__0;
+        CData/*0:0*/ __VactContinue;
         IData/*31:0*/ ysyx_25060170_top__DOT__PCout;
         IData/*31:0*/ ysyx_25060170_top__DOT__op_1;
         IData/*31:0*/ ysyx_25060170_top__DOT__op_2;
@@ -133,8 +137,8 @@ class alignas(VL_CACHE_LINE_BYTES) Vysyx_25060170_top___024root final : public V
     };
     VlTriggerVec<1> __VstlTriggered;
     VlTriggerVec<1> __VicoTriggered;
-    VlTriggerVec<1> __VactTriggered;
-    VlTriggerVec<1> __VnbaTriggered;
+    VlTriggerVec<2> __VactTriggered;
+    VlTriggerVec<2> __VnbaTriggered;
 
     // INTERNAL VARIABLES
     Vysyx_25060170_top__Syms* const vlSymsp;

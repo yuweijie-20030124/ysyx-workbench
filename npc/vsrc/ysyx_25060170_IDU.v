@@ -192,9 +192,9 @@ assign is_Btype =   beq | bne | blt | bge | bltu | bgeu;
 assign jal      =   1'b0 | opcode == 7'b1101111;
 assign is_Jtype = jal;
 
-// always@(sltiu)begin
-//     $display("sltiu = %d", sltiu);
-// end
+always@(posedge sltu)begin
+    $display("sltu = %d", sltu);
+end
 
 //选择器模板 立即数处理 R-type并不需要立即数处理
 assign imm = 32'h0 |    
@@ -355,7 +355,7 @@ assign imm_o = imm;
                     //slt   R-type
                     ({32{slt == 1'b1}} & {reg2_rdata_i}) |
                     //sltu   R-type
-                    ({32{sltu == 1'b1}} & {imm}) |
+                    ({32{sltu == 1'b1}} & {reg2_rdata_i}) |
                     //xor   R-type
                     ({32{npcxor == 1'b1}} & {reg2_rdata_i}) |
                     //or   R-type
@@ -409,12 +409,12 @@ assign imm_o = imm;
                     ({4{srli == 1'b1}} & {4'd8}) |
                     ({4{slli == 1'b1}} & {4'd9}) |
                     ({4{sltiu == 1'b1}} & {4'd15}) |
+                    ({4{sltu == 1'b1}} & {4'd15}) |
                     ({4{andi == 1'b1}} & {4'd4}) |
                     ({4{xori == 1'b1}} & {4'd6}) |
                     ({4{ori == 1'b1}} & {4'd5}) |
                     ({4{sll == 1'b1}} & {4'd8}) |
-                    ({4{slt == 1'b1}} & {4'd1}) |
-                    ({4{sltu == 1'b1}} & {4'd1}) |
+                    ({4{slt == 1'b1}} & {4'd1}) |   
                     ({4{npcxor == 1'b1}} & {4'd6}) |
                     ({4{npcor == 1'b1}} & {4'd5}) |
                     ({4{npcand == 1'b1}} & {4'd4}) |

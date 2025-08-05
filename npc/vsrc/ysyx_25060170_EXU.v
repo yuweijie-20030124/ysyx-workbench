@@ -70,6 +70,11 @@ assign bltu_flag = is_bltu & subu_carry;      // 无符号 <
 assign bgeu_flag = is_bgeu & ~subu_carry;     // 无符号 >=  
 assign sltiu_flag = is_sltiu & subu_carry;    // 无符号 <  < (结果负且非零)
 assign sltu_flag  = is_sltu  & subu_carry;    // 无符号 <  < (结果负且非零)
+
+always @(posedge is_sltu) begin
+        $display("is_sltu       = %d", is_sltu); 
+        $display("sltu_flag     = %d", sltu_flag);       
+    end
     //+0 -1 *2 /3 &4 |5 ^6 单目7 左移8 右移9 %余10
     assign exu_res1 = 32'h0 | 
                     //addi  i-type
@@ -84,7 +89,8 @@ assign sltu_flag  = is_sltu  & subu_carry;    // 无符号 <  < (结果负且非
                     ({32{ALUop == 4'd8}}  & { exu_op_1 << exu_op_2 }) |
                     ({32{ALUop == 4'd9}}  & { exu_op_1 >> exu_op_2 }) |
                     ({32{ALUop == 4'd10}} & { exu_op_1 %  exu_op_2 }) |
-                    ({32{ALUop == 4'd15}} & {32{sltiu_flag == 1}} & { 32'b1 }) ;
+                    ({32{ALUop == 4'd15}} & {32{sltiu_flag == 1}} & { 32'b1 }) |
+                    ({32{ALUop == 4'd15}} & {32{sltu_flag == 1}}  & { 32'b1 }) ;
 
 
 
