@@ -196,11 +196,7 @@ void Vysyx_25060170_top___024root___eval_triggers__act(Vysyx_25060170_top___024r
     // Body
     vlSelfRef.__VactTriggered.setBit(0U, ((IData)(vlSelfRef.clk) 
                                           & (~ (IData)(vlSelfRef.__Vtrigprevexpr___TOP__clk__0))));
-    vlSelfRef.__VactTriggered.setBit(1U, ((IData)(vlSelfRef.ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__sltu) 
-                                          & (~ (IData)(vlSelfRef.__Vtrigprevexpr___TOP__ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__sltu__0))));
     vlSelfRef.__Vtrigprevexpr___TOP__clk__0 = vlSelfRef.clk;
-    vlSelfRef.__Vtrigprevexpr___TOP__ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__sltu__0 
-        = vlSelfRef.ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__sltu;
 #ifdef VL_DEBUG
     if (VL_UNLIKELY(vlSymsp->_vm_contextp__->debug())) {
         Vysyx_25060170_top___024root___dump_triggers__act(vlSelf);

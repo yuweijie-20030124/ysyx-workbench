@@ -192,9 +192,9 @@ assign is_Btype =   beq | bne | blt | bge | bltu | bgeu;
 assign jal      =   1'b0 | opcode == 7'b1101111;
 assign is_Jtype = jal;
 
-always@(posedge sltu)begin
-    $display("sltu = %d", sltu);
-end
+// always@(posedge sltu)begin
+//     $display("sltu = %d", sltu);
+// end
 
 //选择器模板 立即数处理 R-type并不需要立即数处理
 assign imm = 32'h0 |    
@@ -428,7 +428,8 @@ assign imm_o = imm;
                     ({4{div == 1'b1}} & {4'd3}) |
                     ({4{divu == 1'b1}} & {4'd3}) |
                     ({4{rem == 1'b1}} & {4'd10}) |
-                    ({4{remu == 1'b1}} & {4'd10}) ;
+                    ({4{remu == 1'b1}} & {4'd10}) |
+                    ({4{srai == 1'b1}} & {4'd12}) ;
 
     //regS-写回数据的选择信号，0-来源于ALU，1-来源于DataMem，2-来源于PC+4；
     assign regS = 2'b0 |
@@ -462,6 +463,8 @@ assign imm_o = imm;
                         ({32{lh == 1'b1}} & { 32'd2 }) |
                         //lb
                         ({32{lb == 1'b1}} & { 32'd1 }) |
+                        //lbu
+                        ({32{lbu == 1'b1}} & { 32'd1 }) |
                         //sd
                         ({32{sd == 1'b1}} & { 32'd8 }) |
                         //sw
@@ -498,7 +501,7 @@ assign imm_o = imm;
     //$display("PC = 0x%08x", pc_i);
     //$display("inst = 0x%08x", inst_i);
     if(inst_i == 32'b0000_0000_0001_0000_0000_0000_0111_0011) begin
-        $display("我进来了，应该ebreak了\n");
+        //$display("我进来了，应该ebreak了\n");
         set_npc_exit(pc_i,0);
     end
 end
