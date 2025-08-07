@@ -50,16 +50,23 @@ assign sub_op_1 = reg1_rdata_i;
 assign sub_op_2 = is_sltiu ? imm : reg2_rdata_i;
 
 wire [31:0] reg1_sub_reg2 = sub_op_1 - sub_op_2;
-wire sub_sign = reg1_sub_reg2[31] | ((sub_op_1[31] == 1) & (sub_op_2[31] == 0));  // 减法结果的符号位
-wire sub_zero = (reg1_sub_reg2 == 0); // 结果是否为0
+wire sub_sign = (sub_op_1[31] ^ sub_op_2[31]) ?  // 符号位不同
+               (sub_op_1[31] & ~sub_op_2[31]) : // rs1负且rs2正时，rs1 < rs2
+               (reg1_sub_reg2[31]);             // 符号位相同时，看减法结果符号
+
+wire sub_zero = (reg1_sub_reg2 == 0); // 结果是否为0 
+
+ //(reg1_sub_reg2[31] | ((sub_op_1[31] == 1) & (sub_op_2[31] == 0))) & ((sub_op_1[31] != 0) & (sub_op_2[31] != 1));  // 减法结果的符号位
+
 wire sltiu_flag;
 wire sltu_flag;
 
 // 有符号比较
-assign beq_flag = is_beq & sub_zero;          // ==
-assign blt_flag = is_blt & ~sub_zero & sub_sign; // < (结果负且非零)
-assign bge_flag = is_bge & (sub_zero | ~sub_sign); // >= (结果正或零)
-assign bne_flag = is_bne & ~sub_zero;         // !=
+assign beq_flag = is_beq & sub_zero;          // rs1 == rs2
+assign blt_flag = is_blt & ~sub_zero & sub_sign; // rs1 < rs2（结果负且非零）
+assign bge_flag = is_bge & (sub_zero | ~sub_sign); // rs1 >= rs2（结果正或零）
+assign bne_flag = is_bne & ~sub_zero;         // rs1 != rs2
+
 
 // 无符号比较（需额外处理）
 wire [32:0] reg1_ext = {1'b0, sub_op_1};  // 扩展1位防止溢出

@@ -120,8 +120,8 @@ int main(int argc, char** argv) {
 
   sdb_mainloop();
 	//sdb_mainloop();
-	
-	
+	//多记录一个数据
+	tfp -> dump(main_time++);
 	//is_exit_status_bad();
 
     close_npc();
