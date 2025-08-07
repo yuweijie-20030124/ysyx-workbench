@@ -5,9 +5,8 @@ brlt-判断指令是否为blt；
 regS-写回数据的选择信号，0-来源于ALU，1-来源于DataMem，2-来源于PC+4；
 ALUop-ALU控制信号，0对应+，1对应-,2对应*，3对应÷；
 MemWr-DataMem写使能；
-ALUsrc-操作数选择信号，0-选择寄存器，1-选择立即数；
 RegW-寄存器堆写使能；
-PCx1-jalr处理信号，若为jalr则将x1+offset的值写入PC；
+jalr处理信号，若为jalr则将x1+offset的值写入PC；
 */
 
 module ysyx_25060170_IDU(
@@ -30,59 +29,52 @@ module ysyx_25060170_IDU(
     output [4:0] rd_addr,           //目标寄存器rd索引    
     output [31:0] op_1,             //exu执行的第一个数
     output [31:0] op_2,             //exu执行的第二个数
-    output [31:0] imm_o,             // 立即数
+    output [31:0] imm_o,            // 立即数
+    output reg is_beq,              //是否为beq
+    output reg is_blt,              //是否为blt
+    output reg is_bne,              //是否为bne
+    output reg is_bge,              //是否为bge
+    output reg is_bltu,             //是否为bltu
+    output reg is_bgeu,             //是否为bgeu
+    output reg is_sltiu,            //是否为sltiu
+    output reg is_sltu,             //是否为sltu
     
     //to WBU
+    output reg [31:0] reg1_rdata_o,
     output reg [31:0] reg2_rdata_o,
     output reg [31:0] memory_lenth,
+    output reg [1:0] need_sign_ext,
     output reg MemWr,
-    output reg jal,
-    //output reg branch,
-    //output reg brlt,    
+    output reg is_jal,
+    output reg is_jalr,    
     output reg [1:0] regS,
-    output reg RegW,
-    output reg PCx1,
-    output jump_en
-
+    output reg RegW
 );
 /********************************DPI-C START****************************************/
 import "DPI-C" function void set_npc_exit(int pc, int halt_ret);
-
-
-
 /********************************DPI-C END  ****************************************/
-
-//wire is_jump = (opcode == 7'b1100111 || opcode == 7'b1101111);
-    //localparam PC_INCR = 32'd4;  // 添加在模块开头
-    assign jump_en = PCx1 | jal;
     wire [6:0] opcode;
     wire [6:0] func7;
     wire [2:0] func3;
-    wire [31:0] imm;
-
-    
-    // 寄存器文件声明 现在就只有i和u
+    wire [31:0] imm;   
     assign rs1_raddr_o = inst_i[19:15];  // 源寄存器1地址
     assign rs2_raddr_o = inst_i[24:20];  // 源寄存器2地址
+    assign reg1_rdata_o = reg1_rdata_i;
     assign reg2_rdata_o = reg2_rdata_i;
     assign opcode = inst_i[6:0];         // 操作码
     assign func3 = inst_i[14:12];      
-    /* lint_off */
     assign func7 = inst_i[31:25];
-    /* lint_on */
     assign rd_addr = inst_i[11:7];
 
 /********************************识别是哪一条指令****************************/
 //U type
-wire auipc;//
-wire lui;//
-wire is_Utype;//
+wire auipc;
+wire lui;
+wire is_Utype;
 
 //I type
-wire srli;//
-wire [5:0] shamt;
-assign shamt = inst_i[31:26];
-wire slli;//
+wire srli;
+wire slli;
 wire srai;
 wire lbu;
 wire addi;
@@ -142,21 +134,22 @@ wire is_Jtype;
 assign auipc    =   1'b0 | opcode == 7'b0010111;
 assign lui      =   1'b0 | opcode == 7'b0110111;
 assign is_Utype =   auipc | lui;
+
 //I type
 assign srli     =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b101) & (func7 == 7'b0000000);
 assign slli     =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b001) & (func7 == 7'b0000000);
 assign srai     =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b101) & (func7 == 7'b0100000);
 assign lbu      =   1'b0 | (opcode == 7'b0000011) & (func3 == 3'b100);
 assign addi     =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b000);
-assign sltiu    =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b101);
-assign lb       =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b000);
-assign lh       =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b001);
-assign lhu      =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b101);
-assign lw       =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b010);
+assign sltiu    =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b011);
+assign lb       =   1'b0 | (opcode == 7'b0000011) & (func3 == 3'b000);
+assign lh       =   1'b0 | (opcode == 7'b0000011) & (func3 == 3'b001);
+assign lhu      =   1'b0 | (opcode == 7'b0000011) & (func3 == 3'b101);
+assign lw       =   1'b0 | (opcode == 7'b0000011) & (func3 == 3'b010);
 assign andi     =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b111);
-assign xori     =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b110);
+assign xori     =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b100);
 assign ori      =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b010);
-assign jalr     =   1'b0 | (opcode == 7'b1101111);
+assign jalr     =   1'b0 | (opcode == 7'b1100111) & (func3 == 3'b000);
 assign is_Itype =   srli | slli | srai | lbu | addi | sltiu | lb | lh | lhu | lw | andi | xori | ori | jalr;
 
 //S type
@@ -200,6 +193,10 @@ assign is_Btype =   beq | bne | blt | bge | bltu | bgeu;
 assign jal      =   1'b0 | opcode == 7'b1101111;
 assign is_Jtype = jal;
 
+// always@(posedge sltu)begin
+//     $display("sltu = %d", sltu);
+// end
+
 //选择器模板 立即数处理 R-type并不需要立即数处理
 assign imm = 32'h0 |    
                     //U type
@@ -217,195 +214,306 @@ assign imm_o = imm;
 
 /*************************************2025 . 8 . 03 (todo)*************************************************/
     assign op_1 = 32'h0 |
-                    //auipc U-type
+                    //auipc U-type      rd寄存器 = pc寄存器的值 + imm的值 
                     ({32{auipc == 1'b1}} & {pc_i}) |
-                    //lui   U-type
+                    //lui   U-type      rd寄存器 = imm的值
                     ({32{lui == 1'b1}} & {imm}) |
-                    //srli  I-type
+                    //srli  I-type      rd寄存器 = rs1寄存器的值 无符号>> rs2寄存器地址的值
                     ({32{srli == 1'b1}} & {reg1_rdata_i}) |
-                    //addi  i-type
-                    ({32{opcode == 7'b0010011}} & {reg1_rdata_i}) |
-                    //add  i-type
-                    ({32{opcode == 7'b0110011}} & {reg1_rdata_i}) |
-                    //lw i-type
-                    ({32{opcode == 7'b0000011}} & {reg1_rdata_i}) |
-                    //sw s-type
-                    ({32{opcode == 7'b0100011}} & {reg1_rdata_i}) |
-                    //beq blt b-type
-                    ({32{opcode == 7'b1100011}} & {pc_i}) |
-                    //jalr i-type 4
-                    ({32{opcode == 7'b1100111}} & {pc_i}) |
-                    //jal j-type 4
-                    ({32{opcode == 7'b1101111}} & {pc_i}) |
-                    //all r-type page160
-                    ({32{opcode == 7'b0110011}} & {reg1_rdata_i}) ;
+                    //slli  I-type      rd寄存器 = rs1寄存器的值 左移<<   rs2寄存器地址的值
+                    ({32{slli == 1'b1}} & {reg1_rdata_i}) |
+                    //srai  I-type      rd寄存器 = rs1寄存器的值 有符号>> rs2寄存器地址的值
+                    ({32{srai == 1'b1}} & {reg1_rdata_i}) |
+                    //lbu   I-type      rd寄存器 = 从地址（rs1寄存器的值 + imm的值）中读取一个字节，0扩展后写入rd寄存器
+                    ({32{lbu == 1'b1}} & {reg1_rdata_i}) |
+                    //addi   I-type     rd寄存器 = rs1寄存器的值 + imm的值 
+                    ({32{addi == 1'b1}} & {reg1_rdata_i}) |
+                    //sltiu   I-type    比较rs1寄存器的值和立即数的值，如果rs1寄存器的值更小，rd写入1，否则写入0
+                    ({32{sltiu == 1'b1}} & {reg1_rdata_i}) |
+                    //lb   I-type       向地址（rs1 + 立即数的值）读取一个字节，经过符号拓展后写入寄存器rd
+                    ({32{lb == 1'b1}} & {reg1_rdata_i}) |
+                    //lh   I-type       向地址（rs1 + 立即数的值）读取两个字节，经过符号拓展后写入寄存器rd
+                    ({32{lh == 1'b1}} & {reg1_rdata_i}) |
+                    //lhu   I-type      rd寄存器 = 从地址（rs1寄存器的值 + imm的值）中读取两个字节，0扩展后写入rd寄存器
+                    ({32{lhu == 1'b1}} & {reg1_rdata_i}) |
+                    //lw   I-type       向地址（rs1 + 立即数的值）读取四个字节，经过符号拓展后写入寄存器rd
+                    ({32{lw == 1'b1}} & {reg1_rdata_i}) |
+                    //andi   I-type     rd寄存器 = rs1寄存器的值 & imm的值 
+                    ({32{andi == 1'b1}} & {reg1_rdata_i}) |
+                    //xori   I-type     rd寄存器 = rs1寄存器的值 按位异或 立即数
+                    ({32{xori == 1'b1}} & {reg1_rdata_i}) |
+                    //ori   I-type      rd寄存器 = rs1寄存器的值 按位或 立即数
+                    ({32{ori == 1'b1}} & {reg1_rdata_i}) |
+                    //jalr   I-type     原pc + 4 写入rd寄存器中，并将pc设置为rs1寄存器的值 + 立即数
+                    ({32{jalr == 1'b1}} & {reg1_rdata_i}) |
+                    //sw   S-type       将rs2寄存器的低四位的值存入地址（rs1寄存器的值 + 立即数）
+                    ({32{sw == 1'b1}} & {reg1_rdata_i}) |
+                    //sh   S-type       将rs2寄存器的低两位的值存入地址（rs1寄存器的值 + 立即数）
+                    ({32{sh == 1'b1}} & {reg1_rdata_i}) |
+                    //sb   S-type       将rs2寄存器的低一位的值存入地址（rs1寄存器的值 + 立即数）
+                    ({32{sb == 1'b1}} & {reg1_rdata_i}) |
+                    //sd   S-type       将rs2寄存器的八个字节的值存入地址（rs1寄存器的值 + 立即数）
+                    ({32{sd == 1'b1}} & {reg1_rdata_i}) |
+                    //srl   R-type      把rs1寄存器的值右移rs2寄存器的值的位数，并将空的位数写入0，并将结果写入rd中
+                    ({32{srl == 1'b1}} & {reg1_rdata_i}) |
+                    //add   R-type      rd寄存器 = rs1寄存器的值 + rs2寄存器的值 
+                    ({32{add == 1'b1}} & {reg1_rdata_i}) |
+                    //sll   R-type      把rs1寄存器的值左移rs2寄存器的值的位数，并将空的位数写入0，并将结果写入rd中
+                    ({32{sll == 1'b1}} & {reg1_rdata_i}) |
+                    //slt   R-type      比较rs1寄存器的值和rs2寄存器的值，如果rs1寄存器的值更小，则rd写入1，否则写入0
+                    ({32{slt == 1'b1}} & {reg1_rdata_i}) |
+                    //sltu   R-type     无符号比较rs1寄存器的值和rs2寄存器的值，如果rs1寄存器的值更小，则rd写入1，否则写入0
+                    ({32{sltu == 1'b1}} & {reg1_rdata_i}) |
+                    //xor   R-type      rs1寄存器的值和rs2寄存器的值按位异或并将结果写入rd
+                    ({32{npcxor == 1'b1}} & {reg1_rdata_i}) |
+                    //or   R-type       rs1寄存器的值和rs2寄存器的值按位或并将结果写入rd
+                    ({32{npcor == 1'b1}} & {reg1_rdata_i}) |
+                    //and   R-type      rs1寄存器的值和rs2寄存器的值按位与并将结果写入rd 
+                    ({32{npcand == 1'b1}} & {reg1_rdata_i}) |
+                    //sra   R-type      把rs1寄存器的值右移rs2寄存器的值的位数，并将空的位数写入rs1寄存器的最高位，并将结果写入rd中
+                    ({32{sra == 1'b1}} & {reg1_rdata_i}) |
+                    //sub   R-type      rs1寄存器的值减去rs2寄存器的值，结果写入rd中，忽略算术溢出
+                    ({32{sub == 1'b1}} & {reg1_rdata_i}) |
+                    //mul   R-type      rs1寄存器的值 * rs2寄存器的值，写入rd寄存器中
+                    ({32{mul == 1'b1}} & {reg1_rdata_i}) |
+                    //mulh   R-type     rs1寄存器的值 * rs2寄存器的值，有符号形式，并将高位写入rd寄存器中
+                    ({32{mulh == 1'b1}} & {reg1_rdata_i}) |
+                    //mulhsu   R-type   rs1寄存器的值 * rs2寄存器的值，rs1寄存器为2的补码，rs2寄存器为无符号数，将乘积的高位写入rd中
+                    ({32{mulhsu == 1'b1}} & {reg1_rdata_i}) |
+                    //mulhu   R-type    rs1寄存器的值 * rs2寄存器的值，rs1寄存器、rs2寄存器都为无符号数，将乘积的高位写入rd中
+                    ({32{mulhu == 1'b1}} & {reg1_rdata_i}) |
+                    //div   R-type      rs1寄存器的值 / rs2寄存器的值，向0摄入，将这些数是为有符号数并将商写入rd寄存器中。
+                    ({32{div == 1'b1}} & {reg1_rdata_i}) |
+                    //divu   R-type     rs1寄存器的值 / rs2寄存器的值，向0摄入，将这些数是为无符号数并将商写入rd寄存器中。
+                    ({32{divu == 1'b1}} & {reg1_rdata_i}) |
+                    //rem   R-type      rs1寄存器的值 余 rs2寄存器的值，是为有符号数，余数写入rd寄存器中
+                    ({32{rem == 1'b1}} & {reg1_rdata_i}) |
+                    //remu   R-type     rs1寄存器的值 余 rs2寄存器的值，是为无符号数，余数写入rd寄存器中
+                    ({32{remu == 1'b1}} & {reg1_rdata_i}) |
+                    //beq   B-type      如果rs1 == rs2 => pc寄存器 = pc寄存器的值 + imm的值 
+                    ({32{beq == 1'b1}} & {pc_i}) |
+                    //bne   B-type      如果rs1 != rs2 => pc寄存器 = pc寄存器的值 + imm的值
+                    ({32{bne == 1'b1}} & {pc_i}) |
+                    //blt   B-type      如果有符号rs1 <  有符号rs2 => pc寄存器 = pc寄存器的值 + imm的值 
+                    ({32{blt == 1'b1}} & {pc_i}) |
+                    //bge   B-type      如果有符号rs1 >= 有符号rs2 => pc寄存器 = pc寄存器的值 + imm的值 
+                    ({32{bge == 1'b1}} & {pc_i}) |
+                    //bltu   B-type     如果无符号rs1 <  无符号rs2 => pc寄存器 = pc寄存器的值 + imm的值
+                    ({32{bltu == 1'b1}} & {pc_i}) |
+                    //bgeu   B-type     如果无符号rs1 >= 无符号rs2 => pc寄存器 = pc寄存器的值 + imm的值
+                    ({32{bgeu == 1'b1}} & {pc_i}) |
+                    //jal   J-type      下一条指令pc+4存入rd寄存器中，并且让pc = pc + imm
+                    ({32{jal == 1'b1}} & {pc_i}) ;
+                    
 	
     assign op_2 = 32'h0 |
                     //auipc u-type
                     ({32{auipc == 1'b1}} & {imm}) |
                     //lui   u-type
-                    ({32{lui == 1'b1}} & {0}) |
+                    ({32{lui == 1'b1}} & {32'b0}) |
                     //srli  I-type
-                    ({32{srli == 1'b1}} & {shamt}) |
-                    //addi  i-type
-                    ({32{opcode == 7'b0010011}} & {imm}) |
-                    //add  i-type
-                    ({32{opcode == 7'b0110011}} & {reg2_rdata_i}) |
-                    //auipc u-type
-                    ({32{opcode == 7'b0010111}} & {imm}) |
-                    //lw i-type
-                    ({32{opcode == 7'b0000011}} & {imm}) |
-                    //sw s-type
-                    ({32{opcode == 7'b0100011}} & {imm}) |
-                    //beq blt b-type
-                    ({32{opcode == 7'b1100011}} & {imm}) |
-                    //jalr i-type 4
-                    ({32{opcode == 7'b1100111}} & {32'd4}) |
-                    //jal j-type 4
-                    //({32{opcode == 7'b1101111}} & {imm[31:1], 1'b0});
-                    ({32{opcode == 7'b1101111}} & {32'd4}) |
-                    //all r-type page160
-                    ({32{opcode == 7'b0110011}} & {reg2_rdata_i}) ;
+                    ({32{srli == 1'b1}} & {27'b0,rs2_raddr_o}) |
+                    //slli  I-type
+                    ({32{slli == 1'b1}} & {27'b0,rs2_raddr_o}) |
+                    //srai  I-type
+                    ({32{srai == 1'b1}} & {27'b0,rs2_raddr_o}) |
+                    //lbu   I-type
+                    ({32{lbu == 1'b1}} & {imm}) |
+                    //addi   I-type
+                    ({32{addi == 1'b1}} & {imm}) |
+                    //sltiu   I-type
+                    ({32{sltiu == 1'b1}} & {imm}) |
+                    //lb   I-type
+                    ({32{lb == 1'b1}} & {imm}) |
+                    //lh   I-type
+                    ({32{lh == 1'b1}} & {imm}) |
+                    //lhu   I-type
+                    ({32{lhu == 1'b1}} & {imm}) |
+                    //lw   I-type
+                    ({32{lw == 1'b1}} & {imm}) |
+                    //andi   I-type     
+                    ({32{andi == 1'b1}} & {imm}) |
+                    //xori   I-type
+                    ({32{xori == 1'b1}} & {imm}) |
+                    //ori   I-type
+                    ({32{ori == 1'b1}} & {imm}) |
+                    //jalr   I-type
+                    ({32{jalr == 1'b1}} & {imm}) |
+                    //sw   S-type
+                    ({32{sw == 1'b1}} & {imm}) |
+                    //sh   S-type
+                    ({32{sh == 1'b1}} & {imm}) |
+                    //sb   S-type
+                    ({32{sb == 1'b1}} & {imm}) |
+                    //sd   S-type
+                    ({32{sd == 1'b1}} & {imm}) |
+                    //srl   R-type
+                    ({32{srl == 1'b1}} & {reg2_rdata_i}) |
+                    //add   R-type
+                    ({32{add == 1'b1}} & {reg2_rdata_i}) |
+                    //sll   R-type
+                    ({32{sll == 1'b1}} & {reg2_rdata_i}) |
+                    //slt   R-type
+                    ({32{slt == 1'b1}} & {reg2_rdata_i}) |
+                    //sltu   R-type
+                    ({32{sltu == 1'b1}} & {reg2_rdata_i}) |
+                    //xor   R-type
+                    ({32{npcxor == 1'b1}} & {reg2_rdata_i}) |
+                    //or   R-type
+                    ({32{npcor == 1'b1}} & {reg2_rdata_i}) |
+                    //and   R-type
+                    ({32{npcand == 1'b1}} & {reg2_rdata_i}) |
+                    //sra   R-type
+                    ({32{sra == 1'b1}} & {reg2_rdata_i}) |
+                    //sub   R-type
+                    ({32{sub == 1'b1}} & {reg2_rdata_i}) |
+                     //mul   R-type
+                    ({32{mul == 1'b1}} & {reg2_rdata_i}) |
+                    //mulh   R-type
+                    ({32{mulh == 1'b1}} & {reg2_rdata_i}) |
+                    //mulhsu   R-type
+                    ({32{mulhsu == 1'b1}} & {reg2_rdata_i}) |
+                    //mulhu   R-type
+                    ({32{mulhu == 1'b1}} & {reg2_rdata_i}) |
+                    //div   R-type
+                    ({32{div == 1'b1}} & {reg2_rdata_i}) |
+                    //divu   R-type
+                    ({32{divu == 1'b1}} & {reg2_rdata_i}) |
+                    //rem   R-type
+                    ({32{rem == 1'b1}} & {reg2_rdata_i}) |
+                    //remu   R-type
+                    ({32{remu == 1'b1}} & {reg2_rdata_i}) |
+                    //beq   B-type
+                    ({32{beq == 1'b1}} & {imm}) |
+                    //bne   B-type
+                    ({32{bne == 1'b1}} & {imm}) |
+                    //blt   B-type
+                    ({32{blt == 1'b1}} & {imm}) |
+                    //bge   B-type
+                    ({32{bge == 1'b1}} & {imm}) |
+                    //bltu   B-type
+                    ({32{bltu == 1'b1}} & {imm}) |
+                    //bgeu   B-type
+                    ({32{bgeu == 1'b1}} & {imm}) |
+                    //jal   J-type
+                    ({32{jal == 1'b1}} & {imm}) ;
 
-    assign ALUop = 4'b0 |
-                    //auipc u-type
-                    ({4{auipc == 1'b1}} & {4'd0}) ;
+// always @(posedge jalr)begin
+//         $display("op1   = 0x%08x", op_1); 
+//         $display("op2   = 0x%08x", op_2);  
+// end                  
+/***********************************************ALU控制信号************************************************/
+    
+    //ALUop是决定要 +0 -1 *2 /3 &4 |5 ^6 单目7 补0左移8 补0右移9 %余10 补符号位左移11，补符号位右移12       none 15
+    assign ALUop = 4'b0 |   //auipc 
+                    ({4{lui == 1'b1}} & {4'd7}) |
+                    ({4{srli == 1'b1}} & {4'd9}) |
+                    ({4{srl == 1'b1}} & {4'd9}) |
+                    ({4{slli == 1'b1}} & {4'd8}) |
+                    ({4{sltiu == 1'b1}} & {4'd15}) |
+                    ({4{sltu == 1'b1}} & {4'd15}) |
+                    ({4{andi == 1'b1}} & {4'd4}) |
+                    ({4{xori == 1'b1}} & {4'd6}) |
+                    ({4{ori == 1'b1}} & {4'd5}) |
+                    ({4{sll == 1'b1}} & {4'd8}) |
+                    ({4{slt == 1'b1}} & {4'd1}) |   
+                    ({4{npcxor == 1'b1}} & {4'd6}) |
+                    ({4{npcor == 1'b1}} & {4'd5}) |
+                    ({4{npcand == 1'b1}} & {4'd4}) |
+                    ({4{sra == 1'b1}} & {4'd12}) |
+                    ({4{sub == 1'b1}} & {4'd1}) |
+                    ({4{mul == 1'b1}} & {4'd2}) |
+                    ({4{mulh == 1'b1}} & {4'd2}) |
+                    ({4{mulhsu == 1'b1}} & {4'd2}) |
+                    ({4{mulhu == 1'b1}} & {4'd2}) |
+                    ({4{div == 1'b1}} & {4'd3}) |
+                    ({4{divu == 1'b1}} & {4'd3}) |
+                    ({4{rem == 1'b1}} & {4'd10}) |
+                    ({4{remu == 1'b1}} & {4'd10}) |
+                    ({4{srai == 1'b1}} & {4'd12}) ;
 
+    //regS-写回数据的选择信号，0-来源于ALU，1-来源于DataMem，2-来源于PC+4；
     assign regS = 2'b0 |
-                    ({2{auipc == 1'b1}} & {4'd0}) ;
-    //用来控制EXU和WBU的控制信号
-    always @(*) begin
-        // 默认值
-        jal = 0;
-        //branch = 0;
-        //brlt = 0;
-        regS = 0;
-        ALUop = 0;
-        MemWr = 0;
-        RegW = 0;
-        PCx1 = 0;
-        // $display("op_1 = 0x%08x", op_1);
-        // $display("op_2 = 0x%08x", op_2);
-        case(opcode)
-            7'b0110011: begin //Rtype
-                if   (func7 == 7'b0000000) begin
-                        if(func3 == 3'b000)begin        //add
-                            ALUop = 0;
-                            RegW = 1;
-                        end
-                        else if(func3 == 3'b001)begin   //sll
+                     ({2{lb == 1'b1}} & {2'd1}) |
+                     ({2{lh == 1'b1}} & {2'd1}) |
+                     ({2{lw == 1'b1}} & {2'd1}) |
+                     ({2{lbu == 1'b1}} & {2'd1}) |
+                     ({2{lhu == 1'b1}} & {2'd1}) |
+                     ({2{jal == 1'b1}} & {2'd2}) |
+                     ({2{jalr == 1'b1}} & {2'd2}) ;
 
-                        end
-                        else if(func3 == 3'b010)begin   //slt
+    // always @(*)begin
+    // $display("lb  = %d",lb );
+    // $display("lh  = %d",lh );
+    // $display("lw  = %d",lw );
+    // $display("lbu = %d",lbu);
+    // $display("lhu = %d",lhu);
+    // end
 
-                        end
-                        else if(func3 == 3'b011)begin   //Rsltu
-
-                        end
-                        else if(func3 == 3'b100)begin   //xor
-
-                        end
-                        else if(func3 == 3'b101)begin   //srl
-
-                        end
-                        else if(func3 == 3'b110)begin   //or
-
-                        end
-                        else begin  //func3 == 3'b111   //and
-
-                        end
-                        
-                end
-                else if   (func7 == 7'b0100000) begin
-                        if(func3 == 3'b000)begin  //sub
-                            ALUop = 1;
-                            RegW = 1;
-                        end
-                        else if(func3 == 3'b101)begin   //sra
-
-                        end                
-                end
-                else if   (func7 == 7'b0000001) begin  
-                        if(func3 == 3'b000)begin  //mul
-                            
-                        end
-                        else begin
-                            $display("add more instructions please!");
-                        end                
-                end
-            end
-            7'b0010111:begin    //I type
-
-            end
-            7'b0000011:begin    //I type
-
-            end
-            7'b0010011:begin    //I type
-
-            end
-            /*
-            7'b0010011: begin // addi
-                RegW = 1;
-            end
+    //MemWr-DataMem写使能；
+    assign MemWr = 1'b0 |
+                    ({{is_Stype == 1'b1}} & {1'b1});
+    //RegW-寄存器堆写使能；
+    assign RegW = is_Utype | is_Itype | is_Rtype | is_Jtype;  // 所有需要写寄存器的指令类型
     
-            7'b0010111: begin // auipc
-                regS = 0;
-                RegW = 1;
-            end
-    
-            7'b0000011: begin // lw
-                regS = 1;
-                RegW = 1;
-            end
-    
-            7'b0100011: begin // sw
-                MemWr = 1;
-                ALUop = 0;
-            end
-    /*
-            7'b1100011: begin // beq/blt
-                ALUop = 1;
-                regS = 2;
-                if (func3 == 3'b000) branch = 1;
-                else if (func3 == 3'b100) brlt = 1;
-            end
-    */
-    /*
-            7'b1100111: begin // jalr
-                regS = 2;
-                RegW = 1;
-                PCx1 = 1;
-            end
-    
-            7'b1101111: begin // jal
-                jal = 1;
-                regS = 2;
-                RegW = 1;
-            end
-            */
-            default: begin   
-                //todo
-                $display("add more instructions please!");
-            end
-        endcase
-        //$display("opcode = %7b", opcode);
-    end
-    
-assign memory_lenth = 32'b0 |
+    //给DPI-C write 和 read
+    assign memory_lenth = 32'b0 |
                         //lw
-                        ({32{opcode == 7'b0000011}} & {32{func3 == 3'b010}} & { 32'd4 }) |
+                        ({32{lw == 1'b1}} & { 32'd4 }) |
+                        //lh
+                        ({32{lh == 1'b1}} & { 32'd2 }) |
+                        //lhu
+                        ({32{lhu == 1'b1}} & { 32'd2 }) |
+                        //lb
+                        ({32{lb == 1'b1}} & { 32'd1 }) |
+                        //lbu
+                        ({32{lbu == 1'b1}} & { 32'd1 }) |
+                        //sd
+                        ({32{sd == 1'b1}} & { 32'd8 }) |
                         //sw
-                        ({32{opcode == 7'b0100011}} & {32{func3 == 3'b010}} & { 32'd4 }) ;
+                        ({32{sw == 1'b1}} & { 32'd4 }) |
+                        //sh
+                        ({32{sh == 1'b1}} & { 32'd2 }) |
+                        //sb
+                        ({32{sb== 1'b1}}  & { 32'd1 }) ;
 
-assign 
+//需不需要符号位扩展，不需要00 ，取一个字节要扩展01；取两个字节要扩展10；取四个字节要扩展11。
+    assign need_sign_ext = 2'b0 |
+                        //lh
+                        ({2{lh == 1'b1}} & { 2'd2 }) |
+                        //lb
+                        ({2{lb == 1'b1}} & { 2'd1 }) |
+                        //lw
+                        ({2{lw == 1'b1}} & { 2'd3 });
+
+    //判断指令是否为jal
+    assign is_jal = jal;
+    //判断指令是否为jalr
+    assign is_jalr = jalr;
+    //判断指令是否为beq
+    assign is_beq = beq;
+    //判断指令是否为blt
+    assign is_blt = blt;
+    //判断指令是否为bne
+    assign is_bne = bne;
+    //判断指令是否为bge
+    assign is_bge = bge;
+    //判断指令是否为bltu
+    assign is_bltu = bltu;
+    //判断指令是否为bgeu
+    assign is_bgeu = bgeu;
+    //判断指令是否为sltiu
+    assign is_sltiu = sltiu;
+    //判断指令是否为sltu
+    assign is_sltu = sltu;
+
 
 /***************************************DPI-C*******************************************/
-
-
     always @(*) begin
     //$display("PC = 0x%08x", pc_i);
     //$display("inst = 0x%08x", inst_i);
     if(inst_i == 32'b0000_0000_0001_0000_0000_0000_0111_0011) begin
+        //$display("我进来了，应该ebreak了\n");
         set_npc_exit(pc_i,0);
     end
 end
@@ -430,7 +538,7 @@ task IDU_SEND_CALL_FLAG(
     output int dnpc
 );
 
-    call_flag = ((rd_addr == 1 && jump_en == 1) || (rd_addr == 0 && imm == 0 && PCx1 == 1)) ? 1 : 0;
+    call_flag = ((rd_addr == 1 && jal == 1 | jalr == 1 ) || (rd_addr == 0 && imm == 0 && jalr == 1)) ? 1 : 0;
     // $display("rd_addr = 0x%08x", rd_addr);
     // $display("jump_en = %d", jump_en);
     // $display("jalr = %d", PCx1);
@@ -450,12 +558,8 @@ task IDU_SEND_RET_FLAG(
 
     ret_flag = inst_i == 32'h00008067 ? 1 : 0;
     //pc  = pc_i;
-    pc = PCx1 ? {pc_i[31:1],1'b0} : pc_i ;
+    pc = jalr ? {pc_i[31:1],1'b0} : pc_i ;
 
 endtask
-
-
-
-
 
     endmodule
