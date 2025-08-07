@@ -42,6 +42,7 @@ module ysyx_25060170_WBU(
     input MemWr,                    //表示数据要load store到内存中 
     input [31:0]  reg2_rdata,
     input [31:0]  memory_lenth,     //load store 的字节的大小（配合paddrwrite和paddrread使用）
+    input [1:0]   need_sign_ext,
     //to GPR
     output [31:0] reg_write_data_o, // 写回寄存器的数据
     output [4:0]  reg_write_addr_o, // 写回寄存器的地址
@@ -58,7 +59,7 @@ module ysyx_25060170_WBU(
                     ({is_beq  == 1'b1}   & { beq_flag  == 1'b0  }) | 
                     ({is_blt  == 1'b1}   & { blt_flag  == 1'b0  }) |
                     ({is_bne  == 1'b1}   & { bne_flag  == 1'b0  }) |
-                    ({is_bge  == 1'b1}   & { bge_flag  == 1'b0  }) |
+                    ({is_bge  == 1'b1}   & { bge_flag  == 1'b1  }) |
                     ({is_bltu == 1'b1}   & { bltu_flag == 1'b0  }) |
                     ({is_bgeu == 1'b1}   & { bgeu_flag == 1'b0  }) ;
 
@@ -69,7 +70,14 @@ module ysyx_25060170_WBU(
     end
     
     //assign l_memdata = paddr_read(exu_result_i,memory_lenth);
-    assign l_memdata = (regS == 1) ? paddr_read(exu_result_i,memory_lenth) : 0 ;
+    //assign l_memdata = (regS == 1) ? paddr_read(exu_result_i,memory_lenth) : 0 ;
+    wire [31:0] paddr_data = (regS == 1) ? paddr_read(exu_result_i,memory_lenth) : 0;
+    assign l_memdata = 32'b0 |
+                        ({32{need_sign_ext == 2'd1}}  & {32{regS == 2'd1}}  & { {24{paddr_data[7]}} , paddr_data[7:0] }) |
+                        ({32{need_sign_ext == 2'd2}}  & {32{regS == 2'd1}}  & { {16{paddr_data[15]}} , paddr_data[15:0] }) |
+                        ({32{need_sign_ext == 2'd3}}  & {32{regS == 2'd1}}  & { paddr_data }) | 
+                        ({32{regS == 2'd1}}  & { paddr_data });
+
     
     always @(*) begin
         if(MemWr)begin

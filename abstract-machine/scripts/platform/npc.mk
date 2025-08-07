@@ -15,7 +15,7 @@ LDFLAGS   += --gc-sections -e _start
 NPCFLAGS += -l $(shell dirname $(IMAGE).elf)/NPC-log.txt
 NPCFLAGS += -f $(IMAGE).elf
 NPCFLAGS += --diff=/home/yuweijie/ysyx-workbench/nemu/build/riscv32-nemu-interpreter-so
-#NPCFLAGS += -b
+NPCFLAGS += -b
 
 MAINARGS_MAX_LEN = 64
 MAINARGS_PLACEHOLDER = the_insert-arg_rule_in_Makefile_will_insert_mainargs_here

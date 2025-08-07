@@ -44,21 +44,33 @@ module ysyx_25060170_EXU(
 );
     wire [31:0] jumpaddr;
 
-wire [31:0] reg1_sub_reg2 = reg1_rdata_i - reg2_rdata_i;
-wire sub_sign = reg1_sub_reg2[31];  // 减法结果的符号位
-wire sub_zero = (reg1_sub_reg2 == 0); // 结果是否为0
+wire [31:0] sub_op_1;
+wire [31:0] sub_op_2;
+assign sub_op_1 = reg1_rdata_i;
+assign sub_op_2 = is_sltiu ? imm : reg2_rdata_i;
+
+wire [31:0] reg1_sub_reg2 = sub_op_1 - sub_op_2;
+wire sub_sign = (sub_op_1[31] ^ sub_op_2[31]) ?  // 符号位不同
+               (sub_op_1[31] & ~sub_op_2[31]) : // rs1负且rs2正时，rs1 < rs2
+               (reg1_sub_reg2[31]);             // 符号位相同时，看减法结果符号
+
+wire sub_zero = (reg1_sub_reg2 == 0); // 结果是否为0 
+
+ //(reg1_sub_reg2[31] | ((sub_op_1[31] == 1) & (sub_op_2[31] == 0))) & ((sub_op_1[31] != 0) & (sub_op_2[31] != 1));  // 减法结果的符号位
+
 wire sltiu_flag;
 wire sltu_flag;
 
 // 有符号比较
-assign beq_flag = is_beq & sub_zero;          // ==
-assign blt_flag = is_blt & ~sub_zero & sub_sign; // < (结果负且非零)
-assign bge_flag = is_bge & (sub_zero | ~sub_sign); // >= (结果正或零)
-assign bne_flag = is_bne & ~sub_zero;         // !=
+assign beq_flag = is_beq & sub_zero;          // rs1 == rs2
+assign blt_flag = is_blt & ~sub_zero & sub_sign; // rs1 < rs2（结果负且非零）
+assign bge_flag = is_bge & (sub_zero | ~sub_sign); // rs1 >= rs2（结果正或零）
+assign bne_flag = is_bne & ~sub_zero;         // rs1 != rs2
+
 
 // 无符号比较（需额外处理）
-wire [32:0] reg1_ext = {1'b0, reg1_rdata_i};  // 扩展1位防止溢出
-wire [32:0] reg2_ext = {1'b0, reg2_rdata_i};
+wire [32:0] reg1_ext = {1'b0, sub_op_1};  // 扩展1位防止溢出
+wire [32:0] reg2_ext = {1'b0, sub_op_2};
 
 //用这个方法可以取消 对未用信号的报警
 /* verilator lint_off UNUSEDSIGNAL */
@@ -72,11 +84,12 @@ assign bgeu_flag = is_bgeu & ~subu_carry;     // 无符号 >=
 assign sltiu_flag = is_sltiu & subu_carry;    // 无符号 <  < (结果负且非零)
 assign sltu_flag  = is_sltu  & subu_carry;    // 无符号 <  < (结果负且非零)
 
-// always @(posedge is_sltu) begin
-//         $display("is_sltu       = %d", is_sltu); 
-//         $display("sltu_flag     = %d", sltu_flag);
-//         $display("reg1_rdata_i  = 0x%08x", reg1_rdata_i);
-//         $display("reg2_rdata_i  = 0x%08x", reg2_rdata_i);
+// always @(posedge is_sltiu) begin
+//         $display("is_sltiu       = %d", is_sltiu); 
+//         $display("sltiu_flag     = %d", sltiu_flag);
+//         $display("sub_op_1  = 0x%08x", sub_op_1);
+//         $display("sub_op_2  = 0x%08x", sub_op_2);
+//         $display("sub_op_2  = 0x%08x", sub_op_2);
 //         $display("ALUop         = %d", ALUop); 
 //         $display("exu_res1      = 0x%08x", exu_res1);       
 //     end
@@ -108,7 +121,10 @@ assign sltu_flag  = is_sltu  & subu_carry;    // 无符号 <  < (结果负且非
                        exu_is_jal  ?  jumpaddr : 
                        bne_flag    ?  exu_res1 : 
                        bge_flag    ?  exu_res1 : 
-                       blt_flag    ?  exu_res1 :32'b0;
+                       blt_flag    ?  exu_res1 :
+                       bltu_flag   ?  exu_res1 :
+                       beq_flag    ?  exu_res1 :
+                       bgeu_flag   ?  exu_res1 : 32'b0;
                        
     
     // always @(posedge exu_is_jalr) begin

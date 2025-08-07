@@ -10,6 +10,7 @@ wire [4:0]  	rs2_raddr;
 wire [3:0]  	ALUop;
 wire        	MemWr;
 wire [31:0]		memory_lenth;
+wire [1:0]		need_sign_ext;
 wire [4:0]  	rd_addr;
 wire [31:0] 	op_1;
 wire [31:0] 	op_2;
@@ -49,7 +50,7 @@ wire        	reg_write_en_o;
 wire [31:0]     EXU_PC;
 wire			jump_en;
 
-assign jump_en = jalr | jal | bne_flag | bge_flag | blt_flag;
+assign jump_en = jalr | jal | bne_flag | bge_flag | blt_flag | bgeu_flag | bltu_flag | beq_flag;
  
 ysyx_25060170_IFU #(
 	.RESET_PC 	( 32'h8000_0000  ))
@@ -85,6 +86,7 @@ ysyx_25060170_IDU u_ysyx_25060170_IDU(
 	.reg1_rdata_o	( reg1_rdata	),
 	.reg2_rdata_o	( reg2_rdata	),
 	.memory_lenth	( memory_lenth	),
+	.need_sign_ext	( need_sign_ext ),
 	.MemWr        	( MemWr         ),	
 	.is_jal         ( jal           ),
 	.is_jalr        ( jalr          ),
@@ -165,6 +167,7 @@ ysyx_25060170_WBU u_ysyx_25060170_WBU(
 	.MemWr				( MemWr				),
 	.reg2_rdata			( reg2_rdata		),
 	.memory_lenth       ( memory_lenth		),
+	.need_sign_ext		( need_sign_ext),
 	.reg_write_data_o 	( reg_write_data_o  ),
 	.reg_write_addr_o 	( reg_write_addr_o  ),
 	.reg_write_en_o   	( reg_write_en_o    )

@@ -43,6 +43,7 @@ module ysyx_25060170_IDU(
     output reg [31:0] reg1_rdata_o,
     output reg [31:0] reg2_rdata_o,
     output reg [31:0] memory_lenth,
+    output reg [1:0] need_sign_ext,
     output reg MemWr,
     output reg is_jal,
     output reg is_jalr,    
@@ -146,7 +147,7 @@ assign lh       =   1'b0 | (opcode == 7'b0000011) & (func3 == 3'b001);
 assign lhu      =   1'b0 | (opcode == 7'b0000011) & (func3 == 3'b101);
 assign lw       =   1'b0 | (opcode == 7'b0000011) & (func3 == 3'b010);
 assign andi     =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b111);
-assign xori     =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b110);
+assign xori     =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b100);
 assign ori      =   1'b0 | (opcode == 7'b0010011) & (func3 == 3'b010);
 assign jalr     =   1'b0 | (opcode == 7'b1100111) & (func3 == 3'b000);
 assign is_Itype =   srli | slli | srai | lbu | addi | sltiu | lb | lh | lhu | lw | andi | xori | ori | jalr;
@@ -461,6 +462,8 @@ assign imm_o = imm;
                         ({32{lw == 1'b1}} & { 32'd4 }) |
                         //lh
                         ({32{lh == 1'b1}} & { 32'd2 }) |
+                        //lhu
+                        ({32{lhu == 1'b1}} & { 32'd2 }) |
                         //lb
                         ({32{lb == 1'b1}} & { 32'd1 }) |
                         //lbu
@@ -473,6 +476,15 @@ assign imm_o = imm;
                         ({32{sh == 1'b1}} & { 32'd2 }) |
                         //sb
                         ({32{sb== 1'b1}}  & { 32'd1 }) ;
+
+//需不需要符号位扩展，不需要00 ，取一个字节要扩展01；取两个字节要扩展10；取四个字节要扩展11。
+    assign need_sign_ext = 2'b0 |
+                        //lh
+                        ({2{lh == 1'b1}} & { 2'd2 }) |
+                        //lb
+                        ({2{lb == 1'b1}} & { 2'd1 }) |
+                        //lw
+                        ({2{lw == 1'b1}} & { 2'd3 });
 
     //判断指令是否为jal
     assign is_jal = jal;
