@@ -96,19 +96,20 @@ static int decode_exec(Decode *s) {
     int temp = cpu.mtvec;
     cpu.mtvec =  src1;
     src1 = temp;
-    printf("write ntvec\n");
+    printf("mtvec = 0x%08x",cpu.mtvec);
+    //printf("write ntvec\n");
   };
-  if(rd == 0x300){ //mstatus
+  if(imm == 0x300){ //mstatus
     int temp = cpu.mstatus;
     cpu.mstatus =  src1;
     src1 = temp;
   };
-  if(rd == 0x341){ //mepc
+  if(imm == 0x341){ //mepc
     int temp = cpu.mepc;
     cpu.mepc =  src1;
     src1 = temp;
   };
-  if(rd == 0x342){ //mcause
+  if(imm == 0x342){ //mcause
     int temp = cpu.mcause;
     cpu.mcause =  src1;
     src1 = temp;
