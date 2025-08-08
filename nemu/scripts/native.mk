@@ -29,7 +29,7 @@ override ARGS ?= --log=$(BUILD_DIR)/nemu-log.txt   # --log=指定日志文件的
 override ARGS += $(ARGS_DIFF)
 
 #override ARGS += -b ，当你make run的时候他其实就输入了make run ARGS="-b"，启动批处理模式
-#override ARGS += -b  ###批处理是这一行，不要的话可以注释掉
+# override ARGS += -b  ###批处理是这一行，不要的话可以注释掉
 
 # Command to execute NEMU
 IMG ?=

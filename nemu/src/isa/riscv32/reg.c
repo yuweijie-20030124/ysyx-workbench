@@ -28,6 +28,9 @@ void isa_reg_display() {
   for (int i = 0; i < 32; i++) {
     printf("%s\t0x%08x\t%d\n", reg_name(i), gpr(i), gpr(i));
   }
+    printf("mcause\t0x%08x\t%d\n",cpu.mcause,cpu.mcause);
+    printf("mstatus\t0x%08x\t%d\n",cpu.mstatus,cpu.mstatus);
+    printf("mepc\t0x%08x\t%d\n",cpu.mepc,cpu.mepc);
 }
 
 //讲寄存器名字符转换为对应的寄存器值
