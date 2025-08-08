@@ -91,8 +91,8 @@ static int decode_exec(Decode *s) {
 
   //CSR寄存器
   INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw  , I, 
-    printf("write ntvec\n"); 
-  if(rd == 0x305){  //mtvec
+    //printf("write ntvec\n"); 
+  if(imm == 0x305){  //mtvec
     int temp = cpu.mtvec;
     cpu.mtvec =  src1;
     src1 = temp;
