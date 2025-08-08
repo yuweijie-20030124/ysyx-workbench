@@ -56,7 +56,7 @@ static void exec_once(Decode *s, vaddr_t pc) {
   s->pc = pc;//当前指令地址
   s->snpc = pc;//静态下一条指令地址，默认为pc+4
 
-  if(s->pc == 0x80001480){
+  if(s->pc == 0x80001474){
     printf("找到一场入口地址\n");
     nemu_state.state = NEMU_STOP;
   }
