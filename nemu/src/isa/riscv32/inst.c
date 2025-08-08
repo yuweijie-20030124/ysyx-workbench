@@ -91,26 +91,26 @@ static int decode_exec(Decode *s) {
 
   //CSR寄存器
   INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw  , I, 
-  if(rd == 0x305){  //mtvec
-    int temp = cpu.mtvec;
-    cpu.mtvec =  src1;
-    src1 = temp;
-  };
-  if(rd == 0x300){ //mstatus
-    int temp = cpu.mstatus;
-    cpu.mstatus =  src1;
-    src1 = temp;
-  };
-  if(rd == 0x341){ //mepc
-    int temp = cpu.mepc;
-    cpu.mepc =  src1;
-    src1 = temp;
-  };
-  if(rd == 0x342){ //mcause
-    int temp = cpu.mcause;
-    cpu.mcause =  src1;
-    src1 = temp;
-  };
+  // if(rd == 0x305){  //mtvec
+  //   int temp = cpu.mtvec;
+  //   cpu.mtvec =  src1;
+  //   src1 = temp;
+  // };
+  // if(rd == 0x300){ //mstatus
+  //   int temp = cpu.mstatus;
+  //   cpu.mstatus =  src1;
+  //   src1 = temp;
+  // };
+  // if(rd == 0x341){ //mepc
+  //   int temp = cpu.mepc;
+  //   cpu.mepc =  src1;
+  //   src1 = temp;
+  // };
+  // if(rd == 0x342){ //mcause
+  //   int temp = cpu.mcause;
+  //   cpu.mcause =  src1;
+  //   src1 = temp;
+  // };
 );
 
   INSTPAT("??????? ????? ????? 010 ????? 01000 11", sw     , S, Mw(src1 + imm, 4, src2)); 
