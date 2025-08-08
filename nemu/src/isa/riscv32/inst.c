@@ -92,7 +92,9 @@ static int decode_exec(Decode *s) {
   //CSR寄存器
   INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw  , I, 
   if(rd == 0x305){  //mtvec
-
+    int temp = cpu.mtvec;
+    cpu.mtvec =  src1;
+    src1 = temp;
   };
   if(rd == 0x300){ //mstatus
     
