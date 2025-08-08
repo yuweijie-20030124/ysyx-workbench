@@ -95,6 +95,7 @@ static int decode_exec(Decode *s) {
     int temp = cpu.mtvec;
     cpu.mtvec =  src1;
     src1 = temp;
+    printf("write ntvec\n");
   };
   if(rd == 0x300){ //mstatus
     int temp = cpu.mstatus;
