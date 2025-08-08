@@ -112,7 +112,7 @@ static int decode_exec(Decode *s) {
     src1 = temp;
   };
 );
-  INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , I, s->pc = isa_raise_intr(8,s->pc);printf("pc = 0x%08x\n",s->pc));
+  INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , I, s->dnpc = isa_raise_intr(8,s->pc));
 
   INSTPAT("??????? ????? ????? 010 ????? 01000 11", sw     , S, Mw(src1 + imm, 4, src2)); 
 
