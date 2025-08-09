@@ -31,6 +31,7 @@ void isa_reg_display() {
     printf("mcause\t0x%08x\t%d\n",cpu.mcause,cpu.mcause);
     printf("mstatus\t0x%08x\t%d\n",cpu.mstatus,cpu.mstatus);
     printf("mepc\t0x%08x\t%d\n",cpu.mepc,cpu.mepc);
+    printf("mtvec\t0x%08x\t%d\n",cpu.mepc,cpu.mtvec);
 }
 
 //讲寄存器名字符转换为对应的寄存器值
