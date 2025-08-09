@@ -90,53 +90,42 @@ static int decode_exec(Decode *s) {
   INSTPAT("??????? ????? ????? 110 ????? 00100 11", ori    , I, R(rd) = src1 | imm);
 
   //CSR寄存器
-  INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw  , I, 
-    //printf("write ntvec\n"); 
+  INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw  , I,  
   if(imm == 0x305){  //mtvec
-    int temp = cpu.mtvec;
+    R(rd) = cpu.mtvec;
     cpu.mtvec =  src1;
-    R(rd) = temp;
-    //printf("write ntvec\n");
   };
   if(imm == 0x300){ //mstatus
-    int temp = cpu.mstatus;
+    R(rd) = cpu.mstatus;
     cpu.mstatus =  src1;
-    R(rd) = temp;
   };
   if(imm == 0x341){ //mepc
-    int temp = cpu.mepc;
+    R(rd) = cpu.mepc;
     cpu.mepc =  src1;
-    R(rd) = temp;
   };
   if(imm == 0x342){ //mcause
-    int temp = cpu.mcause;
+    R(rd) = cpu.mcause;
     cpu.mcause =  src1;
-    R(rd) = temp;
   };
 );
 
   INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , I, s->dnpc = isa_raise_intr(8,s->pc));
   INSTPAT("??????? ????? ????? 010 ????? 11100 11", csrrs  , I, 
   if(imm == 0x305){  //mtvec
-    int temp = cpu.mtvec;
-    cpu.mtvec =  src1 | temp;
-    R(rd) = temp;
-    //printf("write ntvec\n");
+    R(rd) = cpu.mtvec;
+    cpu.mtvec |=  src1;
   };
   if(imm == 0x300){ //mstatus
-    int temp = cpu.mstatus;
-    cpu.mstatus =  src1 | temp;
-    R(rd) = temp;
+    R(rd) = cpu.mstatus;
+    cpu.mstatus |=  src1;
   };
   if(imm == 0x341){ //mepc
-    int temp = cpu.mepc;
-    cpu.mepc =  src1 | temp;
-    R(rd) = temp;
+    R(rd) = cpu.mepc;
+    cpu.mepc |=  src1;
   };
   if(imm == 0x342){ //mcause
-    int temp = cpu.mcause;
-    cpu.mcause =  src1 | temp;
-    R(rd) = temp;
+    R(rd) = cpu.mcause;
+    cpu.mcause |=  src1;
   };
 );
   INSTPAT("??????? ????? ????? 010 ????? 01000 11", sw     , S, Mw(src1 + imm, 4, src2)); 
