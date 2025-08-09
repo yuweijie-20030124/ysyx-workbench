@@ -29,7 +29,7 @@ enum {
 
 static void etrace() {
   IFDEF(CONFIG_ETRACE, {
-      printf(ANSI_FMT("[ETRACE]", ANSI_FG_YELLOW)"ecall in mepc = " FMT_WORD ", mcause = " FMT_WORD "\n",cpu.mepc, cpu.mcause);});
+      printf(ANSI_FMT("[ETRACE]", ANSI_FG_BLUE)"ecall in mepc = " FMT_WORD ", mcause = " FMT_WORD "\n",cpu.mepc, cpu.mcause);});
 }
 
 #define src1R() do { *src1 = R(rs1); } while (0)
