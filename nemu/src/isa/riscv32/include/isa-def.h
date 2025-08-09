@@ -17,6 +17,7 @@
 #define __ISA_RISCV_H__
 
 #include <common.h>
+
 //在这里添加csr寄存器
 typedef struct {
   word_t gpr[MUXDEF(CONFIG_RVE, 16, 32)];
