@@ -95,28 +95,50 @@ static int decode_exec(Decode *s) {
   if(imm == 0x305){  //mtvec
     int temp = cpu.mtvec;
     cpu.mtvec =  src1;
-    src1 = temp;
-    printf("mtvec = 0x%08x\n",cpu.mtvec);
+    R(rd) = temp;
     //printf("write ntvec\n");
   };
   if(imm == 0x300){ //mstatus
     int temp = cpu.mstatus;
     cpu.mstatus =  src1;
-    src1 = temp;
+    R(rd) = temp;
   };
   if(imm == 0x341){ //mepc
     int temp = cpu.mepc;
     cpu.mepc =  src1;
-    src1 = temp;
+    R(rd) = temp;
   };
   if(imm == 0x342){ //mcause
     int temp = cpu.mcause;
     cpu.mcause =  src1;
-    src1 = temp;
+    R(rd) = temp;
   };
 );
-  INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , I, s->dnpc = isa_raise_intr(8,s->pc);printf("caosinidema\n"));
 
+  INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , I, s->dnpc = isa_raise_intr(8,s->pc));
+  INSTPAT("??????? ????? ????? 010 ????? 11100 11", csrrs  , I, 
+  if(imm == 0x305){  //mtvec
+    int temp = cpu.mtvec;
+    cpu.mtvec =  src1 | temp;
+    R(rd) = temp;
+    //printf("write ntvec\n");
+  };
+  if(imm == 0x300){ //mstatus
+    int temp = cpu.mstatus;
+    cpu.mstatus =  src1 | temp;
+    R(rd) = temp;
+  };
+  if(imm == 0x341){ //mepc
+    int temp = cpu.mepc;
+    cpu.mepc =  src1 | temp;
+    R(rd) = temp;
+  };
+  if(imm == 0x342){ //mcause
+    int temp = cpu.mcause;
+    cpu.mcause =  src1 | temp;
+    R(rd) = temp;
+  };
+);
   INSTPAT("??????? ????? ????? 010 ????? 01000 11", sw     , S, Mw(src1 + imm, 4, src2)); 
 
   INSTPAT("??????? ????? ????? 001 ????? 01000 11", sh     , S, Mw(src1 + imm, 2, src2)); 
