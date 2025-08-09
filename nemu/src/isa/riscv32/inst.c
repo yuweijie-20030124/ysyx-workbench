@@ -173,6 +173,7 @@ static int decode_exec(Decode *s) {
   INSTPAT("0000001 ????? ????? 101 ????? 01100 11", divu   , R, if (src2 == 0) R(rd) = 0xFFFFFFFF;else R(rd) = (uint32_t)src1 / (uint32_t)src2;);
   INSTPAT("0000001 ????? ????? 110 ????? 01100 11", rem    , R, if (src2 == 0) R(rd) = (int32_t)src1;else if ((int32_t)src1 == INT32_MIN && (int32_t)src2 == -1) R(rd) = 0;else R(rd) = (int32_t)src1 % (int32_t)src2;);
   INSTPAT("0000001 ????? ????? 111 ????? 01100 11", remu   , R, if (src2 == 0) R(rd) = (uint32_t)src1;else R(rd) = (uint32_t)src1 % (uint32_t)src2;);
+  INSTPAT("0011000 00010 00000 000 0000 011100 11", mret   , R, s->dnpc = cpu.mepc);
   //div注释：
   //匹配 div 指令（有符号除法）。
   //如果除数 src2 为 0，结果规定为 -1。
