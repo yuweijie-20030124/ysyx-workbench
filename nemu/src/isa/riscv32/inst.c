@@ -27,6 +27,10 @@ enum {
   TYPE_N, // none 
 };
 
+static void etrace() {
+  IFDEF(CONFIG_ETRACE, {
+      printf(ANSI_FMT("[ETRACE]", ANSI_FG_YELLOW)"ecall in mepc = " FMT_WORD ", mcause = " FMT_WORD "\n",cpu.mepc, cpu.mcause);});
+}
 
 #define src1R() do { *src1 = R(rs1); } while (0)
 #define src2R() do { *src2 = R(rs2); } while (0)
@@ -109,7 +113,7 @@ static int decode_exec(Decode *s) {
   };
 );
 
-  INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , I, s->dnpc = isa_raise_intr(11,s->pc));
+  INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , I, s->dnpc = isa_raise_intr(11,s->pc);etrace());
   INSTPAT("??????? ????? ????? 010 ????? 11100 11", csrrs  , I, 
   if(imm == 0x305){  //mtvec
     R(rd) = cpu.mtvec;
