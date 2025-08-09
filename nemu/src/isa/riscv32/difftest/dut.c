@@ -17,11 +17,13 @@
 #include <cpu/difftest.h>
 #include "../local-include/reg.h"
 
+extern const char *regs[];
+
 bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
   int reg_num = (int)(sizeof(cpu.gpr) / sizeof(cpu.gpr[0]));
   for (int i = 0; i < reg_num; i++) {
     if (ref_r->gpr[i] != cpu.gpr[i]) {
-      printf("reg %c is wrong\n",gpr(i));
+      printf("reg %s is wrong\n",regs[i]);
       printf("wrong reg value is 0x%08x\n",cpu.gpr[i]);
       printf("right reg value is 0x%08x\n",ref_r->gpr[i]);
       return false;
