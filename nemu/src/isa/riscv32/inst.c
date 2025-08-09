@@ -113,7 +113,7 @@ static int decode_exec(Decode *s) {
   };
 );
 
-  INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , I, s->dnpc = isa_raise_intr(11,s->pc);etrace());
+  INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , I, s->dnpc = isa_raise_intr(11,s->pc);printf("pc = 0x%08x",s->dnpc);etrace());
   INSTPAT("??????? ????? ????? 010 ????? 11100 11", csrrs  , I, 
   if(imm == 0x305){  //mtvec
     R(rd) = cpu.mtvec;
