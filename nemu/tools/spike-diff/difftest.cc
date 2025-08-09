@@ -43,9 +43,6 @@ struct diff_context_t {
   word_t mstatus;
   vaddr_t mepc;
   word_t mtvec;
-  
-  
-
 };
 
 static sim_t* s = NULL;
