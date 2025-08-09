@@ -17,13 +17,15 @@
 #define __ISA_RISCV_H__
 
 #include <common.h>
+
 //在这里添加csr寄存器
 typedef struct {
   word_t gpr[MUXDEF(CONFIG_RVE, 16, 32)];
   vaddr_t pc;
-  vaddr_t mcause;     // 存放触发异常的原因
-  vaddr_t mstatus;    // 存放处理器的状态
-  vaddr_t mepc;       // 存放触发异常的PC
+  vaddr_t mcause;     // 存放触发异常的原因           0x342
+  vaddr_t mstatus;    // 存放处理器的状态             0x300
+  vaddr_t mepc;       // 存放触发异常的PC             0x341
+  vaddr_t mtvec;      // 指向trap处理函数的入口地址    0x305
 } MUXDEF(CONFIG_RV64, riscv64_CPU_state, riscv32_CPU_state);
 
 // decode

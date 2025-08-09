@@ -27,6 +27,10 @@ enum {
   TYPE_N, // none 
 };
 
+static void etrace() {
+  IFDEF(CONFIG_ETRACE, {
+      printf(ANSI_FMT("[ETRACE]", ANSI_FG_BLUE)"ecall in mepc = " FMT_WORD ", mcause = " FMT_WORD "\n",cpu.mepc, cpu.mcause);});
+}
 
 #define src1R() do { *src1 = R(rs1); } while (0)
 #define src2R() do { *src2 = R(rs2); } while (0)
@@ -90,8 +94,45 @@ static int decode_exec(Decode *s) {
   INSTPAT("??????? ????? ????? 110 ????? 00100 11", ori    , I, R(rd) = src1 | imm);
 
   //CSR寄存器
-  //INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw  , I, );
+  INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw  , I,  
+  if(imm == 0x305){  //mtvec
+    R(rd) = cpu.mtvec;
+    cpu.mtvec =  src1;
+  };
+  if(imm == 0x300){ //mstatus
+    R(rd) = cpu.mstatus;
+    cpu.mstatus =  src1;
+  };
+  if(imm == 0x341){ //mepc
+    R(rd) = cpu.mepc;
+    cpu.mepc =  src1;
+  };
+  if(imm == 0x342){ //mcause
+    R(rd) = cpu.mcause;
+    cpu.mcause =  src1;
+  };
+);
 
+  INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , I, s->dnpc = isa_raise_intr(11,s->pc);etrace());
+  INSTPAT("??????? ????? ????? 010 ????? 11100 11", csrrs  , I, 
+  if(imm == 0x305){  //mtvec
+    R(rd) = cpu.mtvec;
+    cpu.mtvec |=  src1;
+  };
+  if(imm == 0x300){ //mstatus
+    R(rd) = cpu.mstatus;
+    cpu.mstatus |=  src1;
+  };
+  if(imm == 0x341){ //mepc
+    R(rd) = cpu.mepc;
+    cpu.mepc |=  src1;
+  };
+  if(imm == 0x342){ //mcause
+        // printf("??????????????????????????*****\n");
+    R(rd) = cpu.mcause;
+    cpu.mcause |=  src1;
+  };
+);
   INSTPAT("??????? ????? ????? 010 ????? 01000 11", sw     , S, Mw(src1 + imm, 4, src2)); 
 
   INSTPAT("??????? ????? ????? 001 ????? 01000 11", sh     , S, Mw(src1 + imm, 2, src2)); 
@@ -136,6 +177,7 @@ static int decode_exec(Decode *s) {
   INSTPAT("0000001 ????? ????? 101 ????? 01100 11", divu   , R, if (src2 == 0) R(rd) = 0xFFFFFFFF;else R(rd) = (uint32_t)src1 / (uint32_t)src2;);
   INSTPAT("0000001 ????? ????? 110 ????? 01100 11", rem    , R, if (src2 == 0) R(rd) = (int32_t)src1;else if ((int32_t)src1 == INT32_MIN && (int32_t)src2 == -1) R(rd) = 0;else R(rd) = (int32_t)src1 % (int32_t)src2;);
   INSTPAT("0000001 ????? ????? 111 ????? 01100 11", remu   , R, if (src2 == 0) R(rd) = (uint32_t)src1;else R(rd) = (uint32_t)src1 % (uint32_t)src2;);
+  INSTPAT("0011000 00010 00000 000 0000 011100 11", mret   , R, s->dnpc = cpu.mepc);
   //div注释：
   //匹配 div 指令（有符号除法）。
   //如果除数 src2 为 0，结果规定为 -1。
