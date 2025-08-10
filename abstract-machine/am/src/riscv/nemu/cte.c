@@ -34,7 +34,8 @@ bool cte_init(Context*(*handler)(Event, Context*)) {
 //创建内核线程的上下文 kstack是栈的范围，entry是内核线程的入口，arg是内核线程的参数kcontext要求内核线程不能从entry返回，
 //否则其行为是未定义的，你需要在kstack的底部创建一个以entry为入口的上下文结构，然后返回这一结构的指针。
 Context *kcontext(Area kstack, void (*entry)(void *), void *arg) {
-  return NULL;
+  Context *cp = (Context *)(kstack.end - sizeof(Context));
+  return cp;
 }
 
 void yield() {
