@@ -12,7 +12,7 @@ Context* __am_irq_handle(Context *c) {
       default: ev.event = EVENT_ERROR; break;
     }
     c = user_handler(ev, c);
-    assert(c != NULL);
+     assert(c != NULL);
   }
   return c;
 }
@@ -23,7 +23,7 @@ extern void __am_asm_trap(void);
 //第二件事情把传进来的handler回调函数做一个注册，设置到一个全局变量中
 bool cte_init(Context*(*handler)(Event, Context*)) {
   // initialize exception entry
-  asm volatile("csrw mtvec, %0" : : "r"(__am_asm_trap));
+  asm volatile("csrw mtvec, %0" : : "r"(__am_asm_trap));  //把amasmtrap的地址传给mtvec
 
   // register event handler
   user_handler = handler;
