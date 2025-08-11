@@ -36,7 +36,7 @@ bool cte_init(Context*(*handler)(Event, Context*)) {
 //此时可以访问上下文中的参数了。
 Context *kcontext(Area kstack, void (*entry)(void *), void *arg) {
   Context *cp = (Context *)(kstack.end - sizeof(Context));
-  cp->mepc = (unsigned long int)entry - 4;
+  //cp->mepc = (unsigned long int)entry - 4;
   cp->gpr[10] = (unsigned long int)arg;
   return cp;
 }
