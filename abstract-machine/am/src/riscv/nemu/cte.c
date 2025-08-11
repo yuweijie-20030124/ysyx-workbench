@@ -12,7 +12,7 @@ Context* __am_irq_handle(Context *c) {
       default: ev.event = EVENT_ERROR; break;
     }
     //printf("mcause = %s\n",c->mcause);
-    c = user_handler(ev, c);
+    c = user_handler(ev, c);    //调用之前注册的handler
      assert(c != NULL);
   }
   return c;
@@ -38,7 +38,7 @@ Context *kcontext(Area kstack, void (*entry)(void *), void *arg) {
   Context *cp = (Context *)(kstack.end - sizeof(Context));
   cp->mepc = (uintptr_t)entry;
   cp->mstatus = 0x1800;
-  cp->gpr[10] = (uintptr_t)arg;
+  cp->gpr[10] = (uintptr_t)arg;   //a0传参
   return cp;
 }
 
