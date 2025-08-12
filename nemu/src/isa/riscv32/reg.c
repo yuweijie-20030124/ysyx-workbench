@@ -30,6 +30,7 @@ void isa_reg_display() {
     printf("%s\t0x%08x\t%d\t", reg_name(i), gpr(i), gpr(i));
     j++;
     if(j == 1) {
+      printf("j = %d",j);
       j = 0;
       printf("\n");
     }
