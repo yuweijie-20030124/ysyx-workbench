@@ -29,7 +29,7 @@ void isa_reg_display() {
   for (int i = 0; i < 32; i++) {
     printf("%s\t0x%08x\t%d\t", reg_name(i), gpr(i), gpr(i));
     j++;
-    if(j == 1) {
+    if(j == 2) {
       printf("j = %d",j);
       j = 0;
       printf("\n");
