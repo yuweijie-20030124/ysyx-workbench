@@ -57,5 +57,6 @@ bool ienabled() {
   return false;
 }
 
+//实现RT-Thread中开/关中断功能
 void iset(bool enable) {
 }
