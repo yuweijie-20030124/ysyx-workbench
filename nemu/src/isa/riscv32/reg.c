@@ -25,12 +25,18 @@ const char *regs[] = {
 };
 
 void isa_reg_display() {
+  int j = 0;
   for (int i = 0; i < 32; i++) {
-    printf("%s\t0x%08x\t%d\n", reg_name(i), gpr(i), gpr(i));
+    printf("%s\t0x%08x\t%d\t", reg_name(i), gpr(i), gpr(i));
+    j++;
+    if(j == 1) {
+      j = 0;
+      printf("\n");
+    }
   }
-    printf("mcause\t0x%08x\t%d\n",cpu.mcause,cpu.mcause);
+    printf("mcause\t0x%08x\t%d\t",cpu.mcause,cpu.mcause);
     printf("mstatus\t0x%08x\t%d\n",cpu.mstatus,cpu.mstatus);
-    printf("mepc\t0x%08x\t%d\n",cpu.mepc,cpu.mepc);
+    printf("mepc\t0x%08x\t%d\t",cpu.mepc,cpu.mepc);
     printf("mtvec\t0x%08x\t%d\n",cpu.mepc,cpu.mtvec);
 }
 
