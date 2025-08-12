@@ -61,6 +61,7 @@ VM_USER_CLASSES = \
 	reg \
 	ringbuffer \
 	sdb \
+	serial \
 	timer \
 	watchpoint \
 
@@ -108,6 +109,8 @@ reg.o: csrc/reg.c
 ringbuffer.o: csrc/ringbuffer.c 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
 sdb.o: csrc/sdb.c 
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
+serial.o: csrc/serial.c 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
 timer.o: csrc/timer.c 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
