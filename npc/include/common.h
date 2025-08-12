@@ -156,6 +156,11 @@
 #define unlikely(cond) __builtin_expect(cond, 0)
 #endif
 
+//--------------------------------------------device.h-----------------------------//
+#define CONFIG_SERIAL_MMIO 0xa00003f8
+#define CONFIG_RTC_MMIO 0xa0000048
+
+
 
 //--------------------------------------------utils.h------------------------------//
 
