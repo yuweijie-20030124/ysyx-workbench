@@ -81,6 +81,7 @@ module ysyx_25060170_WBU(
     
     always @(*) begin
         if(MemWr)begin
+            $display("pc = 0x%08x",PC_i);
             //$display("exu_result_i = %08x",exu_result_i);
             paddr_write(exu_result_i,memory_lenth,reg2_rdata);
         end
