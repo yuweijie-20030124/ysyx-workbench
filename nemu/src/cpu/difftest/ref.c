@@ -75,3 +75,6 @@ __EXPORT void difftest_init(int port) {
   /* Perform ISA dependent initialization. */
   init_isa();
 }
+
+extern CPU_state cpu;
+__EXPORT CPU_state *nemu_cpu = &cpu;
