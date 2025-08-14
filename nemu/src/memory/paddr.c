@@ -88,9 +88,9 @@ void paddr_write(paddr_t addr, int len, word_t data) {
     pmem_write(addr, len, data);
     IFDEF(CONFIG_MTRACE, Log("write in address = " FMT_PADDR ", len = %d, data = " FMT_WORD "\n", addr, len, data));
     return; }
-  
-  IFDEF(CONFIG_DEVICE, mmio_write(addr, len, data); return);
-  printf("\n\n\n\n\n\n\n");
-  out_of_bound(addr);
+  mmio_write(addr, len, data); return;
+  // IFDEF(CONFIG_DEVICE, mmio_write(addr, len, data); return);
+  // printf("\n\n\n\n\n\n\n");
+  // out_of_bound(addr);
   //Log("weiwei");
 }
