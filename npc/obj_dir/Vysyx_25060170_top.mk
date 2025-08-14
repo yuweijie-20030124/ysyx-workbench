@@ -46,12 +46,14 @@ VM_USER_LDLIBS = \
 
 # User .cpp files (from .cpp's on Verilator command line)
 VM_USER_CLASSES = \
+	alarm \
 	cpu-exec \
 	difftest \
 	disasm \
 	expr \
 	ftrace \
 	init \
+	intr \
 	log \
 	main \
 	map \
@@ -63,6 +65,7 @@ VM_USER_CLASSES = \
 	sdb \
 	serial \
 	timer \
+	timer_device \
 	watchpoint \
 
 # User .cpp directories (from .cpp's on Verilator command line)
@@ -80,6 +83,8 @@ include $(VERILATOR_ROOT)/include/verilated.mk
 ### Executable rules... (from --exe)
 VPATH += $(VM_USER_DIR)
 
+alarm.o: csrc/alarm.c 
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
 cpu-exec.o: csrc/cpu-exec.c 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
 difftest.o: csrc/difftest.c 
@@ -91,6 +96,8 @@ expr.o: csrc/expr.c
 ftrace.o: csrc/ftrace.c 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
 init.o: csrc/init.c 
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
+intr.o: csrc/intr.c 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
 log.o: csrc/log.c 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
@@ -113,6 +120,8 @@ sdb.o: csrc/sdb.c
 serial.o: csrc/serial.c 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
 timer.o: csrc/timer.c 
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
+timer_device.o: csrc/timer_device.c 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
 watchpoint.o: csrc/watchpoint.c 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
