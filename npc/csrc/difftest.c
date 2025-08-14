@@ -150,6 +150,8 @@ bool isa_difftest_checkregs(NPC_reg *ref_r, vaddr_t pc) {
       return false;
     }
   }
+  // printf("cpu.pc    = 0x%08x\n",cpu.pc);
+  // printf("ref_r->pc = 0x%08x\n",ref_r->pc);
   if (cpu.pc != ref_r->pc) {
         //printf("进来啦!!!!!!!!!\n");
         printf("pc wrong!!!!!!!!!\n");

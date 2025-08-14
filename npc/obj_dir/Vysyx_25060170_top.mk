@@ -37,12 +37,12 @@ VM_PREFIX = Vysyx_25060170_top
 VM_MODPREFIX = Vysyx_25060170_top
 # User CFLAGS (from -CFLAGS on Verilator command line)
 VM_USER_CFLAGS = \
-	 -I /home/yuweijie/ysyx-workbench/npc/include -O2 \
-	 -I /home/yuweijie/ysyx-workbench/nemu/tools/capstone/repo/include -O2 \
+	-g -I /home/yuweijie/ysyx-workbench/npc/include -O2 \
+	-I /home/yuweijie/ysyx-workbench/nemu/tools/capstone/repo/include -O2 \
 
 # User LDLIBS (from -LDFLAGS on Verilator command line)
 VM_USER_LDLIBS = \
-	 -lreadline -lSDL2 \
+	-g -lreadline -lSDL2 \
 
 # User .cpp files (from .cpp's on Verilator command line)
 VM_USER_CLASSES = \
