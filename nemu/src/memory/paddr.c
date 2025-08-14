@@ -76,6 +76,7 @@ word_t paddr_read(paddr_t addr, int len) {
     IFDEF(CONFIG_MTRACE, Log("read in address = " FMT_PADDR ", len = %d\n", addr, len));
     return pmem_read(addr, len);
   }
+  IFNDEF(CONFIG_DEVICE, printf("not devine config device\n"));
   IFDEF(CONFIG_DEVICE, return mmio_read(addr, len));
   // printf("\n\n\n\n\n\n\n");
   out_of_bound(addr);
@@ -88,7 +89,7 @@ void paddr_write(paddr_t addr, int len, word_t data) {
     pmem_write(addr, len, data);
     IFDEF(CONFIG_MTRACE, Log("write in address = " FMT_PADDR ", len = %d, data = " FMT_WORD "\n", addr, len, data));
     return; }
-  
+  IFNDEF(CONFIG_DEVICE, printf("not devine config device\n"));
   IFDEF(CONFIG_DEVICE, mmio_write(addr, len, data); return);
   // printf("\n\n\n\n\n\n\n");
   out_of_bound(addr);
