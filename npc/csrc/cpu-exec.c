@@ -12,6 +12,8 @@ void isa_exec_once();
 extern "C" void IDU_SEND_CALL_FLAG(int * ,int *, int*);
 extern "C" void IDU_SEND_RET_FLAG(int *, int *);
 
+void device_update();
+int update_watchpoint(void);
 void call_trace(paddr_t pc, paddr_t target);
 void ret_trace(paddr_t pc);
 void difftest_step(vaddr_t pc, vaddr_t npc);

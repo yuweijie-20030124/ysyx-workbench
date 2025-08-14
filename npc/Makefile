@@ -40,7 +40,7 @@ VERILATOR_FLAGS = -Wall --cc --trace \
 					-CFLAGS  " -I /home/yuweijie/ysyx-workbench/npc/include -O2" \
 					-CFLAGS  " -I /home/yuweijie/ysyx-workbench/nemu/tools/capstone/repo/include -O2" \
 					 --exe --build \
-					 -LDFLAGS " -lreadline" \
+					 -LDFLAGS " -lreadline -lSDL2" \
 					 -Ivsrc \
 					 --top-module ysyx_25060170_top
 
@@ -48,7 +48,7 @@ GDBVERILATOR_FLAGS = -Wall --cc --trace \
     -CFLAGS "-g -I /home/yuweijie/ysyx-workbench/npc/include -O2" \
     -CFLAGS "-I /home/yuweijie/ysyx-workbench/nemu/tools/capstone/repo/include -O2" \
     --exe --build \
-    -LDFLAGS "-g -lreadline" \
+    -LDFLAGS "-g -lreadline -lSDL2" \
     -Ivsrc \
     --top-module ysyx_25060170_top
 
