@@ -510,8 +510,8 @@ assign imm_o = imm;
 
 /***************************************DPI-C*******************************************/
     always @(*) begin
-    //$display("PC = 0x%08x", pc_i);
-    //$display("inst = 0x%08x", inst_i);
+    // $display("verilog PC   = 0x%08x", pc_i);
+    // $display("verilog inst = 0x%08x", inst_i);
     if(inst_i == 32'b0000_0000_0001_0000_0000_0000_0111_0011) begin
         //$display("我进来了，应该ebreak了\n");
         set_npc_exit(pc_i,0);

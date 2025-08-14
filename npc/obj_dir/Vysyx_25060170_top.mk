@@ -42,18 +42,20 @@ VM_USER_CFLAGS = \
 
 # User LDLIBS (from -LDFLAGS on Verilator command line)
 VM_USER_LDLIBS = \
-	 -lreadline \
+	 -lreadline -lSDL2 \
 
 # User .cpp files (from .cpp's on Verilator command line)
 VM_USER_CLASSES = \
 	alarm \
 	cpu-exec \
+	device \
 	difftest \
 	disasm \
 	expr \
 	ftrace \
 	init \
 	intr \
+	keyboard \
 	log \
 	main \
 	map \
@@ -66,6 +68,7 @@ VM_USER_CLASSES = \
 	serial \
 	timer \
 	timer_device \
+	vga \
 	watchpoint \
 
 # User .cpp directories (from .cpp's on Verilator command line)
@@ -87,6 +90,8 @@ alarm.o: csrc/alarm.c
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
 cpu-exec.o: csrc/cpu-exec.c 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
+device.o: csrc/device.c 
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
 difftest.o: csrc/difftest.c 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
 disasm.o: csrc/disasm.c 
@@ -98,6 +103,8 @@ ftrace.o: csrc/ftrace.c
 init.o: csrc/init.c 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
 intr.o: csrc/intr.c 
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
+keyboard.o: csrc/keyboard.c 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
 log.o: csrc/log.c 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
@@ -122,6 +129,8 @@ serial.o: csrc/serial.c
 timer.o: csrc/timer.c 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
 timer_device.o: csrc/timer_device.c 
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
+vga.o: csrc/vga.c 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
 watchpoint.o: csrc/watchpoint.c 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<

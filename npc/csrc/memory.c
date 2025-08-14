@@ -3,6 +3,10 @@
 #include "reg.h"
 #include "svdpi.h"
 
+void mmio_write(paddr_t addr, int len, word_t data);
+word_t mmio_read(paddr_t addr, int len);
+
+
 paddr_t host_read(void *addr, int len) {
   switch (len) {
     case 1: return *(uint8_t  *)addr;

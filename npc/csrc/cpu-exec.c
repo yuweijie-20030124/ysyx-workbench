@@ -12,6 +12,8 @@ void isa_exec_once();
 extern "C" void IDU_SEND_CALL_FLAG(int * ,int *, int*);
 extern "C" void IDU_SEND_RET_FLAG(int *, int *);
 
+void device_update();
+int update_watchpoint(void);
 void call_trace(paddr_t pc, paddr_t target);
 void ret_trace(paddr_t pc);
 void difftest_step(vaddr_t pc, vaddr_t npc);
@@ -73,10 +75,12 @@ static void exec_once(Decode *s, vaddr_t pc) {
     ret_trace(ftrace_pc);
   }
   
-  // printf("0x%08x\n",pc);
+  
   s->pc = get_pc();//当前指令地址
-   //printf("0x%08x\n",s->pc);
+  // printf("pc=0x%08x\n",pc);
+   
   s->snpc = get_pc()+4 ;//静态下一条指令地址，默认为pc+4
+  // printf("s->pc=0x%08x\n",s->pc);
   int inst_from_verilog = get_inst();
   //printf("instformverilog is 0x%08x\n", inst_from_verilog);
   isa_exec_once();
@@ -120,6 +124,8 @@ static void execute(uint64_t n) {
   initBuffer(&cb); // 初始化环形缓冲区，大小为BUFFER_SIZE
 #endif
   for (;n > 0; n --) {
+    cpu.pc = get_pc();
+    // printf("execute_cpu.pc = 0x%08x\n",cpu.pc);
     exec_once(&s, cpu.pc);
     g_nr_guest_inst ++;
     trace_and_difftest(&s, cpu.pc);

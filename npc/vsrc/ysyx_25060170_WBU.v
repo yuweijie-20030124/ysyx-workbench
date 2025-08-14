@@ -49,11 +49,11 @@ module ysyx_25060170_WBU(
     output        reg_write_en_o    // 写回使能
 );
 
-/********************************DPI-C****************************************/
+/**********************************DPI-C******************************************/
     import "DPI-C" function void paddr_write(int addr, int len, int data);
     import "DPI-C" function int paddr_read(int addr, int len);
 
-/********************************DPI-C END  ****************************************/
+/********************************DPI-C END****************************************/
     wire tiaojian;
     assign tiaojian = 1'b0 |
                     ({is_beq  == 1'b1}   & { beq_flag  == 1'b0  }) | 
@@ -81,7 +81,8 @@ module ysyx_25060170_WBU(
     
     always @(*) begin
         if(MemWr)begin
-            //$display("exu_result_i = %08x",exu_result_i);
+            //$display("pc = 0x%08x",PC_i);
+            // $display("exu_result_i = %08x",exu_result_i);
             paddr_write(exu_result_i,memory_lenth,reg2_rdata);
         end
     end
