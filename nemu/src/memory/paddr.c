@@ -90,7 +90,6 @@ void paddr_write(paddr_t addr, int len, word_t data) {
     return; }
   
   IFDEF(CONFIG_DEVICE, mmio_write(addr, len, data); return);
-  printf("\n\n\n\n\n\n\n");
   out_of_bound(addr);
   //Log("weiwei");
 }
