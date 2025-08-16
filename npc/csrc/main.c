@@ -40,6 +40,7 @@ extern "C" void pmem_read(paddr_t raddr, paddr_t* rdata, int rlen){
    return;
 }
 
+
 extern "C" void set_npc_exit(vaddr_t pc, int halt_ret){
   npc_state.state = NPC_END;
   npc_state.halt_pc = pc;
@@ -176,5 +177,14 @@ void cpu_reset(){
 #endif  
 
   top -> rst = 0;
+
+}
+
+
+/******************************************************DPI-C***************************************************/
+extern "C" void pc_inst_end(int thepc_data, int the_inst){
+
+  cpu.pc = thepc_data;
+  s.val = the_inst;
 
 }

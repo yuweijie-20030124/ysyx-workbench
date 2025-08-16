@@ -25,7 +25,7 @@ CircularBuffer cb;
 
 NPC_reg cpu = { .pc =0x80000000};
 Decode s;
-NPC_State npc_state = { .state = NPC_STOP };
+NPC_State npc_state = { .state = NPC_QUIT };
 
 #define MAX_INST_TO_PRINT 10
 
@@ -76,14 +76,16 @@ static void exec_once(Decode *s, vaddr_t pc) {
   }
   
   
-  s->pc = get_pc();//当前指令地址
+  s->pc = cpu.pc;
   // printf("pc=0x%08x\n",pc);
    
-  s->snpc = get_pc()+4 ;//静态下一条指令地址，默认为pc+4
-  // printf("s->pc=0x%08x\n",s->pc);
-  int inst_from_verilog = get_inst();
-  //printf("instformverilog is 0x%08x\n", inst_from_verilog);
   isa_exec_once();
+
+  s->snpc = cpu.pc ;//静态下一条指令地址，默认为pc+4
+  // printf("s->pc=0x%08x\n",s->pc);
+
+  int inst_from_verilog = s->val;
+  //printf("instformverilog is 0x%08x\n", inst_from_verilog);
 #ifdef CONFIG_ITRACE//如果启用了 CONFIG_ITRACE，会记录指令的详细信息到日志缓冲区 s->logbuf：
   char *p = s->logbuf;
   //snprintf() 是一个 C 语言标准库函数，用于格式化输出字符串，并将结果写入到指定的缓冲区，
@@ -124,7 +126,6 @@ static void execute(uint64_t n) {
   initBuffer(&cb); // 初始化环形缓冲区，大小为BUFFER_SIZE
 #endif
   for (;n > 0; n --) {
-    cpu.pc = get_pc();
     // printf("execute_cpu.pc = 0x%08x\n",cpu.pc);
     exec_once(&s, cpu.pc);
     g_nr_guest_inst ++;
@@ -157,10 +158,11 @@ void assert_fail_msg() {//输出错误信息
   statistic();
 }
 
+/* Simulate how the CPU works. */
 void cpu_exec(uint64_t n) {
   g_print_step = (n < MAX_INST_TO_PRINT);//一次执行太多步就不打印了，bool类型的gprintstep就赋值为false
   switch (npc_state.state) {
-    case NPC_END: case NPC_ABORT: case NPC_QUIT:
+    case NPC_END: case NPC_ABORT:
       //printf("%d\n",npc_state.state);
       printf("Program execution has ended. To restart the program, exit NPC and run again.\n");
       return;//如果状态是结束了，出错了，退出了就打印“退出nemu”。

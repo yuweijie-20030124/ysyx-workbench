@@ -25,6 +25,18 @@ VL_INLINE_OPT void Vysyx_25060170_top___024root____Vdpiimwrap_ysyx_25060170_top_
     set_npc_exit(pc__Vcvt, halt_ret__Vcvt);
 }
 
+extern "C" void pc_inst_end(int thepc_data, int the_inst);
+
+VL_INLINE_OPT void Vysyx_25060170_top___024root____Vdpiimwrap_ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__pc_inst_end_TOP(IData/*31:0*/ thepc_data, IData/*31:0*/ the_inst) {
+    VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_top___024root____Vdpiimwrap_ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__pc_inst_end_TOP\n"); );
+    // Body
+    int thepc_data__Vcvt;
+    for (size_t thepc_data__Vidx = 0; thepc_data__Vidx < 1; ++thepc_data__Vidx) thepc_data__Vcvt = thepc_data;
+    int the_inst__Vcvt;
+    for (size_t the_inst__Vidx = 0; the_inst__Vidx < 1; ++the_inst__Vidx) the_inst__Vcvt = the_inst;
+    pc_inst_end(thepc_data__Vcvt, the_inst__Vcvt);
+}
+
 void Vysyx_25060170_top___024root____Vdpiexp_ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__IDU_SEND_INST_TOP(Vysyx_25060170_top__Syms* __restrict vlSymsp, IData/*31:0*/ &c_inst) {
     VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_top___024root____Vdpiexp_ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__IDU_SEND_INST_TOP\n"); );
     // Init

@@ -64,6 +64,7 @@ u_ysyx_25060170_IFU(
 
 
 ysyx_25060170_IDU u_ysyx_25060170_IDU(
+	.clk			( clk			),
 	.pc_i         	( PCout         ),
 	.inst_i       	( MEM_inst_o    ),
 	.reg1_rdata_i 	( GPR_rd1  		),

@@ -10,6 +10,9 @@ jalr处理信号，若为jalr则将x1+offset的值写入PC；
 */
 
 module ysyx_25060170_IDU(
+    //from top
+    input clk,
+
     //from IFU
     input [31:0] pc_i,
 
@@ -52,6 +55,8 @@ module ysyx_25060170_IDU(
 );
 /********************************DPI-C START****************************************/
 import "DPI-C" function void set_npc_exit(int pc, int halt_ret);
+import "DPI-C" function void pc_inst_end(input int thepc_data, input int the_inst);
+export "DPI-C" task IDU_SEND_INST;
 /********************************DPI-C END  ****************************************/
     wire [6:0] opcode;
     wire [6:0] func7;
@@ -518,7 +523,12 @@ assign imm_o = imm;
     end
 end
 
-export "DPI-C" task IDU_SEND_INST;
+
+ always @(posedge clk) begin
+     pc_inst_end(pc_i, inst_i);
+ end
+
+
 
 task IDU_SEND_INST(
     output int c_inst
