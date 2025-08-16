@@ -59,6 +59,7 @@ u_ysyx_25060170_IFU(
 	.rst         	( rst          ),
 	.jump_addr		( EXU_PC	   ),
 	.jump_en		( jump_en	   ),
+	.inst_o			( MEM_inst_o   ),
 	.PCout       	( PCout        )
 );
 
@@ -108,13 +109,6 @@ ysyx_25060170_GPR u_ysyx_25060170_GPR(
 	.GPR_rd1     	( GPR_rd1      ),
 	.GPR_rd2     	( GPR_rd2      )
 );
-
-
-ysyx_25060170_MEM u_ysyx_25060170_MEM(
-	.addr_i      	( PCout        ),
-	.inst_o      	( MEM_inst_o   )
-);
-
 
 ysyx_25060170_EXU u_ysyx_25060170_EXU(
     .ALUop          ( ALUop		),

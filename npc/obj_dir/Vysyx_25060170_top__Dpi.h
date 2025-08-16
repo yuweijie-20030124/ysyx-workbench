@@ -22,8 +22,6 @@ extern "C" {
     extern void IDU_SEND_CALL_FLAG(int* call_flag, int* pc, int* dnpc);
     // DPI export at vsrc/ysyx_25060170_IDU.v:523:6
     extern void IDU_SEND_INST(int* c_inst);
-    // DPI export at vsrc/ysyx_25060170_IFU.v:42:6
-    extern void IDU_SEND_PC(int* c_pc);
     // DPI export at vsrc/ysyx_25060170_IDU.v:554:6
     extern void IDU_SEND_RET_FLAG(int* ret_flag, int* pc);
 
@@ -32,7 +30,9 @@ extern "C" {
     extern int paddr_read(int addr, int len);
     // DPI import at vsrc/ysyx_25060170_WBU.v:53:34
     extern void paddr_write(int addr, int len, int data);
-    // DPI import at vsrc/ysyx_25060170_MEM.v:9:30
+    // DPI import at vsrc/ysyx_25060170_IFU.v:29:30
+    extern void pc_inst_end(int thepc_data, int the_inst);
+    // DPI import at vsrc/ysyx_25060170_IFU.v:40:30
     extern void pmem_read(int raddr, int* rdata, char rlen);
     // DPI import at vsrc/ysyx_25060170_IDU.v:54:30
     extern void set_npc_exit(int pc, int halt_ret);

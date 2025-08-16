@@ -9,7 +9,6 @@ void Vysyx_25060170_top___024root____Vdpiexp_ysyx_25060170_top__DOT__u_ysyx_2506
 void Vysyx_25060170_top___024root____Vdpiexp_ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__IDU_SEND_CALL_FLAG_TOP(Vysyx_25060170_top__Syms* __restrict vlSymsp, IData/*31:0*/ &call_flag, IData/*31:0*/ &pc, IData/*31:0*/ &dnpc);
 void Vysyx_25060170_top___024root____Vdpiexp_ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__IDU_SEND_INST_TOP(Vysyx_25060170_top__Syms* __restrict vlSymsp, IData/*31:0*/ &c_inst);
 void Vysyx_25060170_top___024root____Vdpiexp_ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__IDU_SEND_RET_FLAG_TOP(Vysyx_25060170_top__Syms* __restrict vlSymsp, IData/*31:0*/ &ret_flag, IData/*31:0*/ &pc);
-void Vysyx_25060170_top___024root____Vdpiexp_ysyx_25060170_top__DOT__u_ysyx_25060170_IFU__DOT__IDU_SEND_PC_TOP(Vysyx_25060170_top__Syms* __restrict vlSymsp, IData/*31:0*/ &c_pc);
 
 // FUNCTIONS
 Vysyx_25060170_top__Syms::~Vysyx_25060170_top__Syms()
@@ -24,7 +23,7 @@ Vysyx_25060170_top__Syms::Vysyx_25060170_top__Syms(VerilatedContext* contextp, c
     , TOP{this, namep}
 {
         // Check resources
-        Verilated::stackCheck(713);
+        Verilated::stackCheck(733);
     // Configure time unit / time precision
     _vm_contextp__->timeunit(-12);
     _vm_contextp__->timeprecision(-12);
@@ -34,13 +33,11 @@ Vysyx_25060170_top__Syms::Vysyx_25060170_top__Syms(VerilatedContext* contextp, c
     // Setup scopes
     __Vscope_ysyx_25060170_top__u_ysyx_25060170_GPR.configure(this, name(), "ysyx_25060170_top.u_ysyx_25060170_GPR", "u_ysyx_25060170_GPR", "<null>", -12, VerilatedScope::SCOPE_OTHER);
     __Vscope_ysyx_25060170_top__u_ysyx_25060170_IDU.configure(this, name(), "ysyx_25060170_top.u_ysyx_25060170_IDU", "u_ysyx_25060170_IDU", "<null>", -12, VerilatedScope::SCOPE_OTHER);
-    __Vscope_ysyx_25060170_top__u_ysyx_25060170_IFU.configure(this, name(), "ysyx_25060170_top.u_ysyx_25060170_IFU", "u_ysyx_25060170_IFU", "<null>", -12, VerilatedScope::SCOPE_OTHER);
     // Setup export functions
     for (int __Vfinal = 0; __Vfinal < 2; ++__Vfinal) {
         __Vscope_ysyx_25060170_top__u_ysyx_25060170_GPR.exportInsert(__Vfinal, "GPR_SEND_VALUE", (void*)(&Vysyx_25060170_top___024root____Vdpiexp_ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT__GPR_SEND_VALUE_TOP));
         __Vscope_ysyx_25060170_top__u_ysyx_25060170_IDU.exportInsert(__Vfinal, "IDU_SEND_CALL_FLAG", (void*)(&Vysyx_25060170_top___024root____Vdpiexp_ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__IDU_SEND_CALL_FLAG_TOP));
         __Vscope_ysyx_25060170_top__u_ysyx_25060170_IDU.exportInsert(__Vfinal, "IDU_SEND_INST", (void*)(&Vysyx_25060170_top___024root____Vdpiexp_ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__IDU_SEND_INST_TOP));
         __Vscope_ysyx_25060170_top__u_ysyx_25060170_IDU.exportInsert(__Vfinal, "IDU_SEND_RET_FLAG", (void*)(&Vysyx_25060170_top___024root____Vdpiexp_ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__IDU_SEND_RET_FLAG_TOP));
-        __Vscope_ysyx_25060170_top__u_ysyx_25060170_IFU.exportInsert(__Vfinal, "IDU_SEND_PC", (void*)(&Vysyx_25060170_top___024root____Vdpiexp_ysyx_25060170_top__DOT__u_ysyx_25060170_IFU__DOT__IDU_SEND_PC_TOP));
     }
 }

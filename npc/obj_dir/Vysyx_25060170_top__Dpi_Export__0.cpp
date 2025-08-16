@@ -6,20 +6,6 @@
 #include "verilated_dpi.h"
 
 
-void Vysyx_25060170_top::IDU_SEND_PC(int* c_pc) {
-    VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_top___024root::IDU_SEND_PC\n"); );
-    // Init
-    IData/*31:0*/ c_pc__Vcvt;
-    c_pc__Vcvt = 0;
-    // Body
-    static int __Vfuncnum = -1;
-    if (VL_UNLIKELY(__Vfuncnum == -1)) __Vfuncnum = Verilated::exportFuncNum("IDU_SEND_PC");
-    const VerilatedScope* __Vscopep = Verilated::dpiScope();
-    Vysyx_25060170_top__Vcb_IDU_SEND_PC_t __Vcb = (Vysyx_25060170_top__Vcb_IDU_SEND_PC_t)(VerilatedScope::exportFind(__Vscopep, __Vfuncnum));
-    (*__Vcb)((Vysyx_25060170_top__Syms*)(__Vscopep->symsp()), c_pc__Vcvt);
-    for (size_t c_pc__Vidx = 0; c_pc__Vidx < 1; ++c_pc__Vidx) *c_pc = c_pc__Vcvt;
-}
-
 void Vysyx_25060170_top::IDU_SEND_INST(int* c_inst) {
     VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_top___024root::IDU_SEND_INST\n"); );
     // Init

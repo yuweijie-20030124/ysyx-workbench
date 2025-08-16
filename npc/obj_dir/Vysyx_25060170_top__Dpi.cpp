@@ -38,14 +38,6 @@ void IDU_SEND_INST(int* c_inst) {
 }
 #endif
 
-#ifndef VL_DPIDECL_IDU_SEND_PC_
-#define VL_DPIDECL_IDU_SEND_PC_
-void IDU_SEND_PC(int* c_pc) {
-    // DPI export at vsrc/ysyx_25060170_IFU.v:42:6
-    return Vysyx_25060170_top::IDU_SEND_PC(c_pc);
-}
-#endif
-
 #ifndef VL_DPIDECL_IDU_SEND_RET_FLAG_
 #define VL_DPIDECL_IDU_SEND_RET_FLAG_
 void IDU_SEND_RET_FLAG(int* ret_flag, int* pc) {

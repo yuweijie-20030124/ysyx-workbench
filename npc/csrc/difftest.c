@@ -25,7 +25,6 @@ void (*ref_difftest_memcpy)(paddr_t addr, void *buf, size_t n, bool direction) =
 void (*ref_difftest_regcpy)(void *dut, bool direction) = NULL;
 void (*ref_difftest_exec)(uint64_t n) = NULL;
 void (*ref_difftest_raise_intr)(uint64_t NO) = NULL;
-int get_pc();
 
 void isa_reg_display();
 
@@ -115,7 +114,6 @@ void init_difftest(char *ref_so_file, long img_size, int port) {
 bool isa_difftest_checkregs(NPC_reg *ref_r, vaddr_t pc) {
   int reg_num = (int)(sizeof(cpu.gpr) / sizeof(cpu.gpr[0]));
   
-  cpu.pc = get_pc();
   // printf("pc = 0x%08x!!!!!\n",cpu.pc);
 
   const svScope scope = svGetScopeFromName("TOP.ysyx_25060170_top.u_ysyx_25060170_GPR");
@@ -243,7 +241,6 @@ void difftest_step(vaddr_t pc, vaddr_t npc) {
   if (is_skip_ref) {
     // to skip the checking of an instruction, just copy the reg state to reference design
     // printf("i am in \n");
-    cpu.pc = get_pc();
     // printf("skip cpu.pc = 0x%08x\n",cpu.pc);
     // int inst = get_inst();
     // printf("skip inst = 0x%08x\n",inst);
