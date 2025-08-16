@@ -86,37 +86,36 @@ static void exec_once(Decode *s, vaddr_t pc) {
 
   int inst_from_verilog = s->val;
   //printf("instformverilog is 0x%08x\n", inst_from_verilog);
-#ifdef CONFIG_ITRACE//如果启用了 CONFIG_ITRACE，会记录指令的详细信息到日志缓冲区 s->logbuf：
+#ifdef CONFIG_ITRACE
   char *p = s->logbuf;
-  //snprintf() 是一个 C 语言标准库函数，用于格式化输出字符串，并将结果写入到指定的缓冲区，
-  //与 sprintf() 不同的是，snprintf() 会限制输出的字符数，避免缓冲区溢出。
-  //int snprintf ( char * str, size_t size, const char * format, ... );
-  //str -- 目标字符串，用于存储格式化后的字符串的字符数组的指针。   size -- 字符数组的大小。
-  //format -- 格式化字符串。    ... -- 可变参数，可变数量的参数根据 format 中的格式化指令进行格式化。
-  p += snprintf(p, sizeof(s->logbuf), FMT_WORD ":", s->pc);//FMT_WORD：格式化字符串（如 "0x%08x"），用于输出 PC 地址。
-  int ilen = s->snpc - s->pc; //计算指令长度
-  //int ilen = 4;
+  
+  p += snprintf(p, sizeof(s->logbuf), FMT_WORD ":", s->snpc);
+  int ilen = 4;//s->snpc - s->pc;
   int i;
-  //uint8_t *inst = (uint8_t *)&s->isa.inst;
-  uint8_t *inst = (uint8_t *)&inst_from_verilog;
-  // printf("inst ========= 0x%08x\n", *inst);
-  for (i = ilen - 1; i >= 0; i --) {//riscv是大段，从高地址开始打印
-    p += snprintf(p, 4, " %02x", inst[i]); //把指令打印出来
+  uint8_t *inst = (uint8_t *)&s->val;
+  for (i = ilen - 1; i >= 0; i --) {
+    p += snprintf(p, 4, " %02x", inst[i]);
   }
-  int ilen_max = 4; 
-  int space_len = ilen_max - ilen;   //计算需要填充的空格数
-  if (space_len < 0) space_len = 0; //
+  
+  int ilen_max = MUXDEF(CONFIG_ISA_x86, 8, 4);
+  int space_len = ilen_max - ilen;
+  if (space_len < 0) space_len = 0;
   space_len = space_len * 3 + 1;
   memset(p, ' ', space_len);
   p += space_len;
-  /***********************************ITRACE**************************************/
-  void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);//反汇编指令
-  disassemble(p, s->logbuf + sizeof(s->logbuf) - p, s->pc, inst, ilen);
-            //muxdef，有点像  ？：，
+ 
+  void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
+  disassemble(p, s->logbuf + sizeof(s->logbuf) - p,
+       s->snpc, (uint8_t *)&s->val, ilen);
+  
 #endif
         
 #ifdef CONFIG_ITRACE_IRINGBUF
   enqueue(&cb, s->logbuf);
+  if (!cb.buffer) {
+    fprintf(stderr, "Ring buffer not initialized!\n");
+    abort();
+}
 #endif
 
 }

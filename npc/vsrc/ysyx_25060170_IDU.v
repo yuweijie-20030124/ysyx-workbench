@@ -10,8 +10,6 @@ jalr处理信号，若为jalr则将x1+offset的值写入PC；
 */
 
 module ysyx_25060170_IDU(
-    //from top
-    input clk,
 
     //from IFU
     input [31:0] pc_i,
@@ -524,7 +522,7 @@ assign imm_o = imm;
 end
 
 
- always @(posedge clk) begin
+ always @(*) begin
      pc_inst_end(pc_i, inst_i);
  end
 
