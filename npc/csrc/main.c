@@ -64,6 +64,7 @@ int main(int argc, char** argv) {
     tfp->open("waveform.vcd");
   #endif  
 
+  cpu_reset();
 	init_monitor(argc,argv);
 	cpu_reset();
 
@@ -112,10 +113,11 @@ void cpu_reset(){
   top -> clk = 0;
   top -> rst = 1;  
   top -> eval();
-  printf("***reset***\n");
 #ifdef CONFIG_GTK
   tfp -> dump(main_time++);
 #endif  
+
+  printf("***reset***\n");
 
   top -> clk = 1;
   top -> rst = 1;

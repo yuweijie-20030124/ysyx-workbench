@@ -82,7 +82,7 @@ static void exec_once(Decode *s, vaddr_t pc) {
   isa_exec_once();  
 
   s->snpc = cpu.pc;//静态下一条指令地址，默认为pc+4
-  // printf("s->pc=0x%08x\n",s->pc);
+  // printf("s->snpc - s->pc =0x%08x\n",s->snpc - s->pc);
   //printf("instformverilog is 0x%08x\n", inst_from_verilog);
 
 #ifdef CONFIG_ITRACE

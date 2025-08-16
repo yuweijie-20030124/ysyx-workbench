@@ -32,7 +32,7 @@ extern "C" {
     extern void paddr_write(int addr, int len, int data);
     // DPI import at vsrc/ysyx_25060170_IFU.v:29:30
     extern void pc_inst_end(int thepc_data, int the_inst);
-    // DPI import at vsrc/ysyx_25060170_IFU.v:40:30
+    // DPI import at vsrc/ysyx_25060170_IFU.v:41:30
     extern void pmem_read(int raddr, int* rdata, char rlen);
     // DPI import at vsrc/ysyx_25060170_IDU.v:54:30
     extern void set_npc_exit(int pc, int halt_ret);

@@ -28,7 +28,8 @@ module ysyx_25060170_IFU (
 /***************************************DPI-C*******************************************/
 import "DPI-C" function void pc_inst_end(input int thepc_data, input int the_inst);
  
- always @(posedge clk) begin
+//  always @(posedge clk) begin
+ always @(*) begin
    if(rst) begin
      pc_inst_end(PCout, inst_o);
    end
