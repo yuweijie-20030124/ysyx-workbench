@@ -55,6 +55,8 @@ static int skip_dut_nr_inst = 0;
 // can not produce consistent behavior with NEMU
 void difftest_skip_ref() {
   is_skip_ref = true;
+  // printf("pc = 0x%08x\n",cpu.pc);
+  // printf("inst = 0x%08x\n",s.val);
   // If such an instruction is one of the instruction packing in QEMU
   // (see below), we end the process of catching up with QEMU's pc to
   // keep the consistent behavior in our best.
@@ -240,6 +242,8 @@ void difftest_step(vaddr_t pc, vaddr_t npc) {
   }
 
   if (is_skip_ref) {
+    // printf("pc = 0x%08x\n",cpu.pc);
+    // printf("inst = 0x%08x\n",s.val);
     // to skip the checking of an instruction, just copy the reg state to reference design
     // printf("i am in \n");
     // cpu.pc = get_pc();
