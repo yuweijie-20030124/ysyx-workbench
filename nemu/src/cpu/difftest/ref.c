@@ -24,6 +24,7 @@
 void diff_get_regs(riscv32_CPU_state *diff_context);
 
 __EXPORT void difftest_memcpy(paddr_t addr, void *buf, size_t n, bool direction) {
+  printf("pc = 0x%08x\n",cpu.pc);
   if (direction == DIFFTEST_TO_REF) {
     //printf("jinlaile\n");
     for (size_t i = 0; i < n; i++) {
