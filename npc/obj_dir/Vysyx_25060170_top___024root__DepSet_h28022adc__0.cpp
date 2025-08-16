@@ -6,11 +6,30 @@
 #include "Vysyx_25060170_top__Syms.h"
 #include "Vysyx_25060170_top___024root.h"
 
-void Vysyx_25060170_top___024root____Vdpiexp_ysyx_25060170_top__DOT__u_ysyx_25060170_IFU__DOT__IDU_SEND_PC_TOP(Vysyx_25060170_top__Syms* __restrict vlSymsp, IData/*31:0*/ &c_pc) {
-    VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_top___024root____Vdpiexp_ysyx_25060170_top__DOT__u_ysyx_25060170_IFU__DOT__IDU_SEND_PC_TOP\n"); );
-    // Init
+extern "C" void pc_inst_end(int thepc_data, int the_inst);
+
+VL_INLINE_OPT void Vysyx_25060170_top___024root____Vdpiimwrap_ysyx_25060170_top__DOT__u_ysyx_25060170_IFU__DOT__pc_inst_end_TOP(IData/*31:0*/ thepc_data, IData/*31:0*/ the_inst) {
+    VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_top___024root____Vdpiimwrap_ysyx_25060170_top__DOT__u_ysyx_25060170_IFU__DOT__pc_inst_end_TOP\n"); );
     // Body
-    c_pc = vlSymsp->TOP.ysyx_25060170_top__DOT__PCout;
+    int thepc_data__Vcvt;
+    for (size_t thepc_data__Vidx = 0; thepc_data__Vidx < 1; ++thepc_data__Vidx) thepc_data__Vcvt = thepc_data;
+    int the_inst__Vcvt;
+    for (size_t the_inst__Vidx = 0; the_inst__Vidx < 1; ++the_inst__Vidx) the_inst__Vcvt = the_inst;
+    pc_inst_end(thepc_data__Vcvt, the_inst__Vcvt);
+}
+
+extern "C" void pmem_read(int raddr, int* rdata, char rlen);
+
+VL_INLINE_OPT void Vysyx_25060170_top___024root____Vdpiimwrap_ysyx_25060170_top__DOT__u_ysyx_25060170_IFU__DOT__pmem_read_TOP(IData/*31:0*/ raddr, IData/*31:0*/ &rdata, CData/*7:0*/ rlen) {
+    VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_top___024root____Vdpiimwrap_ysyx_25060170_top__DOT__u_ysyx_25060170_IFU__DOT__pmem_read_TOP\n"); );
+    // Body
+    int raddr__Vcvt;
+    for (size_t raddr__Vidx = 0; raddr__Vidx < 1; ++raddr__Vidx) raddr__Vcvt = raddr;
+    int rdata__Vcvt;
+    char rlen__Vcvt;
+    for (size_t rlen__Vidx = 0; rlen__Vidx < 1; ++rlen__Vidx) rlen__Vcvt = rlen;
+    pmem_read(raddr__Vcvt, &rdata__Vcvt, rlen__Vcvt);
+    rdata = rdata__Vcvt;
 }
 
 extern "C" void set_npc_exit(int pc, int halt_ret);
@@ -23,18 +42,6 @@ VL_INLINE_OPT void Vysyx_25060170_top___024root____Vdpiimwrap_ysyx_25060170_top_
     int halt_ret__Vcvt;
     for (size_t halt_ret__Vidx = 0; halt_ret__Vidx < 1; ++halt_ret__Vidx) halt_ret__Vcvt = halt_ret;
     set_npc_exit(pc__Vcvt, halt_ret__Vcvt);
-}
-
-extern "C" void pc_inst_end(int thepc_data, int the_inst);
-
-VL_INLINE_OPT void Vysyx_25060170_top___024root____Vdpiimwrap_ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__pc_inst_end_TOP(IData/*31:0*/ thepc_data, IData/*31:0*/ the_inst) {
-    VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_top___024root____Vdpiimwrap_ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__pc_inst_end_TOP\n"); );
-    // Body
-    int thepc_data__Vcvt;
-    for (size_t thepc_data__Vidx = 0; thepc_data__Vidx < 1; ++thepc_data__Vidx) thepc_data__Vcvt = thepc_data;
-    int the_inst__Vcvt;
-    for (size_t the_inst__Vidx = 0; the_inst__Vidx < 1; ++the_inst__Vidx) the_inst__Vcvt = the_inst;
-    pc_inst_end(thepc_data__Vcvt, the_inst__Vcvt);
 }
 
 void Vysyx_25060170_top___024root____Vdpiexp_ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__IDU_SEND_INST_TOP(Vysyx_25060170_top__Syms* __restrict vlSymsp, IData/*31:0*/ &c_inst) {
@@ -138,20 +145,6 @@ void Vysyx_25060170_top___024root____Vdpiexp_ysyx_25060170_top__DOT__u_ysyx_2506
         [0x1fU];
 }
 
-extern "C" void pmem_read(int raddr, int* rdata, char rlen);
-
-VL_INLINE_OPT void Vysyx_25060170_top___024root____Vdpiimwrap_ysyx_25060170_top__DOT__u_ysyx_25060170_MEM__DOT__pmem_read_TOP(IData/*31:0*/ raddr, IData/*31:0*/ &rdata, CData/*7:0*/ rlen) {
-    VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_top___024root____Vdpiimwrap_ysyx_25060170_top__DOT__u_ysyx_25060170_MEM__DOT__pmem_read_TOP\n"); );
-    // Body
-    int raddr__Vcvt;
-    for (size_t raddr__Vidx = 0; raddr__Vidx < 1; ++raddr__Vidx) raddr__Vcvt = raddr;
-    int rdata__Vcvt;
-    char rlen__Vcvt;
-    for (size_t rlen__Vidx = 0; rlen__Vidx < 1; ++rlen__Vidx) rlen__Vcvt = rlen;
-    pmem_read(raddr__Vcvt, &rdata__Vcvt, rlen__Vcvt);
-    rdata = rdata__Vcvt;
-}
-
 extern "C" void paddr_write(int addr, int len, int data);
 
 VL_INLINE_OPT void Vysyx_25060170_top___024root____Vdpiimwrap_ysyx_25060170_top__DOT__u_ysyx_25060170_WBU__DOT__paddr_write_TOP(IData/*31:0*/ addr, IData/*31:0*/ len, IData/*31:0*/ data) {
@@ -208,16 +201,7 @@ void Vysyx_25060170_top___024root___eval_triggers__act(Vysyx_25060170_top___024r
     // Body
     vlSelfRef.__VactTriggered.setBit(0U, ((IData)(vlSelfRef.clk) 
                                           & (~ (IData)(vlSelfRef.__Vtrigprevexpr___TOP__clk__0))));
-    vlSelfRef.__VactTriggered.setBit(1U, ((IData)(vlSelfRef.rst) 
-                                          != (IData)(vlSelfRef.__Vtrigprevexpr___TOP__rst__0)));
-    vlSelfRef.__VactTriggered.setBit(2U, ((IData)(vlSelfRef.rst) 
-                                          & (~ (IData)(vlSelfRef.__Vtrigprevexpr___TOP__rst__0))));
     vlSelfRef.__Vtrigprevexpr___TOP__clk__0 = vlSelfRef.clk;
-    vlSelfRef.__Vtrigprevexpr___TOP__rst__0 = vlSelfRef.rst;
-    if (VL_UNLIKELY(((1U & (~ (IData)(vlSelfRef.__VactDidInit)))))) {
-        vlSelfRef.__VactDidInit = 1U;
-        vlSelfRef.__VactTriggered.setBit(1U, 1U);
-    }
 #ifdef VL_DEBUG
     if (VL_UNLIKELY(vlSymsp->_vm_contextp__->debug())) {
         Vysyx_25060170_top___024root___dump_triggers__act(vlSelf);

@@ -8,16 +8,10 @@ module Reg #(WIDTH = 1, RESET_VAL = 0) (
   output reg [WIDTH-1:0] dout,
   input wen
 );
-  always @(posedge clk or posedge rst) begin
-  if (rst) begin
-    dout <= RESET_VAL;
-    $display("!!!Reg Reset dout = 0x%08x", dout);
+  always @(posedge clk) begin
+    if (rst) dout <= RESET_VAL;
+    else if (wen) dout <= din;
   end
-  else if (wen) begin
-    dout <= din;
-    $display("!!!Reg Update dout = 0x%08x, din = 0x%08x", dout, din);
-  end
-end
 
 endmodule
 

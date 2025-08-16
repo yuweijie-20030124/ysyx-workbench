@@ -18,8 +18,6 @@
 #include <device/mmio.h>
 #include <isa.h>
 
-
-
 //只需要在paddr_read()和paddr_write()中进行记录即可. 你可以自行定义mtrace输出的格式.
 
 #if   defined(CONFIG_PMEM_MALLOC)
@@ -78,11 +76,8 @@ word_t paddr_read(paddr_t addr, int len) {
     IFDEF(CONFIG_MTRACE, Log("read in address = " FMT_PADDR ", len = %d\n", addr, len));
     return pmem_read(addr, len);
   }
-  // IFNDEF(CONFIG_DEVICE, printf("not devine config device\n"));
   IFDEF(CONFIG_DEVICE, return mmio_read(addr, len));
-  printf("\n\n\n\n\n\n\n");
-  printf("pc = 0x%08x\n",cpu.pc);
-  // printf("inst = 0x%08x\n",s->isa.inst);
+  //printf("");
   out_of_bound(addr);
   return 0;
 }
@@ -93,11 +88,8 @@ void paddr_write(paddr_t addr, int len, word_t data) {
     pmem_write(addr, len, data);
     IFDEF(CONFIG_MTRACE, Log("write in address = " FMT_PADDR ", len = %d, data = " FMT_WORD "\n", addr, len, data));
     return; }
-  // IFNDEF(CONFIG_DEVICE, printf("not devine config device\n"));
+  
   IFDEF(CONFIG_DEVICE, mmio_write(addr, len, data); return);
-   printf("\n\n\n\n\n\n\n");
-       printf("pc = 0x%08x\n",cpu.pc);
-    // printf("inst = 0x%08x\n",s->val);
   out_of_bound(addr);
   //Log("weiwei");
 }

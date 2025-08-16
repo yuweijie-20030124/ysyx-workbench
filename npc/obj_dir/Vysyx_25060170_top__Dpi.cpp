@@ -25,7 +25,7 @@ void GPR_SEND_VALUE(int* r1, int* r2, int* r3, int* r4, int* r5, int* r6, int* r
 #ifndef VL_DPIDECL_IDU_SEND_CALL_FLAG_
 #define VL_DPIDECL_IDU_SEND_CALL_FLAG_
 void IDU_SEND_CALL_FLAG(int* call_flag, int* pc, int* dnpc) {
-    // DPI export at vsrc/ysyx_25060170_IDU.v:548:6
+    // DPI export at vsrc/ysyx_25060170_IDU.v:535:6
     return Vysyx_25060170_top::IDU_SEND_CALL_FLAG(call_flag, pc, dnpc);
 }
 #endif
@@ -33,23 +33,15 @@ void IDU_SEND_CALL_FLAG(int* call_flag, int* pc, int* dnpc) {
 #ifndef VL_DPIDECL_IDU_SEND_INST_
 #define VL_DPIDECL_IDU_SEND_INST_
 void IDU_SEND_INST(int* c_inst) {
-    // DPI export at vsrc/ysyx_25060170_IDU.v:536:6
+    // DPI export at vsrc/ysyx_25060170_IDU.v:523:6
     return Vysyx_25060170_top::IDU_SEND_INST(c_inst);
-}
-#endif
-
-#ifndef VL_DPIDECL_IDU_SEND_PC_
-#define VL_DPIDECL_IDU_SEND_PC_
-void IDU_SEND_PC(int* c_pc) {
-    // DPI export at vsrc/ysyx_25060170_IFU.v:53:6
-    return Vysyx_25060170_top::IDU_SEND_PC(c_pc);
 }
 #endif
 
 #ifndef VL_DPIDECL_IDU_SEND_RET_FLAG_
 #define VL_DPIDECL_IDU_SEND_RET_FLAG_
 void IDU_SEND_RET_FLAG(int* ret_flag, int* pc) {
-    // DPI export at vsrc/ysyx_25060170_IDU.v:567:6
+    // DPI export at vsrc/ysyx_25060170_IDU.v:554:6
     return Vysyx_25060170_top::IDU_SEND_RET_FLAG(ret_flag, pc);
 }
 #endif

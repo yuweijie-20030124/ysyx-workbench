@@ -452,8 +452,6 @@ VL_ATTR_COLD void Vysyx_25060170_top___024root__trace_init_sub__TOP__0(Vysyx_250
     tracep->popPrefix();
     tracep->popPrefix();
     tracep->pushPrefix("u_ysyx_25060170_IDU", VerilatedTracePrefixType::SCOPE_MODULE);
-    tracep->declBit(c+192,0,"clk",-1, VerilatedTraceSigDirection::INPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1);
-    tracep->declBit(c+193,0,"rst",-1, VerilatedTraceSigDirection::INPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1);
     tracep->declBus(c+33,0,"pc_i",-1, VerilatedTraceSigDirection::INPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1, 31,0);
     tracep->declBus(c+65,0,"inst_i",-1, VerilatedTraceSigDirection::INPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1, 31,0);
     tracep->declBus(c+45,0,"reg1_rdata_i",-1, VerilatedTraceSigDirection::INPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1, 31,0);
@@ -543,9 +541,11 @@ VL_ATTR_COLD void Vysyx_25060170_top___024root__trace_init_sub__TOP__0(Vysyx_250
     tracep->declBit(c+193,0,"rst",-1, VerilatedTraceSigDirection::INPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1);
     tracep->declBus(c+67,0,"jump_addr",-1, VerilatedTraceSigDirection::INPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1, 31,0);
     tracep->declBit(c+68,0,"jump_en",-1, VerilatedTraceSigDirection::INPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1);
+    tracep->declBus(c+65,0,"inst_o",-1, VerilatedTraceSigDirection::OUTPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1, 31,0);
     tracep->declBus(c+33,0,"PCout",-1, VerilatedTraceSigDirection::OUTPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1, 31,0);
     tracep->declBus(c+196,0,"RESET_PC",-1, VerilatedTraceSigDirection::NONE, VerilatedTraceSigKind::PARAMETER, VerilatedTraceSigType::LOGIC, false,-1, 31,0);
     tracep->declBus(c+188,0,"PC_temp",-1, VerilatedTraceSigDirection::NONE, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1, 31,0);
+    tracep->declBus(c+197,0,"rlen",-1, VerilatedTraceSigDirection::NONE, VerilatedTraceSigKind::VAR, VerilatedTraceSigType::LOGIC, false,-1, 7,0);
     tracep->pushPrefix("pc_reg", VerilatedTracePrefixType::SCOPE_MODULE);
     tracep->declBus(c+194,0,"WIDTH",-1, VerilatedTraceSigDirection::NONE, VerilatedTraceSigKind::PARAMETER, VerilatedTraceSigType::LOGIC, false,-1, 31,0);
     tracep->declBus(c+196,0,"RESET_VAL",-1, VerilatedTraceSigDirection::NONE, VerilatedTraceSigKind::PARAMETER, VerilatedTraceSigType::LOGIC, false,-1, 31,0);
@@ -553,13 +553,8 @@ VL_ATTR_COLD void Vysyx_25060170_top___024root__trace_init_sub__TOP__0(Vysyx_250
     tracep->declBit(c+193,0,"rst",-1, VerilatedTraceSigDirection::INPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1);
     tracep->declBus(c+188,0,"din",-1, VerilatedTraceSigDirection::INPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1, 31,0);
     tracep->declBus(c+33,0,"dout",-1, VerilatedTraceSigDirection::OUTPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1, 31,0);
-    tracep->declBit(c+197,0,"wen",-1, VerilatedTraceSigDirection::INPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1);
+    tracep->declBit(c+198,0,"wen",-1, VerilatedTraceSigDirection::INPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1);
     tracep->popPrefix();
-    tracep->popPrefix();
-    tracep->pushPrefix("u_ysyx_25060170_MEM", VerilatedTracePrefixType::SCOPE_MODULE);
-    tracep->declBus(c+33,0,"addr_i",-1, VerilatedTraceSigDirection::INPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1, 31,0);
-    tracep->declBus(c+65,0,"inst_o",-1, VerilatedTraceSigDirection::OUTPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1, 31,0);
-    tracep->declBus(c+198,0,"rlen",-1, VerilatedTraceSigDirection::NONE, VerilatedTraceSigKind::VAR, VerilatedTraceSigType::LOGIC, false,-1, 7,0);
     tracep->popPrefix();
     tracep->pushPrefix("u_ysyx_25060170_WBU", VerilatedTracePrefixType::SCOPE_MODULE);
     tracep->declBit(c+193,0,"rst",-1, VerilatedTraceSigDirection::INPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1);
@@ -639,8 +634,8 @@ VL_ATTR_COLD void Vysyx_25060170_top___024root__trace_const_0_sub_0(Vysyx_250601
     bufp->fullIData(oldp+194,(0x20U),32);
     bufp->fullIData(oldp+195,(0U),32);
     bufp->fullIData(oldp+196,(0x80000000U),32);
-    bufp->fullBit(oldp+197,(1U));
-    bufp->fullCData(oldp+198,(4U),8);
+    bufp->fullCData(oldp+197,(4U),8);
+    bufp->fullBit(oldp+198,(1U));
 }
 
 VL_ATTR_COLD void Vysyx_25060170_top___024root__trace_full_0_sub_0(Vysyx_25060170_top___024root* vlSelf, VerilatedVcd::Buffer* bufp);
@@ -979,7 +974,37 @@ VL_ATTR_COLD void Vysyx_25060170_top___024root__trace_full_0_sub_0(Vysyx_2506017
                                    | ((IData)(vlSelfRef.ysyx_25060170_top__DOT__is_bge) 
                                       | ((IData)(vlSelfRef.ysyx_25060170_top__DOT__is_bltu) 
                                          | (IData)(vlSelfRef.ysyx_25060170_top__DOT__is_bgeu))))))));
-    bufp->fullIData(oldp+188,(vlSelfRef.ysyx_25060170_top__DOT__u_ysyx_25060170_IFU__DOT__PC_temp),32);
+    bufp->fullIData(oldp+188,((((0x6fU == (0x7fU & vlSelfRef.ysyx_25060170_top__DOT__MEM_inst_o)) 
+                                | ((IData)(vlSelfRef.ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__jalr) 
+                                   | ((IData)(vlSelfRef.ysyx_25060170_top__DOT__bge_flag) 
+                                      | ((IData)(vlSelfRef.ysyx_25060170_top__DOT__bne_flag) 
+                                         | ((IData)(vlSelfRef.ysyx_25060170_top__DOT__bgeu_flag) 
+                                            | ((IData)(vlSelfRef.ysyx_25060170_top__DOT__blt_flag) 
+                                               | ((IData)(vlSelfRef.ysyx_25060170_top__DOT__beq_flag) 
+                                                  | (IData)(vlSelfRef.ysyx_25060170_top__DOT__bltu_flag))))))))
+                                ? ((IData)(vlSelfRef.ysyx_25060170_top__DOT__u_ysyx_25060170_IDU__DOT__jalr)
+                                    ? (0xfffffffeU 
+                                       & vlSelfRef.ysyx_25060170_top__DOT__u_ysyx_25060170_EXU__DOT__jumpaddr)
+                                    : ((0x6fU == (0x7fU 
+                                                  & vlSelfRef.ysyx_25060170_top__DOT__MEM_inst_o))
+                                        ? vlSelfRef.ysyx_25060170_top__DOT__u_ysyx_25060170_EXU__DOT__jumpaddr
+                                        : ((IData)(vlSelfRef.ysyx_25060170_top__DOT__bne_flag)
+                                            ? vlSelfRef.ysyx_25060170_top__DOT__exu_res1
+                                            : ((IData)(vlSelfRef.ysyx_25060170_top__DOT__bge_flag)
+                                                ? vlSelfRef.ysyx_25060170_top__DOT__exu_res1
+                                                : ((IData)(vlSelfRef.ysyx_25060170_top__DOT__blt_flag)
+                                                    ? vlSelfRef.ysyx_25060170_top__DOT__exu_res1
+                                                    : 
+                                                   ((IData)(vlSelfRef.ysyx_25060170_top__DOT__bltu_flag)
+                                                     ? vlSelfRef.ysyx_25060170_top__DOT__exu_res1
+                                                     : 
+                                                    ((IData)(vlSelfRef.ysyx_25060170_top__DOT__beq_flag)
+                                                      ? vlSelfRef.ysyx_25060170_top__DOT__exu_res1
+                                                      : 
+                                                     ((IData)(vlSelfRef.ysyx_25060170_top__DOT__bgeu_flag)
+                                                       ? vlSelfRef.ysyx_25060170_top__DOT__exu_res1
+                                                       : 0U))))))))
+                                : ((IData)(4U) + vlSelfRef.ysyx_25060170_top__DOT__PCout))),32);
     bufp->fullBit(oldp+189,(vlSelfRef.ysyx_25060170_top__DOT__u_ysyx_25060170_WBU__DOT__tiaojian));
     bufp->fullIData(oldp+190,((((- (IData)((1U == (IData)(vlSelfRef.ysyx_25060170_top__DOT__need_sign_ext)))) 
                                 & ((- (IData)((1U == (IData)(vlSelfRef.ysyx_25060170_top__DOT__regS)))) 

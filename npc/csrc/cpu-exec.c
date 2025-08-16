@@ -23,10 +23,9 @@ CircularBuffer cb;
 #endif
 
 
-// NPC_reg cpu = { .pc =0x80000000};
-NPC_reg cpu;
+NPC_reg cpu = { .pc =0x80000000};
 Decode s;
-NPC_State npc_state = { .state = NPC_QUIT };
+NPC_State npc_state = { .state = NPC_STOP };
 
 #define MAX_INST_TO_PRINT 10
 
@@ -77,16 +76,15 @@ static void exec_once(Decode *s, vaddr_t pc) {
   }
   
   
-  s->pc = cpu.pc;
+  s->pc = cpu.pc;//当前指令地址
   // printf("pc=0x%08x\n",pc);
-   
-  isa_exec_once();
 
-  s->snpc = cpu.pc ;//静态下一条指令地址，默认为pc+4
-  // printf("s->pc=0x%08x\n",s->pc);
+  isa_exec_once();  
 
-  int inst_from_verilog = s->val;
+  s->snpc = cpu.pc;//静态下一条指令地址，默认为pc+4
+  // printf("s->snpc - s->pc =0x%08x\n",s->snpc - s->pc);
   //printf("instformverilog is 0x%08x\n", inst_from_verilog);
+
 #ifdef CONFIG_ITRACE
   char *p = s->logbuf;
   
@@ -113,10 +111,6 @@ static void exec_once(Decode *s, vaddr_t pc) {
         
 #ifdef CONFIG_ITRACE_IRINGBUF
   enqueue(&cb, s->logbuf);
-  if (!cb.buffer) {
-    fprintf(stderr, "Ring buffer not initialized!\n");
-    abort();
-}
 #endif
 
 }
@@ -158,11 +152,10 @@ void assert_fail_msg() {//输出错误信息
   statistic();
 }
 
-/* Simulate how the CPU works. */
 void cpu_exec(uint64_t n) {
   g_print_step = (n < MAX_INST_TO_PRINT);//一次执行太多步就不打印了，bool类型的gprintstep就赋值为false
   switch (npc_state.state) {
-    case NPC_END: case NPC_ABORT:
+    case NPC_END: case NPC_ABORT: case NPC_QUIT:
       //printf("%d\n",npc_state.state);
       printf("Program execution has ended. To restart the program, exit NPC and run again.\n");
       return;//如果状态是结束了，出错了，退出了就打印“退出nemu”。

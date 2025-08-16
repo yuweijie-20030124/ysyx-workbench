@@ -13,7 +13,7 @@ typedef struct Decode {
   word_t pc;
   word_t snpc; // static next pc
   word_t val;
-  IFDEF(CONFIG_ITRACE, char logbuf[256]);
+  IFDEF(CONFIG_ITRACE, char logbuf[128]);
 } Decode;
 
 extern NPC_reg cpu;

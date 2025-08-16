@@ -40,70 +40,18 @@ extern "C" void pmem_read(paddr_t raddr, paddr_t* rdata, int rlen){
    return;
 }
 
-
 extern "C" void set_npc_exit(vaddr_t pc, int halt_ret){
   npc_state.state = NPC_END;
   npc_state.halt_pc = pc;
   npc_state.halt_ret = halt_ret;
 }
 
-//void init_monitor(int argc, char *argv[]);
-
-/*
-0000000 00000 00000 000 00000 0010011
-
-imm[11:0] = 000000000000 (立即数 0)
-
-rs1 = 00000 (x0)
-
-funct3 = 000 (addi 的操作码)
-
-rd = 00000 (x0)
-
-opcode = 0010011 (I-type 指令的操作码)
-*/
-
-/*
-int main(int argc, char** argv) {
-    VerilatedContext* contextp = new VerilatedContext;
-    contextp->commandArgs(argc, argv);
-    contextp->traceEverOn(true);
-
-    Vysyx_25060170_top* top = new Vysyx_25060170_top{contextp};
-    VerilatedVcdC* tfp = new VerilatedVcdC;
-    top->trace(tfp, 0);
-    tfp->open("waveform.vcd");
-
-    // 初始化信号
-    top->clk = 0;
-    top->rst = 1;
-    top->ready_i = 1;
-
-    for (vluint64_t sim_time = 0; sim_time < MAX_SIM_TIME && !contextp->gotFinish(); sim_time++) {
-        // 时钟上升沿
-        top->clk = !top->clk;
-        if (sim_time == 2) top->rst = 0; // 复位释放
-
-        top->eval();
-        tfp->dump(sim_time);
-
-        //可选：打印寄存器或信号，便于调试
-        //printf("pc = %08x\n", top->pc);
-
-        // 时钟下降沿
-        top->clk = !top->clk;
-        top->eval();
-        tfp->dump(sim_time + 0.5);
-    }
-
-    tfp->close();
-    delete top;
-    delete tfp;
-    delete contextp;
-    return 0;
+extern "C" void pc_inst_end(int thepc_data, int the_inst){
+  cpu.pc = thepc_data;
+  s.val = the_inst;
 }
-*/
 
+/***********************************************END DPI-C*******************************************/
 int main(int argc, char** argv) {
 
   contextp = new VerilatedContext;
@@ -115,6 +63,7 @@ int main(int argc, char** argv) {
     top->trace(tfp, 0);
     tfp->open("waveform.vcd");
   #endif  
+
   cpu_reset();
 	init_monitor(argc,argv);
 	cpu_reset();
@@ -164,10 +113,11 @@ void cpu_reset(){
   top -> clk = 0;
   top -> rst = 1;  
   top -> eval();
-  printf("***reset***\n");
 #ifdef CONFIG_GTK
   tfp -> dump(main_time++);
 #endif  
+
+  printf("***reset***\n");
 
   top -> clk = 1;
   top -> rst = 1;
@@ -177,14 +127,5 @@ void cpu_reset(){
 #endif  
 
   top -> rst = 0;
-
-}
-
-
-/******************************************************DPI-C***************************************************/
-extern "C" void pc_inst_end(int thepc_data, int the_inst){
-
-  cpu.pc = thepc_data;
-  s.val = the_inst;
 
 }

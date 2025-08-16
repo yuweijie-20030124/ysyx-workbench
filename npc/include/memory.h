@@ -40,10 +40,6 @@ static inline bool in_pmem(paddr_t addr) {
 
 uint8_t* guest_to_host(paddr_t addr);
 
-int get_inst();
-
-int get_pc();
-
 #define PAGE_SHIFT        12
 #define PAGE_SIZE         (1ul << PAGE_SHIFT)
 #define PAGE_MASK         (PAGE_SIZE - 1)

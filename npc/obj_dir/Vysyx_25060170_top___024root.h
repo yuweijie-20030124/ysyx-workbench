@@ -89,8 +89,6 @@ class alignas(VL_CACHE_LINE_BYTES) Vysyx_25060170_top___024root final : public V
         CData/*0:0*/ __VstlFirstIteration;
         CData/*0:0*/ __VicoFirstIteration;
         CData/*0:0*/ __Vtrigprevexpr___TOP__clk__0;
-        CData/*0:0*/ __Vtrigprevexpr___TOP__rst__0;
-        CData/*0:0*/ __VactDidInit;
         CData/*0:0*/ __VactContinue;
         IData/*31:0*/ ysyx_25060170_top__DOT__PCout;
         IData/*31:0*/ ysyx_25060170_top__DOT__op_1;
@@ -137,8 +135,8 @@ class alignas(VL_CACHE_LINE_BYTES) Vysyx_25060170_top___024root final : public V
         IData/*31:0*/ ysyx_25060170_top__DOT__u_ysyx_25060170_EXU__DOT____VdfgRegularize_h08aa94b0_0_3;
         IData/*31:0*/ ysyx_25060170_top__DOT__u_ysyx_25060170_WBU__DOT__paddr_data;
         IData/*31:0*/ ysyx_25060170_top__DOT__u_ysyx_25060170_WBU__DOT____VdfgRegularize_hca46b70a_1_1;
-        IData/*31:0*/ __Vtask_ysyx_25060170_top__DOT__u_ysyx_25060170_MEM__DOT__pmem_read__2__rdata;
-        IData/*31:0*/ __Vfunc_ysyx_25060170_top__DOT__u_ysyx_25060170_WBU__DOT__paddr_read__3__Vfuncout;
+        IData/*31:0*/ __Vtask_ysyx_25060170_top__DOT__u_ysyx_25060170_IFU__DOT__pmem_read__2__rdata;
+        IData/*31:0*/ __Vfunc_ysyx_25060170_top__DOT__u_ysyx_25060170_WBU__DOT__paddr_read__4__Vfuncout;
         IData/*31:0*/ __VactIterCount;
         QData/*32:0*/ ysyx_25060170_top__DOT__u_ysyx_25060170_EXU__DOT__sub_unsigned;
         VlUnpacked<IData/*31:0*/, 32> ysyx_25060170_top__DOT__u_ysyx_25060170_GPR__DOT__rf;
@@ -146,8 +144,8 @@ class alignas(VL_CACHE_LINE_BYTES) Vysyx_25060170_top___024root final : public V
     };
     VlTriggerVec<1> __VstlTriggered;
     VlTriggerVec<1> __VicoTriggered;
-    VlTriggerVec<3> __VactTriggered;
-    VlTriggerVec<3> __VnbaTriggered;
+    VlTriggerVec<1> __VactTriggered;
+    VlTriggerVec<1> __VnbaTriggered;
 
     // INTERNAL VARIABLES
     Vysyx_25060170_top__Syms* const vlSymsp;
