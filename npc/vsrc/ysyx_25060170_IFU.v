@@ -19,11 +19,22 @@ module ysyx_25060170_IFU (
         .dout(PCout),
         .wen(1'b1)
     );
+    // always @(posedge clk) begin
+    //     if(rst)begin
+    //         PCout <= RESET_PC;
+    //     end
+    //     else begin
+    //         PCout <= PC_temp;
+    //     end
+    // end
 
     assign PC_temp = jump_en ? jump_addr : PCout + 4;
 
 
-
+// always @(posedge clk or rst) begin
+//             $display("!!!verilog PC   = 0x%08x", PCout);
+//             // $display("!!!verilog PC_temp   = 0x%08x", PC_temp);
+//     end
 
 
 

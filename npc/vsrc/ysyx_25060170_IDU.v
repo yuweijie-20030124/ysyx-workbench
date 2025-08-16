@@ -10,6 +10,9 @@ jalr处理信号，若为jalr则将x1+offset的值写入PC；
 */
 
 module ysyx_25060170_IDU(
+    //from top
+    input clk,
+    input rst,
 
     //from IFU
     input [31:0] pc_i,
@@ -522,7 +525,9 @@ assign imm_o = imm;
 end
 
 
- always @(*) begin
+ always @(posedge clk or rst) begin
+    // $display("verilog PC   = 0x%08x", pc_i);
+    // $display("verilog inst = 0x%08x", inst_i);
      pc_inst_end(pc_i, inst_i);
  end
 

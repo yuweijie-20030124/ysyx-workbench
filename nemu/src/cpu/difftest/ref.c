@@ -48,7 +48,7 @@ __EXPORT void difftest_regcpy(void *dut, bool direction) {
     if (direction == DIFFTEST_TO_REF) {
     //printf("%lx\n",cpu.pc);
     cpu.pc = ((CPU_state *)dut)->pc;
-    printf("ref pc = 0x%08x\n",cpu.pc);
+    // printf("ref pc = 0x%08x\n",cpu.pc);
     //printf("%lx\n",cpu.pc);
     for (int i = 0; i < 32; ++i) {
       cpu.gpr[i] = ((CPU_state *)dut)->gpr[i];

@@ -23,7 +23,8 @@ CircularBuffer cb;
 #endif
 
 
-NPC_reg cpu = { .pc =0x80000000};
+// NPC_reg cpu = { .pc =0x80000000};
+NPC_reg cpu;
 Decode s;
 NPC_State npc_state = { .state = NPC_QUIT };
 
