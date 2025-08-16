@@ -4,7 +4,7 @@ module ysyx_25060170_IFU (
     input  [31:0] jump_addr,      //执行单元结果，（用于JALR等指令时更新PC）。
     input  jump_en,         //跳转或分支的标志位
     //to IDU
-    output reg [31:0] PCout
+    output [31:0] PCout
 
 );
     parameter RESET_PC = 32'h8000_0000;
@@ -31,10 +31,10 @@ module ysyx_25060170_IFU (
     assign PC_temp = jump_en ? jump_addr : PCout + 4;
 
 
-// always @(posedge clk or rst) begin
-//             $display("!!!verilog PC   = 0x%08x", PCout);
-//             // $display("!!!verilog PC_temp   = 0x%08x", PC_temp);
-//     end
+always @(posedge clk or rst) begin
+            $display("!!!verilog PC   = 0x%08x", PCout);
+            $display("!!!verilog PC_temp   = 0x%08x", PC_temp);
+    end
 
 
 

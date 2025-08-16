@@ -210,6 +210,8 @@ void Vysyx_25060170_top___024root___eval_triggers__act(Vysyx_25060170_top___024r
                                           & (~ (IData)(vlSelfRef.__Vtrigprevexpr___TOP__clk__0))));
     vlSelfRef.__VactTriggered.setBit(1U, ((IData)(vlSelfRef.rst) 
                                           != (IData)(vlSelfRef.__Vtrigprevexpr___TOP__rst__0)));
+    vlSelfRef.__VactTriggered.setBit(2U, ((IData)(vlSelfRef.rst) 
+                                          & (~ (IData)(vlSelfRef.__Vtrigprevexpr___TOP__rst__0))));
     vlSelfRef.__Vtrigprevexpr___TOP__clk__0 = vlSelfRef.clk;
     vlSelfRef.__Vtrigprevexpr___TOP__rst__0 = vlSelfRef.rst;
     if (VL_UNLIKELY(((1U & (~ (IData)(vlSelfRef.__VactDidInit)))))) {

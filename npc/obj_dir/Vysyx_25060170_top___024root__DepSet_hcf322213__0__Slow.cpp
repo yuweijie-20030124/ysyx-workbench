@@ -1220,6 +1220,9 @@ VL_ATTR_COLD void Vysyx_25060170_top___024root___dump_triggers__act(Vysyx_250601
     if ((2ULL & vlSelfRef.__VactTriggered.word(0U))) {
         VL_DBG_MSGF("         'act' region trigger index 1 is active: @( rst)\n");
     }
+    if ((4ULL & vlSelfRef.__VactTriggered.word(0U))) {
+        VL_DBG_MSGF("         'act' region trigger index 2 is active: @(posedge rst)\n");
+    }
 }
 #endif  // VL_DEBUG
 
@@ -1237,6 +1240,9 @@ VL_ATTR_COLD void Vysyx_25060170_top___024root___dump_triggers__nba(Vysyx_250601
     }
     if ((2ULL & vlSelfRef.__VnbaTriggered.word(0U))) {
         VL_DBG_MSGF("         'nba' region trigger index 1 is active: @( rst)\n");
+    }
+    if ((4ULL & vlSelfRef.__VnbaTriggered.word(0U))) {
+        VL_DBG_MSGF("         'nba' region trigger index 2 is active: @(posedge rst)\n");
     }
 }
 #endif  // VL_DEBUG

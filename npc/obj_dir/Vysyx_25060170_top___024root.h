@@ -146,8 +146,8 @@ class alignas(VL_CACHE_LINE_BYTES) Vysyx_25060170_top___024root final : public V
     };
     VlTriggerVec<1> __VstlTriggered;
     VlTriggerVec<1> __VicoTriggered;
-    VlTriggerVec<2> __VactTriggered;
-    VlTriggerVec<2> __VnbaTriggered;
+    VlTriggerVec<3> __VactTriggered;
+    VlTriggerVec<3> __VnbaTriggered;
 
     // INTERNAL VARIABLES
     Vysyx_25060170_top__Syms* const vlSymsp;

@@ -8,12 +8,16 @@ module Reg #(WIDTH = 1, RESET_VAL = 0) (
   output reg [WIDTH-1:0] dout,
   input wen
 );
-  always @(posedge clk) begin
-    // $display("verilog reg_out_PC   = 0x%08x", dout);
-    // $display("verilog reg_in_PC   = 0x%08x", din);
-    if (rst) dout <= RESET_VAL;
-    else if (wen) dout <= din;
+  always @(posedge clk or posedge rst) begin
+  if (rst) begin
+    dout <= RESET_VAL;
+    $display("!!!Reg Reset dout = 0x%08x", dout);
   end
+  else if (wen) begin
+    dout <= din;
+    $display("!!!Reg Update dout = 0x%08x, din = 0x%08x", dout, din);
+  end
+end
 
 endmodule
 
