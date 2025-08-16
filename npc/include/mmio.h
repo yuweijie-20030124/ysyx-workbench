@@ -38,7 +38,10 @@ static inline int find_mapid_by_addr(IOMap *maps, int size, paddr_t addr) {
   for (i = 0; i < size; i ++) {//遍历一遍要找的addr中的size空间
     if (map_inside(maps + i, addr)) {//确认看的是IO的映射区域
       // printf("!!!!!!!!!!!!!!!!!!!!!******\n");
+
+      #ifdef CONFIG_DIFFTEST
       difftest_skip_ref();
+      #endif
       return i;
     }
   }

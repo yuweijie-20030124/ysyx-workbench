@@ -64,7 +64,6 @@ int main(int argc, char** argv) {
     tfp->open("waveform.vcd");
   #endif  
 
-  cpu_reset();
 	init_monitor(argc,argv);
 	cpu_reset();
 
