@@ -221,6 +221,17 @@ static void checkregs(NPC_reg *ref, vaddr_t pc) {
 void difftest_step(vaddr_t pc, vaddr_t npc) {
   NPC_reg ref_r;
   
+  if (is_skip_ref) {
+    // to skip the checking of an instruction, just copy the reg state to reference design
+    // printf("i am in \n");
+    // printf("skip cpu.pc = 0x%08x\n",cpu.pc);
+    // int inst = get_inst();
+    // printf("skip inst = 0x%08x\n",inst);
+    ref_difftest_regcpy(&cpu, DIFFTEST_TO_REF);
+    is_skip_ref = false;
+    return;
+  }
+
   //printf("进来啦!!!!!!!!!\n");
   // printf("difftest_step pc = 0x%08x, npc = 0x%08x\n", pc, npc);
   if (skip_dut_nr_inst > 0) {
@@ -235,17 +246,6 @@ void difftest_step(vaddr_t pc, vaddr_t npc) {
     skip_dut_nr_inst --;
     if (skip_dut_nr_inst == 0)
       panic("can not catch up with ref.pc = " FMT_WORD " at pc = " FMT_WORD, ref_r.pc, pc);
-    return;
-  }
-
-  if (is_skip_ref) {
-    // to skip the checking of an instruction, just copy the reg state to reference design
-    // printf("i am in \n");
-    // printf("skip cpu.pc = 0x%08x\n",cpu.pc);
-    // int inst = get_inst();
-    // printf("skip inst = 0x%08x\n",inst);
-    ref_difftest_regcpy(&cpu, DIFFTEST_TO_REF);
-    is_skip_ref = false;
     return;
   }
 
