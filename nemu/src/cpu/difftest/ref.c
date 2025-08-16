@@ -45,7 +45,6 @@ __EXPORT void difftest_memcpy(paddr_t addr, void *buf, size_t n, bool direction)
 //   }
 // }
 __EXPORT void difftest_regcpy(void *dut, bool direction) {
-    printf("ref pc = 0x%08x\n",cpu.pc);
     if (direction == DIFFTEST_TO_REF) {
     //printf("%lx\n",cpu.pc);
     cpu.pc = ((CPU_state *)dut)->pc;
