@@ -18,8 +18,6 @@
 #include <device/mmio.h>
 #include <isa.h>
 
- extern CPU_state cpu;
-
 
 
 //只需要在paddr_read()和paddr_write()中进行记录即可. 你可以自行定义mtrace输出的格式.
