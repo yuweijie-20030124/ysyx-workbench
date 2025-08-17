@@ -87,6 +87,11 @@ module ysyx_25060170_WBU(
         end
     end
     
+    //  always@(*)begin
+    //     if(PC_i == 32'h800012a4)begin
+    //                  $display("reg_write_data_o  = 0x%08x",reg_write_data_o );
+    //     end
+    // end
 
     //assign reg_write_data_o = exu_result_i;
     assign reg_write_data_o = 32'b0 |

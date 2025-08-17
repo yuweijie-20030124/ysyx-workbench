@@ -93,6 +93,13 @@ assign sltu_flag  = is_sltu  & subu_carry;    // 无符号 <  < (结果负且非
 //         $display("ALUop         = %d", ALUop); 
 //         $display("exu_res1      = 0x%08x", exu_res1);       
 //     end
+
+    // always@(*)begin
+    //     if(ALUop == 7)begin
+    //                  $display("exu_res1  = 0x%08x",exu_res1 );
+    //     end
+    // end
+
     //+0 -1 *2 /3 &4 |5 ^6 单目7 左移8 右移9 %余10 补符号位左移11，补符号位右移12  none 15
     assign exu_res1 = 32'h0 | 
                     //addi  i-type
