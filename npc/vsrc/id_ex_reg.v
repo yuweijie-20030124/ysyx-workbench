@@ -1,0 +1,123 @@
+ `include "define.v"
+
+ module ysyx_25060170_reg_idex(
+	//front stage input
+   	input	wire					clk		,
+   	input	wire					rst		,
+   	input	wire	[`ysyx_25060170_INST]		id_inst		,	
+   	input	wire	[`ysyx_25060170_PC]		id_pc		,
+   	input	wire	[`ysyx_25060170_REG]		id_op1		,
+   	input	wire	[`ysyx_25060170_REG]		id_op2		,
+   	input	wire	[1:0]				id_op1_sel	,
+   	input	wire	[2:0]				id_op2_sel	,
+   	input	wire	[`ysyx_25060170_IMM]		id_imm		,
+   	input	wire					id_rd_ena	,
+   	input	wire	[`ysyx_25060170_REGADDR]	id_rd_addr	,
+   	input	wire	[`ysyx_25060170_REGADDR]	id_rs1_addr	,
+   	input	wire	[7:0]         			id_alusrc	,
+   	input	wire	[3:0]      			id_lsctl	,
+   	input	wire	[1:0]     			id_wbctl	,
+   	input	wire 					id_load_flag	, 
+   	input	wire 					id_csr_ena	,
+    
+    	//ctl
+   	input	wire					id_valid	,
+   	input	wire					id_flush	,
+   	input	wire					ie_flush	,
+   	input	wire					ls_flush	,
+   	input	wire					ex_ready	,
+
+	//output to next stage
+	output	reg	[`ysyx_25060170_INST]		ex_inst		,
+	output	reg	[`ysyx_25060170_PC]		ex_pc		,
+	output	reg	[`ysyx_25060170_REG]		ex_op1		,
+	output	reg	[`ysyx_25060170_REG]		ex_op2		,
+	output	reg	[1:0]				ex_op1_sel	,
+	output	reg	[2:0]				ex_op2_sel	,
+	output	reg	[`ysyx_25060170_IMM]		ex_imm 		,
+	output	reg					ex_rd_ena	,
+	output	reg	[`ysyx_25060170_REGADDR]	ex_rd_addr	,
+	output	reg	[`ysyx_25060170_REGADDR]	ex_rs1_addr	,
+	output	reg	[7:0]				ex_alusrc  	,
+	output	reg	[3:0]      			ex_lsctl   	,
+	output	reg 					ex_load_flag	,
+	output	reg 					ex_csr_ena	,
+	output	reg	[1:0]     			ex_wbctl    
+   );
+
+wire flush = id_flush | ie_flush | ls_flush;
+wire stall = id_valid | ex_ready;
+
+always@(posedge clk) begin
+	if(rst == `ysyx_25060170_RSTABLE)begin 
+		ex_inst		<= 32'd0;
+		ex_pc		<= `ysyx_25060170_ZERO32;
+		ex_op1		<= `ysyx_25060170_ZERO32;
+		ex_op2		<= `ysyx_25060170_ZERO32;
+		ex_op1_sel	<= 2'b0;
+		ex_op2_sel	<= 3'd0;
+		ex_imm		<= `ysyx_25060170_ZERO32;
+		ex_rd_ena	<= 1'b0;
+		ex_rd_addr	<= 5'd0;
+		ex_rs1_addr	<= 5'd0;
+		ex_alusrc	<= 8'd0;
+		ex_lsctl	<= 4'd0;
+		ex_wbctl	<= 2'b0;
+		ex_load_flag	<= 1'b0;
+		ex_csr_ena	<= 1'b0;
+	end
+	else if(stall) begin 
+		ex_inst		<= ex_inst;
+		ex_pc		<= ex_pc;
+		ex_op1		<= ex_op1;
+		ex_op2		<= ex_op2;
+		ex_op1_sel	<= ex_op1_sel;
+		ex_op2_sel	<= ex_op2_sel;
+		ex_imm		<= ex_imm;
+		ex_rd_ena	<= ex_rd_ena;
+		ex_rd_addr	<= ex_rd_addr;
+		ex_rs1_addr	<= ex_rs1_addr;
+		ex_alusrc	<= ex_alusrc;
+		ex_lsctl	<= ex_lsctl;
+		ex_wbctl	<= ex_wbctl;
+		ex_load_flag	<= ex_load_flag;
+		ex_csr_ena	<= ex_csr_ena;
+	end
+	else if(flush) begin 
+		ex_inst		<= 32'd0;
+		ex_pc		<= `ysyx_25060170_ZERO32;
+		ex_op1		<= `ysyx_25060170_ZERO32;
+		ex_op2		<= `ysyx_25060170_ZERO32;
+		ex_op1_sel	<= 2'b0;
+		ex_op2_sel	<= 3'd0;
+		ex_imm		<= `ysyx_25060170_ZERO32;
+		ex_rd_ena	<= 1'b0;
+		ex_rd_addr	<= 5'd0;
+		ex_rs1_addr	<= 5'd0;
+		ex_alusrc	<= 8'd0;
+		ex_lsctl	<= 4'd0;
+		ex_wbctl	<= 2'b0;
+		ex_load_flag	<= 1'b0;
+		ex_csr_ena	<= 1'b0;
+	end
+	else begin
+		ex_inst		<= id_inst;
+		ex_pc 		<= id_pc;
+		ex_op1		<= id_op1;
+		ex_op2		<= id_op2;
+		ex_op1_sel	<= id_op1_sel;
+		ex_op2_sel	<= id_op2_sel;
+		ex_imm		<= id_imm;
+		ex_rd_ena	<= id_rd_ena;
+		ex_rd_addr	<= id_rd_addr;
+		ex_rs1_addr	<= id_rs1_addr;
+		ex_alusrc	<= id_alusrc;
+		ex_lsctl	<= id_lsctl;
+		ex_wbctl	<= id_wbctl;
+		ex_load_flag	<= id_load_flag;
+		ex_csr_ena	<= id_csr_ena;
+	end
+end
+
+endmodule
+
