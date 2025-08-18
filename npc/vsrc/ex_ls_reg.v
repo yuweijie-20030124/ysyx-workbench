@@ -2,35 +2,32 @@
 
  module ysyx_25060170_ex_ls(
 	//front stage input
-	input	wire					clk		,
-	input	wire					rst		,
-	input	wire	[`ysyx_25060170_INST]		ex_inst 	,
-	input	wire	[`ysyx_25060170_PC]		ex_pc		,
-	input	wire	[`ysyx_25060170_REG] 		ex_store_data	,
-	input 	wire 	[`ysyx_25060170_DATA] 		ex_exu_res	,
-	input	wire 	[3:0]      			ex_lsctl	,
-	input	wire 	[1:0]     			ex_wbctl	,	
-	input	wire                                    ex_rd_ena	,
-	input	wire	[`ysyx_25060170_REGADDR]	ex_rd_addr	,
-    
- 	//ctl
-	input	wire					ex_valid	,	
-	input	wire					ls_ready	,
-	input	wire					ie_flush	,
-	input	wire					ls_flush	,
-    
-	//output to next stage
-	output	reg	[`ysyx_25060170_INST]		ls_inst		,
-	output	reg	[`ysyx_25060170_PC]		ls_pc		,
-	output	reg 	[`ysyx_25060170_REG] 		ls_store_data 	,
-	output 	reg 	[`ysyx_25060170_DATA] 		ls_exu_res	,
-	output	reg 	[3:0]      			ls_lsctl	,
-	output	reg 	[1:0]		     		ls_wbctl   	, 
-	output	reg                                     ls_rd_ena	,
-	output	reg	[`ysyx_25060170_REGADDR]	ls_rd_addr	,
-	
-	//ls csr forward to idu
-	output	reg					ls_csr_ena	,
+	input	wire					            clk		            ,
+	input	wire					            rst		            ,
+	input	wire	[`ysyx_25060170_INST]		ex_inst 	        ,
+	input	wire	[`ysyx_25060170_PC]		    ex_pc		        ,
+	input	wire	[`ysyx_25060170_REG] 		ex_store_data	    ,
+	input 	wire 	[`ysyx_25060170_DATA] 		ex_exu_res	        ,
+	input	wire 	[3:0]      			        ex_lsctl	        ,
+	input	wire 	[1:0]     			        ex_wbctl	        ,	
+	input	wire                                ex_rd_ena	        ,
+	input	wire	[`ysyx_25060170_REGADDR]	ex_rd_addr	        ,
+
+ 	//ctl       
+	input	wire					            ex_valid	        ,	
+	input	wire					            ls_ready	        ,
+	input	wire					            ie_flush	        ,
+	input	wire					            ls_flush	        ,
+
+	//output to next stage      
+	output	reg	    [`ysyx_25060170_INST]		ls_inst		        ,
+	output	reg	    [`ysyx_25060170_PC]		    ls_pc		        ,
+	output	reg 	[`ysyx_25060170_REG] 		ls_store_data 	    ,
+	output 	reg 	[`ysyx_25060170_DATA] 		ls_exu_res	        ,
+	output	reg 	[3:0]      			        ls_lsctl	        ,
+	output	reg 	[1:0]		     		    ls_wbctl   	        , 
+	output	reg                                 ls_rd_ena	        ,
+	output	reg	    [`ysyx_25060170_REGADDR]	ls_rd_addr	        ,
     
 	//ex forward to idu
 	output	wire	[`ysyx_25060170_REGADDR]	ex_rd_addr_forward	,
@@ -50,7 +47,6 @@ always@(posedge clk) begin
 		ls_wbctl	<= 2'b0;
 		ls_rd_ena	<= 1'b0;
 		ls_rd_addr	<= 5'd0;
-		ls_csr_ena 	<= 1'b0;
 	end
 	else if(stall) begin 
 		ls_inst		<= ls_inst;
@@ -61,7 +57,6 @@ always@(posedge clk) begin
 		ls_wbctl	<= ls_wbctl;
 		ls_rd_ena	<= ls_rd_ena;
 		ls_rd_addr	<= ls_rd_addr;
-		ls_csr_ena 	<= ls_csr_ena;
 	end
 	else if(flush)begin 
 		ls_inst		<= 32'd0;
@@ -72,7 +67,6 @@ always@(posedge clk) begin
 		ls_wbctl	<= 2'b0;
 		ls_rd_ena	<= 1'b0;
 		ls_rd_addr	<= 5'd0;
-		ls_csr_ena 	<= 1'b0;
 	end
 	else begin
 		ls_inst		<= ex_inst;
@@ -83,7 +77,6 @@ always@(posedge clk) begin
 		ls_wbctl	<= ex_wbctl;
 		ls_rd_ena	<= ex_rd_ena;
 		ls_rd_addr	<= ex_rd_addr;
-		ls_csr_ena 	<= ex_csr_ena;
 	end
 end
 

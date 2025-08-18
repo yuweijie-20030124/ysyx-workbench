@@ -1,23 +1,23 @@
  `include "define.v"
- module ysyx_25060170_reg_ifidreg(
+ module ysyx_25060170_if_id(
  	//front stage input
-	input	wire				clk	,
-	input	wire				rst	,
-	input	wire	[`ysyx_25060170_INST]	if_inst	,
-	input	wire	[`ysyx_25060170_PC]	if_pc	,
-	
-	//ctl
-	input	wire				if_valid,
-	input	wire				id_flush,
-	input	wire				ie_flush,
-	input	wire				ls_flush,
-	input	wire				id_stall,
-	input	wire				id_ready,
-	
-	//output to next stage
-	output	reg				id_jump	,
-	output	reg	[`ysyx_25060170_INST]	id_inst	,
-	output	reg	[`ysyx_25060170_PC]	id_pc
+	input	wire				                clk	        ,
+	input	wire				                rst	        ,
+	input	wire	[`ysyx_25060170_INST]	    if_inst	    ,
+	input	wire	[`ysyx_25060170_PC]	        if_pc	    ,
+    
+	//ctl   
+	input	wire				                if_valid    ,
+	input	wire				                id_flush    ,
+	input	wire				                ie_flush    ,
+	input	wire				                ls_flush    ,
+	input	wire				                id_stall    ,
+	input	wire				                id_ready    ,
+    
+	//output to next stage  
+	output	reg				                    id_jump	    ,
+	output	reg	    [`ysyx_25060170_INST]	    id_inst	    ,
+	output	reg	    [`ysyx_25060170_PC]	        id_pc
  );
  
  wire flush =  (~id_stall & id_flush) | ie_flush | ls_flush;

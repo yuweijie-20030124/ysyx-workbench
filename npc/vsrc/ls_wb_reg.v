@@ -2,30 +2,30 @@
 
  module ysyx_25060170_ls_wb(
 	//front stage input
-	input	wire                                     clk		,
-	input	wire                                     rst		,
-	input	wire	[`ysyx_25060170_INST]		ls_inst	,
-	input	wire	[`ysyx_25060170_PC]		ls_pc		,
-	input	wire 	[1:0]				ls_wbctl    	,
-	input 	wire 	[`ysyx_25060170_DATA]		ls_exu_res	,
-	input	wire 	[`ysyx_25060170_DATA]		ls_wbdata	,
-	input	wire					ls_rd_ena	,
-	input	wire	[`ysyx_25060170_REGADDR]	ls_rd_addr	,   
-	input	wire 	[`ysyx_25060170_DATA]		ls_data_forward	,
-    
-	//ctl
-	input	wire					ls_valid	,
-	input	wire					wb_ready	,
-	input	wire					ie_flush	,	
+	input	wire                                clk		            ,
+	input	wire                                rst		            ,
+	input	wire	[`ysyx_25060170_INST]		ls_inst	            ,
+	input	wire	[`ysyx_25060170_PC]		    ls_pc		        ,
+	input	wire 	[1:0]				        ls_wbctl    	    ,
+	input 	wire 	[`ysyx_25060170_DATA]		ls_exu_res	        ,
+	input	wire 	[`ysyx_25060170_DATA]		ls_wbdata	        ,
+	input	wire					            ls_rd_ena	        ,
+	input	wire	[`ysyx_25060170_REGADDR]	ls_rd_addr	        ,   
+	input	wire 	[`ysyx_25060170_DATA]		ls_data_forward	    ,
 
-	//output to next stage  
-	output	reg	[`ysyx_25060170_INST]		wb_inst		,
-	output	reg	[`ysyx_25060170_PC]		wb_pc		,
-	output	reg 	[1:0]				wb_wbctl    	,
-	output 	reg 	[`ysyx_25060170_DATA]		wb_exu_res	,
-	output	reg 	[`ysyx_25060170_DATA]     	wb_wbdata	,
-	output	reg                                     wb_rd_ena	,
-	output	reg	[`ysyx_25060170_REGADDR]	wb_rd_addr	,
+	//ctl   
+	input	wire					            ls_valid	        ,
+	input	wire					            wb_ready	        ,
+	input	wire					            ie_flush	        ,	
+
+	//output to next stage      
+	output	reg	    [`ysyx_25060170_INST]		wb_inst		        ,
+	output	reg	    [`ysyx_25060170_PC]		    wb_pc		        ,
+	output	reg 	[1:0]				        wb_wbctl    	    ,
+	output 	reg 	[`ysyx_25060170_DATA]		wb_exu_res	        ,
+	output	reg 	[`ysyx_25060170_DATA]     	wb_wbdata	        ,
+	output	reg                                 wb_rd_ena	        ,
+	output	reg	    [`ysyx_25060170_REGADDR]	wb_rd_addr	        ,
 	
     	//ls forward to idu
 	output	wire	[`ysyx_25060170_REGADDR]	ls_rd_addr_forward	,

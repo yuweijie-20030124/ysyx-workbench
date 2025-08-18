@@ -1,35 +1,23 @@
  `include "define.v"
 
   module ysyx_25060170_lsu(
-  	input	wire                    		rst       ,
-  	input	wire                    		clk       ,
- 	input	wire	[`ysyx_25060170_DATA]           alu_res   ,
- 	input	wire	[`ysyx_25060170_DATA]           store_data ,
- 	input	wire	[3:0]               		ls_ctl ,
-	
-	input	wire					wb_ready,
-	input	wire					ex_valid,
-	input	wire					except_ena,
- 	output	wire					ls_ready,
- 	output	wire					ls_valid,
- 	output	wire					ls_flush,
- 	output	wire					ls_jump,
- 	output	wire	[`ysyx_25060170_PC]		ls_jump_pc,
+  	input	wire                    		        rst             ,
+  	input	wire                    		        clk             ,
+ 	input	wire	[`ysyx_25060170_DATA]           alu_res         ,
+ 	input	wire	[`ysyx_25060170_DATA]           store_data      ,
+ 	input	wire	[3:0]               		    ls_ctl          ,
+    
+	input	wire					                wb_ready        ,
+	input	wire					                ex_valid        ,
+	input	wire					                except_ena      ,
+ 	output	wire					                ls_ready        ,
+ 	output	wire					                ls_valid        ,
+ 	output	wire					                ls_flush        ,
+ 	output	wire					                ls_jump         ,
+ 	output	wire	[`ysyx_25060170_PC]		        ls_jump_pc      ,
  	
- 	//axi
- 	output	wire					we,
- 	output	wire					re,
- 	output	wire					core_ready,
- 	output	wire	[`ysyx_25060170_PC]		data_pc,
- 	input	wire	[`ysyx_25060170_DATA]		data_temp,
- 	output	reg	[`ysyx_25060170_DATA]		data_o,
- 	output 	wire	[2:0]				data_size	,
- 	output	wire	[`ysyx_25060170_DATA]		device_data_o,
- 	output	reg	[7:0]				wlen,
- 	input	wire					data_valid,
- 	
- 	output	wire	[`ysyx_25060170_DATA]      	ls_data_forward,
- 	output	wire	[`ysyx_25060170_DATA]      	ls_data_o
+ 	output	wire	[`ysyx_25060170_DATA]      	    ls_data_forward ,
+ 	output	wire	[`ysyx_25060170_DATA]      	    ls_data_o
  );
  
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -41,7 +29,7 @@
  
  wire [`ysyx_25060170_DATAADDR] raddr ;
  wire [`ysyx_25060170_DATAADDR] waddr ; 
- reg [`ysyx_25060170_DATA] load_data ;
+ reg  [`ysyx_25060170_DATA] load_data ;
  
  reg data_ok;
  
@@ -281,7 +269,6 @@ end
 
  assign ls_flush = ls_jump;
  assign ls_jump_pc = alu_res;
- assign ls_jump = fencei;
  
 //------------------------------------------------------out to idu--------------------------------------------------------------//
 
