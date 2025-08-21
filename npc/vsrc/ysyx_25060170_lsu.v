@@ -9,15 +9,17 @@
     
 	input	wire					                wb_ready        ,
 	input	wire					                ex_valid        ,
-	input	wire					                except_ena      ,
  	output	wire					                ls_ready        ,
  	output	wire					                ls_valid        ,
  	output	wire					                ls_flush        ,
  	output	wire					                ls_jump         ,
  	output	wire	[`ysyx_25060170_PC]		        ls_jump_pc      ,
  	
- 	output	wire	[`ysyx_25060170_DATA]      	    ls_data_forward ,
- 	output	wire	[`ysyx_25060170_DATA]      	    ls_data_o
+ 	// output	wire	[`ysyx_25060170_DATA]      	    ls_data_forward ,
+ 	output	wire	[`ysyx_25060170_DATA]      	    ls_data_o,
+    output	wire	[`ysyx_25060170_DATA]      	    data_o,
+    output  wire    [7:0]                           wlen       
+
  );
  
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -264,7 +266,7 @@ end
  
 //------------------------------------------------------out to idu--------------------------------------------------------------//
 
- assign ls_data_forward  = re ? load_data : alu_res ;
+//  assign ls_data_forward  = re ? load_data : alu_res ;
 
 //------------------------------------------------------out to wbu--------------------------------------------------------------//
 

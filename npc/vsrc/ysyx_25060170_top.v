@@ -1,14 +1,5 @@
 `include "define.v"
-`include "DPI-C.v"
-`include "ex_ls_reg.v"
-`include "exu.v"
-`include "id_ex_reg.v"
-`include "if_id_reg.v"
-`include "ifu.v"
-`include "ls_wb_reg.v"
-`include "lsu.v"
-`include "regfile.v"
-`include "wbu.v"
+
 
 
 module ysyx_25060170_top (
@@ -19,6 +10,7 @@ module ysyx_25060170_top (
 //if_id_reg
 wire	[`ysyx_25060170_INST]  		ifid_if_inst 	;
 wire	[`ysyx_25060170_PC]    		ifid_if_pc    	;
+wire	[`ysyx_25060170_PC]    		ifid_if_nextpc	;
 wire 	[`ysyx_25060170_INST]  		ifid_id_inst 	;
 wire	[`ysyx_25060170_PC]    		ifid_id_pc    	;
   
@@ -134,10 +126,13 @@ wire 								ex_flush;
 wire 								id_idex_flush;
 wire 								id_ifid_flush;
 wire 								ls_lswb_flush;
-	
+
+// DPI-C signals
+wire	[`ysyx_25060170_INST]		DPIC_INST;
+
 //--------------------------------------in core ---------------------------------//
 
-ysyx_25060170_ifu ifu0(
+ysyx_25060170_ifu ysyx_25060170_ifu0(
 		.id_pc_jump			(id_if_pc_sel)  ,
  		.id_pc_i			(id_if_pc)	,
  		.ie_pc_jump			(ie_if_pc_sel)  ,
@@ -147,30 +142,30 @@ ysyx_25060170_ifu ifu0(
  		.id_ready			(id_ready)	,
  		.id_stall			(id_idex_flush),
  		.if_valid			(if_valid)	,
- 		.inst_i				(DPIC-INST)	,
+ 		.inst_i				(DPIC_INST)	,
  		.inst_o				(ifid_if_inst)	,	
- 		.pc_i				(DPIC-PC)	,
- 		.pc_o				(ifid_if_pc)	,	
-		.pc_next			()
+ 		.pc_i				(lswb_wb_pc)	,	
+		.pc_next			(ifid_if_nextpc)
 );
 
-ysyx_25060170_reg_ifid reg_ifid1(
+ysyx_25060170_if_id_reg ysyx_25060170_if_id_reg_ifid1(
 		.clk				(clk)	,
 		.rst				(rst)	,
 		.if_inst			(ifid_if_inst),
-		.if_pc				(ifid_if_pc)	,
+		.if_pc				(ifid_if_nextpc)	,
 		
 		.if_valid			(if_valid),
 		.ls_flush			(ls_flush),
 		.id_flush			(id_ifid_flush),
 		.ie_flush			(ie_flush),
+		.id_stall			(id_idex_flush),
 		.id_ready			(id_ready),
 
 		.id_inst			(ifid_id_inst)	,
 		.id_pc				(ifid_id_pc)	
 );
 
-ysyx_25060170_idu idu2(
+ysyx_25060170_idu ysyx_25060170_idu2(
 	.rst					(rst)	,
 	.inst_i					(ifid_id_inst)	,
 	.pc_i					(ifid_id_pc)	,
@@ -216,7 +211,7 @@ ysyx_25060170_idu idu2(
 	.op2					(idex_id_op2)
 );
 
-ysyx_25060170_reg_idex reg_idex3(
+ysyx_25060170_id_ex_reg ysyx_25060170_reg_idex3(
 	.clk(clk)	,
 	.rst(rst)	,
 	.id_inst(idex_id_inst),
@@ -257,7 +252,7 @@ ysyx_25060170_reg_idex reg_idex3(
 );
 
 
-ysyx_25060170_exu exu4(
+ysyx_25060170_exu ysyx_25060170_exu4(
 	.clk(clk)	,
 	.rst(rst)	,
 	.reg_op1(idex_ex_op1)	,
@@ -280,7 +275,7 @@ ysyx_25060170_exu exu4(
 	
 );
 
-ysyx_25060170_reg_exls reg_exls5(
+ysyx_25060170_ex_ls_reg ysyx_25060170_reg_exls5(
 	.clk(clk)	,
 	.rst(rst)	,
 	.ex_inst(idex_ex_inst),
@@ -310,7 +305,7 @@ ysyx_25060170_reg_exls reg_exls5(
 	.ls_wbctl(exls_ls_wbctl)
 );
 
-ysyx_25060170_lsu lsu6(
+ysyx_25060170_lsu ysyx_25060170_lsu6(
  	.rst			(rst)		,
  	.clk			(clk)		,
  	.alu_res		(exls_ls_aludata)	,
@@ -325,11 +320,11 @@ ysyx_25060170_lsu lsu6(
 	.ls_jump_pc(ls_if_pc),
 	.ls_flush(ls_flush),
  	
- 	.ls_data_forward(ls_lswb_data_forward),
+ 	// .ls_data_forward(ls_lswb_data_forward),
  	.ls_data_o(lswb_ls_wbdata)	
  );
  
- ysyx_25060170_reg_lswb reg_lswb7(
+ ysyx_25060170_ls_wb_reg ysyx_25060170_reg_lswb7(
 	.clk(clk)	,
 	.rst(rst)	,
 	.ls_inst(exls_ls_inst),
@@ -359,7 +354,7 @@ ysyx_25060170_lsu lsu6(
 	
 	
 
-ysyx_25060170_wbu wbu8(
+ysyx_25060170_wbu ysyx_25060170_wbu8(
 	.clk(clk)	,
  	.rst(rst),
  	.inst_i(lswb_wb_inst)	,
@@ -387,7 +382,7 @@ ysyx_25060170_wbu wbu8(
  	.wb_data(wb_reg_rd_data )	
 );
 
-ysyx_25060170_regfile reg9(
+ysyx_25060170_regfile ysyx_25060170_reg9(
 	.clk(clk)	,
 	.rst(rst)	,
 	.waddr(wb_reg_rd_addr)	,
@@ -401,7 +396,14 @@ ysyx_25060170_regfile reg9(
 	.ren2(id_reg_rs2_ena)	
 );
 
-
+ysyx_25060170_DPIC	ysyx_25060170_dpic10(
+	.clk		(clk),
+	.rst		(rst),
+	.ls_valid	(ls_valid),
+	.id_stall	(id_idex_flush),
+	.pc_i		(lswb_wb_pc),
+	.inst_o		(DPIC-INST)
+);
 
 endmodule
 

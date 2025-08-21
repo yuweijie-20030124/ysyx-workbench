@@ -1,6 +1,6 @@
  `include "define.v"
 
- module ysyx_25060170_ls_wb(
+ module ysyx_25060170_ls_wb_reg(
 	//front stage input
 	input	wire                                clk		            ,
 	input	wire                                rst		            ,

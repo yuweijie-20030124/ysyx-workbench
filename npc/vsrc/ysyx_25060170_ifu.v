@@ -17,12 +17,11 @@ module ysyx_25060170_ifu (
 	//out sign
 	input	wire	[`ysyx_25060170_INST]	  inst_i	    ,
 	input	wire	[`ysyx_25060170_PC]		  pc_i	      ,
-	output  wire	[`ysyx_25060170_PC]		  pc_o	      ,
 	output	wire	[`ysyx_25060170_INST]	  inst_o	    ,
 	output  wire	[`ysyx_25060170_PC]		  pc_next		
  );
  
-assign pc_next = 32'b0 |   
+assign pc_next = pc_i + `ysyx_25060170_PLUS4 |   
                     ({32{ie_pc_jump == 1'b1}} & {ie_pc_i}) |
                     ({32{ls_pc_jump == 1'b1}} & {ls_pc_i}) |
                     ({32{id_pc_jump == 1'b1}} & {id_pc_i}) ;
@@ -32,8 +31,9 @@ wire stall = clean_stall ? 1'b0 : id_stall;
 
 assign if_valid = (id_ready | stall) ? 1'b0 : 1'b1  ;
 assign inst_o = inst_i;
-assign pc_o = pc_i;
 
-assign pc_i
+
+// assign pc_i
 
 endmodule
+

@@ -49,10 +49,6 @@ module ysyx_25060170_idu(
 	output	wire					            id_ex_flush     ,
 	output	wire					            id_ready        ,
 	output	wire					            id_valid        ,
-        
-	//to ifu                    
-	output	wire					            jump_ena        ,
-	output	wire	[`ysyx_25060170_PC]		    jump_pc
 	
 );
 
@@ -60,7 +56,8 @@ module ysyx_25060170_idu(
 //---------------------------------------------hzd_ctl-------------------------------------------------------//
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-assign id_flush = jump_ena ;
+// assign id_flush = jump_ena ;
+assign id_flush = 1'b0 ;
 assign id_ready = ex_ready ;
 assign id_valid = if_valid; 
 assign id_ex_flush = id_stall_ena;
@@ -78,7 +75,7 @@ assign  rs2      =  inst_i [24:20]  ;
 
 wire branch;
 
-ysyx_25060170_idu_decode decode(
+ysyx_25060170_idu_decode u_decode(
 	.rst    (rst)	,
 	.inst   (inst_i),
 	.rs1_ena(rs1_ena),
@@ -88,7 +85,6 @@ ysyx_25060170_idu_decode decode(
  	.mem_ctl(lsctl_o) ,
  	.op1_sel(op1_sel),
  	.op2_sel(op2_sel),
- 	.branch(branch) ,
  	.load(load_flag),
 	.alu_ctl(alusrc_o)
 );
@@ -156,19 +152,5 @@ assign op2 = rs2_ena & op2_forward_ena ? op2_forward_data : rs2_ena ? rs2_data :
 
 assign pc_o = rst == `ysyx_25060170_RSTABLE ? `ysyx_25060170_ZERO32 : pc_i	;
 assign inst_o = rst == `ysyx_25060170_RSTABLE ? 32'd0 : inst_i	;
-				
-
-//---------------------------------------------out to ifu-------------------------------------------------------//
-
-assign jump_ena =((alusrc_o == `INST_JALR)) | (ex_branch);
-
-wire [`ysyx_25060170_DATA] p1;
-wire [`ysyx_25060170_DATA] p2;
-
-assign p1 = 	(alusrc_o == `INST_JALR) ? op1 : pc_i ; 
-		
-assign p2 =	bpu_jump ? `ysyx_25060170_PLUS4 : imm;
-
-assign jump_pc = jump_ena ? (p1 + p2) : `ysyx_25060170_ZERO32;
 
 endmodule
