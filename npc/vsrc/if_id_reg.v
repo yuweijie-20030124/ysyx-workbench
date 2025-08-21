@@ -6,6 +6,9 @@
 	input	wire	[`ysyx_25060170_INST]	    if_inst	    ,
 	input	wire	[`ysyx_25060170_PC]	        if_pc	    ,
     
+	//from DPI-C
+	input 	wire	[`ysyx_25060170_INST]		first_inst	,
+
 	//ctl   
 	input	wire				                if_valid    ,
 	input	wire				                id_flush    ,
@@ -25,8 +28,8 @@
  
  always@(posedge clk) begin
 	 if(rst) begin 
-		 id_inst <= 	32'd0;
-		 id_pc	 <= 	32'd0;
+		 id_inst <= 	first_inst;
+		 id_pc	 <= 	`ysyx_25060170_STARTPC;
 		 id_jump <= 	1'd0;
 	 end	 
 	 else if(stall) begin

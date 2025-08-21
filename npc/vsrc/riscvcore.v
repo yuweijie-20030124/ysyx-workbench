@@ -145,12 +145,11 @@ ysyx_25060170_ifu ifu0(
  		.ls_pc_jump			(ls_if_pc_sel)  ,
  		.ls_pc_i			(ls_if_pc)	,
  		.id_ready			(id_ready)	,
- 		.id_stall			(),
+ 		.id_stall			(id_idex_flush),
  		.if_valid			(if_valid)	,
- 		.core_ready			(),
- 		.inst_i				()	,
+ 		.inst_i				(DPIC-INST)	,
  		.inst_o				(ifid_if_inst)	,	
- 		.pc_i				()	,
+ 		.pc_i				(DPIC-PC)	,
  		.pc_o				(ifid_if_pc)	,	
 		.pc_next			()
 );
@@ -167,7 +166,6 @@ ysyx_25060170_reg_ifid reg_ifid1(
 		.ie_flush			(ie_flush),
 		.id_ready			(id_ready),
 
-		.id_jump			(ifid_id_jump),		
 		.id_inst			(ifid_id_inst)	,
 		.id_pc				(ifid_id_pc)	
 );
@@ -402,6 +400,7 @@ ysyx_25060170_regfile reg9(
 	.ren1(id_reg_rs1_ena)	,
 	.ren2(id_reg_rs2_ena)	
 );
+
 
 
 endmodule

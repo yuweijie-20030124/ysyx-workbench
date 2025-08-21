@@ -24,8 +24,8 @@
 //------------------------------------------------------hzd_ctl--------------------------------------------------------------//
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
- assign ls_ready = wb_ready | (data_ok  & (re | we ));
- assign ls_valid = ex_valid | (data_ok  & (re | we ));
+ assign ls_ready = wb_ready | data_ok;
+ assign ls_valid = ex_valid | data_ok;
  
  wire [`ysyx_25060170_DATAADDR] raddr ;
  wire [`ysyx_25060170_DATAADDR] waddr ; 
@@ -40,9 +40,6 @@ always@(posedge clk) begin
 	else if(~(ls_ready | ex_valid)) begin 
 		data_ok <= 1'b1;
 	end
-	else if(~data_valid)begin
-		data_ok <= 1'b0;
-	end
 	else begin
 		data_ok <= data_ok;
 	end
@@ -56,9 +53,6 @@ end
 	end
 	else if(~(ls_ready | ex_valid)) begin 
 		data_i <= 32'd0;
-	end
-	else if(~data_valid)begin
-		data_i <= data_temp;
 	end
 	else begin
 		data_i <= data_i;
@@ -88,10 +82,8 @@ always @(*) begin
             3'b001: data_byte = data_i[15: 8] ;
             3'b010: data_byte = data_i[23:16] ;
             3'b011: data_byte = data_i[31:24] ;
-            3'b100: data_byte = data_i[39:32] ;
-            3'b101: data_byte = data_i[47:40] ;
-            3'b110: data_byte = data_i[55:48] ;
-            default: data_byte = data_i[63:56] ;
+
+            default: data_byte = 0;
         endcase
     end 
 end

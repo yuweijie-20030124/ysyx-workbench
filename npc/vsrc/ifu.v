@@ -2,22 +2,21 @@
 module ysyx_25060170_ifu (
 
 	// diff_pc_input
-	input	  wire					                id_pc_jump	,
-	input	  wire	[`ysyx_25060170_PC]		  id_pc_i  	  ,
-	input	  wire					                ie_pc_jump	,
-	input	  wire	[`ysyx_25060170_PC]		  ie_pc_i  	  ,
-	input	  wire					                ls_pc_jump	,
-	input	  wire	[`ysyx_25060170_PC]		  ls_pc_i  	  ,
+	input	wire					          id_pc_jump	,
+	input	wire	[`ysyx_25060170_PC]		  id_pc_i  	  ,
+	input	wire					          ie_pc_jump	,
+	input	wire	[`ysyx_25060170_PC]		  ie_pc_i  	  ,
+	input	wire					          ls_pc_jump	,
+	input	wire	[`ysyx_25060170_PC]		  ls_pc_i  	  ,
 
 	//stage control signal  
-	input	  wire					                id_ready	  ,
-	input	  wire					                id_stall	  ,
-	output  wire					                if_valid	  , 
-	output  wire					                core_ready	,
+	input	wire					          id_ready	  ,
+	input	wire					          id_stall	  ,
+	output  wire					          if_valid	  , 
 	
 	//out sign
-	input	  wire	[`ysyx_25060170_INST]		inst_i	    ,
-	input	  wire	[`ysyx_25060170_PC]		  pc_i	      ,
+	input	wire	[`ysyx_25060170_INST]	  inst_i	    ,
+	input	wire	[`ysyx_25060170_PC]		  pc_i	      ,
 	output  wire	[`ysyx_25060170_PC]		  pc_o	      ,
 	output	wire	[`ysyx_25060170_INST]	  inst_o	    ,
 	output  wire	[`ysyx_25060170_PC]		  pc_next		
@@ -32,8 +31,9 @@ wire clean_stall = ie_pc_jump | ls_pc_jump;
 wire stall = clean_stall ? 1'b0 : id_stall;
 
 assign if_valid = (id_ready | stall) ? 1'b0 : 1'b1  ;
-assign core_ready = (id_ready | stall);
 assign inst_o = inst_i;
 assign pc_o = pc_i;
+
+assign pc_i
 
 endmodule

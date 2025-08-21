@@ -13,6 +13,7 @@
     input	wire	[`ysyx_25060170_PC]		    ls_pc_i	            ,
     input	wire					            ls_valid            ,
     input 	wire					            id_stall            ,
+
     output	wire					            wb_ready            ,
     output	wire	[`ysyx_25060170_PC]		    ie_jump_pc	        ,
     output	wire					            ie_flush	        ,
@@ -32,8 +33,10 @@ assign wb_ready = 1'b0;
 //------------------------------------------------------jump--------------------------------------------------------------//
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-assign ie_jump = csr_ctl[1] | csr_ctl[0] | time_jump;
-assign ie_jump_pc = ie_jump ? read_csr_data : `ysyx_25060170_ZERO32;
+assign ie_jump = `ysyx_25060170_ZERO32;
+assign ie_jump_pc = `ysyx_25060170_ZERO32;
+// assign ie_jump = csr_ctl[1] | csr_ctl[0] | time_jump;
+// assign ie_jump_pc = ie_jump ? read_csr_data : `ysyx_25060170_ZERO32;
 assign ie_flush = ie_jump;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
