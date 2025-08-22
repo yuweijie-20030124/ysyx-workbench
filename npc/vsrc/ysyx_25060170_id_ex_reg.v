@@ -6,6 +6,7 @@
    	input	wire					            rst		    ,
    	input	wire	[`ysyx_25060170_INST]		id_inst		,	
    	input	wire	[`ysyx_25060170_PC]		    id_pc		,
+	input 	wire								id_branch		,
    	input	wire	[`ysyx_25060170_REG]		id_op1		,
    	input	wire	[`ysyx_25060170_REG]		id_op2		,
    	input	wire	[1:0]				        id_op1_sel	,
@@ -29,6 +30,7 @@
 	//output to next stage
 	output	reg	[`ysyx_25060170_INST]		    ex_inst		,
 	output	reg	[`ysyx_25060170_PC]		        ex_pc		,
+	output	reg					                ex_branch	,
 	output	reg	[`ysyx_25060170_REG]		    ex_op1		,
 	output	reg	[`ysyx_25060170_REG]		    ex_op2		,
 	output	reg	[1:0]				            ex_op1_sel	,
@@ -50,6 +52,7 @@ always@(posedge clk) begin
 	if(rst == `ysyx_25060170_RSTABLE)begin 
 		ex_inst		<= 32'd0;
 		ex_pc		<= `ysyx_25060170_ZERO32;
+		ex_branch	<= 1'b0;
 		ex_op1		<= `ysyx_25060170_ZERO32;
 		ex_op2		<= `ysyx_25060170_ZERO32;
 		ex_op1_sel	<= 2'b0;
@@ -66,6 +69,7 @@ always@(posedge clk) begin
 	else if(stall) begin 
 		ex_inst		<= ex_inst;
 		ex_pc		<= ex_pc;
+		ex_branch	<= ex_branch;
 		ex_op1		<= ex_op1;
 		ex_op2		<= ex_op2;
 		ex_op1_sel	<= ex_op1_sel;
@@ -80,8 +84,9 @@ always@(posedge clk) begin
 		ex_load_flag	<= ex_load_flag;
 	end
 	else if(flush) begin 
-		ex_inst		<= 32'd0;
+		ex_inst		<= `ysyx_25060170_ZERO32;
 		ex_pc		<= `ysyx_25060170_ZERO32;
+		ex_branch	<= 1'b0;
 		ex_op1		<= `ysyx_25060170_ZERO32;
 		ex_op2		<= `ysyx_25060170_ZERO32;
 		ex_op1_sel	<= 2'b0;
@@ -98,6 +103,7 @@ always@(posedge clk) begin
 	else begin
 		ex_inst		<= id_inst;
 		ex_pc 		<= id_pc;
+		ex_branch 	<= id_branch;
 		ex_op1		<= id_op1;
 		ex_op2		<= id_op2;
 		ex_op1_sel	<= id_op1_sel;
