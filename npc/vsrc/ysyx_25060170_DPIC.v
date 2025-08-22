@@ -53,7 +53,7 @@ import "DPI-C" function void pmem_read(input int raddr, output int rdata, input 
  	input int t5 ,
  	input int t6 
  );
- 
+
 reg delay;
 
 reg [31:0] pc_delay;
@@ -130,5 +130,47 @@ end
  		regs[31]
  	);
  end
+
+import "DPI-C" function void pmem_read(input int raddr, output int rdata, input byte rlen);
+reg [7:0] rlen = 8'd4;
+reg [31:0] rinst;
+always @(posedge clk) begin
+    pmem_read(pc_next,rinst,rlen);
+end
+
+import "DPI-C" function void pc_inst_end(input longint thepc_data, input bit[31:0] the_inst);
+
+ always @(posedge clk) begin
+   if(rst ==`ysyx_25060170_RSTABLE) begin
+     pc_inst_end(`ysyx_25060170_STARTPC, inst_o);
+   end
+   else begin
+     pc_inst_end(pc_o, inst_o);
+   end
+ end
+
+ import "DPI-C" function void ebreak (input bit ebreak_ena);
+ 
+always@(*) begin
+  ebreak(inst_ebreak);
+  end
+
+wire _unused_ok = &{opcode[1:0],funct7[6],funct7[4:1]};
+
+import "DPI-C" function void difftest_dut_csr(
+	input longint csr_mstatus,
+	input longint csr_mtvec,
+	input longint csr_mepc,
+	input longint csr_mcause
+);
+
+always@(*) begin
+   difftest_dut_csr(
+   	mstatus,
+   	mtvec,
+   	mepc,
+   	mcause
+   );
+end
 
  endmodule

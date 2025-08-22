@@ -1,39 +1,32 @@
  `include "define.v"
+
 module ysyx_25060170_ifu (
-
-	// diff_pc_input
-	input	wire					          id_pc_jump	,
-	input	wire	[`ysyx_25060170_PC]		  id_pc_i  	  ,
-	input	wire					          ie_pc_jump	,
-	input	wire	[`ysyx_25060170_PC]		  ie_pc_i  	  ,
-	input	wire					          ls_pc_jump	,
-	input	wire	[`ysyx_25060170_PC]		  ls_pc_i  	  ,
-
-	//stage control signal  
-	input	wire					          id_ready	  ,
-	input	wire					          id_stall	  ,
-	output  wire					          if_valid	  , 
-	
-	//out sign
-	input	wire	[`ysyx_25060170_INST]	  inst_i	    ,
-	input	wire	[`ysyx_25060170_PC]		  pc_i	      ,
-	output	wire	[`ysyx_25060170_INST]	  inst_o	    ,
-	output  wire	[`ysyx_25060170_PC]		  pc_next		
- );
+ input  wire								clk			,
+ input  wire								rst			,
+ input	wire								pcsrc_i		,
+ input	wire 	[`ysyx_25060170_PC]			ex_pc_i  	,
+ input  wire	[`ysyx_25060170_INST]		inst_i		,
  
-assign pc_next = pc_i + `ysyx_25060170_PLUS4 |   
-                    ({32{ie_pc_jump == 1'b1}} & {ie_pc_i}) |
-                    ({32{ls_pc_jump == 1'b1}} & {ls_pc_i}) |
-                    ({32{id_pc_jump == 1'b1}} & {id_pc_i}) ;
-		
-wire clean_stall = ie_pc_jump | ls_pc_jump;
-wire stall = clean_stall ? 1'b0 : id_stall;
+ output	reg 	[`ysyx_25060170_INST]		inst_o		,
+ output reg		[`ysyx_25060170_PC]			pc_o	
+ );
 
-assign if_valid = (id_ready | stall) ? 1'b0 : 1'b1  ;
-assign inst_o = inst_i;
+ reg [`ysyx_25060170_PC] pc_next;
+ wire [`ysyx_25060170_PC] pc_plus4;
+ 
+ assign pc_plus4=(rst==`ysyx_25060170_RSTABLE) ? `ysyx_25060170_STARTPC : (pc_o+`ysyx_25060170_PLUS4);
+ assign pc_next = (rst == `ysyx_25060170_RSTABLE) ? `ysyx_25060170_STARTPC : ((pcsrc_i==0) ? pc_plus4 : ex_pc_i);
 
-
-// assign pc_i
-
+ always@(posedge clk) begin
+	 if(rst == `ysyx_25060170_RSTABLE)begin
+		pc_o<=`ysyx_25060170_STARTPC;
+	end
+  else begin
+	  pc_o<=pc_next;
+	end
+end
+ 
+ assign inst_o = inst_i[31:0];
+ 
+  
 endmodule
-
