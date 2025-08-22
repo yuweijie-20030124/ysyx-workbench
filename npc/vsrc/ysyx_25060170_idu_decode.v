@@ -2,12 +2,12 @@
 
 module ysyx_25060170_idu_decode(
 	input	wire				            rst  	,
-	input	wire	[`ysyx_25060170_INST]	inst	,
+	input	wire	[`ysyx_25060170_INST]	inst	,		//指令
   
-	output	wire				            rs1_ena	,
-	output	wire				            rs2_ena	,
-	output	wire	[1:0]			        wb_ctl  ,
-	output	reg	    [3:0]			        mem_ctl ,
+	output	wire				            rs1_ena	,		//寄存器r1读取使能
+	output	wire				            rs2_ena	,		//寄存器r2读取使能
+	output	wire	[1:0]			        wb_ctl  ,		//回写控制信号 00无写回	01写回内存 10写回register file
+	output	reg	    [3:0]			        mem_ctl ,		//内存控制信号，用于控制存储器访问类型，sb字节储存，lw字储存
 	output	wire				            branch  ,
 	output	reg	    [`ysyx_25060170_IMM]	ext_imm ,
 	output	wire				            load	,
@@ -43,7 +43,7 @@ assign s_imm = {inst[31:25], inst[11:7]} ;
 assign {b_imm[12] , b_imm[10:5] , b_imm[4:1] , b_imm[11]} = {inst[31:25] , inst[11:7]} ;
 
 wire [7:0] inst_type;
-
+//dont understand
 assign inst_type[7] = (rst == `ysyx_25060170_RSTABLE) ? 0 : (opcode[6:2] == `ysyx_25060170_SYSTEM)       ;
 assign inst_type[6] = (rst == `ysyx_25060170_RSTABLE) ? 0 : (opcode[6:2] == `ysyx_25060170_OP32)   ;
 assign inst_type[5] = (rst == `ysyx_25060170_RSTABLE) ? 0 : (opcode[6:2] == `ysyx_25060170_OPIMM32)   ;
@@ -110,27 +110,11 @@ wire inst_slli  = inst_type[4] & ~funct3[2] & ~funct3[1] &  funct3[0]   ;
 wire inst_srli  = inst_type[4] &  funct3[2] & ~funct3[1] &  funct3[0] & ~i_imm[10]   ;
 wire inst_srai  = inst_type[4] &  funct3[2] & ~funct3[1] &  funct3[0] &  i_imm[10]   ;
 
-wire inst_addiw = inst_type[5] & ~funct3[2] & ~funct3[1] & ~funct3[0]   ;
-wire inst_slliw = inst_type[5] & ~funct3[2] & ~funct3[1] &  funct3[0]   ;
-wire inst_srliw = inst_type[5] &  funct3[2] & ~funct3[1] &  funct3[0] & ~i_imm[10]   ;
-wire inst_sraiw = inst_type[5] &  funct3[2] & ~funct3[1] &  funct3[0] &  i_imm[10]   ;
-
-wire inst_addw  = inst_type[6] & ~funct3[2] & ~funct3[1] & ~funct3[0] & ~i_imm[10] & ~funct7[0] ;
-wire inst_subw  = inst_type[6] & ~funct3[2] & ~funct3[1] & ~funct3[0] &  i_imm[10] & ~funct7[0] ;
-wire inst_sllw  = inst_type[6] & ~funct3[2] & ~funct3[1] &  funct3[0]   ;
-wire inst_srlw  = inst_type[6] &  funct3[2] & ~funct3[1] &  funct3[0] & ~i_imm[10] & ~funct7[0] ;
-wire inst_sraw  = inst_type[6] &  funct3[2] & ~funct3[1] &  funct3[0] &  i_imm[10] & ~funct7[0] ;
-wire inst_divuw = inst_type[6] &  funct3[2] & ~funct3[1] &  funct3[0]  & funct7[0] ;
-wire inst_divw  = inst_type[6] &  funct3[2] & ~funct3[1] & ~funct3[0]  & funct7[0] ;
-wire inst_mulw  = inst_type[6] &  ~funct3[2] & ~funct3[1] & ~funct3[0] & funct7[0] ;
-wire inst_remuw = inst_type[6] &  funct3[2] &  funct3[1] &  funct3[0]  & funct7[0] ;
-wire inst_remw  = inst_type[6] &  funct3[2] &  funct3[1] & ~funct3[0]  & funct7[0] ;
 
 
 wire inst_ecall  = inst_type[7] & ~funct3[2] & ~funct3[1] & ~funct3[0] && (i_imm == 12'd0)         ;
 wire inst_mret   = inst_type[7] & ~funct3[2] & ~funct3[1] & ~funct3[0] & funct7[3] & funct7[4];
 wire inst_ebreak = inst_type[7] & ~funct3[2] & ~funct3[1] & ~funct3[0] && (i_imm == 12'd1)         ;
-wire inst_fencei = ~funct3[2] & ~funct3[1] & funct3[0] & (opcode[6:2] == 5'b00011); 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //---------------------------------------------output signal-------------------------------------------------------//
@@ -138,21 +122,21 @@ wire inst_fencei = ~funct3[2] & ~funct3[1] & funct3[0] & (opcode[6:2] == 5'b0001
 
 //---------------------------------------------ctl signal------------------------------------------------------//
 
-assign alu_ctl[7] = (rst == `ysyx_25060170_RSTABLE) ? 1'b0 :   inst_srli | inst_xor | inst_auipc | inst_addw | inst_sraw | inst_ebreak | inst_sh | inst_sw | inst_bltu | inst_ld | inst_mulh | inst_div | inst_divw ;
+assign alu_ctl[7] = (rst == `ysyx_25060170_RSTABLE) ? 1'b0 :   inst_srli | inst_xor | inst_auipc | inst_ebreak | inst_sh | inst_sw | inst_bltu | inst_ld | inst_mulh | inst_div ;
 
-assign alu_ctl[6] = (rst == `ysyx_25060170_RSTABLE) ? 1'b0 :   inst_slli | inst_sltu | inst_xor | inst_lui | inst_sraiw | inst_srlw | inst_jalr | inst_sb | inst_bge | inst_bltu | inst_lw | inst_ld | inst_mul | inst_mulw | inst_divuw | inst_rem | inst_mret  ;
+assign alu_ctl[6] = (rst == `ysyx_25060170_RSTABLE) ? 1'b0 :   inst_slli | inst_sltu | inst_xor | inst_lui | inst_jalr | inst_sb | inst_bge | inst_bltu | inst_lw | inst_ld | inst_mul | inst_rem | inst_mret  ;
 
-assign alu_ctl[5] = (rst == `ysyx_25060170_RSTABLE) ? 1'b0 :   inst_andi | inst_slt | inst_sltu | inst_and |inst_auipc | inst_srliw | inst_sllw | inst_jal | inst_blt | inst_bge | inst_bltu | inst_lh | inst_lw | inst_lwu | inst_mulh | inst_mulhu ;
+assign alu_ctl[5] = (rst == `ysyx_25060170_RSTABLE) ? 1'b0 :   inst_andi | inst_slt | inst_sltu | inst_and |inst_auipc |  inst_jal | inst_blt | inst_bge | inst_bltu | inst_lh | inst_lw | inst_lwu | inst_mulh | inst_mulhu ;
 
-assign alu_ctl[4] = (rst == `ysyx_25060170_RSTABLE) ? 1'b0 :   inst_ori | inst_sll | inst_slt | inst_or | inst_lui |inst_slliw | inst_addw | inst_subw | inst_bne | inst_blt | inst_bge | inst_lb | inst_lh | inst_ld | inst_lhu | inst_mul | inst_mulh | inst_mulhu | inst_div | inst_remw | inst_mret ;
+assign alu_ctl[4] = (rst == `ysyx_25060170_RSTABLE) ? 1'b0 :   inst_ori | inst_sll | inst_slt | inst_or | inst_lui | inst_bne | inst_blt | inst_bge | inst_lb | inst_lh | inst_ld | inst_lhu | inst_mul | inst_mulh | inst_mulhu | inst_div | inst_mret ;
 
-assign alu_ctl[3] = (rst == `ysyx_25060170_RSTABLE) ? 1'b0 :   inst_xori  | inst_sub | inst_sll  | inst_sra  | inst_and  | inst_addiw  | inst_sraiw | inst_sraw | inst_beq | inst_bne   | inst_blt | inst_bgeu  | inst_lb  | inst_lw   | inst_lbu | inst_lwu | inst_mul | inst_mulw | inst_div | inst_divw;
+assign alu_ctl[3] = (rst == `ysyx_25060170_RSTABLE) ? 1'b0 :   inst_xori  | inst_sub | inst_sll  | inst_sra  | inst_and  | inst_beq | inst_bne   | inst_blt | inst_bgeu  | inst_lb  | inst_lw   | inst_lbu | inst_lwu | inst_mul | inst_div ;
 
-assign alu_ctl[2] = (rst == `ysyx_25060170_RSTABLE) ? 1'b0 :   inst_sltiu   | inst_add | inst_sub | inst_srl  | inst_or  | inst_srliw   | inst_srlw  | inst_ebreak  | inst_sd | inst_beq | inst_bne | inst_bgeu   | inst_lh | inst_lhu | inst_lwu | inst_mulhu | inst_mulw | inst_divuw | inst_divw | inst_remu | inst_remw | inst_mret;
+assign alu_ctl[2] = (rst == `ysyx_25060170_RSTABLE) ? 1'b0 :   inst_sltiu   | inst_add | inst_sub | inst_srl  | inst_or  | inst_ebreak  | inst_sd | inst_beq | inst_bne | inst_bgeu   | inst_lh | inst_lhu | inst_lwu | inst_mulhu | inst_remu | inst_mret;
 
-assign alu_ctl[1] = (rst == `ysyx_25060170_RSTABLE) ? 1'b0 :   inst_slti | inst_srai  | inst_add  | inst_sra   | inst_slliw  | inst_sllw | inst_jalr  | inst_sh  | inst_sd   | inst_beq   | inst_lb  | inst_lbu | inst_lhu | inst_mulhsu | inst_mulhu | inst_divu | inst_divuw | inst_rem | inst_remu | inst_remuw | inst_ecall ;
+assign alu_ctl[1] = (rst == `ysyx_25060170_RSTABLE) ? 1'b0 :   inst_slti | inst_srai  | inst_add  | inst_sra | inst_jalr  | inst_sh  | inst_sd   | inst_beq   | inst_lb  | inst_lbu | inst_lhu | inst_mulhsu | inst_mulhu | inst_divu | inst_rem | inst_remu | inst_ecall ;
 
-assign alu_ctl[0] = (rst == `ysyx_25060170_RSTABLE) ? 1'b0 :   inst_addi | inst_srai  | inst_srl  | inst_addiw  | inst_subw | inst_jal | inst_sb | inst_sw   | inst_sd   | inst_bgeu    | inst_lbu | inst_mulhsu | inst_divu | inst_rem | inst_remuw | inst_remw;          
+assign alu_ctl[0] = (rst == `ysyx_25060170_RSTABLE) ? 1'b0 :   inst_addi | inst_srai  | inst_srl | inst_jal | inst_sb | inst_sw   | inst_sd   | inst_bgeu    | inst_lbu | inst_mulhsu | inst_divu | inst_rem ;          
 
 //output to regfile signal
 assign rs1_ena =  inst_type[6] | inst_type[5] | inst_type[4] | inst_type[3] | inst_type[2] | inst_type[1] | inst_type[0] | inst_jalr;
@@ -168,8 +152,8 @@ assign load = inst_type[1];
 //output to exu singal
 wire imm_ena;
 assign imm_ena =  inst_type[0] | inst_type[1]  | inst_type[4] | inst_type[5] | inst_type[7] |  inst_lui | inst_auipc  ;
-assign op1_sel = (jump | inst_auipc | inst_fencei) ? 2'b10 : rs1_ena ? 2'b01 : 2'b00;
-assign op2_sel = (jump | inst_fencei) ? 3'b010 : imm_ena ? 3'b100 : rs2_ena ? 3'b001 : 3'b000;
+assign op1_sel = (jump | inst_auipc) ? 2'b10 : rs1_ena ? 2'b01 : 2'b00;
+assign op2_sel = (jump) ? 3'b010 : imm_ena ? 3'b100 : rs2_ena ? 3'b001 : 3'b000;
 
 
 //output to mem signal
@@ -202,15 +186,27 @@ assign wb_ctl = (inst_type[1] ) ? 2'b01 : (( inst_type[7] | inst_type[6] | inst_
 //---------------------------------------------data signal------------------------------------------------------//
 
 always @(*) begin
-	if(rst == `ysyx_25060170_RSTABLE) begin
+	if (rst == `ysyx_25060170_RSTABLE) begin
 		ext_imm = `ysyx_25060170_ZERO32;
 	end
-	else if(inst_type[1] | inst_type[4] | inst_type[5] | inst_type[7] | inst_jalr) begin ext_imm = {{52{i_imm[11]}},i_imm}; end
-	else if (inst_lui | inst_auipc)                            begin ext_imm = {{32{u_imm[19]}},u_imm,{12{1'b0}}}; end
-	else if (inst_jal)                                         begin ext_imm = {{44{j_imm[20]}},j_imm[20:1]<<1}; end
-	else if (inst_type[0])                                     begin ext_imm = {{52{s_imm[11]}},s_imm};   end
-	else if (inst_type[2])                                     begin ext_imm = {{52{b_imm[12]}},b_imm<<1};   end
-	else                                                       begin ext_imm = `ysyx_25060170_ZERO32; end
-end 
+	else if (inst_type[1] | inst_type[4] | inst_type[5] | inst_type[7] | inst_jalr) begin
+		ext_imm = {{20{i_imm[11]}}, i_imm}; // i_imm扩展为32位
+	end
+	else if (inst_lui | inst_auipc) begin
+		ext_imm = {u_imm, 12'b0}; // u_imm扩展为32位
+	end
+	else if (inst_jal) begin
+		ext_imm = {{11{j_imm[20]}}, j_imm[20:1], 1'b0}; // j_imm扩展为32位，注意左移1位
+	end
+	else if (inst_type[0]) begin
+		ext_imm = {{20{s_imm[11]}}, s_imm}; // s_imm扩展为32位
+	end
+	else if (inst_type[2]) begin
+		ext_imm = {{20{b_imm[12]}}, b_imm}; // b_imm扩展为32位，注意左移1位
+	end
+	else begin
+		ext_imm = `ysyx_25060170_ZERO32; // 默认值
+	end
+end
 
 endmodule

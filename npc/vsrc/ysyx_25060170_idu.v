@@ -41,6 +41,7 @@ module ysyx_25060170_idu(
 	output  wire 	[`ysyx_25060170_IMM]      	imm             ,
 	output	wire 	[`ysyx_25060170_INST]		inst_o	        ,
 	output	wire 	[`ysyx_25060170_PC]		    pc_o	        ,
+	output  wire								branch			,
 	
 	//hzd
 	input	wire					            ex_ready        ,
@@ -48,7 +49,7 @@ module ysyx_25060170_idu(
 	output	wire					            id_flush        ,
 	output	wire					            id_ex_flush     ,
 	output	wire					            id_ready        ,
-	output	wire					            id_valid        ,
+	output	wire					            id_valid        
 	
 );
 
@@ -73,11 +74,10 @@ assign  rd       =  inst_i [11:7]   ;
 assign  rs1      =  inst_i [19:15]  ;
 assign  rs2      =  inst_i [24:20]  ;
 
-wire branch;
 
 ysyx_25060170_idu_decode u_decode(
-	.rst    (rst)	,
-	.inst   (inst_i),
+	.rst(rst)	,
+	.inst(inst_i),
 	.rs1_ena(rs1_ena),
 	.rs2_ena(rs2_ena),
 	.ext_imm(imm)	,
@@ -85,6 +85,7 @@ ysyx_25060170_idu_decode u_decode(
  	.mem_ctl(lsctl_o) ,
  	.op1_sel(op1_sel),
  	.op2_sel(op2_sel),
+ 	.branch(branch) ,
  	.load(load_flag),
 	.alu_ctl(alusrc_o)
 );
@@ -152,5 +153,7 @@ assign op2 = rs2_ena & op2_forward_ena ? op2_forward_data : rs2_ena ? rs2_data :
 
 assign pc_o = rst == `ysyx_25060170_RSTABLE ? `ysyx_25060170_ZERO32 : pc_i	;
 assign inst_o = rst == `ysyx_25060170_RSTABLE ? 32'd0 : inst_i	;
+
+
 
 endmodule
