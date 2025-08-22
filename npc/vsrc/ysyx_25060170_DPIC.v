@@ -5,15 +5,45 @@
 	input  wire	clk,
 	input  wire	rst,
 
-	input  wire	ls_valid,
-	input  wire	id_stall,
  	input  wire	[`ysyx_25060170_INST]	pc_i,
-	output wire	[`ysyx_25060170_PC]		inst_o
+	input  wire	[`ysyx_25060170_REG]	regs0,
+	input  wire	[`ysyx_25060170_REG]	regs1,
+	input  wire	[`ysyx_25060170_REG]	regs2,
+	input  wire	[`ysyx_25060170_REG]	regs3,
+	input  wire	[`ysyx_25060170_REG]	regs4,
+	input  wire	[`ysyx_25060170_REG]	regs5,
+	input  wire	[`ysyx_25060170_REG]	regs6,
+	input  wire	[`ysyx_25060170_REG]	regs7,
+	input  wire	[`ysyx_25060170_REG]	regs8,
+	input  wire	[`ysyx_25060170_REG]	regs9,
+	input  wire	[`ysyx_25060170_REG]	regs10,
+	input  wire	[`ysyx_25060170_REG]	regs11,
+	input  wire	[`ysyx_25060170_REG]	regs12,
+	input  wire	[`ysyx_25060170_REG]	regs13,
+	input  wire	[`ysyx_25060170_REG]	regs14,
+	input  wire	[`ysyx_25060170_REG]	regs15,
+	input  wire	[`ysyx_25060170_REG]	regs16,
+	input  wire	[`ysyx_25060170_REG]	regs17,
+	input  wire	[`ysyx_25060170_REG]	regs18,
+	input  wire	[`ysyx_25060170_REG]	regs19,
+	input  wire	[`ysyx_25060170_REG]	regs20,
+	input  wire	[`ysyx_25060170_REG]	regs21,
+	input  wire	[`ysyx_25060170_REG]	regs22,
+	input  wire	[`ysyx_25060170_REG]	regs23,
+	input  wire	[`ysyx_25060170_REG]	regs24,
+	input  wire	[`ysyx_25060170_REG]	regs25,
+	input  wire	[`ysyx_25060170_REG]	regs26,
+	input  wire	[`ysyx_25060170_REG]	regs27,
+	input  wire	[`ysyx_25060170_REG]	regs28,
+	input  wire	[`ysyx_25060170_REG]	regs29,
+	input  wire	[`ysyx_25060170_REG]	regs30,
+	input  wire	[`ysyx_25060170_REG]	regs31,
+	input  wire	[`ysyx_25060170_REG]	regs32,
+	
+	output wire	[`ysyx_25060170_PC]		inst_o,
 );
 
  //--------------------DPI-C----------------------//
-
-import "DPI-C" function void pc_inst_end(input int thepc_data, input int the_inst);
 
 import "DPI-C" function void ebreak (input bit ebreak_ena);
 
@@ -53,24 +83,6 @@ import "DPI-C" function void pmem_read(input int raddr, output int rdata, input 
  	input int t5 ,
  	input int t6 
  );
-
-reg delay;
-
-reg [31:0] pc_delay;
-always@(posedge clk) begin
-	if(rst == `ysyx_25060170_RSTABLE) begin
-		delay <= 1'b0;
-		pc_delay <= 32'd0;
-	end
-	else if(id_stall & ~ls_valid) begin 
-		delay <= 1'b1;
-		pc_delay <= pc_i;
-	end
-	else begin
-		delay <= 1'b0;
-		pc_delay <= 32'd0;
-	end
-end
 
 wire ebreak_ena;
 
