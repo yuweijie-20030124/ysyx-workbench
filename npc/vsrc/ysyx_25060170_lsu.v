@@ -11,8 +11,12 @@ module ysyx_25060170_lsu(
 
 wire [`ysyx_25060170_DATAADDR] raddr;
 wire [`ysyx_25060170_DATAADDR] waddr;
-reg [3:0] rlen = 4'd4;  // 32-bit: maximum 4 bytes
-reg [3:0] wlen;
+
+/* verilator lint_off UNUSEDSIGNAL */
+reg [31:0] rlen = 32'd4;  // 32-bit: maximum 4 bytes
+reg [31:0] wlen;
+/* verilator lint_on UNUSEDSIGNAL */
+
 reg [`ysyx_25060170_DATA] data_i;
 reg [`ysyx_25060170_DATA] data_o;
 wire re;
@@ -116,32 +120,32 @@ end
 always @(*) begin
     if (rst == `ysyx_25060170_RSTABLE) begin
         data_o = `ysyx_25060170_ZERO32;
-        wlen = 4'd0;
+        wlen = 32'd0;
     end else begin
         case (ls_ctl)
             4'b0001: begin  // SB
                 data_o = {4{store_data[7:0]}};  // Replicate byte to all positions
-                wlen = sb_mask;
+                wlen = {{28{1'b0}}, sb_mask}; 
             end
             4'b0010: begin  // SH
                 data_o = {2{store_data[15:0]}};  // Replicate halfword to both positions
-                wlen = sh_mask;
+                wlen = {{28{1'b0}}, sh_mask}; 
             end
             4'b0100: begin  // SW
                 data_o = store_data;
-                wlen = sw_mask;
+                wlen = {{28{1'b0}}, sw_mask};
             end
             default: begin
                 data_o = `ysyx_25060170_ZERO32;
-                wlen = 4'd0;
+                wlen = 32'd0;
             end
         endcase
     end
 end
 
 //--------------------------dpi-c--------------------------------------------------------------------//
-import "DPI-C" function void pmem_read(input int raddr, output int rdata, input byte rlen);
-import "DPI-C" function void pmem_write(input int waddr, input int wdata, input byte wlen);
+import "DPI-C" function void pmem_read(input int raddr, output int rdata, input int rlen);
+import "DPI-C" function void pmem_write(input int waddr, input int wdata, input int wlen);
 
 always @(negedge clk) begin
     if (re) begin
