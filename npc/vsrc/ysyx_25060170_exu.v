@@ -11,6 +11,7 @@ module ysyx_25060170_exu(
 	input	wire	[`ysyx_25060170_REGADDR]	rs1_addr    ,
 	input	wire	[`ysyx_25060170_IMM]		imm	        ,
 	input	wire	[`ysyx_25060170_PC]		    pc_i	    ,
+	input										branch		,
 	input	wire	[7:0]				        alu_sel	    ,
     
     
@@ -27,8 +28,8 @@ module ysyx_25060170_exu(
 //------------------------------------------------------hzd_ctl--------------------------------------------------------------//
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-assign ex_valid = id_valid | mul_stall | div_stall;
-assign ex_ready = ls_ready | mul_stall | div_stall; 
+assign ex_valid = id_valid ;
+assign ex_ready = ls_ready ; 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //------------------------------------------------------alu--------------------------------------------------------------//
@@ -63,18 +64,6 @@ wire     op1_lt_op2 = (op1[31] && ~op2[31]) || (~op1[31] && ~op2[31] && op1_sub_
 //sra srai
 wire	 [`ysyx_25060170_DATA] op1_sra_op2 = $signed(op1) >>> op2[5:0] ;
 
-//sllw slliw
-wire     [31:0]     sllw  = op1[31:0] << op2[4:0]          ;
-wire     [`ysyx_25060170_DATA] op1_sllw_op2 = {{32{sllw[31]}} , sllw} ;
-
-//srlw srliw 
-wire     [31:0]     srlw  = op1[31:0] >> op2[4:0]          ;
-wire     [`ysyx_25060170_DATA] op1_srlw_op2 = {{32{srlw[31]}} , srlw} ;
-
-//sraiw sraw
-wire	 [31:0]     sraw = $signed(op1[31:0]) >>> op2[4:0] ;
-wire	 [`ysyx_25060170_DATA] op1_sraw_op2 = {{32{sraw[31]}} , sraw} ;
-
 reg [`ysyx_25060170_DATA] alu_res ;
 
 
@@ -99,9 +88,6 @@ always@(*)begin
 			`INST_SLTI ,  `INST_SLT  	:  begin alu_res = {31'd0 , op1_lt_op2}		;end
 			`INST_SLTIU , `INST_SLTU 	:  begin alu_res = {31'd0 , (op1 < op2)}	;end
 			`INST_SRAI ,  `INST_SRA  	:  begin alu_res = op1_sra_op2			;end
-			`INST_SLLIW,  `INST_SLLW 	:  begin alu_res = op1_sllw_op2			;end
-			`INST_SRLIW,  `INST_SRLW 	:  begin alu_res = op1_srlw_op2			;end
-			`INST_SRAIW,  `INST_SRAW 	:  begin alu_res = op1_sraw_op2			;end
 			`INST_XORI ,  `INST_XOR  	:  begin alu_res = op1 ^ op2			;end
 			`INST_ORI  ,  `INST_OR   	:  begin alu_res = op1 | op2			;end
 			`INST_ANDI ,  `INST_AND  	:  begin alu_res = op1 & op2			;end

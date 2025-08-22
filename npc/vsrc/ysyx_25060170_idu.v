@@ -13,7 +13,7 @@ module ysyx_25060170_idu(
 	input	wire	[`ysyx_25060170_DATA]		ls_data_forward	,
 	input	wire	[`ysyx_25060170_REGADDR]	wb_addr_forward	,
 	input	wire	[`ysyx_25060170_DATA]		wb_data_forward	,
-	input 	wire					            ex_load_ena	    ,
+	input 	wire					            ex_load_ena	    ,	//是否存在加载指令需要转发数据到解码单元
 	
 	//regfile signal
 	output	wire	[`ysyx_25060170_REGADDR]	rs1_addr        ,
@@ -24,8 +24,8 @@ module ysyx_25060170_idu(
 	output	wire				 	            rs2_ena         ,
 	input	wire	[`ysyx_25060170_REG]     	rs2_data        ,
     
-	output	wire					            rd_ena          ,
-	output	wire	[`ysyx_25060170_REGADDR] 	rd_addr         ,
+	output	wire					            rd_ena          ,	//表示当前指令是否会写回数据到寄存器
+	output	wire	[`ysyx_25060170_REGADDR] 	rd_addr         ,	//目的寄存器的地址
 
 	//control out signal    
 	output  wire	[7:0]         			    alusrc_o	    ,

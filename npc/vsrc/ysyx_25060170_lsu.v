@@ -3,9 +3,9 @@
   module ysyx_25060170_lsu(
   	input	wire                    		        rst             ,
   	input	wire                    		        clk             ,
- 	input	wire	[`ysyx_25060170_DATA]           alu_res         ,
- 	input	wire	[`ysyx_25060170_DATA]           store_data      ,
- 	input	wire	[3:0]               		    ls_ctl          ,
+ 	input	wire	[`ysyx_25060170_DATA]           alu_res         ,   //ALU的计算结果，代表操作数的地址或访问的数据
+ 	input	wire	[`ysyx_25060170_DATA]           store_data      ,   //来自执行单元的数据，准备存储到内存中
+ 	input	wire	[3:0]               		    ls_ctl          ,   //当前操作时加载操作的字节大小
     
 	input	wire					                wb_ready        ,
 	input	wire					                ex_valid        ,
@@ -15,7 +15,7 @@
  	output	wire					                ls_jump         ,
  	output	wire	[`ysyx_25060170_PC]		        ls_jump_pc      ,
  	
- 	// output	wire	[`ysyx_25060170_DATA]      	    ls_data_forward ,
+ 	 output	wire	[`ysyx_25060170_DATA]      	    ls_data_forward ,
  	output	wire	[`ysyx_25060170_DATA]      	    ls_data_o,
     output	wire	[`ysyx_25060170_DATA]      	    data_o,
     output  wire    [7:0]                           wlen       
@@ -267,9 +267,10 @@ end
 //------------------------------------------------------out to idu--------------------------------------------------------------//
 
 //  assign ls_data_forward  = re ? load_data : alu_res ;
+assign ls_data_forward  = alu_res ;
 
 //------------------------------------------------------out to wbu--------------------------------------------------------------//
 
- assign ls_data_o  = re ? load_data : `ysyx_25060170_ZERO32 ;
+ assign ls_data_o  = load_data;
 
 endmodule
