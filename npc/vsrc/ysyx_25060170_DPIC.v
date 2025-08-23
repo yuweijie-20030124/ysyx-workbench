@@ -43,7 +43,7 @@
 	input  wire	[`ysyx_25060170_REG] 	mepc,
 	input  wire	[`ysyx_25060170_REG] 	mcause,
 	
-	output wire	[`ysyx_25060170_PC]		inst_o,
+	output wire	[`ysyx_25060170_PC]		inst_o
 );
 
  //--------------------DPI-C----------------------//
@@ -52,7 +52,7 @@ import "DPI-C" function void ebreak (input bit ebreak_ena);
 
 import "DPI-C" function void pmem_read(input int raddr, output int rdata, input int rlen);
 
-import "DPI-C" function void ebreak (input bit ebreak_ena);
+import "DPI-C" function void set_npc_exit(int pc, int halt_ret);
 
 import "DPI-C" function void difftest_dut_csr(
 	input int csr_mstatus,
@@ -100,14 +100,6 @@ wire ebreak_ena;
 
 assign ebreak_ena = inst_o == `EBREAK_TRAP ? 1'b1 : 1'b0;
  
-reg [7:0] rlen = 8'd4;
-reg [31:0] rinst;
-always @(posedge clk) begin
-    pmem_read(pc_i,inst_o,rlen);
-end
-
-
-
  always@(posedge clk)begin
  	difftest_dut_regs(
  		regs0  ,
@@ -147,13 +139,12 @@ end
 
 
 reg [31:0] rlen = 31'd4;
-reg [31:0] rinst;
 always @(posedge clk) begin
-    pmem_read(pc_next,rinst,rlen);
+    pmem_read(pc_i,inst_o,rlen);
 end
- 
+
 always@(*) begin
-  ebreak(inst_ebreak);
+  set_npc_exit(pc_i,-1);
   end
 
 always@(*) begin

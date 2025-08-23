@@ -15,7 +15,11 @@ module ysyx_25060170_exu(
     output wire [`ysyx_25060170_REG] store_data,
     output wire [`ysyx_25060170_PC] jump_pc_o,
     output wire ex_pcsrc_o,
-    output reg [`ysyx_25060170_DATA] exu_res
+    output reg [`ysyx_25060170_DATA] exu_res,
+	output wire [`ysyx_25060170_REG]  csr_ex_mstatus     ,
+	output wire [`ysyx_25060170_REG]  csr_ex_mepc        ,
+	output wire [`ysyx_25060170_REG]  csr_ex_mtvec       ,
+	output wire [`ysyx_25060170_REG]  csr_ex_mcause      
 );
 
 // 32-bit operations
@@ -147,7 +151,11 @@ ysyx_25060170_csr csr_operate(
     .csr_addr(csr_addr),
     .mcause_value(mcause_value),
     .read_csr_data(read_csr_data),
-    .write_csr_data(write_csr_data)
+    .write_csr_data(write_csr_data),
+	.mstatus_o(csr_ex_mstatus),
+	.mepc_o   (csr_ex_mepc   ),
+	.mtvec_o  (csr_ex_mtvec  ),
+	.mcause_o (csr_ex_mcause )
 );
 
 // Out to WBU

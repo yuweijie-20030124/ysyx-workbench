@@ -7,7 +7,11 @@ module ysyx_25060170_csr(
   input wire [11:0]      csr_addr    ,
   input wire [`ysyx_25060170_REG]  mcause_value,
   input wire [`ysyx_25060170_DATA] write_csr_data,
-  output wire [`ysyx_25060170_DATA] read_csr_data
+  output wire [`ysyx_25060170_DATA] read_csr_data,
+  output wire [`ysyx_25060170_REG]  mstatus_o     ,
+  output wire [`ysyx_25060170_REG]  mepc_o        ,
+  output wire [`ysyx_25060170_REG]  mtvec_o       ,
+  output wire [`ysyx_25060170_REG]  mcause_o      
 );
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -123,6 +127,11 @@ assign read_csr_data = mstatus_rd ? mstatus :
                        mtvec_rd   ? mtvec  : 
                        mcause_rd  ? mcause :
                        `ysyx_25060170_ZERO32;
+
+assign mstatus_o = mstatus;
+assign mepc_o    = mepc   ;
+assign mtvec_o   = mtvec  ;
+assign mcause_o  = mcause ;
 
 endmodule
 

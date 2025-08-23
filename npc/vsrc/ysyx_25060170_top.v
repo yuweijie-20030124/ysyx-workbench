@@ -37,7 +37,12 @@ wire [3:0]                      id_ex_csrctl;
 wire  [`ysyx_25060170_REG]           ex_aludata    ;
 wire [`ysyx_25060170_DATA] 	     ex_ls_store_data  ;
 wire  [`ysyx_25060170_PC]  	     ex_if_pc 	   ;
-wire           			     ex_if_pc_sel  ;
+wire           			     ex_if_pc_sel  		;
+wire [`ysyx_25060170_REG]  	ex_dpic_mstatus     ;
+wire [`ysyx_25060170_REG]  	ex_dpic_mepc        ;
+wire [`ysyx_25060170_REG]  	ex_dpic_mtvec       ;
+wire [`ysyx_25060170_REG]  	ex_dpic_mcause      ;
+
 
 //lsu
 wire [`ysyx_25060170_DATA]         ls_wb_data        ;
@@ -48,6 +53,40 @@ wire [`ysyx_25060170_DATA]	   wb_reg_rd_data     ;
 // regfile
 wire [`ysyx_25060170_REG] reg_id_rs1_data ;
 wire [`ysyx_25060170_REG] reg_id_rs2_data ;
+
+//DPI-C
+wire [`ysyx_25060170_REG]		regs0 ;
+wire [`ysyx_25060170_REG]		regs1 ;
+wire [`ysyx_25060170_REG]		regs2 ;
+wire [`ysyx_25060170_REG]		regs3 ;
+wire [`ysyx_25060170_REG]		regs4 ;
+wire [`ysyx_25060170_REG]		regs5 ;
+wire [`ysyx_25060170_REG]		regs6 ;
+wire [`ysyx_25060170_REG]		regs7 ;
+wire [`ysyx_25060170_REG]		regs8 ;
+wire [`ysyx_25060170_REG]		regs9 ;
+wire [`ysyx_25060170_REG]		regs10;
+wire [`ysyx_25060170_REG]		regs11;
+wire [`ysyx_25060170_REG]		regs12;
+wire [`ysyx_25060170_REG]		regs13;
+wire [`ysyx_25060170_REG]		regs14;
+wire [`ysyx_25060170_REG]		regs15;
+wire [`ysyx_25060170_REG]		regs16;
+wire [`ysyx_25060170_REG]		regs17;
+wire [`ysyx_25060170_REG]		regs18;
+wire [`ysyx_25060170_REG]		regs19;
+wire [`ysyx_25060170_REG]		regs20;
+wire [`ysyx_25060170_REG]		regs21;
+wire [`ysyx_25060170_REG]		regs22;
+wire [`ysyx_25060170_REG]		regs23;
+wire [`ysyx_25060170_REG]		regs24;
+wire [`ysyx_25060170_REG]		regs25;
+wire [`ysyx_25060170_REG]		regs26;
+wire [`ysyx_25060170_REG]		regs27;
+wire [`ysyx_25060170_REG]		regs28;
+wire [`ysyx_25060170_REG]		regs29;
+wire [`ysyx_25060170_REG]		regs30;
+wire [`ysyx_25060170_REG]		regs31;
 
 ysyx_25060170_ifu ifu0(
 		.clk(clk)	,
@@ -98,7 +137,11 @@ ysyx_25060170_exu exu2(
 	.exu_res(ex_aludata)	,
 	.store_data(ex_ls_store_data) ,
 	.jump_pc_o(ex_if_pc)	,
- 	.ex_pcsrc_o(ex_if_pc_sel)		
+ 	.ex_pcsrc_o(ex_if_pc_sel),
+	.mstatus(ex_dpic_mstatus),
+	.mepc   (ex_dpic_mepc   ),
+	.mtvec  (ex_dpic_mtvec  ),
+	.mcause (ex_dpic_mcause )		
 );
 
 ysyx_25060170_lsu lsu3(
@@ -127,9 +170,55 @@ ysyx_25060170_regfile reg3(
 	.raddr2(id_reg_rs2_addr)	,
 	.rdata1(reg_id_rs1_data)	,
 	.rdata2(reg_id_rs2_data)	,
-	.wen(id_reg_rd_ena)	,
+	.wen(id_reg_rd_ena)		,
 	.ren1(id_reg_rs1_ena)	,
 	.ren2(id_reg_rs2_ena)	
 );
+
+ysyx_25060170_DPIC dpic(
+	.clk	(clk)	,
+	.rst	(rst)	,
+	.pc_i   (if_id_pc),
+	.regs0  (regs0 ),
+	.regs1  (regs1 ),
+	.regs2  (regs2 ),
+	.regs3  (regs3 ),
+	.regs4  (regs4 ),
+	.regs5  (regs5 ),
+	.regs6  (regs6 ),
+	.regs7  (regs7 ),
+	.regs8  (regs8 ),
+	.regs9  (regs9 ),
+	.regs10 (regs10),
+	.regs11 (regs11),
+	.regs12 (regs12),
+	.regs13 (regs13),
+	.regs14 (regs14),
+	.regs15 (regs15),
+	.regs16 (regs16),
+	.regs17 (regs17),
+	.regs18 (regs18),
+	.regs19 (regs19),
+	.regs20 (regs20),
+	.regs21 (regs21),
+	.regs22 (regs22),
+	.regs23 (regs23),
+	.regs24 (regs24),
+	.regs25 (regs25),
+	.regs26 (regs26),
+	.regs27 (regs27),
+	.regs28 (regs28),
+	.regs29 (regs29),
+	.regs30 (regs30),
+	.regs31 (regs31),
+	.mstatus(ex_dpic_mstatus),
+	.mtvec  (ex_dpic_mepc   ),
+	.mepc   (ex_dpic_mtvec  ),
+	.mcause (ex_dpic_mcause ), 	
+
+
+
+
+)
 
 endmodule
