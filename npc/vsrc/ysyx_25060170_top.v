@@ -2,7 +2,7 @@
 
 
 
-module ysyx_25060170_rvcpu(
+module ysyx_25060170_top(
 	input wire              clk		,
 	input wire              rst		
 		
@@ -10,6 +10,8 @@ module ysyx_25060170_rvcpu(
 
 //ifu
  wire [`ysyx_25060170_INST]  	if_id_inst 	   ;
+ wire [`ysyx_25060170_INST]		DPIC_if_inst	;
+
  wire [`ysyx_25060170_PC]    	if_id_pc    	   ;
 
 //idu
@@ -93,6 +95,7 @@ ysyx_25060170_ifu ifu0(
 		.rst(rst)	,
 		.pcsrc_i(ex_if_pc_sel)  ,
  		.ex_pc_i(ex_if_pc)	,
+		.inst_i(DPIC_if_inst)	,
  		.inst_o(if_id_inst)	,		
 		.pc_o(if_id_pc)
 );
@@ -138,10 +141,10 @@ ysyx_25060170_exu exu2(
 	.store_data(ex_ls_store_data) ,
 	.jump_pc_o(ex_if_pc)	,
  	.ex_pcsrc_o(ex_if_pc_sel),
-	.mstatus(ex_dpic_mstatus),
-	.mepc   (ex_dpic_mepc   ),
-	.mtvec  (ex_dpic_mtvec  ),
-	.mcause (ex_dpic_mcause )		
+	.csr_ex_mstatus(ex_dpic_mstatus),
+	.csr_ex_mepc   (ex_dpic_mepc   ),
+	.csr_ex_mtvec  (ex_dpic_mtvec  ),
+	.csr_ex_mcause (ex_dpic_mcause )		
 );
 
 ysyx_25060170_lsu lsu3(
@@ -172,12 +175,43 @@ ysyx_25060170_regfile reg3(
 	.rdata2(reg_id_rs2_data)	,
 	.wen(id_reg_rd_ena)		,
 	.ren1(id_reg_rs1_ena)	,
-	.ren2(id_reg_rs2_ena)	
+	.ren2(id_reg_rs2_ena)	,
+	.regs0 (regs0 ),
+	.regs1 (regs1 ),
+	.regs2 (regs2 ),
+	.regs3 (regs3 ),
+	.regs4 (regs4 ),
+	.regs5 (regs5 ),
+	.regs6 (regs6 ),
+	.regs7 (regs7 ),
+	.regs8 (regs8 ),
+	.regs9 (regs9 ),
+	.regs10(regs10),
+	.regs11(regs11),
+	.regs12(regs12),
+	.regs13(regs13),
+	.regs14(regs14),
+	.regs15(regs15),
+	.regs16(regs16),
+	.regs17(regs17),
+	.regs18(regs18),
+	.regs19(regs19),
+	.regs20(regs20),
+	.regs21(regs21),
+	.regs22(regs22),
+	.regs23(regs23),
+	.regs24(regs24),
+	.regs25(regs25),
+	.regs26(regs26),
+	.regs27(regs27),
+	.regs28(regs28),
+	.regs29(regs29),
+	.regs30(regs30),
+	.regs31(regs31)
 );
 
 ysyx_25060170_DPIC dpic(
 	.clk	(clk)	,
-	.rst	(rst)	,
 	.pc_i   (if_id_pc),
 	.regs0  (regs0 ),
 	.regs1  (regs1 ),
@@ -214,11 +248,10 @@ ysyx_25060170_DPIC dpic(
 	.mstatus(ex_dpic_mstatus),
 	.mtvec  (ex_dpic_mepc   ),
 	.mepc   (ex_dpic_mtvec  ),
-	.mcause (ex_dpic_mcause ), 	
+	.mcause (ex_dpic_mcause ),
+	.inst_o	(DPIC_if_inst) 	
 
-
-
-
-)
+);
 
 endmodule
+

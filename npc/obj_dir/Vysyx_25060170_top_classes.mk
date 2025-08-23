@@ -26,12 +26,12 @@ VM_TRACE_VCD = 1
 # Generated module classes, fast-path, compile with highest optimization
 VM_CLASSES_FAST += \
 	Vysyx_25060170_top \
-	Vysyx_25060170_top__Dpi_Export__0 \
 	Vysyx_25060170_top___024root__DepSet_h28022adc__0 \
 	Vysyx_25060170_top___024root__DepSet_hcf322213__0 \
 
 # Generated module classes, non-fast-path, compile with low/medium optimization
 VM_CLASSES_SLOW += \
+	Vysyx_25060170_top__ConstPool_0 \
 	Vysyx_25060170_top___024root__Slow \
 	Vysyx_25060170_top___024root__DepSet_h28022adc__0__Slow \
 	Vysyx_25060170_top___024root__DepSet_hcf322213__0__Slow \

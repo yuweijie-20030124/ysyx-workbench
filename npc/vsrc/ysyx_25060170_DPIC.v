@@ -3,7 +3,6 @@
 
  module ysyx_25060170_DPIC(
 	input  wire	clk,
-	input  wire	rst,
 
  	input  wire	[`ysyx_25060170_INST]	pc_i,
 	input  wire	[`ysyx_25060170_REG]	regs0 ,
@@ -43,7 +42,7 @@
 	input  wire	[`ysyx_25060170_REG] 	mepc,
 	input  wire	[`ysyx_25060170_REG] 	mcause,
 	
-	output wire	[`ysyx_25060170_PC]		inst_o
+	output reg	[`ysyx_25060170_PC]		inst_o
 );
 
  //--------------------DPI-C----------------------//
@@ -138,12 +137,12 @@ assign ebreak_ena = inst_o == `EBREAK_TRAP ? 1'b1 : 1'b0;
  end
 
 
-reg [31:0] rlen = 31'd4;
+reg [31:0] rlen = 32'd4;
 always @(posedge clk) begin
     pmem_read(pc_i,inst_o,rlen);
 end
 
-always@(*) begin
+always@(ebreak_ena == 1) begin
   set_npc_exit(pc_i,-1);
   end
 

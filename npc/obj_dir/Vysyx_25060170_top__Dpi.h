@@ -15,26 +15,18 @@ extern "C" {
 #endif
 
 
-    // DPI EXPORTS
-    // DPI export at vsrc/ysyx_25060170_GPR.v:75:6
-    extern void GPR_SEND_VALUE(int* r1, int* r2, int* r3, int* r4, int* r5, int* r6, int* r7, int* r8, int* r9, int* r10, int* r11, int* r12, int* r13, int* r14, int* r15, int* r16, int* r17, int* r18, int* r19, int* r20, int* r21, int* r22, int* r23, int* r24, int* r25, int* r26, int* r27, int* r28, int* r29, int* r30, int* r31);
-    // DPI export at vsrc/ysyx_25060170_IDU.v:539:6
-    extern void IDU_SEND_CALL_FLAG(int* call_flag, int* pc, int* dnpc);
-    // DPI export at vsrc/ysyx_25060170_IDU.v:527:6
-    extern void IDU_SEND_INST(int* c_inst);
-    // DPI export at vsrc/ysyx_25060170_IDU.v:558:6
-    extern void IDU_SEND_RET_FLAG(int* ret_flag, int* pc);
-
     // DPI IMPORTS
-    // DPI import at vsrc/ysyx_25060170_WBU.v:54:33
-    extern int paddr_read(int addr, int len);
-    // DPI import at vsrc/ysyx_25060170_WBU.v:53:34
-    extern void paddr_write(int addr, int len, int data);
-    // DPI import at vsrc/ysyx_25060170_IFU.v:29:30
-    extern void pc_inst_end(int thepc_data, int the_inst);
-    // DPI import at vsrc/ysyx_25060170_IFU.v:41:30
-    extern void pmem_read(int raddr, int* rdata, char rlen);
-    // DPI import at vsrc/ysyx_25060170_IDU.v:54:30
+    // DPI import at vsrc/ysyx_25060170_DPIC.v:56:30
+    extern void difftest_dut_csr(int csr_mstatus, int csr_mtvec, int csr_mepc, int csr_mcause);
+    // DPI import at vsrc/ysyx_25060170_DPIC.v:63:30
+    extern void difftest_dut_regs(int regs0, int regs1, int regs2, int regs3, int regs4, int regs5, int regs6, int regs7, int regs8, int regs9, int regs10, int regs11, int regs12, int regs13, int regs14, int regs15, int regs16, int regs17, int regs18, int regs19, int regs20, int regs21, int regs22, int regs23, int regs24, int regs25, int regs26, int regs27, int regs28, int regs29, int regs30, int regs31);
+    // DPI import at vsrc/ysyx_25060170_DPIC.v:50:30
+    extern void ebreak(svBit ebreak_ena);
+    // DPI import at vsrc/ysyx_25060170_lsu.v:147:30
+    extern void pmem_read(int raddr, int* rdata, int rlen);
+    // DPI import at vsrc/ysyx_25060170_lsu.v:148:30
+    extern void pmem_write(int waddr, int wdata, int wlen);
+    // DPI import at vsrc/ysyx_25060170_DPIC.v:54:30
     extern void set_npc_exit(int pc, int halt_ret);
 
 #ifdef __cplusplus
