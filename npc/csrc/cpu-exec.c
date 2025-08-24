@@ -156,7 +156,7 @@ void cpu_exec(uint64_t n) {
   g_print_step = (n < MAX_INST_TO_PRINT);//一次执行太多步就不打印了，bool类型的gprintstep就赋值为false
   switch (npc_state.state) {
     case NPC_END: case NPC_ABORT: case NPC_QUIT:
-      //printf("%d\n",npc_state.state);
+      // printf("%d\n",npc_state.state);
       printf("Program execution has ended. To restart the program, exit NPC and run again.\n");
       return;//如果状态是结束了，出错了，退出了就打印“退出nemu”。
     default: npc_state.state = NPC_RUNNING;//默认running

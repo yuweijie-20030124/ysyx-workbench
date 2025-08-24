@@ -90,6 +90,7 @@ extern "C" void set_npc_exit(vaddr_t pc, int halt_ret){
   npc_state.state = NPC_END;
   npc_state.halt_pc = pc;
   npc_state.halt_ret = halt_ret;
+  // printf("exit\n");
 }
 
 extern "C" void pc_inst_end(int thepc_data, int the_inst){

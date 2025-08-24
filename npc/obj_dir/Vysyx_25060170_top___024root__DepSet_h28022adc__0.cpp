@@ -34,6 +34,18 @@ VL_INLINE_OPT void Vysyx_25060170_top___024root____Vdpiimwrap_ysyx_25060170_top_
     pmem_write(waddr__Vcvt, wdata__Vcvt, wlen__Vcvt);
 }
 
+extern "C" void pc_inst_end(int thepc_data, int the_inst);
+
+VL_INLINE_OPT void Vysyx_25060170_top___024root____Vdpiimwrap_ysyx_25060170_top__DOT__dpic__DOT__pc_inst_end_TOP(IData/*31:0*/ thepc_data, IData/*31:0*/ the_inst) {
+    VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_top___024root____Vdpiimwrap_ysyx_25060170_top__DOT__dpic__DOT__pc_inst_end_TOP\n"); );
+    // Body
+    int thepc_data__Vcvt;
+    for (size_t thepc_data__Vidx = 0; thepc_data__Vidx < 1; ++thepc_data__Vidx) thepc_data__Vcvt = thepc_data;
+    int the_inst__Vcvt;
+    for (size_t the_inst__Vidx = 0; the_inst__Vidx < 1; ++the_inst__Vidx) the_inst__Vcvt = the_inst;
+    pc_inst_end(thepc_data__Vcvt, the_inst__Vcvt);
+}
+
 extern "C" void set_npc_exit(int pc, int halt_ret);
 
 VL_INLINE_OPT void Vysyx_25060170_top___024root____Vdpiimwrap_ysyx_25060170_top__DOT__dpic__DOT__set_npc_exit_TOP(IData/*31:0*/ pc, IData/*31:0*/ halt_ret) {
@@ -189,15 +201,7 @@ void Vysyx_25060170_top___024root___eval_triggers__act(Vysyx_25060170_top___024r
                                           & (~ (IData)(vlSelfRef.__Vtrigprevexpr___TOP__clk__0))));
     vlSelfRef.__VactTriggered.setBit(1U, ((~ (IData)(vlSelfRef.clk)) 
                                           & (IData)(vlSelfRef.__Vtrigprevexpr___TOP__clk__0)));
-    vlSelfRef.__VactTriggered.setBit(2U, ((IData)(vlSelfRef.ysyx_25060170_top__DOT__dpic__DOT__ebreak_ena) 
-                                          != (IData)(vlSelfRef.__Vtrigprevexpr___TOP__ysyx_25060170_top__DOT__dpic__DOT__ebreak_ena__0)));
     vlSelfRef.__Vtrigprevexpr___TOP__clk__0 = vlSelfRef.clk;
-    vlSelfRef.__Vtrigprevexpr___TOP__ysyx_25060170_top__DOT__dpic__DOT__ebreak_ena__0 
-        = vlSelfRef.ysyx_25060170_top__DOT__dpic__DOT__ebreak_ena;
-    if (VL_UNLIKELY(((1U & (~ (IData)(vlSelfRef.__VactDidInit)))))) {
-        vlSelfRef.__VactDidInit = 1U;
-        vlSelfRef.__VactTriggered.setBit(2U, 1U);
-    }
 #ifdef VL_DEBUG
     if (VL_UNLIKELY(vlSymsp->_vm_contextp__->debug())) {
         Vysyx_25060170_top___024root___dump_triggers__act(vlSelf);

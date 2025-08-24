@@ -3,7 +3,7 @@
 
  module ysyx_25060170_DPIC(
 	input  wire	clk,
-
+	input  wire rst,
  	input  wire	[`ysyx_25060170_INST]	pc_i,
 	output reg	[`ysyx_25060170_PC]		inst_o,
 	//for ftrace
@@ -49,6 +49,8 @@
 );
 
  //--------------------DPI-C----------------------//
+
+import "DPI-C" function void pc_inst_end(input int thepc_data, input int the_inst);
 
 import "DPI-C" function void pmem_read(input int raddr, output int rdata, input byte rlen);
 
@@ -98,18 +100,15 @@ import "DPI-C" function void difftest_dut_regs(
 
 
 /***********************************use dpic*************************************/
-wire ebreak_ena;
 
-assign ebreak_ena = inst_o == `EBREAK_TRAP ? 1'b1 : 1'b0;
-
-reg [7:0] rlen = 8'd4;
-always @(posedge clk) begin
-    pmem_read(pc_i,inst_o,rlen);
-end
-
-always@(ebreak_ena == 1) begin
-  set_npc_exit(pc_i,0);
-  end
+ always @(posedge clk) begin
+   if(rst ==`ysyx_25060170_RSTABLE) begin
+     pc_inst_end(`ysyx_25060170_STARTPC, inst_o);
+   end
+   else begin
+     pc_inst_end(pc_i, inst_o);
+   end
+ end
 
 /********************************difftest****************************************/
  always@(posedge clk)begin
@@ -201,4 +200,20 @@ task IDU_SEND_RET_FLAG(
 endtask
 
 
+/***********************************ebreak*************************************/
+
+wire ebreak_ena = 0;
+
+assign ebreak_ena = inst_o == `EBREAK_TRAP ? 1'b1 : 1'b0;
+
+reg [7:0] rlen = 8'd4;
+always @(posedge clk) begin
+    pmem_read(pc_i,inst_o,rlen);
+end
+
+always@(ebreak_ena == 1) begin
+  $display("pc_i = 0x%08x",pc_i);
+  $display("inst_o = 0x%08x",inst_o);
+  set_npc_exit(pc_i,0);
+  end
  endmodule

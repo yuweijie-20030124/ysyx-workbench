@@ -214,6 +214,7 @@ ysyx_25060170_regfile reg3(
 
 ysyx_25060170_DPIC dpic(
 	.clk	(clk)	,
+	.rst	(rst)	,
 	.pc_i   (if_id_pc),
 	.inst_o	(DPIC_if_inst),
 	.rd_addr(rd),

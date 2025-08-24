@@ -17,7 +17,6 @@ class alignas(VL_CACHE_LINE_BYTES) Vysyx_25060170_top___024root final : public V
     // Anonymous structures to workaround compiler member-count bugs
     struct {
         VL_IN8(clk,0,0);
-        CData/*0:0*/ ysyx_25060170_top__DOT__dpic__DOT__ebreak_ena;
         VL_IN8(rst,0,0);
         CData/*4:0*/ ysyx_25060170_top__DOT__id_reg_rd_addr;
         CData/*0:0*/ ysyx_25060170_top__DOT__id_reg_rs1_ena;
@@ -80,9 +79,9 @@ class alignas(VL_CACHE_LINE_BYTES) Vysyx_25060170_top___024root final : public V
         CData/*0:0*/ ysyx_25060170_top__DOT__idu1__DOT__decode__DOT____VdfgRegularize_h77367796_0_86;
         CData/*0:0*/ ysyx_25060170_top__DOT__idu1__DOT__decode__DOT____VdfgRegularize_h77367796_0_87;
         CData/*0:0*/ ysyx_25060170_top__DOT__idu1__DOT__decode__DOT____VdfgRegularize_h77367796_0_88;
+        CData/*0:0*/ ysyx_25060170_top__DOT__idu1__DOT__decode__DOT____VdfgRegularize_h77367796_0_89;
     };
     struct {
-        CData/*0:0*/ ysyx_25060170_top__DOT__idu1__DOT__decode__DOT____VdfgRegularize_h77367796_0_89;
         CData/*0:0*/ ysyx_25060170_top__DOT__idu1__DOT__decode__DOT____VdfgRegularize_h77367796_0_91;
         CData/*0:0*/ ysyx_25060170_top__DOT__idu1__DOT__decode__DOT____VdfgRegularize_h77367796_0_92;
         CData/*0:0*/ ysyx_25060170_top__DOT__idu1__DOT__decode__DOT____VdfgRegularize_h77367796_0_93;
@@ -112,8 +111,6 @@ class alignas(VL_CACHE_LINE_BYTES) Vysyx_25060170_top___024root final : public V
         CData/*0:0*/ __VstlFirstIteration;
         CData/*0:0*/ __VicoFirstIteration;
         CData/*0:0*/ __Vtrigprevexpr___TOP__clk__0;
-        CData/*0:0*/ __Vtrigprevexpr___TOP__ysyx_25060170_top__DOT__dpic__DOT__ebreak_ena__0;
-        CData/*0:0*/ __VactDidInit;
         CData/*0:0*/ __VactContinue;
         SData/*11:0*/ ysyx_25060170_top__DOT__idu1__DOT__decode__DOT__b_imm;
         SData/*11:0*/ ysyx_25060170_top__DOT__exu2__DOT__csr_addr;
@@ -146,14 +143,12 @@ class alignas(VL_CACHE_LINE_BYTES) Vysyx_25060170_top___024root final : public V
         IData/*31:0*/ __VactIterCount;
         QData/*63:0*/ ysyx_25060170_top__DOT__exu2__DOT__mul;
         VlUnpacked<IData/*31:0*/, 32> ysyx_25060170_top__DOT__reg3__DOT__regs;
-    };
-    struct {
-        VlUnpacked<CData/*0:0*/, 5> __Vm_traceActivity;
+        VlUnpacked<CData/*0:0*/, 3> __Vm_traceActivity;
     };
     VlTriggerVec<1> __VstlTriggered;
     VlTriggerVec<1> __VicoTriggered;
-    VlTriggerVec<3> __VactTriggered;
-    VlTriggerVec<3> __VnbaTriggered;
+    VlTriggerVec<2> __VactTriggered;
+    VlTriggerVec<2> __VnbaTriggered;
 
     // INTERNAL VARIABLES
     Vysyx_25060170_top__Syms* const vlSymsp;
