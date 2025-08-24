@@ -46,9 +46,6 @@
 );
 
  //--------------------DPI-C----------------------//
-
-import "DPI-C" function void ebreak (input bit ebreak_ena);
-
 import "DPI-C" function void pmem_read(input int raddr, output int rdata, input int rlen);
 
 import "DPI-C" function void set_npc_exit(int pc, int halt_ret);

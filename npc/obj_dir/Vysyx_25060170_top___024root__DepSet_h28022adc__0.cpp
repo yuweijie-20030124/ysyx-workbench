@@ -34,16 +34,6 @@ VL_INLINE_OPT void Vysyx_25060170_top___024root____Vdpiimwrap_ysyx_25060170_top_
     pmem_write(waddr__Vcvt, wdata__Vcvt, wlen__Vcvt);
 }
 
-extern "C" void ebreak(svBit ebreak_ena);
-
-VL_INLINE_OPT void Vysyx_25060170_top___024root____Vdpiimwrap_ysyx_25060170_top__DOT__dpic__DOT__ebreak_TOP(CData/*0:0*/ ebreak_ena) {
-    VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_top___024root____Vdpiimwrap_ysyx_25060170_top__DOT__dpic__DOT__ebreak_TOP\n"); );
-    // Body
-    svBit ebreak_ena__Vcvt;
-    for (size_t ebreak_ena__Vidx = 0; ebreak_ena__Vidx < 1; ++ebreak_ena__Vidx) ebreak_ena__Vcvt = ebreak_ena;
-    ebreak(ebreak_ena__Vcvt);
-}
-
 extern "C" void set_npc_exit(int pc, int halt_ret);
 
 VL_INLINE_OPT void Vysyx_25060170_top___024root____Vdpiimwrap_ysyx_25060170_top__DOT__dpic__DOT__set_npc_exit_TOP(IData/*31:0*/ pc, IData/*31:0*/ halt_ret) {

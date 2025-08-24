@@ -25,7 +25,6 @@ VerilatedVcdC* tfp = new VerilatedVcdC(); //导出vcd波形需要加此语句
 vluint64_t main_time = 0;
 
 /**************************** DPI-C *******************************/
-
 extern "C" void pmem_read(paddr_t raddr, paddr_t* rdata, int rlen){
 
   if (raddr < CONFIG_MEM_BASE) return;
@@ -49,6 +48,53 @@ extern "C" void set_npc_exit(vaddr_t pc, int halt_ret){
 extern "C" void pc_inst_end(int thepc_data, int the_inst){
   cpu.pc = thepc_data;
   s.val = the_inst;
+}
+
+#ifdef HAS_CSR
+extern "C" void difftest_dut_csr(int csr_mstatus, int csr_mtvec, int csr_mepc, int csr_mcause){
+  #ifdef HAS_CSR
+    cpu.csr[0] = csr_mstatus & 0x0ull ;
+    cpu.csr[1] = csr_mtvec;
+    cpu.csr[2] = csr_mepc;    
+    cpu.csr[3] = csr_mcause;
+   // isa_reg_display();
+   #endif
+}
+#endif
+
+extern "C" void difftest_dut_regs(int Z0, int ra, int sp, int gp, int tp, int t0, int t1, int t2, int fp, int s1, int a0, int a1, int a2, int a3, int a4, int a5, int a6, int a7, int s2, int s3, int s4, int s5, int s6, int s7, int s8, int s9, int s10, int a11, int t3, int t4, int t5, int t6){
+  cpu.gpr[0] = Z0;
+  cpu.gpr[1] = ra;
+  cpu.gpr[2] = sp;
+  cpu.gpr[3] = gp;
+  cpu.gpr[4] = tp;
+  cpu.gpr[5] = t0;
+  cpu.gpr[6] = t1;
+  cpu.gpr[7] = t2;
+  cpu.gpr[8] = fp;
+  cpu.gpr[9] = s1;
+  cpu.gpr[10] = a0;
+  cpu.gpr[11] = a1;
+  cpu.gpr[12] = a2;
+  cpu.gpr[13] = a3;
+  cpu.gpr[14] = a4;
+  cpu.gpr[15] = a5;
+  cpu.gpr[16] = a6;
+  cpu.gpr[17] = a7;
+  cpu.gpr[18] = s2;
+  cpu.gpr[19] = s3;
+  cpu.gpr[20] = s4;
+  cpu.gpr[21] = s5;
+  cpu.gpr[22] = s6;
+  cpu.gpr[23] = s7;
+  cpu.gpr[24] = s8;
+  cpu.gpr[25] = s9;
+  cpu.gpr[26] = s10;
+  cpu.gpr[27] = a11;
+  cpu.gpr[28] = t3;
+  cpu.gpr[29] = t4;
+  cpu.gpr[30] = t5;
+  cpu.gpr[31] = t6;
 }
 
 /***********************************************END DPI-C*******************************************/
