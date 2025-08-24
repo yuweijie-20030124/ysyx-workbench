@@ -101,6 +101,13 @@ import "DPI-C" function void difftest_dut_regs(
 
 /***********************************use dpic*************************************/
 
+reg [7:0] rlen = 8'd4;
+always @(posedge clk) begin
+    pmem_read(pc_i,inst_o,rlen);
+	  	$display("pc_i = 0x%08x",pc_i);
+  		$display("inst_o = 0x%08x",inst_o);
+end
+
  always @(posedge clk) begin
    if(rst ==`ysyx_25060170_RSTABLE) begin
      pc_inst_end(`ysyx_25060170_STARTPC, inst_o);
@@ -202,18 +209,12 @@ endtask
 
 /***********************************ebreak*************************************/
 
-wire ebreak_ena = 0;
 
-assign ebreak_ena = inst_o == `EBREAK_TRAP ? 1'b1 : 1'b0;
-
-reg [7:0] rlen = 8'd4;
-always @(posedge clk) begin
-    pmem_read(pc_i,inst_o,rlen);
-end
-
-always@(ebreak_ena == 1) begin
-  $display("pc_i = 0x%08x",pc_i);
-  $display("inst_o = 0x%08x",inst_o);
-  set_npc_exit(pc_i,0);
+always@(*) begin
+	  	// $display("pc_i = 0x%08x",pc_i);
+  		// $display("inst_o = 0x%08x",inst_o);
+	if(inst_o == `EBREAK_TRAP)begin
+  		set_npc_exit(pc_i,0);
+  	end
   end
  endmodule
