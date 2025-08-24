@@ -14,3 +14,19 @@
 #include "Vysyx_25060170_top__Dpi.h"
 #include "Vysyx_25060170_top.h"
 
+#ifndef VL_DPIDECL_IDU_SEND_CALL_FLAG_
+#define VL_DPIDECL_IDU_SEND_CALL_FLAG_
+void IDU_SEND_CALL_FLAG(int* call_flag, int* pc, int* dnpc) {
+    // DPI export at vsrc/ysyx_25060170_DPIC.v:173:6
+    return Vysyx_25060170_top::IDU_SEND_CALL_FLAG(call_flag, pc, dnpc);
+}
+#endif
+
+#ifndef VL_DPIDECL_IDU_SEND_RET_FLAG_
+#define VL_DPIDECL_IDU_SEND_RET_FLAG_
+void IDU_SEND_RET_FLAG(int* ret_flag, int* pc) {
+    // DPI export at vsrc/ysyx_25060170_DPIC.v:192:6
+    return Vysyx_25060170_top::IDU_SEND_RET_FLAG(ret_flag, pc);
+}
+#endif
+

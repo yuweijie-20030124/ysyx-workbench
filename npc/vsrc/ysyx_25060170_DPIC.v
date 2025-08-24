@@ -5,6 +5,11 @@
 	input  wire	clk,
 
  	input  wire	[`ysyx_25060170_INST]	pc_i,
+	output reg	[`ysyx_25060170_PC]		inst_o,
+	//for ftrace
+	input wire 	[`ysyx_25060170_REGADDR] rd_addr,
+	input wire 	[`ysyx_25060170_IMM]	imm,
+	//for difftest
 	input  wire	[`ysyx_25060170_REG]	regs0 ,
 	input  wire	[`ysyx_25060170_REG]	regs1 ,
 	input  wire	[`ysyx_25060170_REG]	regs2 ,
@@ -40,13 +45,12 @@
 	input  wire	[`ysyx_25060170_REG] 	mstatus,
 	input  wire	[`ysyx_25060170_REG] 	mtvec,
 	input  wire	[`ysyx_25060170_REG] 	mepc,
-	input  wire	[`ysyx_25060170_REG] 	mcause,
-	
-	output reg	[`ysyx_25060170_PC]		inst_o
+	input  wire	[`ysyx_25060170_REG] 	mcause
 );
 
  //--------------------DPI-C----------------------//
-import "DPI-C" function void pmem_read(input int raddr, output int rdata, input int rlen);
+
+import "DPI-C" function void pmem_read(input int raddr, output int rdata, input byte rlen);
 
 import "DPI-C" function void set_npc_exit(int pc, int halt_ret);
 
@@ -92,10 +96,22 @@ import "DPI-C" function void difftest_dut_regs(
  	input int regs31 
  );
 
+
+/***********************************use dpic*************************************/
 wire ebreak_ena;
 
 assign ebreak_ena = inst_o == `EBREAK_TRAP ? 1'b1 : 1'b0;
- 
+
+reg [7:0] rlen = 8'd4;
+always @(posedge clk) begin
+    pmem_read(pc_i,inst_o,rlen);
+end
+
+always@(ebreak_ena == 1) begin
+  set_npc_exit(pc_i,0);
+  end
+
+/********************************difftest****************************************/
  always@(posedge clk)begin
  	difftest_dut_regs(
  		regs0  ,
@@ -133,16 +149,6 @@ assign ebreak_ena = inst_o == `EBREAK_TRAP ? 1'b1 : 1'b0;
  	);
  end
 
-
-reg [31:0] rlen = 32'd4;
-always @(posedge clk) begin
-    pmem_read(pc_i,inst_o,rlen);
-end
-
-always@(ebreak_ena == 1) begin
-  set_npc_exit(pc_i,-1);
-  end
-
 always@(*) begin
    difftest_dut_csr(
    	mstatus,
@@ -151,5 +157,48 @@ always@(*) begin
    	mcause
    );
 end
+
+
+
+/********************************FTRACE****************************************/
+
+wire jal;
+wire jalr;
+
+assign jal  	= inst_o[6:0]  == 7'b1101111 ? 1 : 0;
+assign jalr 	= inst_o[6:0]  == 7'b1100111 ? 1 : 0;
+
+export "DPI-C" task IDU_SEND_CALL_FLAG;
+
+task IDU_SEND_CALL_FLAG(
+    output int call_flag,
+    output int pc,
+    output int dnpc
+);
+
+    call_flag = ((rd_addr == 1 && jal == 1 | jalr == 1 ) || (rd_addr == 0 && imm == 0 && jalr == 1)) ? 1 : 0;
+    // $display("rd_addr = 0x%08x", rd_addr);
+    // $display("jump_en = %d", jump_en);
+    // $display("jalr = %d", PCx1);
+    // $display("jal = %d", jal);
+    // $display("imm = 0x%08x", imm);
+    // $display("PCx1 = %d", PCx1);
+    dnpc =  pc_i + imm;
+
+endtask
+
+export "DPI-C" task IDU_SEND_RET_FLAG;
+
+task IDU_SEND_RET_FLAG(
+    output int ret_flag,
+    output int pc
+);
+
+    ret_flag = inst_o == 32'h00008067 ? 1 : 0;
+    //pc  = pc_i;
+    pc = jalr ? {pc_i[31:1],1'b0} : pc_i ;
+
+endtask
+
 
  endmodule

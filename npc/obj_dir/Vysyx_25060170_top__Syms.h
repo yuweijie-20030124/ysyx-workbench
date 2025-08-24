@@ -17,6 +17,8 @@
 #include "Vysyx_25060170_top___024root.h"
 
 // DPI TYPES for DPI Export callbacks (Internal use)
+using Vysyx_25060170_top__Vcb_IDU_SEND_CALL_FLAG_t = void (*) (Vysyx_25060170_top__Syms* __restrict vlSymsp, IData/*31:0*/ &call_flag, IData/*31:0*/ &pc, IData/*31:0*/ &dnpc);
+using Vysyx_25060170_top__Vcb_IDU_SEND_RET_FLAG_t = void (*) (Vysyx_25060170_top__Syms* __restrict vlSymsp, IData/*31:0*/ &ret_flag, IData/*31:0*/ &pc);
 
 // SYMS CLASS (contains all model state)
 class alignas(VL_CACHE_LINE_BYTES)Vysyx_25060170_top__Syms final : public VerilatedSyms {
@@ -30,6 +32,9 @@ class alignas(VL_CACHE_LINE_BYTES)Vysyx_25060170_top__Syms final : public Verila
 
     // MODULE INSTANCE STATE
     Vysyx_25060170_top___024root   TOP;
+
+    // SCOPE NAMES
+    VerilatedScope __Vscope_ysyx_25060170_top__dpic;
 
     // CONSTRUCTORS
     Vysyx_25060170_top__Syms(VerilatedContext* contextp, const char* namep, Vysyx_25060170_top* modelp);

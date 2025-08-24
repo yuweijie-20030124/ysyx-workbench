@@ -1,21 +1,7 @@
 #include <isa.h>
 #include "reg.h"
 // #include "Vysyx_25060170_top__Dpi.h"
-#include "svdpi.h"
 #include "assert.h"
-
-
-//这个 C 告诉编译器以C类型进行编译
-
-extern "C" void GPR_SEND_VALUE(word_t *, word_t *, word_t *, word_t *,
-                           word_t *, word_t *, word_t *, word_t *, 
-                           word_t *, word_t *, word_t *, word_t *, 
-                           word_t *, word_t *, word_t *, word_t *, 
-                           word_t *, word_t *, word_t *, word_t *, 
-                           word_t *, word_t *, word_t *, word_t *, 
-                           word_t *, word_t *, word_t *, word_t *, 
-                           word_t *, word_t *, word_t *
-                          );
 
 
 int i = 0;
@@ -29,20 +15,6 @@ const char *regs[] = {
 
 
 void isa_reg_display() {
-  const svScope scope = svGetScopeFromName("TOP.ysyx_25060170_top.u_ysyx_25060170_GPR");
-  assert(scope);
-  svSetScope(scope);
-
-  GPR_SEND_VALUE(
-               &cpu.gpr[1] , &cpu.gpr[2] , &cpu.gpr[3] , &cpu.gpr[4] , 
-               &cpu.gpr[5] , &cpu.gpr[6] , &cpu.gpr[7] , &cpu.gpr[8] , 
-               &cpu.gpr[9] , &cpu.gpr[10], &cpu.gpr[11], &cpu.gpr[12], 
-               &cpu.gpr[13], &cpu.gpr[14], &cpu.gpr[15], &cpu.gpr[16], 
-               &cpu.gpr[17], &cpu.gpr[18], &cpu.gpr[19], &cpu.gpr[20], 
-               &cpu.gpr[21], &cpu.gpr[22], &cpu.gpr[23], &cpu.gpr[24], 
-               &cpu.gpr[25], &cpu.gpr[26], &cpu.gpr[27], &cpu.gpr[28], 
-               &cpu.gpr[29], &cpu.gpr[30], &cpu.gpr[31]
-              );
   printf("\n");
   printf("┌───────────────────┬───────────────┬────────────────┬───────────────────┐\n");
   printf("│      Register     │  Hex Value    │  Decimal Value │      Notes        │\n");

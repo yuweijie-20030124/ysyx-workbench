@@ -32,8 +32,11 @@ module ysyx_25060170_idu(
 	output    reg  [`ysyx_25060170_DATA]  	op1 ,
 	output    reg  [`ysyx_25060170_DATA]  	op2 , 
 	output    reg  [`ysyx_25060170_IMM]     imm ,
+	output	  wire 	[`ysyx_25060170_REGADDR] idu_dpic_rd_addr,
 	output	  wire [`ysyx_25060170_PC]		pc_o	
 );
+
+assign idu_dpic_rd_addr = rd;
 
 //----------------------------------decode---------------------------//
 wire   [ 4:0]   rd     ;

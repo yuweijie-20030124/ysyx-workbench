@@ -73,6 +73,10 @@ class alignas(VL_CACHE_LINE_BYTES) Vysyx_25060170_top VL_NOT_FINAL : public Veri
     /// Retrieve name of this model instance (as passed to constructor).
     const char* name() const;
 
+    /// DPI Export functions
+    static void IDU_SEND_CALL_FLAG(int* call_flag, int* pc, int* dnpc);
+    static void IDU_SEND_RET_FLAG(int* ret_flag, int* pc);
+
     // Abstract methods from VerilatedModel
     const char* hierName() const override final;
     const char* modelName() const override final;

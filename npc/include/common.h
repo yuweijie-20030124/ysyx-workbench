@@ -12,7 +12,7 @@
 
 //-------------------------------autoconf.h----------------------------------------//
 //#define PIP_CPU 1
-//#define HAS_CSR 1
+#define HAS_CSR 1
 
 #define CONFIG_ISA "riscv32"
 #define CONFIG_ISA_riscv32 1

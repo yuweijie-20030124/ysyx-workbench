@@ -89,6 +89,7 @@ wire [`ysyx_25060170_REG]		regs28;
 wire [`ysyx_25060170_REG]		regs29;
 wire [`ysyx_25060170_REG]		regs30;
 wire [`ysyx_25060170_REG]		regs31;
+wire [`ysyx_25060170_REGADDR]	rd;
 
 ysyx_25060170_ifu ifu0(
 		.clk(clk)	,
@@ -116,13 +117,14 @@ ysyx_25060170_idu idu1(
 	.rd_addr(id_reg_rd_addr)	,
 	
 	.alusrc_o(id_ex_alu_sel)	,
-	.lsctl_o(id_ls_ctl)		,
- 	.wbctl_o(id_wb_ctl)		,
-	.jump_o(id_ex_jump)		,
+	.lsctl_o(id_ls_ctl)			,
+ 	.wbctl_o(id_wb_ctl)			,
+	.jump_o(id_ex_jump)			,
 	.branch_o(id_ex_branch)		,
-	.imm(id_ex_imm)			,
+	.imm(id_ex_imm)				,
+	.idu_dpic_rd_addr(rd)		,
 	.csr_ctl(id_ex_csrctl)		,
-	.op1(id_ex_op1)			,
+	.op1(id_ex_op1)				,
 	.op2(id_ex_op2)
 );
 
@@ -213,6 +215,9 @@ ysyx_25060170_regfile reg3(
 ysyx_25060170_DPIC dpic(
 	.clk	(clk)	,
 	.pc_i   (if_id_pc),
+	.inst_o	(DPIC_if_inst),
+	.rd_addr(rd),
+	.imm	(id_ex_imm),
 	.regs0  (regs0 ),
 	.regs1  (regs1 ),
 	.regs2  (regs2 ),
@@ -248,9 +253,7 @@ ysyx_25060170_DPIC dpic(
 	.mstatus(ex_dpic_mstatus),
 	.mtvec  (ex_dpic_mepc   ),
 	.mepc   (ex_dpic_mtvec  ),
-	.mcause (ex_dpic_mcause ),
-	.inst_o	(DPIC_if_inst) 	
-
+	.mcause (ex_dpic_mcause )
 );
 
 endmodule

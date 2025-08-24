@@ -6,6 +6,7 @@
 #include <verilated_vcd_c.h> //向VCD文件中写入文件
 #include <common.h>
 #include <memory.h>
+#include <mmio.h>
 #include "isa.h"
 
 #define MAX_SIM_TIME 300
@@ -24,8 +25,10 @@ VerilatedVcdC* tfp = new VerilatedVcdC(); //导出vcd波形需要加此语句
 #endif
 vluint64_t main_time = 0;
 
-/**************************** DPI-C *******************************/
-extern "C" void pmem_read(paddr_t raddr, paddr_t* rdata, int rlen){
+/******************************* DPI-C ********************************/
+
+/**************************** read and write ****************************/
+extern "C" void pmem_read(paddr_t raddr, paddr_t* rdata, char rlen){
 
   if (raddr < CONFIG_MEM_BASE) return;
   if (likely(in_pmem(raddr))) {
@@ -38,6 +41,50 @@ extern "C" void pmem_read(paddr_t raddr, paddr_t* rdata, int rlen){
    //IFDEF(CONFIG_DEVICE, *rdata = mmio_read(raddr, rlen); /*printf("%lx\n",raddr);*/return);
    return;
 }
+
+static inline int maskToLen(uint8_t mask) {
+  switch (mask) {
+    case 0x01: case 0x02: case 0x04: case 0x08: return 1;  // 32位: 4个字节位置
+    case 0x03: case 0x0c: return 2;                        // 32位: 2种2字节组合
+    case 0x0f: return 4;                                   // 32位: 4字节
+    default: assert(0);
+  }
+}
+
+// Memory Write for 32-bit system
+extern "C" void pmem_write(uint32_t waddr, uint32_t wdata, uint8_t wlen) {
+  if (waddr < CONFIG_MEM_BASE) return;
+  
+#ifdef CONFIG_MTRACE
+  Log("Write to memory at %#.8x with mask %x, content is %#.8x", waddr, wlen, wdata);
+#endif
+
+  int len = 0;
+  
+  if (likely(in_pmem(waddr))) {
+    // 32位系统，对齐到4字节边界
+    uint32_t addr = waddr & ~0x3u;
+    
+    // 最多处理4个字节
+    for (int i = 0; i < 4; ++i) {
+      if (wlen & 0x01) {  // 检查当前字节是否需要写入
+        host_write(guest_to_host(addr + i), 1, wdata & 0xFF);  // 写入1字节
+        wdata >>= 8;      // 准备下一个字节
+      }
+      wlen >>= 1;         // 检查下一个掩码位
+    }
+    return; 
+  }
+  else {
+    len = maskToLen(wlen);
+  }
+  
+#ifdef CONFIG_DEVICE
+  mmio_write(waddr, len, wdata);
+#endif
+  return;
+}
+/*******************************NPC_STATUS*******************************/
 
 extern "C" void set_npc_exit(vaddr_t pc, int halt_ret){
   npc_state.state = NPC_END;
@@ -61,6 +108,8 @@ extern "C" void difftest_dut_csr(int csr_mstatus, int csr_mtvec, int csr_mepc, i
    #endif
 }
 #endif
+
+/*******************************DIFFTEST*******************************/
 
 extern "C" void difftest_dut_regs(int Z0, int ra, int sp, int gp, int tp, int t0, int t1, int t2, int fp, int s1, int a0, int a1, int a2, int a3, int a4, int a5, int a6, int a7, int s2, int s3, int s4, int s5, int s6, int s7, int s8, int s9, int s10, int a11, int t3, int t4, int t5, int t6){
   cpu.gpr[0] = Z0;
