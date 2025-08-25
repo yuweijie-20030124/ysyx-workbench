@@ -12,7 +12,6 @@
 
 //-------------------------------autoconf.h----------------------------------------//
 //#define PIP_CPU 1
-#define HAS_CSR 1
 
 #define CONFIG_ISA "riscv32"
 #define CONFIG_ISA_riscv32 1
@@ -22,9 +21,7 @@
 
 
 #define CONFIG_TIMER_GETTIMEOFDAY 1
-
-// #define CONFIG_ITRACE 1
-// #define CONFIG_TRACE 1
+ #define CONFIG_TRACE 1
 
 //test log function
 //exec 那里的#ifndef CONFIG_ITRACE
@@ -34,10 +31,10 @@
 #define CONFIG_TRACE_END 10000
 #define CONFIG_TRACE_START 0
 #define CONFIG_ITRACE 1
-// #define CONFIG_MTRACE 1
-// #define CONFIG_DIFFTEST 1
+#define CONFIG_MTRACE 1
+#define CONFIG_DIFFTEST 1
 #define CONFIG_ITRACE_IRINGBUF 1
-// #define CONFIG_WATCHPOINT 1
+ #define CONFIG_WATCHPOINT 1
 /*
 
 #ifdef CONFIG_TRACE

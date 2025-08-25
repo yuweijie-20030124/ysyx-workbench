@@ -1729,9 +1729,6 @@ VL_INLINE_OPT void Vysyx_25060170_top___024root___nba_sequent__TOP__0(Vysyx_2506
     Vysyx_25060170_top___024root____Vdpiimwrap_ysyx_25060170_top__DOT__lsu3__DOT__pmem_read_TOP(vlSelfRef.ysyx_25060170_top__DOT__if_id_pc, __Vtask_ysyx_25060170_top__DOT__dpic__DOT__pmem_read__2__rdata, 4U);
     vlSelfRef.ysyx_25060170_top__DOT__DPIC_if_inst 
         = __Vtask_ysyx_25060170_top__DOT__dpic__DOT__pmem_read__2__rdata;
-    VL_WRITEF_NX("pc_i = 0x%08x\ninst_o = 0x%08x\n",0,
-                 32,vlSelfRef.ysyx_25060170_top__DOT__if_id_pc,
-                 32,vlSelfRef.ysyx_25060170_top__DOT__DPIC_if_inst);
     if ((1U & (~ (IData)(vlSelfRef.rst)))) {
         if (vlSelfRef.ysyx_25060170_top__DOT__exu2__DOT__csr_operate__DOT__mstatus_ie_ena) {
             vlSelfRef.ysyx_25060170_top__DOT__exu2__DOT__csr_operate__DOT__mstatus_mpp 

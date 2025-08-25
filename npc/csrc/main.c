@@ -98,17 +98,13 @@ extern "C" void pc_inst_end(int thepc_data, int the_inst){
   s.val = the_inst;
 }
 
-#ifdef HAS_CSR
 extern "C" void difftest_dut_csr(int csr_mstatus, int csr_mtvec, int csr_mepc, int csr_mcause){
-  #ifdef HAS_CSR
     cpu.csr[0] = csr_mstatus & 0x0ull ;
     cpu.csr[1] = csr_mtvec;
     cpu.csr[2] = csr_mepc;    
     cpu.csr[3] = csr_mcause;
    // isa_reg_display();
-   #endif
 }
-#endif
 
 /*******************************DIFFTEST*******************************/
 
@@ -161,6 +157,7 @@ int main(int argc, char** argv) {
   #endif  
   cpu_reset();
 	init_monitor(argc,argv);
+  cpu_reset();
 
   sdb_mainloop();
 	//sdb_mainloop();
