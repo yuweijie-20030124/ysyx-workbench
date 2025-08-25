@@ -104,21 +104,25 @@ import "DPI-C" function void difftest_dut_regs(
 reg [7:0] rlen = 8'd4;
 always @(posedge clk) begin
     pmem_read(pc_i,inst_o,rlen);
-	  	$display("pc_i = 0x%08x",pc_i);
-  		$display("inst_o = 0x%08x",inst_o);
+	  	// $display("pmemread pc_i = 0x%08x",pc_i);
+  		// $display("pmemread inst_o = 0x%08x",inst_o);
 end
 
  always @(posedge clk) begin
    if(rst ==`ysyx_25060170_RSTABLE) begin
      pc_inst_end(`ysyx_25060170_STARTPC, inst_o);
+	//  $display("rst pc_i = 0x%08x",pc_i);
+  		// $display("rst inst_o = 0x%08x",inst_o);
    end
    else begin
      pc_inst_end(pc_i, inst_o);
+	//  $display("else pc_i = 0x%08x",pc_i);
+  		// $display("else inst_o = 0x%08x",inst_o);
    end
  end
 
 /********************************difftest****************************************/
- always@(posedge clk)begin
+ always@(*)begin
  	difftest_dut_regs(
  		regs0  ,
  		regs1  ,

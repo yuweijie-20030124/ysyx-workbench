@@ -52,37 +52,40 @@ static inline int maskToLen(uint8_t mask) {
 }
 
 // Memory Write for 32-bit system
-extern "C" void pmem_write(uint32_t waddr, uint32_t wdata, uint8_t wlen) {
-  if (waddr < CONFIG_MEM_BASE) return;
+// extern "C" void pmem_write(uint32_t waddr, uint32_t wdata, uint8_t wlen) {
+//   if (waddr < CONFIG_MEM_BASE) return;
   
-#ifdef CONFIG_MTRACE
-  Log("Write to memory at %#.8x with mask %x, content is %#.8x", waddr, wlen, wdata);
-#endif
+// #ifdef CONFIG_MTRACE
+//   Log("Write to memory at %#.8x with mask %x, content is %#.8x", waddr, wlen, wdata);
+// #endif
 
-  int len = 0;
+//   int len = 0;
   
-  if (likely(in_pmem(waddr))) {
-    // 32位系统，对齐到4字节边界
-    uint32_t addr = waddr & ~0x3u;
+//   if (likely(in_pmem(waddr))) {
+//     // 32位系统，对齐到4字节边界
+//     uint32_t addr = waddr & ~0x3u;
     
-    // 最多处理4个字节
-    for (int i = 0; i < 4; ++i) {
-      if (wlen & 0x01) {  // 检查当前字节是否需要写入
-        host_write(guest_to_host(addr + i), 1, wdata & 0xFF);  // 写入1字节
-        wdata >>= 8;      // 准备下一个字节
-      }
-      wlen >>= 1;         // 检查下一个掩码位
-    }
-    return; 
-  }
-  else {
-    len = maskToLen(wlen);
-  }
+//     // 最多处理4个字节
+//     for (int i = 0; i < 4; ++i) {
+//       if (wlen & 0x01) {  // 检查当前字节是否需要写入
+//         host_write(guest_to_host(addr + i), 1, wdata & 0xFF);  // 写入1字节
+//         wdata >>= 8;      // 准备下一个字节
+//       }
+//       wlen >>= 1;         // 检查下一个掩码位
+//     }
+//     return; 
+//   }
+//   else {
+//     len = maskToLen(wlen);
+//   }
   
-#ifdef CONFIG_DEVICE
-  mmio_write(waddr, len, wdata);
-#endif
-  return;
+// #ifdef CONFIG_DEVICE
+//   mmio_write(waddr, len, wdata);
+// #endif
+//   return;
+// }
+
+extern "C" void pmem_write(uint32_t waddr, uint32_t wdata, uint8_t wlen) {
 }
 /*******************************NPC_STATUS*******************************/
 
@@ -98,53 +101,49 @@ extern "C" void pc_inst_end(int thepc_data, int the_inst){
   s.val = the_inst;
 }
 
-#ifdef HAS_CSR
 extern "C" void difftest_dut_csr(int csr_mstatus, int csr_mtvec, int csr_mepc, int csr_mcause){
-  #ifdef HAS_CSR
     cpu.csr[0] = csr_mstatus & 0x0ull ;
     cpu.csr[1] = csr_mtvec;
     cpu.csr[2] = csr_mepc;    
     cpu.csr[3] = csr_mcause;
    // isa_reg_display();
-   #endif
 }
-#endif
 
 /*******************************DIFFTEST*******************************/
 
 extern "C" void difftest_dut_regs(int Z0, int ra, int sp, int gp, int tp, int t0, int t1, int t2, int fp, int s1, int a0, int a1, int a2, int a3, int a4, int a5, int a6, int a7, int s2, int s3, int s4, int s5, int s6, int s7, int s8, int s9, int s10, int a11, int t3, int t4, int t5, int t6){
-  cpu.gpr[0] = Z0;
-  cpu.gpr[1] = ra;
-  cpu.gpr[2] = sp;
-  cpu.gpr[3] = gp;
-  cpu.gpr[4] = tp;
-  cpu.gpr[5] = t0;
-  cpu.gpr[6] = t1;
-  cpu.gpr[7] = t2;
-  cpu.gpr[8] = fp;
-  cpu.gpr[9] = s1;
-  cpu.gpr[10] = a0;
-  cpu.gpr[11] = a1;
-  cpu.gpr[12] = a2;
-  cpu.gpr[13] = a3;
-  cpu.gpr[14] = a4;
-  cpu.gpr[15] = a5;
-  cpu.gpr[16] = a6;
-  cpu.gpr[17] = a7;
-  cpu.gpr[18] = s2;
-  cpu.gpr[19] = s3;
-  cpu.gpr[20] = s4;
-  cpu.gpr[21] = s5;
-  cpu.gpr[22] = s6;
-  cpu.gpr[23] = s7;
-  cpu.gpr[24] = s8;
-  cpu.gpr[25] = s9;
-  cpu.gpr[26] = s10;
-  cpu.gpr[27] = a11;
-  cpu.gpr[28] = t3;
-  cpu.gpr[29] = t4;
-  cpu.gpr[30] = t5;
-  cpu.gpr[31] = t6;
+  cpu.gpr[0]  = Z0  ;
+  cpu.gpr[1]  = ra  ;
+  cpu.gpr[2]  = sp  ;
+  cpu.gpr[3]  = gp  ;
+  cpu.gpr[4]  = tp  ;
+  cpu.gpr[5]  = t0  ;
+  cpu.gpr[6]  = t1  ;
+  cpu.gpr[7]  = t2  ;
+  cpu.gpr[8]  = fp  ;
+  cpu.gpr[9]  = s1  ;
+  cpu.gpr[10] = a0  ;
+  cpu.gpr[11] = a1  ;
+  cpu.gpr[12] = a2  ;
+  cpu.gpr[13] = a3  ;
+  cpu.gpr[14] = a4  ;
+  cpu.gpr[15] = a5  ;
+  cpu.gpr[16] = a6  ;
+  cpu.gpr[17] = a7  ;
+  cpu.gpr[18] = s2  ;
+  cpu.gpr[19] = s3  ;
+  cpu.gpr[20] = s4  ;
+  cpu.gpr[21] = s5  ;
+  cpu.gpr[22] = s6  ;
+  cpu.gpr[23] = s7  ;
+  cpu.gpr[24] = s8  ;
+  cpu.gpr[25] = s9  ;
+  cpu.gpr[26] = s10 ;
+  cpu.gpr[27] = a11 ;
+  cpu.gpr[28] = t3  ;
+  cpu.gpr[29] = t4  ;
+  cpu.gpr[30] = t5  ;
+  cpu.gpr[31] = t6  ;
 }
 
 /***********************************************END DPI-C*******************************************/
@@ -161,6 +160,7 @@ int main(int argc, char** argv) {
   #endif  
   cpu_reset();
 	init_monitor(argc,argv);
+  cpu_reset();
 
   sdb_mainloop();
 	//sdb_mainloop();
