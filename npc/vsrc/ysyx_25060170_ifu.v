@@ -19,14 +19,16 @@ module ysyx_25060170_ifu (
 
  always@(posedge clk) begin
 	 if(rst == `ysyx_25060170_RSTABLE)begin
-		pc_o<=`ysyx_25060170_STARTPC;
+		pc_o <= `ysyx_25060170_STARTPC;
+			$display("rst pc = 0x%08x",pc_o);
+			$display("rst inst = 0x%08x",inst_o);			
 	end
   else begin
 	  pc_o<=pc_next;
 	end
 end
  
- assign inst_o = inst_i[31:0];
+ assign inst_o = inst_i;
  
   
 endmodule
