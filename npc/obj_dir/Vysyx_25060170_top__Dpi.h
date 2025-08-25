@@ -16,9 +16,9 @@ extern "C" {
 
 
     // DPI EXPORTS
-    // DPI export at vsrc/ysyx_25060170_DPIC.v:188:6
+    // DPI export at vsrc/ysyx_25060170_DPIC.v:189:6
     extern void IDU_SEND_CALL_FLAG(int* call_flag, int* pc, int* dnpc);
-    // DPI export at vsrc/ysyx_25060170_DPIC.v:207:6
+    // DPI export at vsrc/ysyx_25060170_DPIC.v:208:6
     extern void IDU_SEND_RET_FLAG(int* ret_flag, int* pc);
 
     // DPI IMPORTS

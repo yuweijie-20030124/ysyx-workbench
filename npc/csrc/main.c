@@ -52,41 +52,41 @@ static inline int maskToLen(uint8_t mask) {
 }
 
 // Memory Write for 32-bit system
-// extern "C" void pmem_write(uint32_t waddr, uint32_t wdata, uint8_t wlen) {
-//   if (waddr < CONFIG_MEM_BASE) return;
-  
-// #ifdef CONFIG_MTRACE
-//   Log("Write to memory at %#.8x with mask %x, content is %#.8x", waddr, wlen, wdata);
-// #endif
-
-//   int len = 0;
-  
-//   if (likely(in_pmem(waddr))) {
-//     // 32位系统，对齐到4字节边界
-//     uint32_t addr = waddr & ~0x3u;
-    
-//     // 最多处理4个字节
-//     for (int i = 0; i < 4; ++i) {
-//       if (wlen & 0x01) {  // 检查当前字节是否需要写入
-//         host_write(guest_to_host(addr + i), 1, wdata & 0xFF);  // 写入1字节
-//         wdata >>= 8;      // 准备下一个字节
-//       }
-//       wlen >>= 1;         // 检查下一个掩码位
-//     }
-//     return; 
-//   }
-//   else {
-//     len = maskToLen(wlen);
-//   }
-  
-// #ifdef CONFIG_DEVICE
-//   mmio_write(waddr, len, wdata);
-// #endif
-//   return;
-// }
-
 extern "C" void pmem_write(uint32_t waddr, uint32_t wdata, uint8_t wlen) {
+  if (waddr < CONFIG_MEM_BASE) return;
+  
+#ifdef CONFIG_MTRACE
+  // Log("Write to memory at %#.8x with mask %x, content is %#.8x", waddr, wlen, wdata);
+#endif
+
+  int len = 0;
+  
+  if (likely(in_pmem(waddr))) {
+    // 32位系统，对齐到4字节边界
+    uint32_t addr = waddr & ~0x3u;
+    
+    // 最多处理4个字节
+    for (int i = 0; i < 4; ++i) {
+      if (wlen & 0x01) {  // 检查当前字节是否需要写入
+        host_write(guest_to_host(addr + i), 1, wdata & 0xFF);  // 写入1字节
+        wdata >>= 8;      // 准备下一个字节
+      }
+      wlen >>= 1;         // 检查下一个掩码位
+    }
+    return; 
+  }
+  else {
+    len = maskToLen(wlen);
+  }
+  
+#ifdef CONFIG_DEVICE
+  mmio_write(waddr, len, wdata);
+#endif
+  return;
 }
+
+
+
 /*******************************NPC_STATUS*******************************/
 
 extern "C" void set_npc_exit(vaddr_t pc, int halt_ret){
@@ -159,8 +159,8 @@ int main(int argc, char** argv) {
     tfp->open("waveform.vcd");
   #endif  
 
-  cpu_reset();
 	init_monitor(argc,argv);
+  cpu_reset();
 
   sdb_mainloop();
 	//sdb_mainloop();
@@ -199,7 +199,7 @@ void close_npc(){
   delete tfp;
 #endif
   
-	exit(0) ;
+	// exit(0) ;
 	
 }
 
