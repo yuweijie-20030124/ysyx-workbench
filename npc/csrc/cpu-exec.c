@@ -43,6 +43,8 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #endif
   //一次执行十条以下的指令gps就会赋值为true。
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }
+  printf("dnpc   = 0x%08x\n",dnpc);
+  printf("thispc = 0x%08x\n",_this->pc);
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
   #ifdef CONFIG_WATCHPOINT
     if (update_watchpoint() > 0) {
