@@ -6,6 +6,11 @@
 typedef struct {
   word_t gpr[32];
   vaddr_t pc;
+
+  #ifdef HAS_CSR
+  uint64_t csr[4] ;
+  #endif
+
 } NPC_reg;
 
 // decode

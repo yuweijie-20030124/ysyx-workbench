@@ -55,7 +55,7 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 static void exec_once(Decode *s, vaddr_t pc) {
   
   /***********************************FTRACE**************************************/
-  const svScope scope = svGetScopeFromName("TOP.ysyx_25060170_top.u_ysyx_25060170_IDU");
+  const svScope scope = svGetScopeFromName("TOP.ysyx_25060170_top.dpic");
   assert(scope);
   svSetScope(scope);  // 设置当前 DPI 作用域
 
@@ -156,7 +156,7 @@ void cpu_exec(uint64_t n) {
   g_print_step = (n < MAX_INST_TO_PRINT);//一次执行太多步就不打印了，bool类型的gprintstep就赋值为false
   switch (npc_state.state) {
     case NPC_END: case NPC_ABORT: case NPC_QUIT:
-      //printf("%d\n",npc_state.state);
+      // printf("%d\n",npc_state.state);
       printf("Program execution has ended. To restart the program, exit NPC and run again.\n");
       return;//如果状态是结束了，出错了，退出了就打印“退出nemu”。
     default: npc_state.state = NPC_RUNNING;//默认running
