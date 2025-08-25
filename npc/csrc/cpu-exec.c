@@ -125,6 +125,7 @@ static void execute(uint64_t n) {
     // printf("execute_cpu.pc = 0x%08x\n",cpu.pc);
     exec_once(&s, cpu.pc);
     g_nr_guest_inst ++;
+    
     trace_and_difftest(&s, cpu.pc);
     if (npc_state.state != NPC_RUNNING) break;
     IFDEF(CONFIG_DEVICE, device_update());

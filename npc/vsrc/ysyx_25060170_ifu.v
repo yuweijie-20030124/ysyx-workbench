@@ -24,7 +24,7 @@ module ysyx_25060170_ifu (
 			$display("rst inst = 0x%08x",inst_o);			
 	end
   else begin
-	  pc_o<=pc_next;
+	  pc_o <= pc_next;
 	end
 end
  

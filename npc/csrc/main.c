@@ -158,6 +158,7 @@ int main(int argc, char** argv) {
     top->trace(tfp, 0);
     tfp->open("waveform.vcd");
   #endif  
+
   cpu_reset();
 	init_monitor(argc,argv);
 
