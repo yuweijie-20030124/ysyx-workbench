@@ -191,7 +191,7 @@ static int decode_exec(Decode *s) {
   
   INSTPAT("??????? ????? ????? 000 ????? 11000 11", beq    , B, 
     printf("src1 =%d\n",src1);printf("src2 =%d\n",src2);
-    printf("pc =%d\n",s->pc);printf("imm =%d\n",imm);
+    printf("pc =0x%08x\n",s->pc);printf("imm =0x%08x\n",imm);
     printf("dnpc =0x%08x\n",s->dnpc);
     if(src1 == src2) s->dnpc = s->pc + imm);
   INSTPAT("??????? ????? ????? 001 ????? 11000 11", bne    , B, if(src1 != src2) s->dnpc = s->pc + imm);
