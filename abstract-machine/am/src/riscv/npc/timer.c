@@ -5,18 +5,15 @@ uint32_t init_time_us;
 uint32_t init_time_s;
 
 void __am_timer_init() {
-  init_time_us = inl(RTC_ADDR);
-  init_time_s = inl(RTC_ADDR + 4);
+  // init_time_s = inl(RTC_ADDR + 4);
+  // init_time_us = inl(RTC_ADDR);
  // printf("%d  %d\n",init_time_s,init_time_us);
 }
 
 void __am_timer_uptime(AM_TIMER_UPTIME_T *uptime) {
-  uint32_t now_time_us = inl(RTC_ADDR);
-  uint32_t now_time_s = inl(RTC_ADDR + 4);
-  uint32_t s = now_time_s - init_time_s;
-  uint32_t us = now_time_us - init_time_us;
-  uint64_t time_us = s * 1000000 + us;
-  uptime->us = time_us;
+  uint32_t h = inl(RTC_ADDR + 4);
+  uint32_t l = inl(RTC_ADDR);
+  uptime->us = (uint32_t)l + ((uint64_t)h << 32);
   //printf("%d,,, \n",now_time_us);
 }
 
