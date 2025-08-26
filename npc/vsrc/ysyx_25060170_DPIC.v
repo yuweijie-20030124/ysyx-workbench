@@ -216,7 +216,22 @@ task IDU_SEND_RET_FLAG(
 
 endtask
 
-
+// reg [999:0] count;
+// reg [999:0] countcount;
+// always @(posedge clk) begin
+//         if (rst == `ysyx_25060170_RSTABLE) begin
+//             count <= 1000'd0;
+// 			countcount <= 1000'd0;
+//         end else begin
+//             count <= count + 1;
+//             if (count == 100000) begin
+//                 count <= 0;
+// 				countcount <= countcount + 1;
+//                 $display("output 10000 inst");
+// 				$display("has gone %d times",countcount);
+//             end
+//         end
+//     end
 /***********************************ebreak*************************************/
 
 

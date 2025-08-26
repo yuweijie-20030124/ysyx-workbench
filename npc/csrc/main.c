@@ -167,7 +167,10 @@ int main(int argc, char** argv) {
   sdb_mainloop();
 	//sdb_mainloop();
 	//多记录一个数据
+
+  #ifdef CONFIG_GTK
 	tfp -> dump(main_time++);
+  #endif 
 	//is_exit_status_bad();
 
     close_npc();
