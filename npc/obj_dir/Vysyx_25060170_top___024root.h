@@ -28,8 +28,6 @@ class alignas(VL_CACHE_LINE_BYTES) Vysyx_25060170_top___024root final : public V
         CData/*1:0*/ ysyx_25060170_top__DOT__id_wb_ctl;
         CData/*7:0*/ ysyx_25060170_top__DOT__id_ex_alu_sel;
         CData/*3:0*/ ysyx_25060170_top__DOT__id_ex_csrctl;
-        CData/*0:0*/ ysyx_25060170_top__DOT__ifu0__DOT____Vstrobe0;
-        CData/*0:0*/ ysyx_25060170_top__DOT__ifu0__DOT____Vstrobe1;
         CData/*0:0*/ ysyx_25060170_top__DOT__idu1__DOT__csr_wr_ena;
         CData/*0:0*/ ysyx_25060170_top__DOT__idu1__DOT__csr_rd_ena;
         CData/*0:0*/ ysyx_25060170_top__DOT__idu1__DOT__mret_ena;
@@ -80,10 +78,10 @@ class alignas(VL_CACHE_LINE_BYTES) Vysyx_25060170_top___024root final : public V
         CData/*0:0*/ ysyx_25060170_top__DOT__idu1__DOT__decode__DOT____VdfgRegularize_h77367796_0_85;
         CData/*0:0*/ ysyx_25060170_top__DOT__idu1__DOT__decode__DOT____VdfgRegularize_h77367796_0_86;
         CData/*0:0*/ ysyx_25060170_top__DOT__idu1__DOT__decode__DOT____VdfgRegularize_h77367796_0_87;
-    };
-    struct {
         CData/*0:0*/ ysyx_25060170_top__DOT__idu1__DOT__decode__DOT____VdfgRegularize_h77367796_0_88;
         CData/*0:0*/ ysyx_25060170_top__DOT__idu1__DOT__decode__DOT____VdfgRegularize_h77367796_0_89;
+    };
+    struct {
         CData/*0:0*/ ysyx_25060170_top__DOT__idu1__DOT__decode__DOT____VdfgRegularize_h77367796_0_91;
         CData/*0:0*/ ysyx_25060170_top__DOT__idu1__DOT__decode__DOT____VdfgRegularize_h77367796_0_92;
         CData/*0:0*/ ysyx_25060170_top__DOT__idu1__DOT__decode__DOT____VdfgRegularize_h77367796_0_93;

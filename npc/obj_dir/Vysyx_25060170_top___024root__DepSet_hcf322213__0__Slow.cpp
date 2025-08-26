@@ -1804,16 +1804,6 @@ VL_ATTR_COLD void Vysyx_25060170_top___024root___dump_triggers__nba(Vysyx_250601
 }
 #endif  // VL_DEBUG
 
-VL_ATTR_COLD void Vysyx_25060170_top___024root___eval_postponed__TOP(Vysyx_25060170_top___024root* vlSelf);
-
-VL_ATTR_COLD void Vysyx_25060170_top___024root___eval_postponed(Vysyx_25060170_top___024root* vlSelf) {
-    VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_top___024root___eval_postponed\n"); );
-    Vysyx_25060170_top__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
-    auto& vlSelfRef = std::ref(*vlSelf).get();
-    // Body
-    Vysyx_25060170_top___024root___eval_postponed__TOP(vlSelf);
-}
-
 VL_ATTR_COLD void Vysyx_25060170_top___024root____Vm_traceActivitySetAll(Vysyx_25060170_top___024root* vlSelf) {
     VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_top___024root____Vm_traceActivitySetAll\n"); );
     Vysyx_25060170_top__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
@@ -1851,8 +1841,6 @@ VL_ATTR_COLD void Vysyx_25060170_top___024root___ctor_var_reset(Vysyx_25060170_t
     vlSelf->ysyx_25060170_top__DOT__id_ex_csrctl = VL_SCOPED_RAND_RESET_I(4, __VscopeHash, 7368999778694199924ull);
     vlSelf->ysyx_25060170_top__DOT__ex_aludata = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 5512478920477896562ull);
     vlSelf->ysyx_25060170_top__DOT__ifu0__DOT__pc_next = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 11408893115606990151ull);
-    vlSelf->ysyx_25060170_top__DOT__ifu0__DOT____Vstrobe0 = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 2122496611667326204ull);
-    vlSelf->ysyx_25060170_top__DOT__ifu0__DOT____Vstrobe1 = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 6983275729731753972ull);
     vlSelf->ysyx_25060170_top__DOT__idu1__DOT__csr_wr_ena = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 6182046244482165437ull);
     vlSelf->ysyx_25060170_top__DOT__idu1__DOT__csr_rd_ena = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 3426834136554263551ull);
     vlSelf->ysyx_25060170_top__DOT__idu1__DOT__mret_ena = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 12940654544844740728ull);

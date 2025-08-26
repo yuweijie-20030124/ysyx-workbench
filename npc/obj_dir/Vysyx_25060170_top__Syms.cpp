@@ -30,7 +30,6 @@ Vysyx_25060170_top__Syms::Vysyx_25060170_top__Syms(VerilatedContext* contextp, c
     TOP.__Vconfigure(true);
     // Setup scopes
     __Vscope_ysyx_25060170_top__dpic.configure(this, name(), "ysyx_25060170_top.dpic", "dpic", "<null>", -12, VerilatedScope::SCOPE_OTHER);
-    __Vscope_ysyx_25060170_top__ifu0.configure(this, name(), "ysyx_25060170_top.ifu0", "ifu0", "<null>", -12, VerilatedScope::SCOPE_OTHER);
     // Setup export functions
     for (int __Vfinal = 0; __Vfinal < 2; ++__Vfinal) {
         __Vscope_ysyx_25060170_top__dpic.exportInsert(__Vfinal, "IDU_SEND_CALL_FLAG", (void*)(&Vysyx_25060170_top___024root____Vdpiexp_ysyx_25060170_top__DOT__dpic__DOT__IDU_SEND_CALL_FLAG_TOP));
