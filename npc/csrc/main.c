@@ -17,6 +17,7 @@ void init_monitor(int argc, char *argv[]);
 void cpu_reset();
 void sdb_mainloop();
 int is_exit_status_bad();
+bool log_enable();
 
 Vysyx_25060170_top* top;
 VerilatedContext* contextp;
@@ -33,12 +34,13 @@ extern "C" void pmem_read(paddr_t raddr, paddr_t* rdata, char rlen){
   if (raddr < CONFIG_MEM_BASE) return;
   if (likely(in_pmem(raddr))) {
     *rdata = host_read(guest_to_host(raddr),rlen);
-    //printf("C:raddr = 0x%08x\n",raddr);
-    //printf("C:rdata1 = 0x%08x\n",*rdata);
-    //printf("C:rdata2 = 0x%08x\n",*(uint32_t *)guest_to_host(0x80000000));
+#ifdef CONFIG_MTRACE
+      Log("Read from memory at %#.8x for %d bytes,content is %#.8x cpu.pc is %#.8x.",raddr,rlen,*rdata,cpu.pc);
+#endif
+
     return;
     }
-   //IFDEF(CONFIG_DEVICE, *rdata = mmio_read(raddr, rlen); /*printf("%lx\n",raddr);*/return);
+   IFDEF(CONFIG_DEVICE, *rdata = mmio_read(raddr, rlen);return);
    return;
 }
 
@@ -56,7 +58,7 @@ extern "C" void pmem_write(uint32_t waddr, uint32_t wdata, uint8_t wlen) {
   if (waddr < CONFIG_MEM_BASE) return;
   
 #ifdef CONFIG_MTRACE
-  // Log("Write to memory at %#.8x with mask %x, content is %#.8x", waddr, wlen, wdata);
+   Log("Write to memory at %#.8x with mask %x, content is %#.8x,cpu.pc is %#.8x", waddr, wlen, wdata,cpu.pc);
 #endif
 
   int len = 0;
