@@ -105,7 +105,6 @@ class alignas(VL_CACHE_LINE_BYTES) Vysyx_25060170_top___024root final : public V
         CData/*0:0*/ ysyx_25060170_top__DOT__exu2__DOT__csr_operate__DOT__mpie_set;
         CData/*1:0*/ ysyx_25060170_top__DOT__exu2__DOT__csr_operate__DOT__mpp_set;
         CData/*0:0*/ ysyx_25060170_top__DOT__lsu3__DOT__re;
-        CData/*7:0*/ ysyx_25060170_top__DOT__lsu3__DOT__data_byte;
         CData/*3:0*/ ysyx_25060170_top__DOT__lsu3__DOT__sb_mask;
         CData/*0:0*/ ysyx_25060170_top__DOT__lsu3__DOT____VdfgRegularize_hcffc0c70_0_0;
         CData/*7:0*/ __Vtableidx1;
@@ -116,7 +115,6 @@ class alignas(VL_CACHE_LINE_BYTES) Vysyx_25060170_top___024root final : public V
         CData/*0:0*/ __VactContinue;
         SData/*11:0*/ ysyx_25060170_top__DOT__idu1__DOT__decode__DOT__b_imm;
         SData/*11:0*/ ysyx_25060170_top__DOT__exu2__DOT__csr_addr;
-        SData/*15:0*/ ysyx_25060170_top__DOT__lsu3__DOT__data_half;
         IData/*31:0*/ ysyx_25060170_top__DOT__DPIC_if_inst;
         IData/*31:0*/ ysyx_25060170_top__DOT__if_id_pc;
         IData/*31:0*/ ysyx_25060170_top__DOT__id_ex_imm;
@@ -146,9 +144,7 @@ class alignas(VL_CACHE_LINE_BYTES) Vysyx_25060170_top___024root final : public V
         IData/*31:0*/ __VactIterCount;
         QData/*63:0*/ ysyx_25060170_top__DOT__exu2__DOT__mul;
         VlUnpacked<IData/*31:0*/, 32> ysyx_25060170_top__DOT__reg3__DOT__regs;
-    };
-    struct {
-        VlUnpacked<CData/*0:0*/, 3> __Vm_traceActivity;
+        VlUnpacked<CData/*0:0*/, 4> __Vm_traceActivity;
     };
     VlTriggerVec<1> __VstlTriggered;
     VlTriggerVec<1> __VicoTriggered;
