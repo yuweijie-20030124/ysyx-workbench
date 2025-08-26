@@ -33,39 +33,40 @@ wire [1:0] byte_sel = alu_res[1:0];  // 32-bit: 2 bits for byte selection
 wire [1:0] half_sel = alu_res[1:0];  // 32-bit: 2 bits for halfword selection
 // word selection not needed for 32-bit as it's always aligned to 4 bytes
 
-reg [7:0] data_byte;
-reg [15:0] data_half;
+reg [7:0] data_byte = data_i[7:0];
+reg [15:0] data_half = data_i[15:0];
 wire [31:0] data_word = data_i;  // 32-bit word
 
-always @(*) begin
-    if (rst == `ysyx_25060170_RSTABLE) begin
-        data_byte = 8'b00000000;
-    end else begin
-        case (byte_sel)
-            2'b00: data_byte = data_i[7:0];
-            2'b01: data_byte = data_i[15:8];
-            2'b10: data_byte = data_i[23:16];
-            2'b11: data_byte = data_i[31:24];
-        endcase
-    end
-end
+// always @(*) begin
+//     if (rst == `ysyx_25060170_RSTABLE) begin
+//         data_byte = 8'b00000000;
+//     end else begin
+//         case (byte_sel)
+//             2'b00: data_byte = data_i[7:0];
+//             2'b01: data_byte = data_i[15:8];
+//             2'b10: data_byte = data_i[23:16];
+//             2'b11: data_byte = data_i[31:24];
+//         endcase
+//     end
+// end
 
-always @(*) begin
-    if (rst == `ysyx_25060170_RSTABLE) begin
-        data_half = 16'h0;
-    end else begin
-        case (half_sel)
-            2'b00: data_half = data_i[15:0];
-            2'b10: data_half = data_i[31:16];  // Halfword must be aligned to 2 bytes
-            default: data_half = 16'h0;
-        endcase
-    end
-end
+// always @(*) begin
+//     if (rst == `ysyx_25060170_RSTABLE) begin
+//         data_half = 16'h0;
+//     end else begin
+//         case (half_sel)
+//             2'b00: data_half = data_i[15:0];
+//             2'b10: data_half = data_i[31:16];  // Halfword must be aligned to 2 bytes
+//             default: data_half = 16'h0;
+//         endcase
+//     end
+// end
 
 always @(*) begin
     if (rst == `ysyx_25060170_RSTABLE) begin
         load_data = `ysyx_25060170_ZERO32;
-    end else if (ls_ctl[3] == 1'b1) begin
+    end 
+    else if (ls_ctl[3] == 1'b1) begin
         case (ls_ctl[2:0])
             3'b001: load_data = {{24{data_byte[7]}}, data_byte};  // LB: sign-extended byte
             3'b010: load_data = {{16{data_half[15]}}, data_half};  // LH: sign-extended halfword

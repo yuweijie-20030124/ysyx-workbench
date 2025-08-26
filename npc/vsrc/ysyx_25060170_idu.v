@@ -1,5 +1,4 @@
  `include "define.v"
-//  `include "ysyx_25060170_idu_decoder.v"
 module ysyx_25060170_idu(
 	//system input
 	input	  wire		       				rst	,
@@ -71,6 +70,7 @@ assign rd_ena  = (rd == 5'd0) ? 1'b0 : (wbctl_o == 2'b00) ? 1'b0 : 1'b1 ;
 assign rd_addr = rd_ena ? rd : 5'd0 ;
 
 //out to exu
+//rs1
 always @(*) begin
   if(rst == `ysyx_25060170_RSTABLE) begin  op1 = `ysyx_25060170_ZERO32   ;   end
   else if(rs1_ena) begin op1 = rs1_data ; end
@@ -78,7 +78,7 @@ always @(*) begin
 	else if (alusrc_o == `INST_CSRRWI | alusrc_o == `INST_CSRRSI | alusrc_o == `INST_CSRRCI) begin op1 ={{27{1'b0}},rs1};end
   else begin op1 = `ysyx_25060170_ZERO32; end
   end
-  
+//rs2  
 always @(*) begin
   if(rst == `ysyx_25060170_RSTABLE) begin  op2 = `ysyx_25060170_ZERO32   ;   end
   else if(rs2_ena) begin op2 = rs2_data ; end

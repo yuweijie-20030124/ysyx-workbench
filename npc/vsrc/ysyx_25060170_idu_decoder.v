@@ -165,7 +165,7 @@ always @(*) begin
 		ext_imm = {{20{s_imm[11]}}, s_imm}; // s_imm扩展为32位
 	end
 	else if (inst_type[2]) begin
-		ext_imm = {{20{b_imm[12]}}, b_imm}; // b_imm扩展为32位，注意左移1位
+		ext_imm = {{19{b_imm[12]}}, b_imm, 1'b0}; // b_imm扩展为32位，注意左移1位
 	end
 	else begin
 		ext_imm = `ysyx_25060170_ZERO32; // 默认值

@@ -43,8 +43,8 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #endif
   //一次执行十条以下的指令gps就会赋值为true。
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }
-  printf("dnpc   = 0x%08x\n",dnpc);
-  printf("thispc = 0x%08x\n",_this->pc);
+  // printf("dnpc   = 0x%08x\n",dnpc);
+  // printf("thispc = 0x%08x\n",_this->pc);
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
   #ifdef CONFIG_WATCHPOINT
     if (update_watchpoint() > 0) {
@@ -82,7 +82,7 @@ static void exec_once(Decode *s, vaddr_t pc) {
   // printf("pc=0x%08x\n",pc);
 
   isa_exec_once();  
-
+  // top -> eval();
   s->snpc = cpu.pc;//静态下一条指令地址，默认为pc+4
   // printf("s->snpc - s->pc =0x%08x\n",s->snpc - s->pc);
   //printf("instformverilog is 0x%08x\n", inst_from_verilog);
@@ -125,6 +125,7 @@ static void execute(uint64_t n) {
     // printf("execute_cpu.pc = 0x%08x\n",cpu.pc);
     exec_once(&s, cpu.pc);
     g_nr_guest_inst ++;
+    
     trace_and_difftest(&s, cpu.pc);
     if (npc_state.state != NPC_RUNNING) break;
     IFDEF(CONFIG_DEVICE, device_update());
@@ -176,7 +177,7 @@ void cpu_exec(uint64_t n) {
 
     case NPC_END: case NPC_ABORT:
       Log("nemu: %s at pc = " FMT_WORD,
-        //nemu出错或者异常退出就用红色打印，正常退出就绿色打印。  
+        //npc出错或者异常退出就用红色打印，正常退出就绿色打印。  
         (npc_state.state == NPC_ABORT ? ANSI_FMT("ABORT", ANSI_FG_RED) :
            (npc_state.halt_ret == 0 ? ANSI_FMT("HIT GOOD TRAP", ANSI_FG_GREEN) :
             ANSI_FMT("HIT BAD TRAP", ANSI_FG_RED))),

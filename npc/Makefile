@@ -22,7 +22,7 @@ NPC_IMG?=
 
 ##NPC_FLAGS?= -l=$(NPC_HOME)/npc-log.txt -b
 NPC_FLAGS ?= --log=$(NPC_HOME)/npc-log.txt
-#NPC_FLAGS += -b
+NPC_FLAGS += -b
 NPC_FLAGS += --diff=/home/yuweijie/ysyx-workbench/nemu/build/riscv32-nemu-interpreter-so
 
 
@@ -45,8 +45,8 @@ VERILATOR_FLAGS = -Wall --cc --trace \
 					 --top-module ysyx_25060170_top
 
 GDBVERILATOR_FLAGS = -Wall --cc --trace \
-    -CFLAGS "-g -I /home/yuweijie/ysyx-workbench/npc/include -O2" \
-    -CFLAGS "-I /home/yuweijie/ysyx-workbench/nemu/tools/capstone/repo/include -O2" \
+    -CFLAGS "-g -I /home/yuweijie/ysyx-workbench/npc/include" \
+    -CFLAGS "-I /home/yuweijie/ysyx-workbench/nemu/tools/capstone/repo/include" \
     --exe --build \
     -LDFLAGS "-g -lreadline -lSDL2" \
     -Ivsrc \
