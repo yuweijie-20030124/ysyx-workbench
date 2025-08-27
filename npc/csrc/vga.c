@@ -43,7 +43,7 @@ static SDL_Texture *texture = NULL;
 static void init_screen() {
   SDL_Window *window = NULL;
   char title[128];
-  sprintf(title, "riscv64-NPC");
+  sprintf(title, "yuweijie-25060170-riscv32-NPC");
   SDL_Init(SDL_INIT_VIDEO);
   SDL_CreateWindowAndRenderer(
       SCREEN_W * (MUXDEF(CONFIG_VGA_SIZE_400x300, 2, 1)),
