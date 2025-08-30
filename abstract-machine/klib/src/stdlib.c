@@ -31,7 +31,6 @@ int atoi(const char* nptr) {
   return x;
 }
 
-
 void *malloc(size_t size) {
 #if !(defined(__ISA_NATIVE__) && defined(__NATIVE_USE_KLIB__))
   static uintptr_t addr = 0;
