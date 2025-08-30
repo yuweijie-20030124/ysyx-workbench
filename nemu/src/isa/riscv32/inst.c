@@ -191,11 +191,13 @@ static int decode_exec(Decode *s) {
   //把寄存器 x[rs2]乘到寄存器 x[rs1]上，都视为 2 的补码，将乘积的高位写入 x[rd]。
   
   INSTPAT("??????? ????? ????? 000 ????? 11000 11", beq    , B, 
-    // if(s->pc == 0x800115c0){
-    // printf("src1 =%d\n",src1);printf("src2 =%d\n",src2);
-    // printf("pc =0x%08x\n",s->pc);printf("imm =0x%08x\n",imm);
-    // printf("dnpc =0x%08x\n",s->dnpc);  
-    // }
+    if(s->pc == 0x800115c0){
+    printf("src1 =%d\n",src1);
+    printf("src2 =%d\n",src2);
+    printf("pc =0x%08x\n",s->pc);
+    printf("imm =0x%08x\n",imm);
+    printf("dnpc =0x%08x\n",s->dnpc);  
+    }
     // printf("src1 =%d\n",src1);printf("src2 =%d\n",src2);
     // printf("pc =0x%08x\n",s->pc);printf("imm =0x%08x\n",imm);
     // printf("dnpc =0x%08x\n",s->dnpc);
