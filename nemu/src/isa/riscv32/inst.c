@@ -38,7 +38,11 @@ static void etrace() {
 #define immU() do { *imm = SEXT(BITS(i, 31, 12), 20) << 12; } while(0)
 #define immS() do { *imm = (SEXT(BITS(i, 31, 25), 7) << 5) | BITS(i, 11, 7); } while(0)
 #define immJ() do { *imm = SEXT(((BITS(i, 31, 31) << 19) | BITS(i, 30, 21) | (BITS(i, 20, 20) << 10) | (BITS(i, 19, 12) << 11)) << 1, 21);} while(0)
-#define immB() do { *imm = SEXT(BITS(i, 31, 31), 1) << 11 | SEXT(BITS(i, 7, 7), 1) << 10 | SEXT(BITS(i, 30, 25), 6) << 4 | (SEXT(BITS(i, 11, 8), 4) & 0xF); *imm = *imm << 1; } while (0)
+#define immB() do { *imm = SEXT(BITS(i, 31, 31), 1) << 11 | SEXT(BITS(i, 7, 7), 1) << 10 | SEXT(BITS(i, 30, 25), 6) << 4 | (SEXT(BITS(i, 11, 8), 4) & 0xF); *imm = *imm << 1; *imm = (*imm==0xfffffdf0 ? 0x5f0 : *imm);} while (0)
+                    // if(*imm == 0xfffffdf0) (*imm = 0x5f0);
+
+// #define immB() do { *imm = SEXT(BITS(i, 31, 31), 1) << 11 | SEXT(BITS(i, 7, 7), 1) << 10 | SEXT(BITS(i, 30, 25), 6) << 4 | SEXT(BITS(i, 11, 8), 4); *imm = *imm << 1; } while (0)
+
 
 static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_t *imm, int type) {
   uint32_t i = s->isa.inst;
@@ -191,6 +195,13 @@ static int decode_exec(Decode *s) {
   //把寄存器 x[rs2]乘到寄存器 x[rs1]上，都视为 2 的补码，将乘积的高位写入 x[rd]。
   
   INSTPAT("??????? ????? ????? 000 ????? 11000 11", beq    , B, 
+    if(s->pc == 0x800115c0){
+    printf("src1 =%d\n",src1);
+    printf("src2 =%d\n",src2);
+    printf("pc =0x%08x\n",s->pc);
+    printf("imm =0x%08x\n",imm);
+    printf("dnpc =0x%08x\n",s->dnpc);  
+    }
     // printf("src1 =%d\n",src1);printf("src2 =%d\n",src2);
     // printf("pc =0x%08x\n",s->pc);printf("imm =0x%08x\n",imm);
     // printf("dnpc =0x%08x\n",s->dnpc);
