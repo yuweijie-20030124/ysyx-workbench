@@ -107,8 +107,6 @@ reg [7:0] rlen = 8'd4;
 always @(*) begin
     pmem_read(pc_i,inst_o,rlen);
     pc_inst_end(pc_i, inst_o);
-	// $display("pmemread pc_i = 0x%08x",pc_i);
-  	// $display("pmemread inst_o = 0x%08x",inst_o);
 end
 
 //  always @(posedge clk) begin

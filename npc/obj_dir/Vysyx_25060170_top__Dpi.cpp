@@ -17,7 +17,7 @@
 #ifndef VL_DPIDECL_IDU_SEND_CALL_FLAG_
 #define VL_DPIDECL_IDU_SEND_CALL_FLAG_
 void IDU_SEND_CALL_FLAG(int* call_flag, int* pc, int* dnpc) {
-    // DPI export at vsrc/ysyx_25060170_DPIC.v:189:6
+    // DPI export at vsrc/ysyx_25060170_DPIC.v:187:6
     return Vysyx_25060170_top::IDU_SEND_CALL_FLAG(call_flag, pc, dnpc);
 }
 #endif
@@ -25,7 +25,7 @@ void IDU_SEND_CALL_FLAG(int* call_flag, int* pc, int* dnpc) {
 #ifndef VL_DPIDECL_IDU_SEND_RET_FLAG_
 #define VL_DPIDECL_IDU_SEND_RET_FLAG_
 void IDU_SEND_RET_FLAG(int* ret_flag, int* pc) {
-    // DPI export at vsrc/ysyx_25060170_DPIC.v:208:6
+    // DPI export at vsrc/ysyx_25060170_DPIC.v:206:6
     return Vysyx_25060170_top::IDU_SEND_RET_FLAG(ret_flag, pc);
 }
 #endif
