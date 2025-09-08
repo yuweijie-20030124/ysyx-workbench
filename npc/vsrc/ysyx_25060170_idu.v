@@ -1,38 +1,38 @@
  `include "define.v"
 module ysyx_25060170_idu(
 	//system input
-	input	  wire		       				rst	,
+	input	  wire		       				rst	,	
 	
 	//ifu input
 	input	  wire [`ysyx_25060170_INST]	inst_i	,
 	input	  wire [`ysyx_25060170_PC]		pc_i	,
 	
 	//regfile signal
-	output    wire [`ysyx_25060170_REGADDR] rs1_addr ,
-	output    wire				 			rs1_ena  ,
+	output    wire [`ysyx_25060170_REGADDR] rs1_addr ,//
+	output    wire				 			rs1_ena  ,//
 	input     wire [`ysyx_25060170_REG]     rs1_data ,
 	
-	output    wire [`ysyx_25060170_REGADDR] rs2_addr ,
-	output    wire						 	rs2_ena  ,
+	output    wire [`ysyx_25060170_REGADDR] rs2_addr ,//
+	output    wire						 	rs2_ena  ,//
 	input     wire [`ysyx_25060170_REG]     rs2_data ,
 	
-	output    wire				 			rd_ena  ,
-  	output    wire [`ysyx_25060170_REGADDR] rd_addr ,
+	output    wire				 			rd_ena  ,//
+  	output    wire [`ysyx_25060170_REGADDR] rd_addr ,//
         
 	//control out signal
-	output    wire [7:0]         			alusrc_o  ,
-	output    wire [3:0]      				lsctl_o   ,
-	output    wire [1:0]     				wbctl_o    ,
-	output    wire            				branch_o   ,
-	output    wire            				jump_o     ,
-	output    wire [3:0]                    csr_ctl    ,
+	output    wire [7:0]         			alusrc_o  ,//
+	output    wire [3:0]      				lsctl_o   ,//
+	output    wire [1:0]     				wbctl_o    ,//
+	output    wire            				branch_o   ,//
+	output    wire            				jump_o     ,//
+	output    wire [3:0]                    csr_ctl    ,//
 	
 	//id out signal
-	output    reg  [`ysyx_25060170_DATA]  	op1 ,
-	output    reg  [`ysyx_25060170_DATA]  	op2 , 
-	output    reg  [`ysyx_25060170_IMM]     imm ,
+	output    reg  [`ysyx_25060170_DATA]  	op1 ,//
+	output    reg  [`ysyx_25060170_DATA]  	op2 , //
+	output    reg  [`ysyx_25060170_IMM]     imm ,//
 	output	  wire 	[`ysyx_25060170_REGADDR] idu_dpic_rd_addr,
-	output	  wire [`ysyx_25060170_PC]		pc_o	
+	output	  wire [`ysyx_25060170_PC]		pc_o//	
 );
 
 assign idu_dpic_rd_addr = rd;
@@ -89,8 +89,8 @@ always @(*) begin
 //csr
 reg csr_wr_ena;
 reg csr_rd_ena;
-reg mret_ena;
-reg ecall_ena;
+reg mret_ena;		//机器模式异常返回
+reg ecall_ena;		//环境调用，调用异常请求执行环境
 
 always @(*) begin
 	csr_wr_ena = 1'b0;
@@ -119,7 +119,7 @@ always @(*) begin
 	endcase 
 end
 
-assign csr_ctl = {csr_wr_ena, csr_rd_ena, ecall_ena, mret_ena};
+assign csr_ctl = {csr_wr_ena, csr_rd_ena, ecall_ena, mret_ena};//csr控制器
  
 assign pc_o = rst == `ysyx_25060170_RSTABLE ? `ysyx_25060170_ZERO32 : pc_i	;
 

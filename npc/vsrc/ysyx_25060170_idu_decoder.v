@@ -1,18 +1,18 @@
  `include "define.v"
 
 module ysyx_25060170_idu_decoder(
-	input wire                 		        rst  ,
-	input wire   [`ysyx_25060170_INST]	    inst	,
+	input wire                 		        rst  	,
+	input wire   [`ysyx_25060170_INST]	    inst	,//
   
-	output wire						        rs1_ena	,
-	output wire						        rs2_ena	,
-	output wire						        jump	,
-	output wire  [1:0]          			wb_ctl  ,
-	output reg   [3:0]          			mem_ctl ,
-	output wire                 			branch  ,
-	output reg   [`ysyx_25060170_IMM] 		ext_imm ,
-	output wire						        imm_ena	,
-    output wire	 [7:0]					    alu_ctl	
+	output wire						        rs1_ena	,//
+	output wire						        rs2_ena	,//
+	output wire						        jump	,//
+	output wire  [1:0]          			wb_ctl  ,//
+	output reg   [3:0]          			mem_ctl ,//
+	output wire                 			branch  ,//
+	output reg   [`ysyx_25060170_IMM] 		ext_imm ,//
+	output wire						        imm_ena	,//
+    output wire	 [7:0]					    alu_ctl	//
 );
 
 wire [6:0] opcode ;
