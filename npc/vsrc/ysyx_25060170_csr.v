@@ -1,13 +1,13 @@
 `include "define.v"
 
 module ysyx_25060170_csr(
-  input wire             clk         ,
-  input wire             rst         ,
-  input wire [3:0]       csr_ctl     ,  // {csr_wr_ena, csr_rd_ena, ecall_ena, mret_ena}
-  input wire [11:0]      csr_addr    ,
-  input wire [`ysyx_25060170_REG]  mcause_value,
-  input wire [`ysyx_25060170_DATA] write_csr_data,
-  output wire [`ysyx_25060170_DATA] read_csr_data,
+  input wire                        clk           ,   //
+  input wire                        rst           ,
+  input wire [3:0]                  csr_ctl       ,  // {csr_wr_ena, csr_rd_ena, ecall_ena, mret_ena}
+  input wire [11:0]                 csr_addr      ,
+  input wire [`ysyx_25060170_REG]   mcause_value  ,
+  input wire [`ysyx_25060170_DATA]  write_csr_data,
+  output wire [`ysyx_25060170_DATA] read_csr_data ,
   output wire [`ysyx_25060170_REG]  mstatus_o     ,
   output wire [`ysyx_25060170_REG]  mepc_o        ,
   output wire [`ysyx_25060170_REG]  mtvec_o       ,

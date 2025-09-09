@@ -12,14 +12,14 @@ module ysyx_25060170_exu(
     input wire            branch_i,
     input wire [3:0]      csr_ctl,
     
-    output wire [`ysyx_25060170_REG] store_data,
-    output wire [`ysyx_25060170_PC] jump_pc_o,
-    output wire ex_pcsrc_o,
-    output reg [`ysyx_25060170_DATA] exu_res,
-	output wire [`ysyx_25060170_REG]  csr_ex_mstatus     ,
-	output wire [`ysyx_25060170_REG]  csr_ex_mepc        ,
-	output wire [`ysyx_25060170_REG]  csr_ex_mtvec       ,
-	output wire [`ysyx_25060170_REG]  csr_ex_mcause      
+    output wire [`ysyx_25060170_REG] store_data,//
+    output wire [`ysyx_25060170_PC] jump_pc_o,//
+    output wire ex_pcsrc_o,//
+    output reg [`ysyx_25060170_DATA] exu_res,//
+	  output wire [`ysyx_25060170_REG]  csr_ex_mstatus     ,
+	  output wire [`ysyx_25060170_REG]  csr_ex_mepc        ,
+	  output wire [`ysyx_25060170_REG]  csr_ex_mtvec       ,
+	  output wire [`ysyx_25060170_REG]  csr_ex_mcause      
 );
 
 // 32-bit operations
@@ -122,8 +122,10 @@ wire [`ysyx_25060170_DATA] read_csr_data;
 reg [`ysyx_25060170_DATA] write_csr_data;
 reg [`ysyx_25060170_REG] mcause_value;
 
+/* verilator lint_off UNUSEDSIGNAL */
 wire [`ysyx_25060170_DATA] set_data = read_csr_data | op1;
 wire [`ysyx_25060170_DATA] clear_data = read_csr_data & (~op1);
+/* verilator lint_on UNUSEDSIGNAL */
 
 always @(*) begin
   write_csr_data = `ysyx_25060170_ZERO32;
@@ -133,9 +135,9 @@ always @(*) begin
 
     `INST_CSRRW, `INST_CSRRWI: begin write_csr_data = op1; end
 
-    `INST_CSRRS, `INST_CSRRSI: begin write_csr_data = set_data; end
+    // `INST_CSRRS, `INST_CSRRSI: begin write_csr_data = set_data; end
 
-    `INST_CSRRC, `INST_CSRRCI: begin write_csr_data = clear_data; end
+    // `INST_CSRRC, `INST_CSRRCI: begin write_csr_data = clear_data; end
 
     default: begin
       write_csr_data = `ysyx_25060170_ZERO32;
@@ -147,9 +149,9 @@ end
 ysyx_25060170_csr csr_operate(
     .clk(clk),
     .rst(rst),
-    .csr_ctl(csr_ctl),
-    .csr_addr(csr_addr),
-    .mcause_value(mcause_value),
+    .csr_ctl(csr_ctl),//
+    .csr_addr(csr_addr),//
+    .mcause_value(mcause_value),//
     .read_csr_data(read_csr_data),
     .write_csr_data(write_csr_data),
 	.mstatus_o(csr_ex_mstatus),
