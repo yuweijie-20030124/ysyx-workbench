@@ -65,11 +65,7 @@ static void exec_once(Decode *s, vaddr_t pc) {
   cpu.pc = s->dnpc;//动态下一条指令，可能跳转或者分支改变
 #ifdef CONFIG_ITRACE//如果启用了 CONFIG_ITRACE，会记录指令的详细信息到日志缓冲区 s->logbuf：
   char *p = s->logbuf;
-  //snprintf() 是一个 C 语言标准库函数，用于格式化输出字符串，并将结果写入到指定的缓冲区，
-  //与 sprintf() 不同的是，snprintf() 会限制输出的字符数，避免缓冲区溢出。
-  //int snprintf ( char * str, size_t size, const char * format, ... );
-  //str -- 目标字符串，用于存储格式化后的字符串的字符数组的指针。   size -- 字符数组的大小。
-  //format -- 格式化字符串。    ... -- 可变参数，可变数量的参数根据 format 中的格式化指令进行格式化。
+  
   p += snprintf(p, sizeof(s->logbuf), FMT_WORD ":", s->pc);//FMT_WORD：格式化字符串（如 "0x%08x"），用于输出 PC 地址。
   //printf("0x%08x\n",s->pc);
   //printf("0x%08x\n",s->snpc);

@@ -1,11 +1,11 @@
 `include "define.v"
 
 module ysyx_25060170_lsu(
-    input wire rst,
-    input wire clk,
-    input wire [`ysyx_25060170_DATA] alu_res,
-    input wire [`ysyx_25060170_DATA] store_data,
-    input wire [3:0] ls_ctl,
+    input wire rst,//
+    input wire clk,//
+    input wire [`ysyx_25060170_DATA] alu_res,//
+    input wire [`ysyx_25060170_DATA] store_data,//
+    input wire [3:0] ls_ctl,//
     output wire [`ysyx_25060170_DATA] ls_data_o
 );
 
@@ -25,8 +25,8 @@ reg [`ysyx_25060170_DATA] load_data;
 
 assign re = (rst == `ysyx_25060170_RSTABLE | ls_ctl == 4'b0000) ? 1'b0 : ls_ctl[3];
 assign we = (rst == `ysyx_25060170_RSTABLE | ls_ctl == 4'b0000) ? 1'b0 : ~ls_ctl[3];
-assign waddr = (rst == `ysyx_25060170_RSTABLE) ? `ysyx_25060170_ZERO32 : alu_res;
-assign raddr = (rst == `ysyx_25060170_RSTABLE) ? `ysyx_25060170_ZERO32 : alu_res[31:0]; // 32-bit address
+assign waddr = (rst == `ysyx_25060170_RSTABLE) ? `ysyx_25060170_ZERO32 : alu_res[31:0];
+assign raddr = (rst == `ysyx_25060170_RSTABLE) ? `ysyx_25060170_ZERO32 : alu_res[31:0];
 
 //--------------------------load-----------------------------------------------------------------//
 wire [1:0] byte_sel = alu_res[1:0];  // 32-bit: 2 bits for byte selection
@@ -68,11 +68,11 @@ always @(*) begin
     end 
     else if (ls_ctl[3] == 1'b1) begin
         case (ls_ctl[2:0])
-            3'b001: load_data = {{24{data_byte[7]}}, data_byte};  // LB: sign-extended byte
-            3'b010: load_data = {{16{data_half[15]}}, data_half};  // LH: sign-extended halfword
-            3'b011: load_data = data_word;                         // LW: word
-            3'b101: load_data = {24'b0, data_byte};               // LBU: zero-extended byte
-            3'b110: load_data = {16'b0, data_half};               // LHU: zero-extended halfword
+            3'b001: load_data = {{24{data_byte[7]}}, data_byte};    // LB: sign-extended byte
+            3'b010: load_data = {{16{data_half[15]}}, data_half};   // LH: sign-extended halfword
+            3'b011: load_data = data_word;                          // LW: word
+            3'b101: load_data = {24'b0, data_byte};                 // LBU: zero-extended byte
+            3'b110: load_data = {16'b0, data_half};                 // LHU: zero-extended halfword
             default: load_data = `ysyx_25060170_ZERO32;
         endcase
     end else begin
