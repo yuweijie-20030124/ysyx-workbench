@@ -5,7 +5,7 @@ module ysyx_25060170_idu_decoder(
 	input wire   [`ysyx_25060170_INST]	    inst	,//
   
 	output wire						        rs1_ena	,//
-	output wire						        rs2_ena	,//
+	output wire						        rs2_ena	,//m
 	output wire						        jump	,//
 	output wire  [1:0]          			wb_ctl  ,//
 	output reg   [3:0]          			mem_ctl ,//
@@ -56,7 +56,6 @@ wire inst_lui   = (rst == `ysyx_25060170_RSTABLE) ? 0 : (opcode[6:2] == `ysyx_25
 wire inst_auipc = (rst == `ysyx_25060170_RSTABLE) ? 0 : (opcode[6:2] == `ysyx_25060170_AUIPC)  ;
 wire inst_jal   = (rst == `ysyx_25060170_RSTABLE) ? 0 : (opcode[6:2] == `ysyx_25060170_JAL)    ;
 wire inst_jalr  = (rst == `ysyx_25060170_RSTABLE) ? 0 : (opcode[6:2] == `ysyx_25060170_JALR)   ;
-
 
 wire inst_sb    = inst_type[0] &  ~funct3[2] & ~funct3[1] & ~funct3[0]   ;
 wire inst_sh    = inst_type[0] &  ~funct3[2] & ~funct3[1] &  funct3[0]   ;
