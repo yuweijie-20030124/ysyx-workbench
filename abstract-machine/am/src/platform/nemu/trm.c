@@ -1,5 +1,6 @@
 #include <am.h>
 #include <nemu.h>
+#include <stdio.h>
 
 extern char _heap_start;
 int main(const char *args);
@@ -13,8 +14,9 @@ void putch(char ch) { //输出一个字符
 }
 
 void halt(int code) {
+  printf("halt called with code: %d\n", code);
+  //fflush(stdout);
   nemu_trap(code);
-  //里面是一个嵌入汇编语句，宏会把一个识别结束的结束码移动到通用寄存器中
   // should not reach here
   while (1);
 }
