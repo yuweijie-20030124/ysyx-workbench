@@ -44,9 +44,10 @@ ISA        = $(word 1,$(ARCH_SPLIT))
 PLATFORM   = $(word 2,$(ARCH_SPLIT))
 
 $(info # Using ISA=$(ISA), PLATFORM=$(PLATFORM))
+$(info # SRCS=$(SRCS))
 
 ### Check if there is something to build
-###flavor是寻找变量函数，但SRCS在makefile及其include中都没有时，函数输出undefined。ifeq就生效执行error
+###flavor是寻找变量函数，当SRCS在makefile及其include中都没有时，函数输出undefined。ifeq就生效执行error
 ifeq ($(flavor SRCS), undefined)
   $(error Nothing to build)
 endif
