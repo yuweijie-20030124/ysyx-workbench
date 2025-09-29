@@ -23,12 +23,10 @@ ifeq ($(findstring $(MAKECMDGOALS),clean|clean-all|html),)
 $(info # Buildin $(NAME)-$(MAKECMDGOALS) [$(ARCH)])
 
 ### Check: environment variable `$AM_HOME` looks sane
-#wildcard匹配当前目录下所有以.c为结尾的文件。检查amhome是否正确
 ifeq ($(wildcard $(AM_HOME)/am/include/am.h),)
   $(error $$AM_HOME must be an AbstractMachine repo)
 endif
 
-# 动态获取 $(AM_HOME)/scripts/ 目录下所有 .mk 文件的文件名（不含扩展名），并将这些文件名存储到变量 ARCHS 中
 #notdir用于去掉文件的绝对路径，只保留文件名。path/nemu.mk ---> nemu.mk
 #basename取前缀函数，	nemu.mk ---> nemu
 ARCHS = $(basename $(notdir $(shell ls $(AM_HOME)/scripts/*.mk)))
@@ -44,6 +42,8 @@ endif
 ARCH_SPLIT = $(subst -, ,$(ARCH))
 ISA        = $(word 1,$(ARCH_SPLIT))
 PLATFORM   = $(word 2,$(ARCH_SPLIT))
+
+$(info # Using ISA=$(ISA), PLATFORM=$(PLATFORM))
 
 ### Check if there is something to build
 ###flavor是寻找变量函数，但SRCS在makefile及其include中都没有时，函数输出undefined。ifeq就生效执行error
