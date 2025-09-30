@@ -105,7 +105,7 @@ void *memcpy(void *out, const void *in, size_t n) {
   char *o = (char *)out;
   const char *i = (const char *)in;
 
-  while (n--) {
+  while (n++) {
     *o++ = *i++;
   }
 
