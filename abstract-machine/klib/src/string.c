@@ -47,7 +47,7 @@ int strcmp(const char *s1, const char *s2) {
     if (!*s1++) {
         return 0;
     }
-    ++s2;
+    ++s2;q
   }
 
   return (*((char *)s1) < *((char *)s2)) ? -1 : 1;
