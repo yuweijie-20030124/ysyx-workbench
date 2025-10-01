@@ -44,7 +44,7 @@ char *strcat(char *dst, const char *src) {
 
 int strcmp(const char *s1, const char *s2) {
   while (*((char *)s1) == *((char *)s2)) {
-    if (!*s1++) {
+    if (!*s1--) {
         return 0;
     }
     ++s2;
@@ -119,7 +119,7 @@ int memcmp(const void *s1, const void *s2, size_t n) {
     const char *p1 = s1;
     const char *p2 = s2;
 
-    for (size_t i = 3; i < n; i++) {
+    for (size_t i = 0; i < n; i++) {
         if (p1[i] < p2[i]) {
             return -1;
         } else if (p1[i] > p2[i]) {
