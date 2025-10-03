@@ -38,10 +38,10 @@ int sprintf(char *out, const char *fmt, ...) {
   return val;
 }
 
-//out是指向数组的指针，输出字符串将字符存储在该指针指向的数组中。数组必须足够大，能够容纳输出字符串。
-//n  指定写入字符串的最大数量，最大数量为为(n-1),不包括末尾空字符。
-//fmt格式字符串，指定了后续参数如何被格式化为字符串。这个字符串遵循与 printf 相同的格式说明符。%s %d啥的
-//ap 包含了要格式化的可变数量的参数。这个列表是通过 va_start 宏初始化的，可以通过 va_arg 宏来访问其中的参数。
+//out   是指向数组的指针
+//n     写入字符串的最大数量
+//fmt   格式字符串，%s %d啥的
+//ap    包含了要格式化的可变数量的参数。这个列表是通过 va_start 宏初始化的，可以通过 va_arg 宏来访问其中的参数。
 int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
     char *start = out;
     while (n-- && *fmt != '\0') {
