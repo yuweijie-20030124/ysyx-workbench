@@ -21,29 +21,20 @@
 typedef void(*io_callback_t)(uint32_t, int, bool);
 uint8_t* new_space(int size);
 
-/*在硬件交互中，某些寄存器的读取可能具有副作用（side effects），例如：
-状态寄存器：读取后可能自动清除某些标志位（如中断状态寄存器）。
-FIFO 缓冲区：读取数据后，硬件可能自动更新内部指针。
-计数器/定时器：读取计数值可能影响其行为。
-callback 允许在 map_read 执行真正的数据读取之前，先通知设备（或模拟器）：“有一个读取操作发生了，请做好相应处理”。*/
-
 typedef struct {
-  const char *name;   //设备名称，调试用
+  const char *name;   //设备名称
   // we treat ioaddr_t as paddr_t here
   paddr_t low;    //映射区的起始地址
   paddr_t high;   //映射区域的结束地址
-  void *space;    //实际存储数据的指针
+  void *space;    //设备实际存储空间指针
   io_callback_t callback;   //回调函数
 } IOMap;
-//包括名字映射的起始地址和结束地址，映射的目标空间和一个回调函数。
-//low地址范围的下界--起始地址  high地址范围的上界--结束地址
 
-//bool类型确认给定的物理地址是否位于IO的映射区域内
 static inline bool map_inside(IOMap *map, paddr_t addr) {
   return (addr >= map->low && addr <= map->high);
 }
 
-//给你地址，范围和mmio，你要找出这个地址和范围在mmio中的id是多少
+//给定addr和maps查找哪个设备映射区域包含这个地址，找到就返回设备的编号。
 static inline int find_mapid_by_addr(IOMap *maps, int size, paddr_t addr) {
   int i;
   for (i = 0; i < size; i ++) {//遍历一遍要找的addr中的size空间

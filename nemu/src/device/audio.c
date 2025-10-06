@@ -67,13 +67,6 @@ int init_sound() {
   return 0;
 }
 
-/*
-回调函数是指一个通过函数指针调用的函数。简单来说：
-定义：你定义一个函数
-注册：你把函数指针交给另一个系统/模块
-调用：当特定事件发生时，系统/模块会"回调"你的函数
-*/
-
 static void audio_io_handler(uint32_t offset, int len, bool is_write) {
   if(audio_base[reg_init] == 1){
     init_sound();

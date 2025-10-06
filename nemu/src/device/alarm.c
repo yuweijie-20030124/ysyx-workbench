@@ -19,7 +19,7 @@
 #include <signal.h>
 //定时器系统，主要用于周期性地触发一系列处理函数
 #define MAX_HANDLER 8 
-//handler数组最多存储8哥定时处理函数
+//handler数组最多存储8个定时处理函数
 
 static alarm_handler_t handler[MAX_HANDLER] = {};
 static int idx = 0; //ids记录当前已组测的处理函数数量

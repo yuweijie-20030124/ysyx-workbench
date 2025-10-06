@@ -23,9 +23,6 @@
 static uint8_t *io_space = NULL;
 static uint8_t *p_space = NULL;//初始化map的空间
 
-//分配一块大小为 size 字节的连续内存空间，并返回指向这块空间的指针（类型为 uint8_t*，即无符号8位整数指针）。
-//作用是将 size 向上取整到最近的 PAGE_SIZE 的倍数。
-//CPU 访问内存时，某些操作（如 DMA、MMU 映射）要求地址必须是页对齐的。
 uint8_t* new_space(int size) {  
   uint8_t *p = p_space; //p = p_space 记录分配前的指针位置，后续作为返回值。
   // page aligned;
@@ -64,7 +61,6 @@ word_t map_read(paddr_t addr, int len, IOMap *map) {
   //map->space + offset：定位到映射区域中的目标地址。
   //host_read：从指针处读取 len 字节并返回 word_t 类型的地址。
   word_t ret = host_read(map->space + offset, len);
-  //如果启用调试（CONFIG_DTRACE），记录读取操作的设备名、地址和长度。
   IFDEF(CONFIG_DTRACE, Log("read device %s : address in  = " FMT_PADDR ", len = %d\n", map->name , addr, len));
   return ret;
 }
