@@ -96,7 +96,6 @@ void init_vga() {
   add_mmio_map("vmem", CONFIG_FB_ADDR, vmem, screen_size(), NULL);
   IFDEF(CONFIG_VGA_SHOW_SCREEN, init_screen());
   IFDEF(CONFIG_VGA_SHOW_SCREEN, memset(vmem, 0, screen_size()));
-  //初始化mmio这段空间，全写为
 }
 
 //C 库函数 void *memset(void *str, int c, size_t n) 用于将一段内存区域设置为指定的值。
