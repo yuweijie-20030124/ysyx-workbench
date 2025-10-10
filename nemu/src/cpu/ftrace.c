@@ -23,7 +23,6 @@ void init_symtab_entrys(FILE *elf_file) {
 	int result = fread(&ehdr, sizeof(Elf32_Ehdr), 1, elf_file);
 	assert(&ehdr != NULL && result == 1);
 
-    // 检查 ELF 魔数 16进制打开所有的elf文件前四个必须是这四个
     if (ehdr.e_ident[0] != 0x7F ||
         ehdr.e_ident[1] != 'E' ||
         ehdr.e_ident[2] != 'L' ||
@@ -39,7 +38,7 @@ void init_symtab_entrys(FILE *elf_file) {
 	result = fread(shdrs, sizeof(Elf32_Shdr), ehdr.e_shnum, elf_file);//从文件中读取shnum个节头，每个节点的大小是sizeof elfshdr
 	assert(result != 0);
 
-    //遍历节头表，查找符号表和字符串表，用偏移赋值给他
+    //遍历段表，查找符号表和字符串表，用偏移赋值给他
 	Elf32_Shdr *symtab = NULL;
     Elf32_Shdr *strtab = NULL;
 	for (int i = 0; i < ehdr.e_shnum; i++) {
@@ -50,11 +49,13 @@ void init_symtab_entrys(FILE *elf_file) {
 			strtab = shdrs + i;  
  	    }
   }
+
 	assert(symtab != NULL);
+  	assert(strtab != NULL);
 
 	//计算符号表中条目数量 shsize是符号表的大小   shentsize是每个符号条目的大小
     //两者相除得到符号表中包含的符号总数量，赋值给全局变量symnum
-    //获得符号表在ELF文件中的偏移量
+    //offset是符号表在ELF文件中的偏移量
 	uint32_t entry_num = symtab->sh_size / symtab->sh_entsize;
 	sym_num = entry_num;	
 	uint32_t offset = symtab->sh_offset; //符号数据在文件的起始位置的偏移量多少，用于后面进来读取具体内容。
@@ -67,9 +68,10 @@ void init_symtab_entrys(FILE *elf_file) {
 	result = fread(symbol_tables, sizeof(Elf32_Sym), entry_num, elf_file);
 	assert(result != 0);
 
-	// 初始化自定义符号表
+	// 初始化自定义符号表 SymbolEntry 是 符号表条目
 	sym_entrys = malloc(sizeof(SymbolEntry) * entry_num);
     char *str = malloc(strtab -> sh_size);
+	//字符串表的总字节数
     int str_result = fseek(elf_file, strtab -> sh_offset, SEEK_SET);
     assert(str_result == 0);
     str_result = fread(str, 1, strtab -> sh_size, elf_file);
