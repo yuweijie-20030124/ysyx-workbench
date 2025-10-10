@@ -111,16 +111,16 @@ char *get_function_name_by_addres(paddr_t addr) {
 }
 
 void call_trace(paddr_t pc, paddr_t target) {
-    if (trace_func_call_flag == 0) return;
-    ++call_depth;
-    char *name  = get_function_name_by_addres(target);
-    Log(FMT_PADDR ":%*scall [%s@" FMT_PADDR "] (depth=%u)\n", pc, call_depth , "", name, target, call_depth);
+	if (trace_func_call_flag == 0) return;
+	++call_depth;
+	char *name  = get_function_name_by_addres(target);
+	Log(FMT_PADDR ":%*scall [%s@" FMT_PADDR "]\n", pc, call_depth , "", name, target);
 }
 
 void ret_trace(paddr_t pc) {
-    if (trace_func_call_flag == 0) return;
-    char *name = get_function_name_by_addres(pc);
-    Log(FMT_PADDR ":%*sret [%s] (depth=%u)\n", pc, call_depth , "", name, call_depth);
-    --call_depth;
-} 
+	if (trace_func_call_flag == 0) return;
+	char *name = get_function_name_by_addres(pc);
+	Log(FMT_PADDR ":%*sret [%s]\n",pc, call_depth , "", name);
+	--call_depth;
+}
 
