@@ -122,5 +122,5 @@ void ret_trace(paddr_t pc) {
     char *name = get_function_name_by_addres(pc);
     Log(FMT_PADDR ":%*sret [%s] (depth=%u)\n", pc, call_depth , "", name, call_depth);
     --call_depth;
-}
+} 
 
