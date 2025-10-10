@@ -161,3 +161,9 @@ void cpu_exec(uint64_t n) {
     case NEMU_QUIT: statistic();
   }
 }
+
+
+void magic_instruction()
+{
+  nemu_state.state = NEMU_STOP;
+}
