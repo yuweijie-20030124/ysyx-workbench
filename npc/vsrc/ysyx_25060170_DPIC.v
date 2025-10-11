@@ -47,7 +47,10 @@
 	input  wire	[`ysyx_25060170_REG] 	mstatus,
 	input  wire	[`ysyx_25060170_REG] 	mtvec,
 	input  wire	[`ysyx_25060170_REG] 	mepc,
-	input  wire	[`ysyx_25060170_REG] 	mcause
+	input  wire	[`ysyx_25060170_REG] 	mcause,
+
+	//for magic number
+	input  wire                           magic_flag
 );
 
  //--------------------DPI-C----------------------//
@@ -57,6 +60,8 @@ import "DPI-C" function void pc_inst_end(input int thepc_data, input int the_ins
 import "DPI-C" function void pmem_read(input int raddr, output int rdata, input byte rlen);
 
 import "DPI-C" function void set_npc_exit(int pc, int halt_ret);
+
+import "DPI-C" function void magic_instruction();
 
 import "DPI-C" function void difftest_dut_csr(
 	input int csr_mstatus,
@@ -238,6 +243,11 @@ always@(*) begin
   		// $display("inst_o = 0x%08x",inst_o);
 	if(inst_o == `EBREAK_TRAP)begin
   		set_npc_exit(pc_i,0);
+  	end
+	else if(magic_flag) begin
+		magic_instruction();
+  		//set_npc_exit(pc_i,1);
+
   	end
   end
  endmodule

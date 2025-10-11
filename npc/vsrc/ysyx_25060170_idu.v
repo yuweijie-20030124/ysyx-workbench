@@ -32,7 +32,9 @@ module ysyx_25060170_idu(
 	output    reg  [`ysyx_25060170_DATA]  	op2 , //
 	output    reg  [`ysyx_25060170_IMM]     imm ,//
 	output	  wire 	[`ysyx_25060170_REGADDR] idu_dpic_rd_addr,
-	output	  wire [`ysyx_25060170_PC]		pc_o//	
+	output	  wire [`ysyx_25060170_PC]		pc_o,//
+	
+	output    wire 							magic_flag
 );
 
 assign idu_dpic_rd_addr = rd;
@@ -44,6 +46,7 @@ wire   [ 4:0]   rs2    ;
 assign  rd       =  inst_i [11:7]   ;
 assign  rs1      =  inst_i [19:15]  ;
 assign  rs2      =  inst_i [24:20]  ;
+assign  magic_flag = (inst_i == 32'b0100_0000_0000_0000_0000_0000_0011_0011);
 
 wire imm_ena ;
 

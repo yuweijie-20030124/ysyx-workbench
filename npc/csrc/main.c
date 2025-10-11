@@ -9,9 +9,6 @@
 #include <mmio.h>
 #include "isa.h"
 
-#define MAX_SIM_TIME 300
-#define VERIF_START_TIME 7
-
 void close_npc();
 void init_monitor(int argc, char *argv[]);
 void cpu_reset();
@@ -98,13 +95,18 @@ extern "C" void set_npc_exit(vaddr_t pc, int halt_ret){
   // printf("exit\n");
 }
 
+extern "C" void magic_instruction(){
+  npc_state.state = NPC_STOP;
+  // printf("exit\n");
+}
+
 extern "C" void pc_inst_end(int thepc_data, int the_inst){
   cpu.pc = thepc_data;
   s.val = the_inst;
 }
 
 extern "C" void difftest_dut_csr(int csr_mstatus, int csr_mtvec, int csr_mepc, int csr_mcause){
-    cpu.csr[0] = csr_mstatus & 0x0ull ;
+    cpu.csr[0] = csr_mstatus;
     cpu.csr[1] = csr_mtvec;
     cpu.csr[2] = csr_mepc;    
     cpu.csr[3] = csr_mcause;

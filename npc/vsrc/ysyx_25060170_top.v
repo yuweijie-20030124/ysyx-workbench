@@ -33,6 +33,7 @@ wire [`ysyx_25060170_PC]    	id_ex_pc    	   ;
 wire [`ysyx_25060170_DATA] 	id_ex_op1 ;
 wire [`ysyx_25060170_DATA] 	id_ex_op2 ;
 wire [3:0]                      id_ex_csrctl;
+wire                            magic_flag;
 
 
 //exu
@@ -125,7 +126,8 @@ ysyx_25060170_idu idu1(
 	.idu_dpic_rd_addr(rd)		,
 	.csr_ctl(id_ex_csrctl)		,
 	.op1(id_ex_op1)				,
-	.op2(id_ex_op2)
+	.op2(id_ex_op2)				,
+	.magic_flag(magic_flag)
 );
 
 ysyx_25060170_exu exu2(
@@ -254,7 +256,8 @@ ysyx_25060170_DPIC dpic(
 	.mstatus(ex_dpic_mstatus),
 	.mtvec  (ex_dpic_mepc   ),
 	.mepc   (ex_dpic_mtvec  ),
-	.mcause (ex_dpic_mcause )
+	.mcause (ex_dpic_mcause ),
+	.magic_flag(magic_flag)
 );
 
 endmodule
