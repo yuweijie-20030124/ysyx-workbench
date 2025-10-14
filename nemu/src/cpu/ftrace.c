@@ -31,27 +31,50 @@ void init_symtab_entrys(FILE *elf_file) {
         exit(0);
     }
 
-	Elf32_Shdr *shdrs = malloc(sizeof(Elf32_Shdr) * ehdr.e_shnum);//申请节头表的内存空间
+
+	//  ehdr.e_shnum是节头表中的项数
+	Elf32_Shdr *shdrs = malloc(sizeof(Elf32_Shdr) * ehdr.e_shnum);
     assert(shdrs != 0);
-	result = fseek(elf_file, ehdr.e_shoff, SEEK_SET); //根据文件的开头和偏移跳转到段表
+	result = fseek(elf_file, ehdr.e_shoff, SEEK_SET); //节头表偏移
 	assert(result == 0);
-	result = fread(shdrs, sizeof(Elf32_Shdr), ehdr.e_shnum, elf_file);//从文件中读取shnum个节头，每个节点的大小是sizeof elfshdr
+	result = fread(shdrs, sizeof(Elf32_Shdr), ehdr.e_shnum, elf_file);
 	assert(result != 0);
 
-    //遍历段表，查找符号表和字符串表，用偏移赋值给他
+    //遍历节头表，查找符号表和字符串表，用偏移赋值给他
+	//符号表：保存符号的 地址 size 类型 名字（在字符串的便宜）。
+	//字符串表：保存符号名的字符数据。
+
+// 	Elf32_Shdr *symtab = NULL;
+//     Elf32_Shdr *strtab = NULL;
+// 	for (int i = 0; i < ehdr.e_shnum; i++) {
+// 		if (shdrs[i].sh_type == SHT_SYMTAB) {
+// 			symtab = shdrs + i;  
+//  	    }
+//         if (shdrs[i].sh_type == SHT_STRTAB) {
+// 			strtab = shdrs + i;  
+//  	    }
+//   }
+
+// 	assert(symtab != NULL);
+//   	assert(strtab != NULL);
+
 	Elf32_Shdr *symtab = NULL;
     Elf32_Shdr *strtab = NULL;
-	for (int i = 0; i < ehdr.e_shnum; i++) {
-		if (shdrs[i].sh_type == SHT_SYMTAB) {
-			symtab = shdrs + i;  
- 	    }
-        if (shdrs[i].sh_type == SHT_STRTAB) {
-			strtab = shdrs + i;  
- 	    }
-  }
 
-	assert(symtab != NULL);
-  	assert(strtab != NULL);
+    // 只寻找符号表节（通常只有一个），找到后通过 sh_link 定位对应的字符串表
+    for (int i = 0; i < ehdr.e_shnum; i++) {
+        if (shdrs[i].sh_type == SHT_SYMTAB) {
+            symtab = &shdrs[i];
+            break;
+        }
+    }
+    assert(symtab != NULL);
+
+    // symtab->sh_link 指向该符号表关联的字符串表节索引
+    uint32_t strtab_idx = symtab->sh_link;
+    assert(strtab_idx < (uint32_t)ehdr.e_shnum);
+    strtab = &shdrs[strtab_idx];
+    assert(strtab->sh_type == SHT_STRTAB);
 
 	//计算符号表中条目数量 shsize是符号表的大小   shentsize是每个符号条目的大小
     //两者相除得到符号表中包含的符号总数量，赋值给全局变量symnum
