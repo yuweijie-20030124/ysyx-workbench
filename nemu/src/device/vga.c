@@ -17,8 +17,8 @@
 #include <device/map.h>
 
 //修改设置
-#define SCREEN_W (MUXDEF(CONFIG_VGA_SIZE_800x600, 800, 800))
-#define SCREEN_H (MUXDEF(CONFIG_VGA_SIZE_800x600, 600, 600))
+#define SCREEN_W (MUXDEF(CONFIG_VGA_SIZE_800x600, 800, 200))
+#define SCREEN_H (MUXDEF(CONFIG_VGA_SIZE_800x600, 600, 150))
 
 static uint32_t screen_width() {
   return MUXDEF(CONFIG_TARGET_AM, io_read(AM_GPU_CONFIG).width, SCREEN_W);
