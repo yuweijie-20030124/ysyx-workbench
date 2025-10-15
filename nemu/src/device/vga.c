@@ -82,8 +82,6 @@ void vga_update_screen() {//更新屏幕
 }
 
 void init_vga() {
-  /*声明了八个字节，宽高寄存器用了四个自己，还有四个字节其实是给sync寄存器了
-  只有当sync位为1才会刷新屏幕*/
   vgactl_port_base = (uint32_t *)new_space(8);
   vgactl_port_base[0] = (screen_width() << 16) | screen_height();//宽是高16位，高是低16位
 #ifdef CONFIG_HAS_PORT_IO
