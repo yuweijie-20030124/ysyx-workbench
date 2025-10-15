@@ -107,8 +107,7 @@ static void execute(uint64_t n) {
     trace_and_difftest(&s, cpu.pc);
     if (nemu_state.state != NEMU_RUNNING) {break;}
     IFDEF(CONFIG_DEVICE, device_update());
-  }/*条件编译宏，如果CONFIG_DEVICE被定义，则调用device_update函数，如果 CONFIG_DEVICE 没有被定义，
-  这一行什么都不会生成（等价于被注释掉）。*/
+  }
   printBuffer(&cb);
 }
 
