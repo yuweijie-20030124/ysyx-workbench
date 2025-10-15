@@ -43,25 +43,10 @@ void init_symtab_entrys(FILE *elf_file) {
     //遍历节头表，查找符号表和字符串表，用偏移赋值给他
 	//符号表：保存符号的 地址 size 类型 名字（在字符串的便宜）。
 	//字符串表：保存符号名的字符数据。
-
-// 	Elf32_Shdr *symtab = NULL;
-//     Elf32_Shdr *strtab = NULL;
-// 	for (int i = 0; i < ehdr.e_shnum; i++) {
-// 		if (shdrs[i].sh_type == SHT_SYMTAB) {
-// 			symtab = shdrs + i;  
-//  	    }
-//         if (shdrs[i].sh_type == SHT_STRTAB) {
-// 			strtab = shdrs + i;  
-//  	    }
-//   }
-
-// 	assert(symtab != NULL);
-//   	assert(strtab != NULL);
-
 	Elf32_Shdr *symtab = NULL;
     Elf32_Shdr *strtab = NULL;
 
-    // 只寻找符号表节（通常只有一个），找到后通过 sh_link 定位对应的字符串表
+    // 只寻找符号表，找到后通过 sh_link 定位对应的字符串表
     for (int i = 0; i < ehdr.e_shnum; i++) {
         if (shdrs[i].sh_type == SHT_SYMTAB) {
             symtab = &shdrs[i];
@@ -70,7 +55,7 @@ void init_symtab_entrys(FILE *elf_file) {
     }
     assert(symtab != NULL);
 
-    // symtab->sh_link 指向该符号表关联的字符串表节索引
+    // sh_link 是目标字符串表在节头表中的索引
     uint32_t strtab_idx = symtab->sh_link;
     assert(strtab_idx < (uint32_t)ehdr.e_shnum);
     strtab = &shdrs[strtab_idx];
@@ -97,7 +82,7 @@ void init_symtab_entrys(FILE *elf_file) {
 	//字符串表的总字节数
     int str_result = fseek(elf_file, strtab -> sh_offset, SEEK_SET);
     assert(str_result == 0);
-    str_result = fread(str, 1, strtab -> sh_size, elf_file);
+    str_result = fread(str, sizeof(char), strtab -> sh_size, elf_file);
     assert(str_result != 0);
 	assert(str != NULL);
     //把strtab中的str解析出来。
