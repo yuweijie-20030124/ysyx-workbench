@@ -82,13 +82,14 @@ void init_symtab_entrys(FILE *elf_file) {
 	//字符串表的总字节数
     int str_result = fseek(elf_file, strtab -> sh_offset, SEEK_SET);
     assert(str_result == 0);
-    str_result = fread(str, sizeof(char), strtab -> sh_size, elf_file);
+	printf("sh_size = ");
+    str_result = fread(str, 1, strtab -> sh_size, elf_file);
     assert(str_result != 0);
 	assert(str != NULL);
     //把strtab中的str解析出来。
 
 	for (int i = 0; i < entry_num; i++) {
-		strcpy(sym_entrys[i].name, str + symbol_tables[i].st_name);
+		strcpy(sym_entrys[i].name, str + symbol_tables[i].st_name);	//name是内部偏移，要加上str
 		sym_entrys[i].info = symbol_tables[i].st_info;
 		sym_entrys[i].address = (paddr_t) symbol_tables[i].st_value;
 		sym_entrys[i].size = (word_t) symbol_tables[i].st_size;
