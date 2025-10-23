@@ -2,7 +2,9 @@
 // DESCRIPTION: Verilator output: Design implementation internals
 // See Vysyx_25060170_top.h for the primary calling header
 
-#include "Vysyx_25060170_top__pch.h"
+#include "verilated.h"
+#include "verilated_dpi.h"
+
 #include "Vysyx_25060170_top__Syms.h"
 #include "Vysyx_25060170_top___024root.h"
 
@@ -184,11 +186,11 @@ VL_ATTR_COLD void Vysyx_25060170_top___024root___dump_triggers__ico(Vysyx_250601
 #endif  // VL_DEBUG
 
 void Vysyx_25060170_top___024root___eval_triggers__ico(Vysyx_25060170_top___024root* vlSelf) {
-    VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_top___024root___eval_triggers__ico\n"); );
+    if (false && vlSelf) {}  // Prevent unused
     Vysyx_25060170_top__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
-    auto& vlSelfRef = std::ref(*vlSelf).get();
+    VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_top___024root___eval_triggers__ico\n"); );
     // Body
-    vlSelfRef.__VicoTriggered.setBit(0U, (IData)(vlSelfRef.__VicoFirstIteration));
+    vlSelf->__VicoTriggered.at(0U) = (0U == vlSelf->__VicoIterCount);
 #ifdef VL_DEBUG
     if (VL_UNLIKELY(vlSymsp->_vm_contextp__->debug())) {
         Vysyx_25060170_top___024root___dump_triggers__ico(vlSelf);
@@ -201,15 +203,15 @@ VL_ATTR_COLD void Vysyx_25060170_top___024root___dump_triggers__act(Vysyx_250601
 #endif  // VL_DEBUG
 
 void Vysyx_25060170_top___024root___eval_triggers__act(Vysyx_25060170_top___024root* vlSelf) {
-    VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_top___024root___eval_triggers__act\n"); );
+    if (false && vlSelf) {}  // Prevent unused
     Vysyx_25060170_top__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
-    auto& vlSelfRef = std::ref(*vlSelf).get();
+    VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_top___024root___eval_triggers__act\n"); );
     // Body
-    vlSelfRef.__VactTriggered.setBit(0U, ((IData)(vlSelfRef.clk) 
-                                          & (~ (IData)(vlSelfRef.__Vtrigprevexpr___TOP__clk__0))));
-    vlSelfRef.__VactTriggered.setBit(1U, ((~ (IData)(vlSelfRef.clk)) 
-                                          & (IData)(vlSelfRef.__Vtrigprevexpr___TOP__clk__0)));
-    vlSelfRef.__Vtrigprevexpr___TOP__clk__0 = vlSelfRef.clk;
+    vlSelf->__VactTriggered.at(0U) = ((IData)(vlSelf->clk) 
+                                      & (~ (IData)(vlSelf->__Vtrigrprev__TOP__clk)));
+    vlSelf->__VactTriggered.at(1U) = ((~ (IData)(vlSelf->clk)) 
+                                      & (IData)(vlSelf->__Vtrigrprev__TOP__clk));
+    vlSelf->__Vtrigrprev__TOP__clk = vlSelf->clk;
 #ifdef VL_DEBUG
     if (VL_UNLIKELY(vlSymsp->_vm_contextp__->debug())) {
         Vysyx_25060170_top___024root___dump_triggers__act(vlSelf);

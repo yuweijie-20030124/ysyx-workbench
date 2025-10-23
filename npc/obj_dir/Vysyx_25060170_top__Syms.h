@@ -21,7 +21,7 @@ using Vysyx_25060170_top__Vcb_IDU_SEND_CALL_FLAG_t = void (*) (Vysyx_25060170_to
 using Vysyx_25060170_top__Vcb_IDU_SEND_RET_FLAG_t = void (*) (Vysyx_25060170_top__Syms* __restrict vlSymsp, IData/*31:0*/ &ret_flag, IData/*31:0*/ &pc);
 
 // SYMS CLASS (contains all model state)
-class alignas(VL_CACHE_LINE_BYTES)Vysyx_25060170_top__Syms final : public VerilatedSyms {
+class Vysyx_25060170_top__Syms final : public VerilatedSyms {
   public:
     // INTERNAL STATE
     Vysyx_25060170_top* const __Vm_modelp;
@@ -42,6 +42,6 @@ class alignas(VL_CACHE_LINE_BYTES)Vysyx_25060170_top__Syms final : public Verila
 
     // METHODS
     const char* name() { return TOP.name(); }
-};
+} VL_ATTR_ALIGNED(VL_CACHE_LINE_BYTES);
 
 #endif  // guard

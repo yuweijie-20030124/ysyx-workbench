@@ -13,14 +13,12 @@ VM_TIMING = 0
 VM_COVERAGE = 0
 # Parallel builds?  0/1 (from --output-split)
 VM_PARALLEL_BUILDS = 0
-# Tracing output mode?  0/1 (from --trace-fst/--trace-saif/--trace-vcd)
+# Tracing output mode?  0/1 (from --trace/--trace-fst)
 VM_TRACE = 1
+# Tracing output mode in VCD format?  0/1 (from --trace)
+VM_TRACE_VCD = 1
 # Tracing output mode in FST format?  0/1 (from --trace-fst)
 VM_TRACE_FST = 0
-# Tracing output mode in SAIF format?  0/1 (from --trace-saif)
-VM_TRACE_SAIF = 0
-# Tracing output mode in VCD format?  0/1 (from --trace-vcd)
-VM_TRACE_VCD = 1
 
 ### Object file lists...
 # Generated module classes, fast-path, compile with highest optimization
@@ -46,7 +44,6 @@ VM_SUPPORT_FAST += \
 VM_SUPPORT_SLOW += \
 	Vysyx_25060170_top__Syms \
 	Vysyx_25060170_top__Trace__0__Slow \
-	Vysyx_25060170_top__TraceDecls__0__Slow \
 
 # Global classes, need linked once per executable, fast-path, compile with highest optimization
 VM_GLOBAL_FAST += \

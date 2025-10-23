@@ -2,7 +2,9 @@
 // DESCRIPTION: Verilator output: Design implementation internals
 // See Vysyx_25060170_top.h for the primary calling header
 
-#include "Vysyx_25060170_top__pch.h"
+#include "verilated.h"
+#include "verilated_dpi.h"
+
 #include "Vysyx_25060170_top__Syms.h"
 #include "Vysyx_25060170_top___024root.h"
 
@@ -17,7 +19,7 @@ Vysyx_25060170_top___024root::Vysyx_25060170_top___024root(Vysyx_25060170_top__S
 }
 
 void Vysyx_25060170_top___024root::__Vconfigure(bool first) {
-    (void)first;  // Prevent unused variable warning
+    if (false && first) {}  // Prevent unused
 }
 
 Vysyx_25060170_top___024root::~Vysyx_25060170_top___024root() {
