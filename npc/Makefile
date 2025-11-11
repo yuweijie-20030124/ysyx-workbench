@@ -8,14 +8,15 @@ endif
 
 # Makefile for NPC simulation
 # 检查语法可以用
-TEST_MODULE = ysyx_25060170_idu
+TEST_MODULE = ysyx_25060170_ex_lsu_reg
+TEST_FILE   = vsrc/core/$(TEST_MODULE).v
 
 SRC_FILES = $(wildcard csrc/*.c)
 ##SRC_FILES = csrc/main.c csrc/monitor.c csrc/log.c csrc/sdb.c csrc/timer.c csrc/memory.c \
 			csrc/init.c csrc/cpu-
 ##TEST_FILES = csrc/main.c csrc/monitor.c csrc/log.c csrc/sdb.c csrc/timer.c csrc/memory.c
 
-VERILOG_FILES = $(wildcard vsrc/*.v)
+VERILOG_FILES = $(wildcard vsrc/core/*.v vsrc/debug/*.v vsrc/utils/*.v)
 VERILATOR = verilator
 
 NPC_IMG?= 
@@ -31,7 +32,7 @@ NPC_FLAGS += --diff=/home/yuweijie/ysyx-workbench/nemu/build/riscv32-nemu-interp
 					 --exe --build \
 					 -LDFLAGS "-g -lreadline" \
 					 -Ivsrc \
-					 --top-module ysyx_25060170_top
+					 --top-module ysyx_2ysyx_25060170_if_id_reg5060170_top
 
 
 #-LDFLAGS " $(NEMU_HOME)/build -lriscv32-nemu-interpreter" 
@@ -46,7 +47,7 @@ VERILATOR_FLAGS = -Wall --cc --trace \
 
 GDBVERILATOR_FLAGS = -Wall --cc --trace \
     -CFLAGS "-g -I /home/yuweijie/ysyx-workbench/npc/include" \
-    -CFLAGS "-I /home/yuweijie/ysyx-workbench/nemu/tools/capstone/repo/include" \
+    -CFLAGS "-I /home/yuweiji./core/defe/ysyx-workbench/nemu/tools/capstone/repo/include" \
     --exe --build \
     -LDFLAGS "-g -lreadline -lSDL2" \
     -Ivsrc \
@@ -73,14 +74,14 @@ all:
 checkall:
 	$(VERILATOR) --lint-only -Wall \
 		-I$(NPC_HOME)/vsrc \
-		--top-module ysyx_25060170_top \
-		$(VERILOG_FILES)
+		--top-module ysyx_25060170_top.v \
+		$(VERILOG_FILES) && echo "lint OK" || echo "lint FAILED"
 
 checkone:
 	verilator --lint-only -Wall \
-    -I/home/yuweijie/ysyx-workbench/npc/vsrc \
-    --top-module $(TEST_MODULE) \
-    vsrc/$(TEST_MODULE)
+	-I$(NPC_HOME)/vsrc/core \
+	--top-module $(TEST_MODULE) \
+	$(TEST_FILE) && echo "lint OK" || echo "lint FAILED"
 
 gdb:
 	$(VERILATOR) $(GDBVERILATOR_FLAGS) $(SRC_FILES) $(VERILOG_FILES) 

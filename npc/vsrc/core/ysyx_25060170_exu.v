@@ -1,26 +1,32 @@
 `include "define.v"
 
 module ysyx_25060170_exu(
-    input wire          clk,
-    input wire          rst,
-    input wire [`ysyx_25060170_DATA] op1,
-    input wire [`ysyx_25060170_DATA] op2,
-    input wire [`ysyx_25060170_IMM] imm,
-    input wire [`ysyx_25060170_PC] pc_i,
-    input wire            jump_i,
-    input wire [ 7:0]     alu_sel,
-    input wire            branch_i,
-    input wire [3:0]      csr_ctl,
-    
-    output wire [`ysyx_25060170_REG] store_data,//
-    output wire [`ysyx_25060170_PC] jump_pc_o,//
-    output wire ex_pcsrc_o,//
-    output reg [`ysyx_25060170_DATA] exu_res,//
-	  output wire [`ysyx_25060170_REG]  csr_ex_mstatus     ,//
-	  output wire [`ysyx_25060170_REG]  csr_ex_mepc        ,//
-	  output wire [`ysyx_25060170_REG]  csr_ex_mtvec       ,//
-	  output wire [`ysyx_25060170_REG]  csr_ex_mcause      //
+    //system signals
+    input wire                            rst,
+
+    //from id_ex_reg
+    input wire [`ysyx_25060170_DATA]      op1,
+    input wire [`ysyx_25060170_DATA]      op2,
+    input wire [`ysyx_25060170_IMM]       imm,
+    input wire [`ysyx_25060170_PC]        pc_i,
+    input wire                            jump_i,
+    input wire [7:0]                      alu_sel,
+    input wire                            branch_i,
+    input wire [3:0]                      csr_ctl,
+    input wire [11:0]                     csr_addr_i,
+    input wire [`ysyx_25060170_REG]       read_csr_data,
+
+
+    output wire [`ysyx_25060170_REG]      store_data,
+    output wire [`ysyx_25060170_PC]       jump_pc_o,
+    output wire                           ex_pcsrc_o,
+    output reg  [`ysyx_25060170_DATA]     exu_res,
+    output wire [11:0]                    csr_addr_o,
+    output reg  [`ysyx_25060170_DATA]     write_csr_data,
+    output reg  [`ysyx_25060170_REG]      mcause_value
 );
+
+//!!!!!乘除法并没有办法被综合得很好，能乘除主要是因为有软件，最好还是用硬件乘除器!!!!!
 
 // 32-bit operations
 wire [`ysyx_25060170_DATA] op1_add_op2 = op1 + op2;
@@ -117,10 +123,8 @@ assign jump_pc_o = (alu_sel == `INST_JAL | branch_i) ? pc_i + imm :
 assign store_data = op2;
 
 // CSR
-wire [11:0] csr_addr = (csr_ctl != 4'd0) ? imm[11:0] : 12'd0;
-wire [`ysyx_25060170_DATA] read_csr_data;
-reg [`ysyx_25060170_DATA] write_csr_data;
-reg [`ysyx_25060170_REG] mcause_value;
+assign csr_addr_o = csr_addr_i;
+
 
 
 wire [`ysyx_25060170_DATA] set_data = read_csr_data | op1;
@@ -146,19 +150,19 @@ always @(*) begin
   endcase
 end
 
-ysyx_25060170_csr csr_operate(
-    .clk(clk),  //
-    .rst(rst),  //
-    .csr_ctl(csr_ctl),//
-    .csr_addr(csr_addr),//
-    .mcause_value(mcause_value),//
-    .read_csr_data(read_csr_data),//
-    .write_csr_data(write_csr_data),//
-	.mstatus_o(csr_ex_mstatus),
-	.mepc_o   (csr_ex_mepc   ),
-	.mtvec_o  (csr_ex_mtvec  ),
-	.mcause_o (csr_ex_mcause )
-);
+// ysyx_25060170_csr csr_operate(
+//     .clk(clk),  //
+//     .rst(rst),  //
+//     .csr_ctl(csr_ctl),//
+//     .csr_addr(csr_addr),//
+//     .mcause_value(mcause_value),//
+//     .read_csr_data(read_csr_data),//
+//     .write_csr_data(write_csr_data),//
+// 	   .mstatus_o(csr_ex_mstatus),
+// 	   .mepc_o   (csr_ex_mepc   ),
+// 	   .mtvec_o  (csr_ex_mtvec  ),
+// 	   .mcause_o (csr_ex_mcause )
+// );
 
 // Out to WBU
 assign exu_res = (csr_ctl != 4'd0) ? read_csr_data : alu_res;

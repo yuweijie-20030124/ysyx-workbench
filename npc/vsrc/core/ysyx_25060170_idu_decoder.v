@@ -2,17 +2,17 @@
 
 module ysyx_25060170_idu_decoder(
 	input wire                 		        rst  	,
-	input wire   [`ysyx_25060170_INST]	    inst	,//
+	input wire   [`ysyx_25060170_INST]	    inst	,
   
-	output wire						        rs1_ena	,//
-	output wire						        rs2_ena	,//m
-	output wire						        jump	,//
-	output wire  [1:0]          			wb_ctl  ,//
-	output reg   [3:0]          			mem_ctl ,//
-	output wire                 			branch  ,//
-	output reg   [`ysyx_25060170_IMM] 		ext_imm ,//
-	output wire						        imm_ena	,//
-    output wire	 [7:0]					    alu_ctl	//
+	output wire						        rs1_ena	,
+	output wire						        rs2_ena	,
+	output wire						        jump	,
+	output wire  [1:0]          			wb_ctl  ,
+	output reg   [3:0]          			mem_ctl ,
+	output wire                 			branch  ,
+	output reg   [`ysyx_25060170_IMM] 		ext_imm ,
+	output wire						        imm_ena	,
+    output wire	 [7:0]					    alu_ctl	
 );
 
 wire [6:0] opcode ;
@@ -106,7 +106,7 @@ wire inst_slli  = inst_type[4] & ~funct3[2] & ~funct3[1] &  funct3[0]   ;
 wire inst_srli  = inst_type[4] &  funct3[2] & ~funct3[1] &  funct3[0] & ~i_imm[10]   ;
 wire inst_srai  = inst_type[4] &  funct3[2] & ~funct3[1] &  funct3[0] &  i_imm[10]   ;
 
-wire inst_ecall  = inst_type[7] & ~funct3[2] & ~funct3[1] & ~funct3[0] && (i_imm == 12'd0)         ;
+wire inst_ecall  = inst_type[7] & ~funct3[2] & ~funct3[1] & ~funct3[0] && (i_imm == 12'd0)         ;	
 wire inst_mret   = inst_type[7] & ~funct3[2] & ~funct3[1] & ~funct3[0] & funct7[3] & funct7[4];
 wire inst_csrrw  = inst_type[7] & ~funct3[2] & ~funct3[1] &  funct3[0]   ;
 wire inst_csrrs  = inst_type[7] & ~funct3[2] &  funct3[1] & ~funct3[0]   ;
@@ -147,49 +147,54 @@ assign branch = inst_type[2];
 assign jump = inst_jal | inst_jalr;
 
 //Extend IMM
-always @(*) begin
-	if (rst == `ysyx_25060170_RSTABLE) begin
-		ext_imm = `ysyx_25060170_ZERO32;
-	end
-	else if (inst_type[1] | inst_type[4] | inst_type[5] | inst_type[7] | inst_jalr) begin
-		ext_imm = {{20{i_imm[11]}}, i_imm}; // i_imm扩展为32位
-	end
-	else if (inst_lui | inst_auipc) begin
-		ext_imm = {u_imm, 12'b0}; // u_imm扩展为32位
-	end
-	else if (inst_jal) begin
-		ext_imm = {{11{j_imm[20]}}, j_imm[20:1], 1'b0}; // j_imm扩展为32位，注意左移1位
-	end
-	else if (inst_type[0]) begin
-		ext_imm = {{20{s_imm[11]}}, s_imm}; // s_imm扩展为32位
-	end
-	else if (inst_type[2]) begin
-		ext_imm = {{19{b_imm[12]}}, b_imm, 1'b0}; // b_imm扩展为32位，注意左移1位
-	end
-	else begin
-		ext_imm = `ysyx_25060170_ZERO32; // 默认值
-	end
-end
+assign ext_imm = 32'b0 |
+				{32{rst == `ysyx_25060170_RSTABLE}} & `ysyx_25060170_ZERO32 | //复位设置为0
+				{32{(inst_type[1] | inst_type[4] | inst_type[5] | inst_type[7] | inst_jalr)}} & {{20{i_imm[11]}}, i_imm} | // i_imm扩展为32位
+				{32{(inst_lui | inst_auipc)}} & {u_imm, 12'b0} | // u_imm扩展为32位
+				{32{inst_jal}} & {{11{j_imm[20]}}, j_imm[20:1], 1'b0} | // j_imm扩展为32位，注意左移1位
+				{32{inst_type[0]}} & {{20{s_imm[11]}}, s_imm} | // s_imm扩展为32位
+				{32{inst_type[2]}} & {{19{b_imm[12]}}, b_imm, 1'b0} ; // b_imm扩展为32位，注意左移1位
+
+// always @(*) begin
+// 	if (rst == `ysyx_25060170_RSTABLE) begin
+// 		ext_imm = `ysyx_25060170_ZERO32;
+// 	end
+// 	else if (inst_type[1] | inst_type[4] | inst_type[5] | inst_type[7] | inst_jalr) begin
+// 		ext_imm = {{20{i_imm[11]}}, i_imm}; // i_imm扩展为32位
+// 	end
+// 	else if (inst_lui | inst_auipc) begin
+// 		ext_imm = {u_imm, 12'b0}; // u_imm扩展为32位
+// 	end
+// 	else if (inst_jal) begin
+// 		ext_imm = {{11{j_imm[20]}}, j_imm[20:1], 1'b0}; // j_imm扩展为32位，注意左移1位
+// 	end
+// 	else if (inst_type[0]) begin
+// 		ext_imm = {{20{s_imm[11]}}, s_imm}; // s_imm扩展为32位
+// 	end
+// 	else if (inst_type[2]) begin
+// 		ext_imm = {{19{b_imm[12]}}, b_imm, 1'b0}; // b_imm扩展为32位，注意左移1位
+// 	end
+// 	else begin
+// 		ext_imm = `ysyx_25060170_ZERO32; // 默认值
+// 	end
+// end
 
 assign imm_ena =  inst_type[0] | inst_type[1] | inst_type[2] | inst_type[4] | inst_type[5] | inst_type[7] |  inst_lui | inst_auipc  ;
 
 //output to mem signal
-always @(*) begin
-  case(alu_ctl) 
-    `INST_SB : begin mem_ctl = 4'b0001; end
-    `INST_SH : begin mem_ctl = 4'b0010; end
-    `INST_SW : begin mem_ctl = 4'b0100; end
-    `INST_SD : begin mem_ctl = 4'b0101; end
-    `INST_LB : begin mem_ctl = 4'b1001; end
-    `INST_LH : begin mem_ctl = 4'b1010; end
-    `INST_LW : begin mem_ctl = 4'b1011; end
-    `INST_LD : begin mem_ctl = 4'b1100; end
-    `INST_LBU: begin mem_ctl = 4'b1101; end
-    `INST_LHU: begin mem_ctl = 4'b1110; end
-    `INST_LWU: begin mem_ctl = 4'b1111; end
-     default : begin mem_ctl = 4'b0000; end
-  endcase
-end
+
+assign mem_ctl = 	 4'b0 | 
+					{4{alu_ctl == `INST_SB}} & 4'b0001 |
+					{4{alu_ctl == `INST_SH}} & 4'b0010 |
+					{4{alu_ctl == `INST_SW}} & 4'b0100 |
+					{4{alu_ctl == `INST_SD}} & 4'b0101 |
+					{4{alu_ctl == `INST_LB}} & 4'b1001 |
+					{4{alu_ctl == `INST_LH}} & 4'b1010 |
+					{4{alu_ctl == `INST_LW}} & 4'b1011 |
+					{4{alu_ctl == `INST_LD}} & 4'b1100 |
+					{4{alu_ctl == `INST_LBU}}& 4'b1101 |
+					{4{alu_ctl == `INST_LHU}}& 4'b1110 |
+					{4{alu_ctl == `INST_LWU}}& 4'b1111 ;
 
 
 //output to wb signal 

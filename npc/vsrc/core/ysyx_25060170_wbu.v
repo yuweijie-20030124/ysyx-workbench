@@ -2,12 +2,12 @@
 
  module ysyx_25060170_wbu(
  	
- 	input	    wire            		rst  ,
- 	input	    wire [`ysyx_25060170_DATA]  ls_rd_data  ,//
- 	input       wire [1:0]      		wb_ctl    ,//
- 	input       wire [`ysyx_25060170_DATA]  exu_res      ,
+ 	input	    wire            		         rst         ,
+ 	input	    wire [`ysyx_25060170_DATA]   ls_rd_data  ,
+ 	input     wire [1:0]      		         wb_ctl      ,
+ 	input     wire [`ysyx_25060170_DATA]   exu_res     ,
  	
- 	output      reg  [`ysyx_25060170_DATA]  wb_data   
+ 	output    reg  [`ysyx_25060170_DATA]   wb_data   
  	
 );
 

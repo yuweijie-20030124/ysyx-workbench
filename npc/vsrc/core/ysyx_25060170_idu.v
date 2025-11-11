@@ -1,40 +1,46 @@
  `include "define.v"
 module ysyx_25060170_idu(
 	//system input
-	input	  wire		       				rst	,	
+	input	  wire		       					rst				,	
+
+	//from if_id signal		
+	input	  wire [`ysyx_25060170_INST]		inst_i			,
+	input	  wire [`ysyx_25060170_PC]			pc_i			,
+
+	//regfile signal		
+	output    wire [`ysyx_25060170_REGADDR] 	rs1_addr 		,
+	output    wire				 				rs1_ena  		,
+	input     wire [`ysyx_25060170_REG]     	rs1_data 		,
+
+	output    wire [`ysyx_25060170_REGADDR] 	rs2_addr 		,
+	output    wire						 		rs2_ena  		,
+	input     wire [`ysyx_25060170_REG]     	rs2_data 		,
+
+	output    wire				 				rd_ena  		,
+  	output    wire [`ysyx_25060170_REGADDR] 	rd_addr 		,
+
+	//to exu out signal		
+	output    wire [7:0]         				alusrc_o  		,
+	output    wire [3:0]      					lsctl_o   		,	//表示lsu阶段应该选取什么样的位宽
+	output    wire [1:0]     					wbctl_o    		,
+	output    wire            					branch_o   		,
+	output    wire            					jump_o     		,
+	output    wire [3:0]                    	csr_ctl    		,
+
+	//id out signal		
+	output    reg  [`ysyx_25060170_DATA]  		op1 			,
+	output    reg  [`ysyx_25060170_DATA]  		op2 			, 
+	output    reg  [`ysyx_25060170_IMM]     	imm 			,
+	output	  wire [`ysyx_25060170_REGADDR] 	idu_dpic_rd_addr,
+	output	  wire [`ysyx_25060170_PC]			pc_o			,
 	
-	//ifu input
-	input	  wire [`ysyx_25060170_INST]	inst_i	,
-	input	  wire [`ysyx_25060170_PC]		pc_i	,
-	
-	//regfile signal
-	output    wire [`ysyx_25060170_REGADDR] rs1_addr ,//
-	output    wire				 			rs1_ena  ,//
-	input     wire [`ysyx_25060170_REG]     rs1_data ,
-	
-	output    wire [`ysyx_25060170_REGADDR] rs2_addr ,//
-	output    wire						 	rs2_ena  ,//
-	input     wire [`ysyx_25060170_REG]     rs2_data ,
-	
-	output    wire				 			rd_ena  ,//
-  	output    wire [`ysyx_25060170_REGADDR] rd_addr ,//
-        
-	//control out signal
-	output    wire [7:0]         			alusrc_o  ,//
-	output    wire [3:0]      				lsctl_o   ,//
-	output    wire [1:0]     				wbctl_o    ,//
-	output    wire            				branch_o   ,//
-	output    wire            				jump_o     ,//
-	output    wire [3:0]                    csr_ctl    ,//
-	
-	//id out signal
-	output    reg  [`ysyx_25060170_DATA]  	op1 ,//
-	output    reg  [`ysyx_25060170_DATA]  	op2 , //
-	output    reg  [`ysyx_25060170_IMM]     imm ,//
-	output	  wire 	[`ysyx_25060170_REGADDR] idu_dpic_rd_addr,
-	output	  wire [`ysyx_25060170_PC]		pc_o,//
-	
-	output    wire 							magic_flag
+	//csr control signal
+	input 	 wire [`ysyx_25060170_REG] 			csr_rdata_i		,
+	output   reg  [11:0]					  	csr_addr_o		,
+	output   reg  [`ysyx_25060170_REG] 			csr_wdata_o		,
+
+	//magic flag for NEMU_STOP
+	output    wire 								magic_flag
 );
 
 assign idu_dpic_rd_addr = rd;
@@ -63,6 +69,14 @@ ysyx_25060170_idu_decoder decode(
  	.branch(branch_o) ,
 	.alu_ctl(alusrc_o)
 );
+//----------------------------------decode---------------------------//
+wire   [ 4:0]   rd     ;
+wire   [ 4:0]   rs1    ;
+wire   [ 4:0]   rs2    ;
+assign  rd       =  inst_i [11:7]   ;
+assign  rs1      =  inst_i [19:15]  ;
+assign  rs2      =  inst_i [24:20]  ;
+assign  magic_flag = inst_i == 32'b01000000000000000000000000110011 ? 1'b1 : 1'b0;
 
 //-------------------------------output--------------------------//
 
@@ -90,6 +104,9 @@ always @(*) begin
  end
 
 //csr
+assign csr_wdata_o = csr_rd_ena ? csr_rdata_i : `ysyx_25060170_ZERO32;
+assign csr_addr_o = inst_i[31:20];
+
 reg csr_wr_ena;
 reg csr_rd_ena;
 reg mret_ena;		//机器模式异常返回
@@ -127,3 +144,4 @@ assign csr_ctl = {csr_wr_ena, csr_rd_ena, ecall_ena, mret_ena};//csr控制器
 assign pc_o = rst == `ysyx_25060170_RSTABLE ? `ysyx_25060170_ZERO32 : pc_i	;
 
 endmodule
+
