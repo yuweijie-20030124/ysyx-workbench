@@ -18,7 +18,7 @@ always @(*) begin
     else begin
       case(wb_ctl)
         2'b01 :		begin wb_data = ls_rd_data ; end
-        2'b10 : 	begin wb_data = exu_res    ; end
+        2'b10 : 	   begin wb_data = exu_res    ; end
         default : 	begin wb_data = `ysyx_25060170_ZERO32  ; end
     endcase
  end

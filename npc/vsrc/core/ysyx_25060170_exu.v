@@ -12,8 +12,13 @@ module ysyx_25060170_exu(
     input wire                            jump_i,
     input wire [7:0]                      alu_sel,
     input wire                            branch_i,
+    input wire [3:0]                      ls_ctl_i,
+    input wire [1:0]                      wbctl_i,
     input wire [3:0]                      csr_ctl,
     input wire [11:0]                     csr_addr_i,
+    input wire                            rd_ena_i,
+    input wire [`ysyx_25060170_REGADDR]   rd_addr_i,
+    //from csr
     input wire [`ysyx_25060170_REG]       read_csr_data,
 
 
@@ -21,13 +26,21 @@ module ysyx_25060170_exu(
     output wire [`ysyx_25060170_PC]       jump_pc_o,
     output wire                           ex_pcsrc_o,
     output reg  [`ysyx_25060170_DATA]     exu_res,
+    output wire [3:0]                     ls_ctl_o,
+    output wire [1:0]                     wbctl_o,
     output wire [11:0]                    csr_addr_o,
+    output wire                            rd_ena_o,
+    output wire [`ysyx_25060170_REGADDR]   rd_addr_o,
     output reg  [`ysyx_25060170_DATA]     write_csr_data,
     output reg  [`ysyx_25060170_REG]      mcause_value
 );
 
 //!!!!!乘除法并没有办法被综合得很好，能乘除主要是因为有软件，最好还是用硬件乘除器!!!!!
 
+assign ls_ctl_o = ls_ctl_i;
+assign wbctl_o = wbctl_i;
+assign rd_ena_o = rd_ena_i;
+assign rd_addr_o = rd_addr_i;
 // 32-bit operations
 wire [`ysyx_25060170_DATA] op1_add_op2 = op1 + op2;
 

@@ -1,27 +1,43 @@
 `include "define.v"
 
 module ysyx_25060170_lsu(
-    input wire rst,//
-    input wire clk,//
-    input wire [`ysyx_25060170_DATA] alu_res,//
-    input wire [`ysyx_25060170_DATA] store_data,//
-    input wire [3:0] ls_ctl,//
-    output wire [`ysyx_25060170_DATA] ls_data_o
+    input  wire                              rst,
+    input  wire [`ysyx_25060170_DATA]        alu_res,
+    input  wire [`ysyx_25060170_DATA]        store_data,
+    input  wire [3:0]                        ls_ctl,
+    input  wire [1:0]                        wb_ctl_i,
+    input  wire                              rd_ena_i,
+    input  wire [`ysyx_25060170_REGADDR]     rd_addr_i,
+    input  wire [`ysyx_25060170_DATA]        exu_res_i,
+    input  wire [`ysyx_25060170_DATA]        write_csr_data_i,
+    output wire [`ysyx_25060170_DATA]        ls_data_o,
+    output wire [1:0]                        wb_ctl_o,
+    output wire                              rd_ena_o,
+    output wire [`ysyx_25060170_REGADDR]     rd_addr_o,
+    output wire [`ysyx_25060170_DATA]        exu_res_o,
+    output wire [`ysyx_25060170_DATA]        write_csr_data_o,
+    //about dpi-c   
+    output wire                              re,
+    output wire                              we,
+    input  reg  [`ysyx_25060170_DATA]        data_i,
+    output reg  [`ysyx_25060170_DATA]        data_o,
+    output wire [`ysyx_25060170_DATAADDR]    raddr,
+    output wire [`ysyx_25060170_DATAADDR]    waddr,
+    output reg  [7:0]                        wlen,
+    output reg  [7:0]                        rlen
 );
 
-wire [`ysyx_25060170_DATAADDR] raddr;
-wire [`ysyx_25060170_DATAADDR] waddr;
-
 /* verilator lint_off UNUSEDSIGNAL */
-reg [7:0] rlen = 8'd4;  // 32-bit: maximum 4 bytes
-reg [7:0] wlen;
+assign rlen = 8'd4;  // 32-bit: always read 4 bytes
 /* verilator lint_on UNUSEDSIGNAL */
 
-reg [`ysyx_25060170_DATA] data_i;
-reg [`ysyx_25060170_DATA] data_o;
-wire re;
-wire we;
 reg [`ysyx_25060170_DATA] load_data;
+assign wb_ctl_o = wb_ctl_i;
+assign rd_ena_o = rd_ena_i;
+assign rd_addr_o = rd_addr_i;
+assign exu_res_o = exu_res_i;
+assign write_csr_data_o = write_csr_data_i;
+
 
 assign re = (rst == `ysyx_25060170_RSTABLE | ls_ctl == 4'b0000) ? 1'b0 : ls_ctl[3];
 assign we = (rst == `ysyx_25060170_RSTABLE | ls_ctl == 4'b0000) ? 1'b0 : ~ls_ctl[3];
@@ -145,17 +161,17 @@ always @(*) begin
 end
 
 //--------------------------dpi-c--------------------------------------------------------------------//
-import "DPI-C" function void pmem_read(input int raddr, output int rdata, input byte rlen);
-import "DPI-C" function void pmem_write(input int waddr, input int wdata, input byte wlen);
+// import "DPI-C" function void pmem_read(input int raddr, output int rdata, input byte rlen);
+// import "DPI-C" function void pmem_write(input int waddr, input int wdata, input byte wlen);
 
-always @(negedge clk) begin
-    if (re) begin
-        pmem_read(raddr, data_i, rlen);
-    end
-    if (we) begin
-        pmem_write(waddr, data_o, wlen);
-    end
-end
+// always @(negedge clk) begin
+//     if (re) begin
+//         pmem_read(raddr, data_i, rlen);
+//     end
+//     if (we) begin
+//         pmem_write(waddr, data_o, wlen);
+//     end
+// end
 
 //------------------------output----------------------------------------------------------------------//
 assign ls_data_o = re ? load_data : `ysyx_25060170_ZERO32;

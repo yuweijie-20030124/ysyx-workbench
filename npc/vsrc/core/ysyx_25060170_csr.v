@@ -2,19 +2,19 @@
 
 module ysyx_25060170_csr(
   //system signals
-  input wire                        clk           , 
-  input wire                        rst           ,
-
-  //from exu
-  input wire [3:0]                  csr_ctl       ,  // {csr_wr_ena, csr_rd_ena, ecall_ena, mret_ena}
-  input wire [11:0]                 csr_addr      ,   //csr地址
-  input wire [`ysyx_25060170_REG]   mcause_value  ,
-  input wire [`ysyx_25060170_DATA]  write_csr_data,
-  output wire [`ysyx_25060170_DATA] read_csr_data ,
-  output wire [`ysyx_25060170_REG]  mstatus_o     ,
-  output wire [`ysyx_25060170_REG]  mepc_o        ,
-  output wire [`ysyx_25060170_REG]  mtvec_o       ,
-  output wire [`ysyx_25060170_REG]  mcause_o      
+  input  wire                        clk           , 
+  input  wire                        rst           ,
+ 
+  //from  exu
+  input  wire [3:0]                  csr_ctl       ,   // {csr_wr_ena, csr_rd_ena, ecall_ena, mret_ena}
+  input  wire [11:0]                 csr_addr      ,   //csr地址
+  input  wire [`ysyx_25060170_REG]   mcause_value  ,
+  input  wire [`ysyx_25060170_DATA]  write_csr_data,
+  output wire [`ysyx_25060170_DATA]  read_csr_data ,
+  output wire [`ysyx_25060170_REG]   mstatus_o     ,
+  output wire [`ysyx_25060170_REG]   mepc_o        ,
+  output wire [`ysyx_25060170_REG]   mtvec_o       ,
+  output wire [`ysyx_25060170_REG]   mcause_o      
 );
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -138,19 +138,3 @@ assign mcause_o  = mcause ;
 
 endmodule
 
-///////////////////////////////////////////////////////////////////////////
-// 0X300 mstatus
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-wire mstatus_rd = (csr_addr == 12'h300) && csr_ctl[2];
-wire mstatus_wr = (csr_addr == 12'h300) && csr_ctl[3];
-reg mstatus_mie;
-reg mstatus_mpie;
-reg [1:0] mstatus_mpp;
-reg [`ysyx_25060170_REG] mstatus;  // 删除初始赋值
-
-wire mstatus_ie_ena = mstatus_wr | csr_ctl[1] | csr_ctl[0];
-
-wire mie_set = csr_ctl[1] ? 1'b0 : 
-               csr_ctl[0] ? mstatus_mpie : 
-                            mstatus_wr ? write_csr_data[3] :
-                            mstatus_mie;

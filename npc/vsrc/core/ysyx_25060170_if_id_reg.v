@@ -2,19 +2,20 @@
 
 module ysyx_25060170_if_id_reg (
  //数据信号
- input  wire								          clk			  ,
- input  wire								          rst			  ,
- input	wire								          pcsrc_i		,// from exu 跳转信号
- input	wire 	[`ysyx_25060170_PC]			ex_pc_i  	, 
- 
- input  wire	[`ysyx_25060170_INST]		inst_i	  ,
- 
- output	reg 	[`ysyx_25060170_PC]			pc_o  	  ,
- output	reg 	[`ysyx_25060170_INST]		inst_o	  ,
+ input  wire						    clk		  ,
+ input  wire						    rst		  ,
+ input	wire						    pcsrc_i	  ,
+ // from exu 跳转信号
+ input	wire 	[`ysyx_25060170_PC]	    ex_pc_i   , 
+ // from dpic 取指令         
+ input  wire	[`ysyx_25060170_INST]	inst_i	  ,
+          
+ output	reg 	[`ysyx_25060170_PC]		pc_o  	  ,
+ output	reg 	[`ysyx_25060170_INST]	inst_o	  ,
 
  //流水线级控制信号
- input wire                           valid     ,
- output wire                          ready
+ input wire                             valid     ,
+ output wire                            ready
  );
 
  reg [`ysyx_25060170_PC] pc_next;
@@ -39,4 +40,12 @@ module ysyx_25060170_if_id_reg (
   else if( & valid == 1 ) begin
      	pc_o   <= pc_next;
      	inst_o <= inst_i;
-      ready  <= 1'b1;
+        ready  <= 1'b1;
+  end
+  else begin
+      ready  <= 1'b0;
+  end
+ end
+
+endmodule
+

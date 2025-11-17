@@ -6,11 +6,11 @@
 	input  wire	clk,
 	input  wire rst,
 	/* verilator lint_on UNUSEDSIGNAL */
- 	input  wire	[`ysyx_25060170_INST]	pc_i,
-	output reg	[`ysyx_25060170_PC]		inst_o,
+ 	input  wire	[`ysyx_25060170_INST]	 pc_i,
+	output reg	[`ysyx_25060170_PC]		 inst_o,
 	//for ftrace
 	input wire 	[`ysyx_25060170_REGADDR] rd_addr,
-	input wire 	[`ysyx_25060170_IMM]	imm,
+	input wire 	[`ysyx_25060170_IMM]	 imm,
 	//for difftest
 	input  wire	[`ysyx_25060170_REG]	regs0 ,
 	input  wire	[`ysyx_25060170_REG]	regs1 ,
@@ -49,6 +49,19 @@
 	input  wire	[`ysyx_25060170_REG] 	mepc,
 	input  wire	[`ysyx_25060170_REG] 	mcause,
 
+	//from lsu
+	input wire 							re,
+	input wire 							we,
+	input wire [`ysyx_25060170_DATA] 	data_i,
+	input wire [7:0] 					wlen,
+	input wire [7:0] 					rlen,
+	
+
+	//to lsu
+	output wire [`ysyx_25060170_DATA]     data_o,
+	input  wire [`ysyx_25060170_DATAADDR] raddr,
+	input  wire [`ysyx_25060170_DATAADDR] waddr,
+
 	//for magic number
 	input  wire                           magic_flag
 );
@@ -58,6 +71,8 @@
 import "DPI-C" function void pc_inst_end(input int thepc_data, input int the_inst);
 
 import "DPI-C" function void pmem_read(input int raddr, output int rdata, input byte rlen);
+
+import "DPI-C" function void pmem_write(input int waddr, input int wdata, input byte wlen);
 
 import "DPI-C" function void set_npc_exit(int pc, int halt_ret);
 
@@ -105,10 +120,17 @@ import "DPI-C" function void difftest_dut_regs(
  	input int regs31 
  );
 
-
 /***********************************use dpic*************************************/
 
-reg [7:0] rlen = 8'd4;
+always @(negedge clk) begin
+    if (re) begin
+        pmem_read(raddr, data_o, rlen);
+    end
+    if (we) begin
+        pmem_write(waddr, data_i, wlen);
+    end
+end
+
 always @(*) begin
     pmem_read(pc_i,inst_o,rlen);
     pc_inst_end(pc_i, inst_o);
