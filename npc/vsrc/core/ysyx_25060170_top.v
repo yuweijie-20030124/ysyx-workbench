@@ -423,14 +423,16 @@ ysyx_25060170_regfile u_ysyx_25060170_regfile (
 //------------------csr--------------------//
 wire    [`ysyx_25060170_DATA]    read_csr_data          ;
 wire    [`ysyx_25060170_REG]     csr_mcause_value_o     ;
+wire                             csr_rd_ena_i           ;
 
 ysyx_25060170_csr u_ysyx_25060170_csr (
     //system signals
     .clk               (clk),
     .rst               (rst),
     //from exu
+    .csr_rd_ena        (csr_rd_ena_i),
     .csr_ctl           (),// {csr_wr_ena, csr_rd_ena, ecall_ena, mret_ena}
-    .csr_addr          (ex_ls_reg_csr_addr_o),
+    .csr_addr          (id_csr_addr_o),
     //csr地址
     .mcause_value      (csr_mcause_value_o),
     .write_csr_data    (lsu_wbu_reg_write_csr_data_o),

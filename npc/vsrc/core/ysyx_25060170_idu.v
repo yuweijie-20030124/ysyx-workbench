@@ -25,7 +25,7 @@ module ysyx_25060170_idu(
 	output    wire [1:0]     					wbctl_o    		,
 	output    wire            					branch_o   		,
 	output    wire            					jump_o     		,
-	output    wire [3:0]                    	csr_ctl    		,
+	output    wire [3:0]                    	csr_ctl    		, //把这里面的read_enable分离开来23：26
 
 	//id out signal		
 	output    reg  [`ysyx_25060170_DATA]  		op1 			,

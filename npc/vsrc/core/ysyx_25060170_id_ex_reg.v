@@ -18,8 +18,6 @@ module ysyx_25060170_id_ex_reg(
     input   wire            			   branch_i   ,
     input   wire            			   jump_i     ,
     input   wire [3:0]                     csr_ctl_i  ,
-    input   wire                           ena_i,
-    input   wire [`ysyx_25060170_REGADDR]  addr_i,
     input   wire                           valid      ,
     output  wire                           ready      ,
     //outputs about exu
