@@ -51,9 +51,7 @@ wire   [`ysyx_25060170_DATA]  		id_op2_o 		;
 wire   [`ysyx_25060170_IMM]     	id_imm_o 		;
 wire   [`ysyx_25060170_REGADDR]  	idu_dpic_rd_addr;
 wire   [`ysyx_25060170_PC]			id_pc_o			;
-wire   [`ysyx_25060170_REG] 		id_csr_rdata_i	;//
 wire   [11:0]					  	id_csr_addr_o	;
-wire   [`ysyx_25060170_REG] 		id_csr_wdata_o	;
 wire  								magic_flag		;
 
 ysyx_25060170_idu u_ysyx_25060170_idu (
@@ -85,9 +83,9 @@ ysyx_25060170_idu u_ysyx_25060170_idu (
 	.idu_dpic_rd_addr    (idu_dpic_rd_addr),
     .pc_o                (id_pc_o),
     //csr control signal
-	.csr_rdata_i         (id_csr_rdata_i),
+	// .csr_rdata_i         (read_csr_data),
     .csr_addr_o          (id_csr_addr_o),
-    .csr_wdata_o         (id_csr_wdata_o),
+    // .csr_wdata_o         (id_csr_wdata_o),
     //magic flag for NEMU_STOP
 	.magic_flag          (magic_flag)
 );
@@ -98,7 +96,6 @@ wire	[`ysyx_25060170_DATA]    id_ex_reg_op2_o       ;
 wire	[`ysyx_25060170_IMM]     id_ex_reg_imm_o	   ;  
 wire	[`ysyx_25060170_PC]      id_ex_reg_pc_o        ;
 wire	[11:0]                   id_ex_reg_csr_addr_o  ;
-wire	[`ysyx_25060170_REG]     id_ex_reg_csr_wdata_o ;
 wire	[7:0]                    id_ex_reg_alusrc_o    ;
 wire	[3:0]                    id_ex_reg_lsctl_o     ;
 wire	[1:0]                    id_ex_reg_wbctl_o     ;
@@ -119,7 +116,6 @@ ysyx_25060170_id_ex_reg u_ysyx_25060170_id_ex_reg (
     .imm_i          (id_imm_o),
     .pc_i           (id_pc_o),
     .csr_addr_i     (id_csr_addr_o),
-    .csr_wdata_i    (id_csr_wdata_o),
     .rd_ena_i       (rd_ena),
     .rd_addr_i      (rd_addr),
     .alusrc_i       (id_alusrc_o),
@@ -136,7 +132,6 @@ ysyx_25060170_id_ex_reg u_ysyx_25060170_id_ex_reg (
     .imm_o          (id_ex_reg_imm_o),
     .pc_o           (id_ex_reg_pc_o),
     .csr_addr_o     (id_ex_reg_csr_addr_o),
-    .csr_wdata_o    (id_ex_reg_csr_wdata_o),
     .rd_ena_o       (id_ex_reg_rd_ena_o),
     .rd_addr_o      (id_ex_reg_rd_addr_o),
     .alusrc_o       (id_ex_reg_alusrc_o),
@@ -197,8 +192,7 @@ ysyx_25060170_exu u_ysyx_25060170_exu (
 
 //------------------ex_lsu_reg--------------------//
 wire	[`ysyx_25060170_REG]	 ex_ls_reg_store_data_o		;
-wire	[`ysyx_25060170_PC]		 ex_ls_reg_jump_pc_o       	;
-wire	[`ysyx_25060170_DATA]	 ex_ls_reg_exu_res_o			;	
+wire	[`ysyx_25060170_DATA]	 ex_ls_reg_exu_res_o		;	
 wire	[11:0]					 ex_ls_reg_csr_addr_o     	;
 wire	[`ysyx_25060170_DATA]	 ex_ls_reg_write_csr_data_o	;
 wire	[`ysyx_25060170_REG]	 ex_ls_reg_mcause_value_o	;
@@ -208,8 +202,7 @@ wire                             ex_ls_reg_rd_ena_o        	;
 wire    [`ysyx_25060170_REGADDR] ex_ls_reg_rd_addr_o        ;
 wire                        	 ex_lsu_valid_i          	;
 wire                        	 ex_lsu_ready_o          	;
-wire                        	 lsu_wb_valid_o          	;
-wire                        	 lsu_wb_next_ready       	;
+
 
 ysyx_25060170_ex_lsu_reg u_ysyx_25060170_ex_lsu_reg (
     //system signals
@@ -218,11 +211,10 @@ ysyx_25060170_ex_lsu_reg u_ysyx_25060170_ex_lsu_reg (
     //signals for pipeline
     .valid               (id_ex_reg_valid_o),
     .ready               (id_ex_reg_next_ready_i),
-    .valid_o             (lsu_wb_valid_o),
-    .next_ready          (lsu_wb_next_ready),
+    .valid_o             (ex_lsu_valid_i),
+    .next_ready          (ex_lsu_ready_o),
     //signals from exu
     .store_data_i        (exu_store_data_o),
-    .jump_pc_i           (exu_jump_pc_o),
     .ex_pcsrc_i          (exu_ifu_pcsrc),
     .exu_res_i           (exu_res_o),
     .csr_addr_i          (exu_csr_addr_o),
@@ -234,7 +226,6 @@ ysyx_25060170_ex_lsu_reg u_ysyx_25060170_ex_lsu_reg (
     .wbctl_i             (exu_wb_ctl_o),
 	//outputs to lsu
     .store_data_o        (ex_ls_reg_store_data_o),
-    .jump_pc_o           (ex_ls_reg_jump_pc_o),
     .exu_res_o           (ex_ls_reg_exu_res_o),
     .csr_addr_o          (ex_ls_reg_csr_addr_o),
     .write_csr_data_o    (ex_ls_reg_write_csr_data_o),
@@ -248,7 +239,7 @@ ysyx_25060170_ex_lsu_reg u_ysyx_25060170_ex_lsu_reg (
 );
 
 //------------------lsu--------------------//
-wire    [`ysyx_25060170_DATA]    lsu_ls_data_o       ;
+wire    [`ysyx_25060170_DATA]    lsu_ls_data_o          ;
 wire                             dpic_lsu_re              ;
 wire                             dpic_lsu_we              ;
 wire [`ysyx_25060170_DATA]       dpic_dpic_data_i         ;
@@ -258,28 +249,33 @@ wire [1:0]                       ls_wbctl_o          ;
 wire                             lsu_rd_ena_o        ;
 wire [`ysyx_25060170_REGADDR]    lsu_rd_addr_o       ;
 wire [`ysyx_25060170_DATA]       ls_exures_o         ;
-wire [`ysyx_25060170_DATA]       lsu_write_csr_data_o ;        ;
+wire [`ysyx_25060170_DATA]       lsu_write_csr_data_o ;        
+wire [`ysyx_25060170_DATA]       lsu_mcause_value_o          ;
 wire [`ysyx_25060170_DATAADDR]   dpic_lsu_raddr           ;
 wire [`ysyx_25060170_DATAADDR]   dpic_lsu_waddr           ;
 wire [7:0]                       dpic_lsu_wlen            ;
 wire [7:0]                       dpic_lsu_rlen            ;
 
 ysyx_25060170_lsu u_ysyx_25060170_lsu (
-    .rst           (rst),
-    .alu_res       (ex_ls_reg_exu_res_o),
-    .store_data    (ex_ls_reg_store_data_o),
-    .ls_ctl        (ex_ls_reg_ls_ctl_o),
-    .wb_ctl_i      (ex_ls_reg_wb_ctl_o),
-    .rd_ena_i      (ex_ls_reg_rd_ena_o),
-    .rd_addr_i     (ex_ls_reg_rd_addr_o),
-    .ls_data_o     (lsu_ls_data_o),
-    .wb_ctl_o      (ls_wbctl_o),
-    .rd_ena_o      (lsu_rd_ena_o),
-    .rd_addr_o     (lsu_rd_addr_o),
-    .exu_res_i     (ex_ls_reg_exu_res_o),
-    .exu_res_o     (ls_exures_o),
-    .write_csr_data_i (ex_ls_reg_write_csr_data_o),
-    .write_csr_data_o (lsu_write_csr_data_o),
+    .rst                (rst),
+    .alu_res            (ex_ls_reg_exu_res_o),
+    .store_data         (ex_ls_reg_store_data_o),
+    .ls_ctl             (ex_ls_reg_ls_ctl_o),
+    .wb_ctl_i           (ex_ls_reg_wb_ctl_o),
+    .rd_ena_i           (ex_ls_reg_rd_ena_o),
+    .rd_addr_i          (ex_ls_reg_rd_addr_o),
+    .ls_data_o          (lsu_ls_data_o),
+    .wb_ctl_o           (ls_wbctl_o),
+    .rd_ena_o           (lsu_rd_ena_o),
+    .rd_addr_o          (lsu_rd_addr_o),
+    .exu_res_i          (ex_ls_reg_exu_res_o),
+    .exu_res_o          (ls_exures_o),
+    .write_csr_data_i   (ex_ls_reg_write_csr_data_o),
+    .write_csr_data_o   (lsu_write_csr_data_o),
+    .mcause_value_i     (ex_ls_reg_mcause_value_o),
+    .mcause_value_o     (lsu_mcause_value_o),
+    .csr_addr_i         (ex_ls_reg_csr_addr_o),
+    .csr_addr_o         (//think//),
     //about dpi-c
     .re            (dpic_lsu_re),
     .we            (dpic_lsu_we),
@@ -311,8 +307,8 @@ ysyx_25060170_lsu_wbu_reg u_ysyx_25060170_lsu_wbu_reg (
     .rd_ena_i      (lsu_rd_ena_o),
     .rd_addr_i     (lsu_rd_addr_o),
     .write_csr_data_i (lsu_write_csr_data_o),
-    .valid         (lsu_wb_valid_o),
-    .ready         (lsu_wb_next_ready),
+    .valid         (ex_lsu_valid_i),
+    .ready         (ex_lsu_ready_o),
     //outputs to wbu
     .ls_data_o     (lsu_wbu_reg_data_o),
     .wbctl_o       (lsu_wbu_reg_wbctl_o),

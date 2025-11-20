@@ -10,7 +10,6 @@ module ysyx_25060170_ex_lsu_reg(
     input    reg                           next_ready       ,
     //signals from exu
     input   wire [`ysyx_25060170_REG]      store_data_i     ,
-    input   wire [`ysyx_25060170_PC]       jump_pc_i        ,
     input   wire                           ex_pcsrc_i       ,
     input   wire [`ysyx_25060170_DATA]     exu_res_i        ,
     input   wire [11:0]                    csr_addr_i       ,
@@ -21,7 +20,6 @@ module ysyx_25060170_ex_lsu_reg(
     input   wire [3:0]                     ls_ctl_i         ,
     input   wire [1:0]                     wbctl_i          ,
     output   reg [`ysyx_25060170_REG]      store_data_o     ,
-    output   reg [`ysyx_25060170_PC]       jump_pc_o        ,
     output   reg [`ysyx_25060170_DATA]     exu_res_o        ,
     output   reg [11:0]                    csr_addr_o       ,
     output   reg [`ysyx_25060170_DATA]     write_csr_data_o ,
@@ -40,7 +38,6 @@ module ysyx_25060170_ex_lsu_reg(
     always@(posedge clk) begin
         if(rst) begin
                 store_data_o         <= `ysyx_25060170_ZERO32;
-                jump_pc_o            <= `ysyx_25060170_ZERO32;
                 ex_pcsrc_o           <= 0;
                 exu_res_o            <= `ysyx_25060170_ZERO32;
                 csr_addr_o           <= 12'b0;;
@@ -55,7 +52,6 @@ module ysyx_25060170_ex_lsu_reg(
             if(ready && valid) begin
                 valid_o              <= 1'b1;
                 store_data_o         <= store_data_i     ;
-                jump_pc_o            <= jump_pc_i        ;
                 ex_pcsrc_o           <= ex_pcsrc_i       ;
                 exu_res_o            <= exu_res_i        ;
                 csr_addr_o           <= csr_addr_i       ;

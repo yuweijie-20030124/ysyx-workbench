@@ -10,12 +10,16 @@ module ysyx_25060170_lsu(
     input  wire [`ysyx_25060170_REGADDR]     rd_addr_i,
     input  wire [`ysyx_25060170_DATA]        exu_res_i,
     input  wire [`ysyx_25060170_DATA]        write_csr_data_i,
+    input  wire [`ysyx_25060170_DATA]        mcause_value_i,
+    input  wire [`ysyx_25060170_DATA]        csr_addr_i,   
     output wire [`ysyx_25060170_DATA]        ls_data_o,
     output wire [1:0]                        wb_ctl_o,
     output wire                              rd_ena_o,
     output wire [`ysyx_25060170_REGADDR]     rd_addr_o,
     output wire [`ysyx_25060170_DATA]        exu_res_o,
+    output wire [`ysyx_25060170_DATA]        mcause_value_o,
     output wire [`ysyx_25060170_DATA]        write_csr_data_o,
+    output wire [`ysyx_25060170_DATA]        csr_addr_o,
     //about dpi-c   
     output wire                              re,
     output wire                              we,
@@ -32,11 +36,13 @@ assign rlen = 8'd4;  // 32-bit: always read 4 bytes
 /* verilator lint_on UNUSEDSIGNAL */
 
 reg [`ysyx_25060170_DATA] load_data;
+assign mcause_value_o = mcause_value_i;
 assign wb_ctl_o = wb_ctl_i;
 assign rd_ena_o = rd_ena_i;
 assign rd_addr_o = rd_addr_i;
 assign exu_res_o = exu_res_i;
 assign write_csr_data_o = write_csr_data_i;
+assign csr_addr_o = csr_addr_i;
 
 
 assign re = (rst == `ysyx_25060170_RSTABLE | ls_ctl == 4'b0000) ? 1'b0 : ls_ctl[3];

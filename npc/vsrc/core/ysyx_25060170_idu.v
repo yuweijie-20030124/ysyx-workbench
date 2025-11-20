@@ -35,9 +35,9 @@ module ysyx_25060170_idu(
 	output	  wire [`ysyx_25060170_PC]			pc_o			,
 	
 	//csr control signal
-	input 	 wire [`ysyx_25060170_REG] 			csr_rdata_i		,
+	// input 	 wire [`ysyx_25060170_REG] 			csr_rdata_i		,
 	output   reg  [11:0]					  	csr_addr_o		,
-	output   reg  [`ysyx_25060170_REG] 			csr_wdata_o		,
+	// output   reg  [`ysyx_25060170_REG] 			csr_wdata_o		,
 
 	//magic flag for NEMU_STOP
 	output    wire 								magic_flag
@@ -104,7 +104,7 @@ always @(*) begin
  end
 
 //csr
-assign csr_wdata_o = csr_rd_ena ? csr_rdata_i : `ysyx_25060170_ZERO32;
+// assign csr_wdata_o = csr_rd_ena ? csr_rdata_i : `ysyx_25060170_ZERO32;
 assign csr_addr_o = inst_i[31:20];
 
 reg csr_wr_ena;
