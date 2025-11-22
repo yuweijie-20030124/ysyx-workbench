@@ -15,7 +15,6 @@ module ysyx_25060170_exu(
     input wire [3:0]                      ls_ctl_i,
     input wire [1:0]                      wbctl_i,
     input wire [2:0]                      csr_ctl,     //{csr_wr_ena2, ecall_ena1, mret_ena0}
-    input wire [11:0]                     csr_addr_i,  
     input wire                            rd_ena_i,
     input wire [`ysyx_25060170_REGADDR]   rd_addr_i,
     //from csr
@@ -28,9 +27,9 @@ module ysyx_25060170_exu(
     output reg  [`ysyx_25060170_DATA]     exu_res,
     output wire [3:0]                     ls_ctl_o,
     output wire [1:0]                     wbctl_o,
-    output wire [11:0]                    csr_addr_o,
-    output wire                            rd_ena_o,
-    output wire [`ysyx_25060170_REGADDR]   rd_addr_o,
+    output wire [2:0]                     csr_ctl_o,   //{csr_wr_ena2, ecall_ena1, mret_ena0}
+    output wire                           rd_ena_o,
+    output wire [`ysyx_25060170_REGADDR]  rd_addr_o,
     output reg  [`ysyx_25060170_DATA]     write_csr_data,
     output reg  [`ysyx_25060170_REG]      mcause_value
 );
@@ -41,6 +40,8 @@ assign ls_ctl_o = ls_ctl_i;
 assign wbctl_o = wbctl_i;
 assign rd_ena_o = rd_ena_i;
 assign rd_addr_o = rd_addr_i;
+assign csr_ctl_o = csr_ctl;
+
 // 32-bit operations
 wire [`ysyx_25060170_DATA] op1_add_op2 = op1 + op2;
 
@@ -135,9 +136,6 @@ assign jump_pc_o = (alu_sel == `INST_JAL | branch_i) ? pc_i + imm :
 // Out to LSU
 assign store_data = op2;
 
-// CSR
-assign csr_addr_o = csr_addr_i;
-
 
 
 wire [`ysyx_25060170_DATA] set_data = read_csr_data | op1;
@@ -178,7 +176,7 @@ end
 // );
 
 // Out to WBU
-assign exu_res = (csr_ctl != 4'd0) ? read_csr_data : alu_res;
+assign exu_res = (csr_ctl != 3'd0) ? read_csr_data : alu_res;
 
 endmodule
 

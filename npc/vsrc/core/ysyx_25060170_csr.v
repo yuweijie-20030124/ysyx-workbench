@@ -29,7 +29,7 @@ wire mstatus_wr = (csr_addr == 12'h300) && csr_rd_ena;
 reg mstatus_mie;
 reg mstatus_mpie;
 reg [1:0] mstatus_mpp;
-reg [`ysyx_25060170_REG] mstatus;  // 删除初始赋值
+reg [`ysyx_25060170_REG] mstatus;  // 删除初始赋值 
 
 wire mstatus_ie_ena = mstatus_wr | csr_ctl[1] | csr_ctl[0];
 

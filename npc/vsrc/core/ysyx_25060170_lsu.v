@@ -11,7 +11,7 @@ module ysyx_25060170_lsu(
     input  wire [`ysyx_25060170_DATA]        exu_res_i,
     input  wire [`ysyx_25060170_DATA]        write_csr_data_i,
     input  wire [`ysyx_25060170_DATA]        mcause_value_i,
-    input  wire [`ysyx_25060170_DATA]        csr_addr_i,   
+    input  wire [2:0]                        csr_ctl_i, 
     output wire [`ysyx_25060170_DATA]        ls_data_o,
     output wire [1:0]                        wb_ctl_o,
     output wire                              rd_ena_o,
@@ -19,7 +19,7 @@ module ysyx_25060170_lsu(
     output wire [`ysyx_25060170_DATA]        exu_res_o,
     output wire [`ysyx_25060170_DATA]        mcause_value_o,
     output wire [`ysyx_25060170_DATA]        write_csr_data_o,
-    output wire [`ysyx_25060170_DATA]        csr_addr_o,
+    output wire [2:0]                        csr_ctl_o,                    
     //about dpi-c   
     output wire                              re,
     output wire                              we,
@@ -42,8 +42,7 @@ assign rd_ena_o = rd_ena_i;
 assign rd_addr_o = rd_addr_i;
 assign exu_res_o = exu_res_i;
 assign write_csr_data_o = write_csr_data_i;
-assign csr_addr_o = csr_addr_i;
-
+assign csr_ctl_o = csr_ctl_i;
 
 assign re = (rst == `ysyx_25060170_RSTABLE | ls_ctl == 4'b0000) ? 1'b0 : ls_ctl[3];
 assign we = (rst == `ysyx_25060170_RSTABLE | ls_ctl == 4'b0000) ? 1'b0 : ~ls_ctl[3];

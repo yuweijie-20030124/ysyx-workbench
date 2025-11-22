@@ -56,6 +56,8 @@
 	input wire [7:0] 					wlen,
 	input wire [7:0] 					rlen,
 	
+	//from wbu 表示已经完成一条指令
+	input wire 						 inst_end,
 
 	//to lsu
 	output wire [`ysyx_25060170_DATA]     data_o,
