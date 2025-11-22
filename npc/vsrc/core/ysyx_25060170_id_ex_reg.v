@@ -13,10 +13,11 @@ module ysyx_25060170_id_ex_reg(
     input   wire [`ysyx_25060170_REGADDR]  rd_addr_i  ,
     input   wire [7:0]         			   alusrc_i   ,
     input   wire [3:0]      			   lsctl_i    ,
+    input   wire                           csr_rd_ena_i,
     input   wire [1:0]     				   wbctl_i    ,
     input   wire            			   branch_i   ,
     input   wire            			   jump_i     ,
-    input   wire [3:0]                     csr_ctl_i  ,
+    input   wire [2:0]                     csr_ctl_i  ,
     input   wire                           valid      ,
     output  wire                           ready      ,
     //outputs about exu
@@ -29,10 +30,11 @@ module ysyx_25060170_id_ex_reg(
     output  reg  [`ysyx_25060170_REGADDR]  rd_addr_o  ,
     output  reg  [7:0]         			   alusrc_o   ,
     output  reg  [3:0]      		       lsctl_o    ,
+    output  reg                            csr_rd_ena_o ,
     output  reg  [1:0]     				   wbctl_o    ,
     output  reg             		       branch_o   ,
     output  reg             		       jump_o     ,
-    output  reg  [3:0]                     csr_ctl_o  ,
+    output  reg  [2:0]                     csr_ctl_o  ,  //{csr_wr_ena, ecall_ena, mret_ena}
     output  reg                            valid_o    ,
     input   reg                            next_ready  
     
@@ -52,10 +54,11 @@ module ysyx_25060170_id_ex_reg(
                 rd_addr_o           <= 5'b00000;
                 alusrc_o            <= 8'b00000000;
                 lsctl_o             <= 4'b0000;
+                csr_rd_ena_o        <= 1'b0;
                 wbctl_o             <= 2'b00;
                 branch_o            <= 1'b0;
                 jump_o              <= 1'b0;
-                csr_ctl_o           <= 4'b0000;
+                csr_ctl_o           <= 3'b0000;
                 valid_o             <= 1'b0;
         end
         else begin
@@ -70,6 +73,7 @@ module ysyx_25060170_id_ex_reg(
                 rd_addr_o           <= rd_addr_i;
                 alusrc_o            <= alusrc_i;
                 lsctl_o             <= lsctl_i;
+                csr_rd_ena_o        <= csr_rd_ena_i;
                 wbctl_o             <= wbctl_i;
                 branch_o            <= branch_i;
                 jump_o              <= jump_i;

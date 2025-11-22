@@ -14,7 +14,7 @@ module ysyx_25060170_exu(
     input wire                            branch_i,
     input wire [3:0]                      ls_ctl_i,
     input wire [1:0]                      wbctl_i,
-    input wire [3:0]                      csr_ctl,
+    input wire [2:0]                      csr_ctl,     //{csr_wr_ena2, ecall_ena1, mret_ena0}
     input wire [11:0]                     csr_addr_i,  
     input wire                            rd_ena_i,
     input wire [`ysyx_25060170_REGADDR]   rd_addr_i,

@@ -25,8 +25,8 @@ module ysyx_25060170_idu(
 	output    wire [1:0]     					wbctl_o    		,
 	output    wire            					branch_o   		,
 	output    wire            					jump_o     		,
-	output    wire [3:0]                    	csr_ctl    		, //把这里面的read_enable分离开来23：26
-
+	output    wire [2:0]                    	csr_ctl    		,   //{csr_wr_ena, ecall_ena, mret_ena}
+    output    wire                              csr_rd_ena_o    ,
 	//id out signal		
 	output    reg  [`ysyx_25060170_DATA]  		op1 			,
 	output    reg  [`ysyx_25060170_DATA]  		op2 			, 
@@ -139,7 +139,8 @@ always @(*) begin
 	endcase 
 end
 
-assign csr_ctl = {csr_wr_ena, csr_rd_ena, ecall_ena, mret_ena};//csr控制器
+assign csr_ctl = {csr_wr_ena, ecall_ena, mret_ena};//{csr_wr_ena, ecall_ena, mret_ena}
+assign csr_rd_ena_o = csr_rd_ena;
  
 assign pc_o = rst == `ysyx_25060170_RSTABLE ? `ysyx_25060170_ZERO32 : pc_i	;
 

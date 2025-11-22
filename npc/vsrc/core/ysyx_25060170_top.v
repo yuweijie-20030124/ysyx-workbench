@@ -45,7 +45,8 @@ wire   [3:0]      					id_lsctl_o   	;//表示lsu阶段应该选取什么样的�
 wire   [1:0]     					id_wbctl_o    	;
 wire  								id_branch_o   	;
 wire  								id_jump_o     	;
-wire   [3:0]                    	id_csr_ctl    	;
+wire   [2:0]                    	id_csr_ctl    	;// {csr_wr_ena, ecall_ena, mret_ena}
+wire                                id_csr_rd_ena_o  ;
 wire   [`ysyx_25060170_DATA]  		id_op1_o 		;
 wire   [`ysyx_25060170_DATA]  		id_op2_o 		;
 wire   [`ysyx_25060170_IMM]     	id_imm_o 		;
@@ -76,6 +77,7 @@ ysyx_25060170_idu u_ysyx_25060170_idu (
 	.branch_o            (id_branch_o),
 	.jump_o              (id_jump_o),
 	.csr_ctl             (id_csr_ctl),
+    .csr_rd_ena_o        (id_csr_rd_ena_o),
 	//id out signal_o
 	.op1                 (id_op1_o),
 	.op2                 (id_op2_o),
@@ -98,10 +100,11 @@ wire	[`ysyx_25060170_PC]      id_ex_reg_pc_o        ;
 wire	[11:0]                   id_ex_reg_csr_addr_o  ;
 wire	[7:0]                    id_ex_reg_alusrc_o    ;
 wire	[3:0]                    id_ex_reg_lsctl_o     ;
+wire                             id_ex_reg_csr_rd_ena_o;
 wire	[1:0]                    id_ex_reg_wbctl_o     ;
 wire	                    	 id_ex_reg_branch_o    ;
 wire	                    	 id_ex_reg_jump_o      ;
-wire	[3:0]                    id_ex_reg_csr_ctl_o   ;
+wire	[2:0]                    id_ex_reg_csr_ctl_o   ;
 wire    [`ysyx_25060170_REGADDR] id_ex_reg_rd_addr_o   ;
 wire                             id_ex_reg_rd_ena_o    ;
 wire	                    	 id_ex_reg_valid_o     ;
@@ -120,6 +123,7 @@ ysyx_25060170_id_ex_reg u_ysyx_25060170_id_ex_reg (
     .rd_addr_i      (rd_addr),
     .alusrc_i       (id_alusrc_o),
     .lsctl_i        (id_lsctl_o),
+    .csr_rd_ena_i   (id_csr_rd_ena_o),
     .wbctl_i        (id_wbctl_o),
     .branch_i       (id_branch_o),
     .jump_i         (id_jump_o),
@@ -136,6 +140,7 @@ ysyx_25060170_id_ex_reg u_ysyx_25060170_id_ex_reg (
     .rd_addr_o      (id_ex_reg_rd_addr_o),
     .alusrc_o       (id_ex_reg_alusrc_o),
     .lsctl_o        (id_ex_reg_lsctl_o),
+    .csr_rd_ena_o   (id_ex_reg_csr_rd_ena_o),
     .wbctl_o        (id_ex_reg_wbctl_o),
     .branch_o       (id_ex_reg_branch_o),
     .jump_o         (id_ex_reg_jump_o),
@@ -149,7 +154,7 @@ wire [`ysyx_25060170_REG]     exu_store_data_o    ;
 wire [`ysyx_25060170_PC]      exu_jump_pc_o       ;
 // wire                          exu_pcsrc_o        ;
 wire [`ysyx_25060170_DATA]    exu_res_o           ;
-wire [3:0]					  exu_ls_ctl_o		 ;
+wire [3:0]					  exu_ls_ctl_o		  ;
 wire [1:0]                    exu_wb_ctl_o        ;
 wire [11:0]                   exu_csr_addr_o      ;
 wire                          exu_rd_ena_o        ;
@@ -242,15 +247,14 @@ ysyx_25060170_ex_lsu_reg u_ysyx_25060170_ex_lsu_reg (
 wire    [`ysyx_25060170_DATA]    lsu_ls_data_o          ;
 wire                             dpic_lsu_re              ;
 wire                             dpic_lsu_we              ;
-wire [`ysyx_25060170_DATA]       dpic_dpic_data_i         ;
 wire [`ysyx_25060170_DATA]       dpic_lsu_data_o          ;
-wire [`ysyx_25060170_DATA]       ls_data_i           ;
 wire [1:0]                       ls_wbctl_o          ; 
 wire                             lsu_rd_ena_o        ;
 wire [`ysyx_25060170_REGADDR]    lsu_rd_addr_o       ;
 wire [`ysyx_25060170_DATA]       ls_exures_o         ;
 wire [`ysyx_25060170_DATA]       lsu_write_csr_data_o ;        
-wire [`ysyx_25060170_DATA]       lsu_mcause_value_o          ;
+wire [`ysyx_25060170_DATA]       lsu_mcause_value_o       ;
+wire [`ysyx_25060170_DATA]       lsu_csr_addr_o           ;
 wire [`ysyx_25060170_DATAADDR]   dpic_lsu_raddr           ;
 wire [`ysyx_25060170_DATAADDR]   dpic_lsu_waddr           ;
 wire [7:0]                       dpic_lsu_wlen            ;
@@ -275,7 +279,7 @@ ysyx_25060170_lsu u_ysyx_25060170_lsu (
     .mcause_value_i     (ex_ls_reg_mcause_value_o),
     .mcause_value_o     (lsu_mcause_value_o),
     .csr_addr_i         (ex_ls_reg_csr_addr_o),
-    .csr_addr_o         (//think//),
+    .csr_addr_o         (lsu_csr_addr_o),
     //about dpi-c
     .re            (dpic_lsu_re),
     .we            (dpic_lsu_we),
@@ -294,8 +298,11 @@ wire        [`ysyx_25060170_DATA]    lsu_wbu_reg_exu_res_o  ;
 wire                                 lsu_wbu_reg_rd_ena_o   ;
 wire        [`ysyx_25060170_REGADDR] lsu_wbu_reg_rd_addr_o  ;
 wire        [`ysyx_25060170_DATA]    lsu_wbu_reg_write_csr_data_o   ;
+wire        [`ysyx_25060170_DATA]    lsu_wbu_reg_csr_addr_o  ;
+wire        [`ysyx_25060170_DATA]    lsu_wbu_reg_mcause_value_o ;
 wire                                 lsu_wbu_reg_valid_o    ;
 wire                                 lsu_wbu_reg_next_ready_i;
+
 
 ysyx_25060170_lsu_wbu_reg u_ysyx_25060170_lsu_wbu_reg (
     .clk           (clk),
@@ -307,6 +314,8 @@ ysyx_25060170_lsu_wbu_reg u_ysyx_25060170_lsu_wbu_reg (
     .rd_ena_i      (lsu_rd_ena_o),
     .rd_addr_i     (lsu_rd_addr_o),
     .write_csr_data_i (lsu_write_csr_data_o),
+    .csr_addr_i    (lsu_csr_addr_o),
+    .mcause_value_i (lsu_mcause_value_o),
     .valid         (ex_lsu_valid_i),
     .ready         (ex_lsu_ready_o),
     //outputs to wbu
@@ -316,6 +325,8 @@ ysyx_25060170_lsu_wbu_reg u_ysyx_25060170_lsu_wbu_reg (
     .rd_ena_o      (lsu_wbu_reg_rd_ena_o),
     .rd_addr_o     (lsu_wbu_reg_rd_addr_o),
     .write_csr_data_o (lsu_wbu_reg_write_csr_data_o),
+    .csr_addr_o    (lsu_wbu_reg_csr_addr_o),
+    .mcause_value_o (lsu_wbu_reg_mcause_value_o),
     .valid_o       (lsu_wbu_reg_valid_o),
     .next_ready    (lsu_wbu_reg_next_ready_i)
 );
@@ -418,7 +429,6 @@ ysyx_25060170_regfile u_ysyx_25060170_regfile (
 
 //------------------csr--------------------//
 wire    [`ysyx_25060170_DATA]    read_csr_data          ;
-wire    [`ysyx_25060170_REG]     csr_mcause_value_o     ;
 wire                             csr_rd_ena_i           ;
 
 ysyx_25060170_csr u_ysyx_25060170_csr (
@@ -426,11 +436,11 @@ ysyx_25060170_csr u_ysyx_25060170_csr (
     .clk               (clk),
     .rst               (rst),
     //from exu
-    .csr_rd_ena        (csr_rd_ena_i),
-    .csr_ctl           (),// {csr_wr_ena, csr_rd_ena, ecall_ena, mret_ena}
+    .csr_rd_ena        (id_ex_reg_csr_rd_ena_o),
+    .csr_ctl           (lsu_wbu_reg_csr_addr_o),// {csr_wr_ena, csr_rd_ena, ecall_ena, mret_ena}
     .csr_addr          (id_csr_addr_o),
     //csr地址
-    .mcause_value      (csr_mcause_value_o),
+    .mcause_value      (lsu_wbu_reg_mcause_value_o),
     .write_csr_data    (lsu_wbu_reg_write_csr_data_o),
     .read_csr_data     (read_csr_data),
     .mstatus_o         (dpicmstatus),
