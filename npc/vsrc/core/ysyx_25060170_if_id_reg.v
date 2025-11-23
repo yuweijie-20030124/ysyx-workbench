@@ -1,51 +1,46 @@
 `include "define.v"
 
 module ysyx_25060170_if_id_reg (
- //数据信号
- input  wire						    clk		  ,
- input  wire						    rst		  ,
- input	wire						    pcsrc_i	  ,
- // from exu 跳转信号
- input	wire 	[`ysyx_25060170_PC]	    ex_pc_i   , 
- // from dpic 取指令         
- input  wire	[`ysyx_25060170_INST]	inst_i	  ,
-          
- output	reg 	[`ysyx_25060170_PC]		pc_o  	  ,
- output	reg 	[`ysyx_25060170_INST]	inst_o	  ,
+    //数据信号
+     input  wire						    clk             //<<i<<
+    ,input  wire						    rst             //<<i<<
+    ,input  wire [`ysyx_25060170_PC]        pc_i            //<<i<<
+    ,input  wire [`ysyx_25060170_INST]      inst_i          //<<i<<
+    ,input  wire                            bp_jump_i      //<<i<<
 
- //流水线级控制信号
- input wire                             valid     ,
- output wire                            ready
+    //流水线控制信号
+    ,input  wire                            if_valid_i      //<<i>>
+    ,input  wire                            id_flush_i      //<<i>>
+    ,input  wire                            ex_flush_i      //<<i>>
+    ,input  wire                            ls_flush_i      //<<i>>
+    ,input  wire                            id_stall_i      //<<i>>
+    ,input  wire                            id_ready_i      //<<i>>
+
+    //输出信号给idu
+    ,output reg  [`ysyx_25060170_PC]        pc_o            //>>o>>
+    ,output reg  [`ysyx_25060170_INST]      inst_o          //>>o>>
+    ,output reg                             id_jump_o       //>>o>>
+
  );
 
- reg [`ysyx_25060170_PC] pc_next;
- wire [`ysyx_25060170_PC] pc_plus4;
+    wire flush = (~id_stall_i & id_flush_i) | ex_flush_i | ls_flush_i ;
 
-//  assign pc_plus4=(rst==`ysyx_25060170_RSTABLE) ? `ysyx_25060170_STARTPC : (pc_o+`ysyx_25060170_PLUS4);
-//  assign pc_next = (rst == `ysyx_25060170_RSTABLE) ? `ysyx_25060170_STARTPC : ((pcsrc_i==0) ? pc_plus4 : ex_pc_i);
- assign pc_plus4 = 32'b0 |
-                ({32{rst == `ysyx_25060170_RSTABLE}} & `ysyx_25060170_STARTPC) |
-                ({32{rst != `ysyx_25060170_RSTABLE}} & (pc_o + `ysyx_25060170_PLUS4)); 
-
- assign pc_next = 32'b0 |
-                ({32{rst == `ysyx_25060170_RSTABLE}} & `ysyx_25060170_STARTPC) |
-                ({32{rst != `ysyx_25060170_RSTABLE && pcsrc_i == 0}} & pc_plus4) |
-                ({32{rst != `ysyx_25060170_RSTABLE && pcsrc_i == 1}} & ex_pc_i);   
-
- always@(posedge clk) begin
-     if(rst == `ysyx_25060170_RSTABLE) begin
-     	pc_o   <= `ysyx_25060170_ZERO32;
-     	inst_o <= `ysyx_25060170_ZERO32;
+    always@(posedge clk) begin
+        if (rst | flush) begin
+            inst_o      <=  `ysyx_25060170_ZERO32;
+            pc_o        <=  `ysyx_25060170_ZERO32;
+            id_jump_o   <=  1'b0;
+        end
+        else if (if_valid_i | id_stall_i | id_ready_i) begin
+            inst_o      <=  inst_o   ;
+            pc_o        <=  pc_o     ;
+            id_jump_o   <=  id_jump_o;
+        end
+        else begin
+            inst_o      <=  inst_i   ;
+            pc_o        <=  pc_i     ;
+            id_jump_o   <=  bp_jump_i;
+        end
     end
-  else if( & valid == 1 ) begin
-     	pc_o   <= pc_next;
-     	inst_o <= inst_i;
-        ready  <= 1'b1;
-  end
-  else begin
-      ready  <= 1'b0;
-  end
- end
-
 endmodule
 

@@ -7,14 +7,6 @@
 	`define ysyx_25060170_STARTPC 32'h80000000
 	`define ysyx_25060170_PLUS4 32'h00000004
 
-//regfile
-  	`define ysyx_25060170_REGADDR 4:0
-	`define ysyx_25060170_REG 31:0
-	`define ysyx_25060170_WENABLE 1'b1
-	`define ysyx_25060170_WDISABLE 1'b0
-	`define ysyx_25060170_RENABLE 1'b1
-	`define ysyx_25060170_RDISABLE 1'b0
-
 //idu
   `define ysyx_25060170_INST			 	31:0
   `define ysyx_25060170_DATA			 	31:0
@@ -115,3 +107,11 @@
 	`define INST_CSRRWI        8'b10010100
 	`define INST_CSRRSI        8'b11001000
 	`define INST_CSRRCI        8'b10100100
+
+//regfile
+  	`define ysyx_25060170_REGADDR 4:0
+	`define ysyx_25060170_REG 31:0
+	`define ysyx_25060170_WENABLE 1'b1
+	`define ysyx_25060170_WDISABLE 1'b0
+	`define ysyx_25060170_RENABLE 1'b1
+	`define ysyx_25060170_RDISABLE 1'b0
