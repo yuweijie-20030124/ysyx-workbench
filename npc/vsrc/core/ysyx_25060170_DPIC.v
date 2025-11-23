@@ -57,7 +57,7 @@
 	input wire [7:0] 					rlen,
 	
 	//from wbu 表示已经完成一条指令
-	input wire 						 inst_end,
+	input wire 						    inst_finish,
 
 	//to lsu
 	output wire [`ysyx_25060170_DATA]     data_o,
@@ -135,7 +135,11 @@ end
 
 always @(*) begin
     pmem_read(pc_i,inst_o,rlen);
-    pc_inst_end(pc_i, inst_o);
+    
+end
+
+always @(posedge inst_finish) begin
+	pc_inst_end(pc_i, inst_o);
 end
 
 //  always @(posedge clk) begin

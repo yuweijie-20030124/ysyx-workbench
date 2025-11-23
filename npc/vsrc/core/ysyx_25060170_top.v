@@ -297,7 +297,9 @@ wire                                 lsu_wbu_reg_rd_ena_o   ;
 wire        [`ysyx_25060170_REGADDR] lsu_wbu_reg_rd_addr_o  ;
 wire        [`ysyx_25060170_DATA]    lsu_wbu_reg_write_csr_data_o   ;
 wire        [`ysyx_25060170_DATA]    lsu_wbu_reg_mcause_value_o ;
+/* verilator lint_off UNUSEDSIGNAL */
 wire                                 lsu_wbu_reg_valid_o    ;
+/* verilator lint_on UNUSEDSIGNAL */
 wire        [2:0]                    lsu_wbu_reg_csr_ctl_o  ;
 
 
@@ -329,13 +331,15 @@ ysyx_25060170_lsu_wbu_reg u_ysyx_25060170_lsu_wbu_reg (
 
 //------------------wbu--------------------//
 wire [`ysyx_25060170_DATA]  wb_data_o;
+wire                        inst_finish_o;
 
 ysyx_25060170_wbu u_ysyx_25060170_wbu (
     .rst           (rst),
     .ls_rd_data    (lsu_wbu_reg_data_o),
     .wb_ctl        (lsu_wbu_reg_wbctl_o),
     .exu_res       (lsu_wbu_reg_exu_res_o),
-    .wb_data       (wb_data_o)
+    .wb_data       (wb_data_o),
+    .inst_finish   (inst_finish_o)
 );
 
 //------------------regfile--------------------//
@@ -458,8 +462,6 @@ ysyx_25060170_DPIC u_ysyx_25060170_DPIC (
     //for ftrace
 	.rd_addr            (idu_dpic_rd_addr),
     .imm                (id_imm_o),
-    //from wbu 表示已经完成一条指令
-    .inst_end           (lsu_wbu_reg_valid_o),
     //for difftest      
 	.regs0              (dpicregs0),
     .regs1              (dpicregs1),
@@ -507,6 +509,8 @@ ysyx_25060170_DPIC u_ysyx_25060170_DPIC (
     .waddr              (dpic_lsu_waddr),
     //to lsu
 	.data_o             (dpic_lsu_data_i),
+    //from wbu 表示已经完成一条指令
+    .inst_finish       (inst_finish_o),
 
     //for magic number
 	.magic_flag    (magic_flag)
