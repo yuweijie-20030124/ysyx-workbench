@@ -1,23 +1,25 @@
  `include "define.v"
 
 module ysyx_25060170_idu_decoder(
-	input wire                 		        rst  	,
-	input wire   [`ysyx_25060170_INST]	    inst	,
-  
-	output wire						        rs1_ena	,
-	output wire						        rs2_ena	,
-	output wire						        jump	,
-	output wire  [1:0]          			wb_ctl  ,
-	output reg   [3:0]          			mem_ctl ,
-	output wire                 			branch  ,
-	output reg   [`ysyx_25060170_IMM] 		ext_imm ,
-	output wire						        imm_ena	,
-    output wire	 [7:0]					    alu_ctl	
+	 input wire                 		    rst  		//<<i<<
+	,input wire   [`ysyx_25060170_INST]	    inst 		//<<i<<
+
+	,output wire						    rs1_ena		//>>o>>
+	,output wire						    rs2_ena		//>>o>>
+	,output wire 							csr_inst	//>>o>>
+	,output wire  [1:0]          			wb_ctl  	//>>o>>
+	,output wire  [3:0]          			mem_ctl 	//>>o>>
+	,output wire                 			branch  	//>>o>>
+	,output wire  [`ysyx_25060170_IMM] 		ext_imm 	//>>o>>
+	,output wire                            load		//>>o>>
+	,output wire  [1:0]						op1_sel		//>>o>>
+	,output wire  [2:0]						op2_sel		//>>o>>
+    ,output wire  [7:0]					    alu_ctl		//>>o>>
 );
+
 
 wire [6:0] opcode ;
 wire [2:0] funct3 ;
-
 /* verilator lint_off UNUSEDSIGNAL */
 wire [6:0] funct7 ;
 /* verilator lint_on UNUSEDSIGNAL */
@@ -132,19 +134,17 @@ assign alu_ctl[1] = (rst == `ysyx_25060170_RSTABLE) ? 0 :   inst_slti | inst_sra
 
 assign alu_ctl[0] = (rst == `ysyx_25060170_RSTABLE) ? 0 :   inst_addi | inst_srai  | inst_srl | inst_jal | inst_sb | inst_sw   | inst_sd   | inst_bgeu    | inst_lbu | inst_mulhsu | inst_divu | inst_rem | inst_csrrs             ;
 
-wire inst_csr   = inst_csrrw | inst_csrrs | inst_csrrc ;
-
+assign csr_inst   = inst_csrrw | inst_csrrs | inst_csrrc | inst_csrrwi | inst_csrrsi | inst_csrrci ;
 
 //--------------------------output signal-----------------------//
 
 //output to regfile signal
-assign rs1_ena =  inst_type[6] | inst_type[5] | inst_type[4] | inst_type[3] | inst_type[2] | inst_type[1] | inst_type[0] | inst_jalr | inst_csr | inst_ecall;
+assign rs1_ena =  inst_type[6] | inst_type[5] | inst_type[4] | inst_type[3] | inst_type[2] | inst_type[1] | inst_type[0] | inst_jalr | inst_csrrw | inst_csrrs | inst_csrrc | inst_ecall;
 assign rs2_ena =  inst_type[6] | inst_type[3] | inst_type[2] | inst_type[0] ;
-
 
 //output to ifu singal
 assign branch = inst_type[2];
-assign jump = inst_jal | inst_jalr;
+assign load   = inst_type[1];
 
 //Extend IMM
 assign ext_imm = 32'b0 |
@@ -155,51 +155,48 @@ assign ext_imm = 32'b0 |
 				{32{inst_type[0]}} & {{20{s_imm[11]}}, s_imm} | // s_imm扩展为32位
 				{32{inst_type[2]}} & {{19{b_imm[12]}}, b_imm, 1'b0} ; // b_imm扩展为32位，注意左移1位
 
-// always @(*) begin
-// 	if (rst == `ysyx_25060170_RSTABLE) begin
-// 		ext_imm = `ysyx_25060170_ZERO32;
-// 	end
-// 	else if (inst_type[1] | inst_type[4] | inst_type[5] | inst_type[7] | inst_jalr) begin
-// 		ext_imm = {{20{i_imm[11]}}, i_imm}; // i_imm扩展为32位
-// 	end
-// 	else if (inst_lui | inst_auipc) begin
-// 		ext_imm = {u_imm, 12'b0}; // u_imm扩展为32位
-// 	end
-// 	else if (inst_jal) begin
-// 		ext_imm = {{11{j_imm[20]}}, j_imm[20:1], 1'b0}; // j_imm扩展为32位，注意左移1位
-// 	end
-// 	else if (inst_type[0]) begin
-// 		ext_imm = {{20{s_imm[11]}}, s_imm}; // s_imm扩展为32位
-// 	end
-// 	else if (inst_type[2]) begin
-// 		ext_imm = {{19{b_imm[12]}}, b_imm, 1'b0}; // b_imm扩展为32位，注意左移1位
-// 	end
-// 	else begin
-// 		ext_imm = `ysyx_25060170_ZERO32; // 默认值
-// 	end
-// end
-
-assign imm_ena =  inst_type[0] | inst_type[1] | inst_type[2] | inst_type[4] | inst_type[5] | inst_type[7] |  inst_lui | inst_auipc  ;
-
 //output to mem signal
-
-assign mem_ctl = 	 4'b0 | 
-					{4{alu_ctl == `INST_SB}} & 4'b0001 |
-					{4{alu_ctl == `INST_SH}} & 4'b0010 |
-					{4{alu_ctl == `INST_SW}} & 4'b0100 |
-					{4{alu_ctl == `INST_SD}} & 4'b0101 |
-					{4{alu_ctl == `INST_LB}} & 4'b1001 |
-					{4{alu_ctl == `INST_LH}} & 4'b1010 |
-					{4{alu_ctl == `INST_LW}} & 4'b1011 |
-					{4{alu_ctl == `INST_LD}} & 4'b1100 |
-					{4{alu_ctl == `INST_LBU}}& 4'b1101 |
-					{4{alu_ctl == `INST_LHU}}& 4'b1110 |
-					{4{alu_ctl == `INST_LWU}}& 4'b1111 ;
+assign mem_ctl = 4'b0 | 
+				 {4{alu_ctl == `INST_SB}} & 4'b0001 |
+				 {4{alu_ctl == `INST_SH}} & 4'b0010 |
+				 {4{alu_ctl == `INST_SW}} & 4'b0100 |
+				 {4{alu_ctl == `INST_SD}} & 4'b0101 |
+				 {4{alu_ctl == `INST_LB}} & 4'b1001 |
+				 {4{alu_ctl == `INST_LH}} & 4'b1010 |
+				 {4{alu_ctl == `INST_LW}} & 4'b1011 |
+				 {4{alu_ctl == `INST_LD}} & 4'b1100 |
+				 {4{alu_ctl == `INST_LBU}}& 4'b1101 |
+				 {4{alu_ctl == `INST_LHU}}& 4'b1110 |
+				 {4{alu_ctl == `INST_LWU}}& 4'b1111 ;
 
 
 //output to wb signal 
-assign wb_ctl = (inst_type[1] ) ? 2'b01 : (( inst_type[7] | inst_type[6] | inst_type[5] |inst_type[4] | inst_type[3] | inst_lui | inst_auipc | jump) ? 2'b10 : 2'b00 ) ;
+assign wb_ctl = 2'b00 | 
+				{2{inst_type[7]}} & 2'b10 | //system指令
+				{2{inst_type[6]}} & 2'b10 | //op32指令
+				{2{inst_type[5]}} & 2'b10 | //opimm32指令
+				{2{inst_type[4]}} & 2'b10 | //opimm指令
+				{2{inst_type[3]}} & 2'b10 | //op指令
+				{2{inst_type[1]}} & 2'b01 | //load指令
+				{2{inst_lui}}     & 2'b10 | //lui指令
+				{2{inst_auipc}}   & 2'b10 | //auipc指令
+				{2{inst_jal}}     & 2'b10 |	//jal指令
+				{2{inst_jalr}}    & 2'b10 ; //jalr指令
 
+//output to exu singal
+wire imm_ena ;
+assign imm_ena = inst_type[0] | inst_type[1]  | inst_type[4] | inst_type[5] | inst_type[7] |  inst_lui | inst_auipc  ;
+assign op1_sel = 2'b00 |
+				{2{inst_jal}} 		& 2'b10 | 	//jal
+				{2{inst_jalr}} 		& 2'b10 | 	//jalr
+				{2{(inst_auipc)}} 	& 2'b10 | 	//auipc
+				{2{(rs1_ena)}} 		& 2'b01 ; 	//rs1
 
+assign op2_sel = 3'b000 |
+				{3{inst_jal}} 		& 3'b010 | 	//jal
+				{3{inst_jalr}} 		& 3'b010 | 	//jalr
+				{3{imm_ena}}	 	& 3'b10 | 	//imm
+				{3{rs2_ena}} 		& 3'b01 ; 	//rs2
 
 endmodule
+

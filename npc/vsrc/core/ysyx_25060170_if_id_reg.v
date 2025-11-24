@@ -6,7 +6,7 @@ module ysyx_25060170_if_id_reg (
     ,input  wire						    rst             //<<i<<
     ,input  wire [`ysyx_25060170_PC]        pc_i            //<<i<<
     ,input  wire [`ysyx_25060170_INST]      inst_i          //<<i<<
-    ,input  wire                            bp_jump_i      //<<i<<
+    ,input  wire                            bp_jump_i       //<<i<<
 
     //流水线控制信号
     ,input  wire                            if_valid_i      //<<i>>
@@ -23,7 +23,7 @@ module ysyx_25060170_if_id_reg (
 
  );
 
-    wire flush = (~id_stall_i & id_flush_i) | ex_flush_i | ls_flush_i ;
+    wire flush = (~id_stall_i & id_flush_i) | ex_flush_i | ls_flush_i ; //停顿的时候不要清空IF/ID
 
     always@(posedge clk) begin
         if (rst | flush) begin

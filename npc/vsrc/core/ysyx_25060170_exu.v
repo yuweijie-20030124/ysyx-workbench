@@ -20,7 +20,6 @@ module ysyx_25060170_exu(
     //from csr
     input wire [`ysyx_25060170_REG]       read_csr_data,
 
-
     output wire [`ysyx_25060170_REG]      store_data,
     output wire [`ysyx_25060170_PC]       jump_pc_o,
     output wire                           ex_pcsrc_o,
