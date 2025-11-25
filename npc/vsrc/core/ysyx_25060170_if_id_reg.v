@@ -7,7 +7,6 @@ module ysyx_25060170_if_id_reg (
     ,input  wire [`ysyx_25060170_PC]        pc_i            //<<i<<
     ,input  wire [`ysyx_25060170_INST]      inst_i          //<<i<<
     ,input  wire                            bp_jump_i       //<<i<<
-
     //流水线控制信号
     ,input  wire                            if_valid_i      //<<i>>
     ,input  wire                            id_flush_i      //<<i>>
@@ -15,7 +14,6 @@ module ysyx_25060170_if_id_reg (
     ,input  wire                            ls_flush_i      //<<i>>
     ,input  wire                            id_stall_i      //<<i>>
     ,input  wire                            id_ready_i      //<<i>>
-
     //输出信号给idu
     ,output reg  [`ysyx_25060170_PC]        pc_o            //>>o>>
     ,output reg  [`ysyx_25060170_INST]      inst_o          //>>o>>

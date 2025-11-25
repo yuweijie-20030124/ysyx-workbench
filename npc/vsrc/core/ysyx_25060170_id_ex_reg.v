@@ -25,21 +25,21 @@ module ysyx_25060170_id_ex_reg(
    	,input	 wire					        ls_flush_i	//<<i<<
    	,input	 wire					        ex_ready_i	//<<i<<
     //output to exu
-    ,output  reg  [`ysyx_25060170_INST]    inst_o      //>>o>>
-    ,output  reg  [`ysyx_25060170_PC]      pc_o        //>>o>>
-    ,output  reg  [`ysyx_25060170_DATA]    op1_o       //>>o>>
-    ,output  reg  [`ysyx_25060170_DATA]    op2_o       //>>o>>
-    ,output  reg  [1:0]                    op1_sel_o   //>>o>>
-    ,output  reg  [2:0]                    op2_sel_o   //>>o>>
-    ,output  reg                           rd_ena_o    //>>o>>
-    ,output  reg  [`ysyx_25060170_REGADDR] rd_addr_o   //>>o>>
-    ,output  reg  [`ysyx_25060170_REGADDR] rs1_addr_o  //>>o>>
-    ,output  reg  [`ysyx_25060170_IMM]     imm_o       //>>o>>
-    ,output  reg  [7:0]             		alusrc_o    //>>o>>
+    ,output  reg  [`ysyx_25060170_INST]     inst_o      //>>o>>
+    ,output  reg  [`ysyx_25060170_PC]       pc_o        //>>o>>
+    ,output  reg  [`ysyx_25060170_DATA]     op1_o       //>>o>>
+    ,output  reg  [`ysyx_25060170_DATA]     op2_o       //>>o>>
+    ,output  reg  [1:0]                     op1_sel_o   //>>o>>
+    ,output  reg  [2:0]                     op2_sel_o   //>>o>>
+    ,output  reg                            rd_ena_o    //>>o>>
+    ,output  reg  [`ysyx_25060170_REGADDR]  rd_addr_o   //>>o>>
+    ,output  reg  [`ysyx_25060170_REGADDR]  rs1_addr_o  //>>o>>
+    ,output  reg  [`ysyx_25060170_IMM]      imm_o       //>>o>>
+    ,output  reg  [7:0]             	    alusrc_o    //>>o>>
     ,output  reg  [3:0]      		        lsctl_o     //>>o>>
-    ,output  reg  [1:0]     				wbctl_o     //>>o>>
-    ,output  reg                           csr_ena_o   //>>o>>
-    ,output  reg                           load_flag_o //>>o>>   
+    ,output  reg  [1:0]     			    wbctl_o     //>>o>>
+    ,output  reg                            csr_ena_o   //>>o>>
+    ,output  reg                            load_flag_o //>>o>>   
 );
 
 wire flush = id_flush_i | ex_flush_i | ls_flush_i;
@@ -47,16 +47,16 @@ wire stall = id_valid_i | ex_ready_i;
 
 always@(posedge clk) begin
     if(rst | flush) begin   
-        inst_o          <=      `ysyx_25060170_ZERO32    ;
-        pc_o            <=      `ysyx_25060170_ZERO32    ;
-        op1_o           <=      `ysyx_25060170_ZERO32    ;
-        op2_o           <=      `ysyx_25060170_ZERO32    ;
+        inst_o          <=      `ysyx_25060170_ZERO32   ;
+        pc_o            <=      `ysyx_25060170_ZERO32   ;
+        op1_o           <=      `ysyx_25060170_ZERO32   ;
+        op2_o           <=      `ysyx_25060170_ZERO32   ;
         op1_sel_o       <=      0                       ;   
         op2_sel_o       <=      0                       ;
         rd_ena_o        <=      0                       ;
         rd_addr_o       <=      5'b0                    ;
         rs1_addr_o      <=      5'b0                    ;
-        imm_o           <=      `ysyx_25060170_ZERO32    ;
+        imm_o           <=      `ysyx_25060170_ZERO32   ;
         alusrc_o        <=      8'b0                    ;
         lsctl_o         <=      4'b0                    ;
         wbctl_o         <=      2'b0                    ;

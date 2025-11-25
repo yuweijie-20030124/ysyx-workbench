@@ -4,15 +4,15 @@
 
 
 module ysyx_25060170_bpu(
-     input  wire                        clk         
-    ,input  wire                        rst       
-    //form ifu
-    ,input  wire [`ysyx_25060170_INST]  inst_i      
-    ,input  wire [`ysyx_25060170_PC]    pc_i        
+     input  wire                        clk          //<<i<<
+    ,input  wire                        rst          //<<i<<
+    //form ifu 
+    ,input  wire [`ysyx_25060170_INST]  inst_i       //<<i<<
+    ,input  wire [`ysyx_25060170_PC]    pc_i         //<<i<<
     //to ifu
-    ,output reg [`ysyx_25060170_PC]    bp_pc_o     
+    ,output reg [`ysyx_25060170_PC]     bp_pc_o      //>>o>>
     //to if_id_reg
-    ,output reg                        bp_predict_o
+    ,output reg                         bp_predict_o //>>o>>
 );
 
     reg strongly_not_taken_state    ;
@@ -32,7 +32,7 @@ module ysyx_25060170_bpu(
         else begin
             case({strongly_not_taken_state , weakly_not_taken_state , weakly_taken_state , strongly_taken_state})
                 4'b1000: begin //strongly not taken
-                    if( (inst_i[6:2] == `ysyx_25060170_BRANCH) & (inst_i[1:0] == 2'b11) ) begin
+                    if(inst_i[6:2] == `ysyx_25060170_BRANCH) begin
                         strongly_not_taken_state <= 1'b0;
                         weakly_not_taken_state   <= 1'b1;
                         weakly_taken_state       <= 1'b0;
@@ -40,7 +40,7 @@ module ysyx_25060170_bpu(
                     end
                 end
                 4'b0100: begin //weakly not taken
-                    if( (inst_i[6:2] == `ysyx_25060170_BRANCH) & (inst_i[1:0] == 2'b11) ) begin//预测成功
+                    if(inst_i[6:2] == `ysyx_25060170_BRANCH) begin//预测成功
                         strongly_not_taken_state <= 1'b0;
                         weakly_not_taken_state   <= 1'b0;
                         weakly_taken_state       <= 1'b1;
@@ -54,7 +54,7 @@ module ysyx_25060170_bpu(
                     end
                 end
                 4'b0010: begin //weakly taken
-                    if( (inst_i[6:2] == `ysyx_25060170_BRANCH) & (inst_i[1:0] == 2'b11) ) begin
+                    if(inst_i[6:2] == `ysyx_25060170_BRANCH) begin
                         strongly_not_taken_state <= 1'b0;
                         weakly_not_taken_state   <= 1'b0;
                         weakly_taken_state       <= 1'b0;
@@ -68,7 +68,7 @@ module ysyx_25060170_bpu(
                     end
                 end
                 4'b0001: begin //strongly taken
-                    if( (inst_i[6:2] == `ysyx_25060170_BRANCH) & (inst_i[1:0] == 2'b11) ) begin
+                    if(inst_i[6:2] == `ysyx_25060170_BRANCH) begin
                         strongly_not_taken_state <= 1'b0;
                         weakly_not_taken_state   <= 1'b0;
                         weakly_taken_state       <= 1'b0;

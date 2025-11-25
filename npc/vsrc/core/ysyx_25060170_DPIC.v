@@ -3,69 +3,69 @@
 
  module ysyx_25060170_DPIC(
 	/* verilator lint_off UNUSEDSIGNAL */
-	input  wire	clk,
-	input  wire rst,
+	 input  wire							 	clk			//<<i<<
+	,input  wire 						 		rst			//<<i<<
 	/* verilator lint_on UNUSEDSIGNAL */
- 	input  wire	[`ysyx_25060170_INST]	 pc_i,
-	output reg	[`ysyx_25060170_PC]		 inst_o,
+ 	,input  wire	[`ysyx_25060170_INST]		pc_i		//<<i<<
+	,output reg	[`ysyx_25060170_PC]		 		inst_o		//>>o>>
 	//for ftrace
-	input wire 	[`ysyx_25060170_REGADDR] rd_addr,
-	input wire 	[`ysyx_25060170_IMM]	 imm,
+	,input wire 	[`ysyx_25060170_REGADDR] 	rd_addr		//<<i<<
+	,input wire 	[`ysyx_25060170_IMM]	 	imm			//<<i<<
 	//for difftest
-	input  wire	[`ysyx_25060170_REG]	regs0 ,
-	input  wire	[`ysyx_25060170_REG]	regs1 ,
-	input  wire	[`ysyx_25060170_REG]	regs2 ,
-	input  wire	[`ysyx_25060170_REG]	regs3 ,
-	input  wire	[`ysyx_25060170_REG]	regs4 ,
-	input  wire	[`ysyx_25060170_REG]	regs5 ,
-	input  wire	[`ysyx_25060170_REG]	regs6 ,
-	input  wire	[`ysyx_25060170_REG]	regs7 ,
-	input  wire	[`ysyx_25060170_REG]	regs8 ,
-	input  wire	[`ysyx_25060170_REG]	regs9 ,
-	input  wire	[`ysyx_25060170_REG]	regs10,
-	input  wire	[`ysyx_25060170_REG]	regs11,
-	input  wire	[`ysyx_25060170_REG]	regs12,
-	input  wire	[`ysyx_25060170_REG]	regs13,
-	input  wire	[`ysyx_25060170_REG]	regs14,
-	input  wire	[`ysyx_25060170_REG]	regs15,
-	input  wire	[`ysyx_25060170_REG]	regs16,
-	input  wire	[`ysyx_25060170_REG]	regs17,
-	input  wire	[`ysyx_25060170_REG]	regs18,
-	input  wire	[`ysyx_25060170_REG]	regs19,
-	input  wire	[`ysyx_25060170_REG]	regs20,
-	input  wire	[`ysyx_25060170_REG]	regs21,
-	input  wire	[`ysyx_25060170_REG]	regs22,
-	input  wire	[`ysyx_25060170_REG]	regs23,
-	input  wire	[`ysyx_25060170_REG]	regs24,
-	input  wire	[`ysyx_25060170_REG]	regs25,
-	input  wire	[`ysyx_25060170_REG]	regs26,
-	input  wire	[`ysyx_25060170_REG]	regs27,
-	input  wire	[`ysyx_25060170_REG]	regs28,
-	input  wire	[`ysyx_25060170_REG]	regs29,
-	input  wire	[`ysyx_25060170_REG]	regs30,
-	input  wire	[`ysyx_25060170_REG]	regs31,
-	input  wire	[`ysyx_25060170_REG] 	mstatus,
-	input  wire	[`ysyx_25060170_REG] 	mtvec,
-	input  wire	[`ysyx_25060170_REG] 	mepc,
-	input  wire	[`ysyx_25060170_REG] 	mcause,
+	,input  wire	[`ysyx_25060170_REG]		regs0 		//<<i<<
+	,input  wire	[`ysyx_25060170_REG]		regs1 		//<<i<<
+	,input  wire	[`ysyx_25060170_REG]		regs2 		//<<i<<
+	,input  wire	[`ysyx_25060170_REG]		regs3 		//<<i<<
+	,input  wire	[`ysyx_25060170_REG]		regs4 		//<<i<<
+	,input  wire	[`ysyx_25060170_REG]		regs5 		//<<i<<
+	,input  wire	[`ysyx_25060170_REG]		regs6 		//<<i<<
+	,input  wire	[`ysyx_25060170_REG]		regs7 		//<<i<<
+	,input  wire	[`ysyx_25060170_REG]		regs8 		//<<i<<
+	,input  wire	[`ysyx_25060170_REG]		regs9 		//<<i<<
+	,input  wire	[`ysyx_25060170_REG]		regs10		//<<i<<
+	,input  wire	[`ysyx_25060170_REG]		regs11		//<<i<<
+	,input  wire	[`ysyx_25060170_REG]		regs12		//<<i<<
+	,input  wire	[`ysyx_25060170_REG]		regs13		//<<i<<
+	,input  wire	[`ysyx_25060170_REG]		regs14		//<<i<<
+	,input  wire	[`ysyx_25060170_REG]		regs15		//<<i<<
+	,input  wire	[`ysyx_25060170_REG]		regs16		//<<i<<
+	,input  wire	[`ysyx_25060170_REG]		regs17		//<<i<<
+	,input  wire	[`ysyx_25060170_REG]		regs18		//<<i<<
+	,input  wire	[`ysyx_25060170_REG]		regs19		//<<i<<
+	,input  wire	[`ysyx_25060170_REG]		regs20		//<<i<<
+	,input  wire	[`ysyx_25060170_REG]		regs21		//<<i<<
+	,input  wire	[`ysyx_25060170_REG]		regs22		//<<i<<
+	,input  wire	[`ysyx_25060170_REG]		regs23		//<<i<<
+	,input  wire	[`ysyx_25060170_REG]		regs24		//<<i<<
+	,input  wire	[`ysyx_25060170_REG]		regs25		//<<i<<
+	,input  wire	[`ysyx_25060170_REG]		regs26		//<<i<<
+	,input  wire	[`ysyx_25060170_REG]		regs27		//<<i<<
+	,input  wire	[`ysyx_25060170_REG]		regs28		//<<i<<
+	,input  wire	[`ysyx_25060170_REG]		regs29		//<<i<<
+	,input  wire	[`ysyx_25060170_REG]		regs30		//<<i<<
+	,input  wire	[`ysyx_25060170_REG]		regs31		//<<i<<
+	,input  wire	[`ysyx_25060170_REG] 		mstatus		//<<i<<
+	,input  wire	[`ysyx_25060170_REG] 		mtvec		//<<i<<
+	,input  wire	[`ysyx_25060170_REG] 		mepc		//<<i<<
+	,input  wire	[`ysyx_25060170_REG] 		mcause		//<<i<<
 
 	//from lsu
-	input wire 							re,
-	input wire 							we,
-	input wire [`ysyx_25060170_DATA] 	data_i,
-	input wire [7:0] 					wlen,
-	input wire [7:0] 					rlen,
+	,input wire 								re			//<<i<<
+	,input wire 								we			//<<i<<
+	,input wire [`ysyx_25060170_DATA] 			data_i		//<<i<<
+	,input wire [7:0] 							wlen		//<<i<<
+	,input wire [7:0] 							rlen		//<<i<<
 	
 	//from wbu 表示已经完成一条指令
-	input wire 						    inst_finish,
+	,input wire 						    	inst_finish	//<<i<<
 
 	//to lsu
-	output wire [`ysyx_25060170_DATA]     data_o,
-	input  wire [`ysyx_25060170_DATAADDR] raddr,
-	input  wire [`ysyx_25060170_DATAADDR] waddr,
+	,output wire [`ysyx_25060170_DATA]     		data_o		//>>o>>
+	,input  wire [`ysyx_25060170_DATAADDR] 		raddr		//<<i<<
+	,input  wire [`ysyx_25060170_DATAADDR] 		waddr		//<<i<<
 
 	//for magic number
-	input  wire                           magic_flag
+	,input  wire                           		magic_flag	//<<i<<
 );
 
  //--------------------DPI-C----------------------//

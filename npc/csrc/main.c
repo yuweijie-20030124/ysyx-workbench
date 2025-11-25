@@ -23,6 +23,8 @@ VerilatedVcdC* tfp = new VerilatedVcdC(); //导出vcd波形需要加此语句
 #endif
 vluint64_t main_time = 0;
 
+static int inst_end = 1;
+
 /******************************* DPI-C ********************************/
 
 /**************************** read and write ****************************/
@@ -101,8 +103,12 @@ extern "C" void magic_instruction(){
 }
 
 extern "C" void pc_inst_end(int thepc_data, int the_inst){
+  if(thepc_data != 0 && the_inst != 0){
   cpu.pc = thepc_data;
   s.val = the_inst;
+  inst_end = 0;
+  }
+  
 }
 
 extern "C" void difftest_dut_csr(int csr_mstatus, int csr_mtvec, int csr_mepc, int csr_mcause){
@@ -181,6 +187,7 @@ int main(int argc, char** argv) {
 }
 
 void isa_exec_once(){
+  while(inst_end){
   top-> clk = 0;
   top -> eval();
 #ifdef CONFIG_GTK
@@ -192,7 +199,7 @@ void isa_exec_once(){
 #ifdef CONFIG_GTK
   tfp -> dump(main_time++);
 #endif
-
+  }
 }
 
 void close_npc(){
@@ -205,7 +212,8 @@ void close_npc(){
 #ifdef CONFIG_GTK
   delete tfp;
 #endif
-  
+ 
+ inst_end = 1;
 	// exit(0) ;
 	
 }

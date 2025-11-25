@@ -16,14 +16,16 @@ SRC_FILES = $(wildcard csrc/*.c)
 			csrc/init.c csrc/cpu-
 ##TEST_FILES = csrc/main.c csrc/monitor.c csrc/log.c csrc/sdb.c csrc/timer.c csrc/memory.c
 
-VERILOG_FILES = $(wildcard vsrc/core/*.v vsrc/debug/*.v vsrc/utils/*.v)
+VERILOG_FILES = $(wildcard vsrc/core/*.v vsrc/core/define.v)
+# vsrc/debug/*.v vsrc/utils/*.v
+
 VERILATOR = verilator
 
 NPC_IMG?= 
 
 ##NPC_FLAGS?= -l=$(NPC_HOME)/npc-log.txt -b
 NPC_FLAGS ?= --log=$(NPC_HOME)/npc-log.txt
-NPC_FLAGS += -b
+# NPC_FLAGS += -b
 NPC_FLAGS += --diff=/home/yuweijie/ysyx-workbench/nemu/build/riscv32-nemu-interpreter-so
 
 
@@ -43,15 +45,17 @@ VERILATOR_FLAGS = -Wall --cc --trace \
 					 --exe --build \
 					 -LDFLAGS " -lreadline -lSDL2" \
 					 -Ivsrc \
+					 -Ivsrc/core \
 					 --top-module ysyx_25060170_top
 
 GDBVERILATOR_FLAGS = -Wall --cc --trace \
-    -CFLAGS "-g -I /home/yuweijie/ysyx-workbench/npc/include" \
-    -CFLAGS "-I /home/yuweiji./core/defe/ysyx-workbench/nemu/tools/capstone/repo/include" \
-    --exe --build \
-    -LDFLAGS "-g -lreadline -lSDL2" \
-    -Ivsrc \
-    --top-module ysyx_25060170_top
+					-CFLAGS  " -g -I /home/yuweijie/ysyx-workbench/npc/include -O2" \
+					-CFLAGS  " -g -I /home/yuweijie/ysyx-workbench/nemu/tools/capstone/repo/include -O2" \
+					 --exe --build \
+					 -LDFLAGS " -lreadline -lSDL2" \
+					 -Ivsrc \
+					 -Ivsrc/core \
+					 --top-module ysyx_25060170_top
 
 GTK = gtkwave
 
@@ -74,17 +78,20 @@ all:
 checkall:
 	$(VERILATOR) --lint-only -Wall \
 		-I$(NPC_HOME)/vsrc \
+		-I$(NPC_HOME)/vsrc/core \
 		--top-module ysyx_25060170_top.v \
 		$(VERILOG_FILES) && echo "lint OK" || echo "lint FAILED"
 
 checkone:
 	verilator --lint-only -Wall \
+	-I$(NPC_HOME)/vsrc \
 	-I$(NPC_HOME)/vsrc/core \
 	--top-module $(TEST_MODULE) \
 	$(TEST_FILE) && echo "lint OK" || echo "lint FAILED"
 
 gdb:
-	$(VERILATOR) $(GDBVERILATOR_FLAGS) $(SRC_FILES) $(VERILOG_FILES) 
+	$(VERILATOR) $(GDBVERILATOR_FLAGS) $(SRC_FILES) $(VERILOG_FILES)
+	$(call git commit, "gdb RTL") # % DO NOT REMOVE THIS LINE!!!
 	gdb --args ./obj_dir/Vysyx_25060170_top $(NPC_FLAGS) $(NPC_IMG)
 
 valgrind:

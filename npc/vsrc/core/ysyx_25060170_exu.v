@@ -2,44 +2,49 @@
 
 module ysyx_25060170_exu(
     //system signals
-    input wire                            rst,
-
+     input  wire                            rst         //<<i<<
     //from id_ex_reg
-    input wire [`ysyx_25060170_DATA]      op1,
-    input wire [`ysyx_25060170_DATA]      op2,
-    input wire [`ysyx_25060170_IMM]       imm,
-    input wire [`ysyx_25060170_PC]        pc_i,
-    input wire                            jump_i,
-    input wire [7:0]                      alu_sel,
-    input wire                            branch_i,
-    input wire [3:0]                      ls_ctl_i,
-    input wire [1:0]                      wbctl_i,
-    input wire [2:0]                      csr_ctl,     //{csr_wr_ena2, ecall_ena1, mret_ena0}
-    input wire                            rd_ena_i,
-    input wire [`ysyx_25060170_REGADDR]   rd_addr_i,
-    //from csr
-    input wire [`ysyx_25060170_REG]       read_csr_data,
-
-    output wire [`ysyx_25060170_REG]      store_data,
-    output wire [`ysyx_25060170_PC]       jump_pc_o,
-    output wire                           ex_pcsrc_o,
-    output reg  [`ysyx_25060170_DATA]     exu_res,
-    output wire [3:0]                     ls_ctl_o,
-    output wire [1:0]                     wbctl_o,
-    output wire [2:0]                     csr_ctl_o,   //{csr_wr_ena2, ecall_ena1, mret_ena0}
-    output wire                           rd_ena_o,
-    output wire [`ysyx_25060170_REGADDR]  rd_addr_o,
-    output reg  [`ysyx_25060170_DATA]     write_csr_data,
-    output reg  [`ysyx_25060170_REG]      mcause_value
+    ,input  wire [`ysyx_25060170_DATA]      op1_i      	//<<i<< 
+    ,input  wire [`ysyx_25060170_DATA]      op2_i       //<<i<<
+    ,input  wire [1:0]                      op1_sel_i	  //<<i<<
+    ,input  wire [2:0]                      op2_sel_i	  //<<i<<
+    ,input  wire [`ysyx_25060170_REGADDR]   rd_addr_i	  //<<i<<
+    ,input  wire [`ysyx_25060170_REGADDR]   rs1_addr_i	//<<i<<
+    ,input  wire [`ysyx_25060170_IMM]       imm_i		    //<<i<<
+    ,input  wire [`ysyx_25060170_PC]        pc_i		    //<<i<<
+    ,input  wire [7:0]                      alu_sel_i	  //<<i<<
+    //控制冒险
+    ,input  wire                            ls_ready_i	//<<i<<
+    ,input  wire                            id_valid_i	//<<i<<
+    ,output wire                            ex_valid_o	//>>o>>
+    ,output wire                            ex_ready_o	//>>o>>
+    //output to next ex_ls_reg
+    ,output wire [`ysyx_25060170_REG]       store_data_o//>>o>>
+    ,output wire [`ysyx_25060170_DATA]      exu_res_o	  //>>o>>
+    ,output wire [11:0]                     csr_addr_o	//>>o>>
+    ,output wire [6:0]                      csr_ctl_o	  //>>o>>
 );
+
+//********************************控制冒险********************************//
+assign ex_valid_o = id_valid_i;
+assign ex_ready_o = ls_ready_i; 
 
 //!!!!!乘除法并没有办法被综合得很好，能乘除主要是因为有软件，最好还是用硬件乘除器!!!!!
 
-assign ls_ctl_o = ls_ctl_i;
-assign wbctl_o = wbctl_i;
-assign rd_ena_o = rd_ena_i;
-assign rd_addr_o = rd_addr_i;
-assign csr_ctl_o = csr_ctl;
+//*******************************OPERAND SELECT*******************************//
+wire [`ysyx_25060170_DATA] op1;
+wire [`ysyx_25060170_DATA] op2;
+
+assign op1 = `ysyx_25060170_ZERO32 |
+             {32{op1_sel_i == 2'b01}} & op1_i |
+             {32{op1_sel_i == 2'b10}} & pc_i  ;
+
+assign op2 = `ysyx_25060170_ZERO32 |
+             {32{op2_sel_i == 3'b001}} & op2_i |
+             {32{op2_sel_i == 3'b010}} & 32'b100|
+             {32{op2_sel_i == 3'b100}} & imm_i ;   
+
+//*******************************alu calculate*******************************//
 
 // 32-bit operations
 wire [`ysyx_25060170_DATA] op1_add_op2 = op1 + op2;
@@ -70,14 +75,14 @@ always@(*) begin
     alu_res = `ysyx_25060170_ZERO32;
   end
   else begin
-    case(alu_sel)
+    case(alu_sel_i)
       `INST_ADDI, `INST_ADD,
       `INST_LUI, `INST_AUIPC: begin alu_res = op1_add_op2; end
 
       `INST_LB, `INST_LH,
       `INST_LW, `INST_LBU,
       `INST_LHU, `INST_SB,
-      `INST_SH, `INST_SW: begin alu_res = op1 + imm; end
+      `INST_SH, `INST_SW: begin alu_res = op1 + imm_i; end
 
       `INST_SUB: begin alu_res = op1_sub_op2; end
 
@@ -106,76 +111,81 @@ always@(*) begin
   end
 end
 
-reg ex_branch;
+//***********************************csr***********************************//
+reg csr_wr_ena;
+reg csr_rd_ena;
+reg mret_ena;
+reg ecall_ena;
+reg csrrw_ena;
+reg csrrs_ena;
+reg csrrc_ena;
+
+wire [`ysyx_25060170_DATA] csr_op = {{27{1'b0}},rs1_addr_i};
+
+assign csr_addr_o = (csr_ctl_o[3:0] != 4'd0) ? imm_i[11:0] : 12'd0;
+
+wire csrrxi_ena = (alu_sel_i == `INST_CSRRWI) |
+                  (alu_sel_i == `INST_CSRRSI) |
+                  (alu_sel_i == `INST_CSRRCI) ;
 
 always @(*) begin
-  if(~branch_i) begin
-    ex_branch = `ysyx_25060170_BRANCHDISABLE;
-  end
-  else begin
-    case (alu_sel)
-      `INST_BEQ: begin ex_branch = (op1 == op2) ? `ysyx_25060170_BRANCHABLE : `ysyx_25060170_BRANCHDISABLE; end
-      `INST_BNE: begin ex_branch = (op1 != op2) ? `ysyx_25060170_BRANCHABLE : `ysyx_25060170_BRANCHDISABLE; end
-      `INST_BLTU: begin ex_branch = (op1 < op2) ? `ysyx_25060170_BRANCHABLE : `ysyx_25060170_BRANCHDISABLE; end
-      `INST_BGEU: begin ex_branch = (op1 >= op2) ? `ysyx_25060170_BRANCHABLE : `ysyx_25060170_BRANCHDISABLE; end
-      `INST_BLT: begin ex_branch = (op1_lt_op2) ? `ysyx_25060170_BRANCHABLE : `ysyx_25060170_BRANCHDISABLE; end
-      `INST_BGE: begin ex_branch = (~op1_lt_op2) ? `ysyx_25060170_BRANCHABLE : `ysyx_25060170_BRANCHDISABLE; end
-      default: begin ex_branch = `ysyx_25060170_BRANCHDISABLE; end
-    endcase
-  end
+	if(rst == `ysyx_25060170_RSTABLE) begin
+  		csr_wr_ena = 1'b0;
+		csr_rd_ena = 1'b0;
+		mret_ena =  1'b0;
+		ecall_ena = 1'b0;
+		csrrw_ena = 1'b0;
+		csrrs_ena = 1'b0;
+		csrrc_ena = 1'b0;
+	end
+	else begin
+  		case(alu_sel_i)
+			`INST_ECALL : begin 
+				ecall_ena = 1'b1; 
+			end
+				
+			`INST_CSRRW, `INST_CSRRWI :  begin 	
+				csr_wr_ena = `ysyx_25060170_WENABLE; 
+				csr_rd_ena = (rd_addr_i == 5'd0) ? `ysyx_25060170_RDISABLE : `ysyx_25060170_RENABLE;
+				csrrw_ena = 1'b1;
+			end
+		 
+			`INST_CSRRS, `INST_CSRRSI :  begin	
+				csr_wr_ena = (rs1_addr_i == 5'd0) ? `ysyx_25060170_WDISABLE : `ysyx_25060170_WENABLE; 
+				csr_rd_ena = `ysyx_25060170_RENABLE;
+				csrrs_ena = 1'b1;					
+			end
+	
+			`INST_CSRRC, `INST_CSRRCI :  begin	
+				csr_wr_ena = (rs1_addr_i == 5'd0) ? `ysyx_25060170_WDISABLE : `ysyx_25060170_WENABLE; 
+				csr_rd_ena = `ysyx_25060170_RENABLE;
+				csrrc_ena = 1'b1;
+			end
+	
+			`INST_MRET :  begin  mret_ena = 1'b1 ;end
+	
+			default : begin	
+				csr_wr_ena = 1'b0;
+				csr_rd_ena = 1'b0;
+				mret_ena =  1'b0;
+				ecall_ena = 1'b0;
+				csrrw_ena = 1'b0;
+				csrrs_ena = 1'b0;
+				csrrc_ena = 1'b0;
+			end
+		endcase 
+	end
 end
 
-// Out to IFU
-assign ex_pcsrc_o = jump_i | ex_branch | csr_ctl[1] | csr_ctl[0];
-assign jump_pc_o = (alu_sel == `INST_JAL | branch_i) ? pc_i + imm :
-                   (alu_sel == `INST_JALR) ? (op1 + imm) & ~32'd1 :  // JALR clears least significant bit
-                   (csr_ctl[1] | csr_ctl[0]) ? read_csr_data :
-                   `ysyx_25060170_ZERO32;
+//***********************************output***********************************//
+// assign exu_res = (csr_ctl != 3'd0) ? read_csr_data : alu_res;
+assign store_data_o = op2_i;
 
-// Out to LSU
-assign store_data = op2;
+assign exu_res_o = alu_res |
+                  {32{(csr_ctl_o[3:0] != 4'd0)}} & op1_i |
+                  {32{csrrxi_ena}} & csr_op ;
 
-
-
-wire [`ysyx_25060170_DATA] set_data = read_csr_data | op1;
-wire [`ysyx_25060170_DATA] clear_data = read_csr_data & (~op1);
-
-
-always @(*) begin
-  write_csr_data = `ysyx_25060170_ZERO32;
-  mcause_value = `ysyx_25060170_ZERO32;
-  case(alu_sel)
-    `INST_ECALL: begin write_csr_data = pc_i; mcause_value = 32'd11; end
-
-    `INST_CSRRW, `INST_CSRRWI: begin write_csr_data = op1; end
-
-    `INST_CSRRS, `INST_CSRRSI: begin write_csr_data = set_data; end
-
-    `INST_CSRRC, `INST_CSRRCI: begin write_csr_data = clear_data; end
-
-    default: begin
-      write_csr_data = `ysyx_25060170_ZERO32;
-      mcause_value = `ysyx_25060170_ZERO32;
-    end
-  endcase
-end
-
-// ysyx_25060170_csr csr_operate(
-//     .clk(clk),  //
-//     .rst(rst),  //
-//     .csr_ctl(csr_ctl),//
-//     .csr_addr(csr_addr),//
-//     .mcause_value(mcause_value),//
-//     .read_csr_data(read_csr_data),//
-//     .write_csr_data(write_csr_data),//
-// 	   .mstatus_o(csr_ex_mstatus),
-// 	   .mepc_o   (csr_ex_mepc   ),
-// 	   .mtvec_o  (csr_ex_mtvec  ),
-// 	   .mcause_o (csr_ex_mcause )
-// );
-
-// Out to WBU
-assign exu_res = (csr_ctl != 3'd0) ? read_csr_data : alu_res;
+assign csr_ctl_o = {csrrw_ena, csrrs_ena, csrrc_ena, csr_wr_ena, csr_rd_ena, ecall_ena, mret_ena};
 
 endmodule
 

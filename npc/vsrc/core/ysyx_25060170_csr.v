@@ -1,35 +1,28 @@
 `include "define.v"
 
 module ysyx_25060170_csr(
-  //system signals
-  input  wire                        clk           , 
-  input  wire                        rst           ,
- 
-  //from  exu 
-  input  wire                        csr_rd_ena    ,
-  /* verilator lint_off UNUSEDSIGNAL */
-  // input  wire [3:0]                  csr_ctl       ,   // {csr_wr_ena3, csr_rd_ena2, ecall_ena1, mret_ena0}
-  input  wire [2:0]                  csr_ctl       ,   //{csr_wr_ena3, ecall_ena1, mret_ena0}
-  /* verilator lint_on UNUSEDSIGNAL */
-  input  wire [11:0]                 csr_addr      ,   //csr地址
-  input  wire [`ysyx_25060170_REG]   mcause_value  ,
-  input  wire [`ysyx_25060170_DATA]  write_csr_data,
-  output wire [`ysyx_25060170_DATA]  read_csr_data ,
-  output wire [`ysyx_25060170_REG]   mstatus_o     ,
-  output wire [`ysyx_25060170_REG]   mepc_o        ,
-  output wire [`ysyx_25060170_REG]   mtvec_o       ,
-  output wire [`ysyx_25060170_REG]   mcause_o      
+   input  wire                        clk              //<<i<<
+  ,input  wire                        rst              //<<i<<
+  ,input  wire [3:0]                  csr_ctl          //<<i<<  {csr_wr_ena, csr_rd_ena, ecall_ena, mret_ena}
+  ,input  wire [11:0]                 csr_addr         //<<i<<
+  ,input  wire [`ysyx_25060170_REG]   mcause_value     //<<i<<
+  ,input  wire [`ysyx_25060170_DATA]  write_csr_data   //<<i<<
+  ,output wire [`ysyx_25060170_DATA]  read_csr_data    //>>o>>
+  ,output wire [`ysyx_25060170_REG]   mstatus_o        //>>o>>
+  ,output wire [`ysyx_25060170_REG]   mepc_o           //>>o>>
+  ,output wire [`ysyx_25060170_REG]   mtvec_o          //>>o>>
+  ,output wire [`ysyx_25060170_REG]   mcause_o         //>>o>>
 );
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // 0X300 mstatus
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-wire mstatus_rd = (csr_addr == 12'h300) && csr_rd_ena;
-wire mstatus_wr = (csr_addr == 12'h300) && csr_rd_ena;
+wire mstatus_rd = (csr_addr == 12'h300) && csr_ctl[2];
+wire mstatus_wr = (csr_addr == 12'h300) && csr_ctl[3];
 reg mstatus_mie;
 reg mstatus_mpie;
 reg [1:0] mstatus_mpp;
-reg [`ysyx_25060170_REG] mstatus;  // 删除初始赋值 
+reg [`ysyx_25060170_REG] mstatus;  // 删除初始赋值
 
 wire mstatus_ie_ena = mstatus_wr | csr_ctl[1] | csr_ctl[0];
 
@@ -65,8 +58,8 @@ end
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // 0x305 mtvec
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-wire mtvec_rd = ((csr_addr == 12'h305) && csr_rd_ena) | csr_ctl[1];
-wire mtvec_wr = ((csr_addr == 12'h305) && csr_ctl[2]);
+wire mtvec_rd = ((csr_addr == 12'h305) && csr_ctl[2]) | csr_ctl[1];
+wire mtvec_wr = ((csr_addr == 12'h305) && csr_ctl[3]);
 
 reg [31:2] mtvec_base;  // 修改为32位寄存器
 always@(posedge clk) begin
@@ -88,8 +81,8 @@ wire [`ysyx_25060170_REG] mtvec = {mtvec_base, mtvec_mode};
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // 0x341 mepc
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-wire mepc_rd = ((csr_addr == 12'h341) && csr_rd_ena) | csr_ctl[0];
-wire mepc_wr = ((csr_addr == 12'h341) && csr_ctl[2]) | csr_ctl[1];
+wire mepc_rd = ((csr_addr == 12'h341) && csr_ctl[2]) | csr_ctl[0];
+wire mepc_wr = ((csr_addr == 12'h341) && csr_ctl[3]) | csr_ctl[1];
 
 reg [`ysyx_25060170_REG] mepc;
 always@(posedge clk) begin
@@ -107,8 +100,8 @@ end
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // 0x342 mcause
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-wire mcause_rd = ((csr_addr == 12'h342) && csr_rd_ena);
-wire mcause_wr = ((csr_addr == 12'h342) && csr_ctl[2]);
+wire mcause_rd = ((csr_addr == 12'h342) && csr_ctl[2]);
+wire mcause_wr = ((csr_addr == 12'h342) && csr_ctl[3]);
 reg [`ysyx_25060170_REG] mcause;
 
 always@(posedge clk) begin
@@ -129,12 +122,11 @@ end
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Read CSR Data
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-assign read_csr_data = 32'b0 |
-                      ({32{mstatus_rd == 1}} & mstatus) |
-                      ({32{mepc_rd    == 1}} & mepc   ) |
-                      ({32{mtvec_rd   == 1}} & mtvec  ) |
-                      ({32{mcause_rd  == 1}} & mcause ) ;
+assign read_csr_data = mstatus_rd ? mstatus :
+                       mepc_rd    ? mepc   :
+                       mtvec_rd   ? mtvec  : 
+                       mcause_rd  ? mcause :
+                       `ysyx_25060170_ZERO32;
 
 assign mstatus_o = mstatus;
 assign mepc_o    = mepc   ;
@@ -142,4 +134,3 @@ assign mtvec_o   = mtvec  ;
 assign mcause_o  = mcause ;
 
 endmodule
-
