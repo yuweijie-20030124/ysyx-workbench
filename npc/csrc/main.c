@@ -189,7 +189,7 @@ int main(int argc, char** argv) {
 }
 
 void isa_exec_once(){
-  printf("inst_end=%d\n",inst_end);
+  // printf("inst_end=%d\n",inst_end);
   while(inst_end){
   // printf("wuhuqifei\n");
   fishtailcore-> clk = 0;

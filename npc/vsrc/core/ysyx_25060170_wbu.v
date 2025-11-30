@@ -91,8 +91,8 @@ assign mcause_o  = mcause ;
 
 assign wbu_dpic_inst_o     = inst_i    ;
 assign wbu_dpic_pc_o       = pc_i      ;
-assign wbu_dpic_ls_valid_o = ls_valid_i;
-assign wbu_dpic_id_stall_o = id_stall_i;
+assign wbu_dpic_ls_valid_o = (pc_i == 32'h00000000) ? 1'b1 :ls_valid_i;
+assign wbu_dpic_id_stall_o = (pc_i == 32'h00000000) ? 1'b1 :id_stall_i;
 //*************************************out**************************************//
 
 assign wb_data_o = `ysyx_25060170_ZERO32 | 

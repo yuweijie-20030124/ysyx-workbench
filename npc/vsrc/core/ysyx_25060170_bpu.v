@@ -24,10 +24,10 @@ module ysyx_25060170_bpu(
     //两位状态机预测逻辑
     always@(posedge clk) begin  
         if(rst) begin 
-        strongly_not_taken_state <= 1'b1;
+        strongly_not_taken_state <= 1'b0;
         weakly_not_taken_state   <= 1'b0;
         weakly_taken_state       <= 1'b0;
-        strongly_taken_state     <= 1'b0;    
+        strongly_taken_state     <= 1'b1;    
         end
         else begin
             case({strongly_not_taken_state , weakly_not_taken_state , weakly_taken_state , strongly_taken_state})
@@ -99,12 +99,15 @@ wire [6:0]  opcode;
 wire [`ysyx_25060170_DATA] op1;
 wire [`ysyx_25060170_DATA] op2;
 wire inst_jal;
+wire inst_jalr;
 wire inst_bxx;
 wire [31:0] jump_pc;
+wire [31:0] jump_jalr_pc;
 
 
 assign opcode = inst_i[6:0];
 assign inst_jal = (rst) ? 0 : (opcode[6:2] == `ysyx_25060170_JAL) & (opcode[1:0] == 2'b11)    ;
+assign inst_jalr= (rst) ? 1'b0 : ((opcode[6:2] == `ysyx_25060170_JALR) && (opcode[1:0] == 2'b11));
 assign inst_bxx = (rst) ? 0 : (opcode[6:2] == `ysyx_25060170_BRANCH) ;
 assign {j_imm[20],j_imm[10:1],j_imm[11],j_imm[19:12]} = inst_i[31:12];
 assign {b_imm[12] , b_imm[10:5] , b_imm[4:1] , b_imm[11]} = {inst_i[31:25] , inst_i[11:7]} ;
@@ -112,18 +115,30 @@ assign op1 = pc_i;
 assign op2 = 32'b0100 |
             {32{inst_jal}} & {{12{j_imm[20]}},(j_imm[20:1] << 1)} |
             {32{inst_bxx & b_imm[12]}} & {{20{b_imm[12]}},b_imm[12:1] << 1} |
+            {32{inst_jalr}} & {{12{j_imm[20]}},(j_imm[20:1] << 1)} |
             {32{rst}} & `ysyx_25060170_ZERO32 ;
+
 assign jump_pc = op1 + op2;
-             
+assign jump_jalr_pc = (op1 + op2) & (~1) ;
 always@(posedge clk) begin
     if(rst) begin
         bp_pc_o       <= `ysyx_25060170_STARTPC ;
         bp_predict_o  <= 1'b0 ;
     end
     else begin
-        if( inst_jal | (inst_bxx & (weakly_taken_state | strongly_taken_state)) ) begin
+        if( inst_jal) begin
+            bp_pc_o      <= jump_pc ;
+            bp_predict_o <= 1'b0 ;
+            // $display("bpu predict jump from to pc = 0x%08x", jump_pc);
+        end
+        else if( (inst_bxx & (weakly_taken_state | strongly_taken_state)) ) begin
             bp_pc_o      <= jump_pc ;
             bp_predict_o <= 1'b1 ;
+            // $display("bpu predict jump from to pc = 0x%08x", jump_pc);
+        end
+        else if( inst_jalr ) begin
+            bp_pc_o      <= jump_jalr_pc ;
+            bp_predict_o <= 1'b0 ;
         end
         else begin
             bp_pc_o      <= pc_i + `ysyx_25060170_PLUS4 ;

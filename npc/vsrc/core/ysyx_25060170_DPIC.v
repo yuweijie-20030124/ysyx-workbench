@@ -321,7 +321,7 @@ end
 		if(magic_flag) begin
 			magic_instruction();
 		end
-		$display("delay = %d",delay);
+		// $display("delay = %d",delay);
 end
 
 

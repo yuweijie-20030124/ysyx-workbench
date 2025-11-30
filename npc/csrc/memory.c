@@ -87,7 +87,7 @@ uint8_t* guest_to_host(paddr_t addr) { return mem + (addr - CONFIG_MEM_BASE); }
 
 const static uint32_t img [] = {
   0x00130393,   // addi t2, t1, 1    t2 = t1 + 1                          0x8000_0000
-  0x00c000ef,   // jal ra ,80000010  跳转到 0x8000_000C，并保存返回地址到 ra  0x8000_0004
+  0x00c000ef,   // jal ra ,80000010  跳转到 0x8000_0010，并保存返回地址到 ra  0x8000_0004 象这种一定jump的没必要flush
   0x00240493,   // addi s1, s0, 2    s1 = s0 + 2                          0x8000_0008
   0x00350593,   // addi a1, a0, 3    a1 = a0 + 3                          0x8000_000C
   0x00460693,   // addi a3, a2, 4    a3 = a2 + 4                          0x8000_0010

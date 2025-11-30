@@ -188,7 +188,8 @@ assign id_valid_o 	 = if_valid_i 	;
 assign id_ex_flush_o = id_stall_ena;
 
 //*************************************out to ifu*************************************//
-assign jump_ena_o =((alusrc_o == `INST_JALR)) | (ex_branch ^ bp_jump_i);
+// assign jump_ena_o =((alusrc_o == `INST_JALR)) | (ex_branch ^ bp_jump_i);
+assign jump_ena_o = (ex_branch ^ bp_jump_i);
 
 wire [`ysyx_25060170_DATA] o1;
 wire [`ysyx_25060170_DATA] o2;
