@@ -57,7 +57,7 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 static void exec_once(Decode *s, vaddr_t pc) {
   
   /***********************************FTRACE**************************************/
-  const svScope scope = svGetScopeFromName("TOP.ysyx_25060170_top.u_ysyx_25060170_DPIC");
+  const svScope scope = svGetScopeFromName("TOP.ysyx_25060170_fishtailcore.u_ysyx_25060170_DPIC");
   assert(scope);
   svSetScope(scope);  // 设置当前 DPI 作用域
 
@@ -80,8 +80,11 @@ static void exec_once(Decode *s, vaddr_t pc) {
   
   s->pc = cpu.pc;//当前指令地址
   // printf("pc=0x%08x\n",pc);
-
-  isa_exec_once();  
+  // printf("进入！\n");
+  // npc_state.state == NPC_END;
+   
+  isa_exec_once();
+ 
   // top -> eval();
   s->snpc = cpu.pc;//静态下一条指令地址，默认为pc+4
   // printf("s->snpc - s->pc =0x%08x\n",s->snpc - s->pc);
@@ -166,7 +169,7 @@ void cpu_exec(uint64_t n) {
   }
 
   uint64_t timer_start = get_time();//获取执行指令前的时间
-
+  // printf("cpu_exec执行完毕\n");
   execute(n);
 
   uint64_t timer_end = get_time();//获取执行指令后的时间

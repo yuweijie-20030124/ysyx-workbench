@@ -21,7 +21,6 @@ module ysyx_25060170_id_ex_reg(
     //pipeline control
    	,input	 wire					        id_valid_i	//<<i<<
    	,input	 wire					        id_flush_i	//<<i<<
-   	,input	 wire					        ex_flush_i	//<<i<<
    	,input	 wire					        ls_flush_i	//<<i<<
    	,input	 wire					        ex_ready_i	//<<i<<
     //output to exu
@@ -42,8 +41,8 @@ module ysyx_25060170_id_ex_reg(
     ,output  reg                            load_flag_o //>>o>>   
 );
 
-wire flush = id_flush_i | ex_flush_i | ls_flush_i;
-wire stall = id_valid_i | ex_ready_i;
+wire flush = id_flush_i | ls_flush_i;
+wire stall = id_valid_i | ~ex_ready_i;
 
 always@(posedge clk) begin
     if(rst | flush) begin   

@@ -16,7 +16,6 @@ module ysyx_25060170_ls_wb_reg(
     //pipeline control
     ,input   wire                           ls_valid_i          //<<i<<
     ,input   wire                           wb_ready_i          //<<i<<
-    ,input   wire                           ex_flush_i          //<<i<<
     //output to wbu
     ,output  reg  [`ysyx_25060170_INST]     inst_o              //>>o>>
     ,output  reg  [`ysyx_25060170_PC]       pc_o                //>>o>>
@@ -32,8 +31,9 @@ module ysyx_25060170_ls_wb_reg(
     ,output  wire  [`ysyx_25060170_DATA]	ls_rd_data_forward  //>>o>>
 );
 
-wire flush = ex_flush_i;
-wire stall = ls_valid_i | wb_ready_i;
+// wire flush = ex_flush_i;
+wire flush = 1'b0;
+wire stall = ls_valid_i | ~wb_ready_i;
 
 always@(posedge clk) begin
     if(rst | flush) begin

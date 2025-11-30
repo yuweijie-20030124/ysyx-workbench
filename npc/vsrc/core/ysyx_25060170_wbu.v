@@ -1,12 +1,12 @@
  `include "define.v"
 
  module ysyx_25060170_wbu(
- 	 input   wire                            clk                //<<i<<  
- 	,input	wire            		           rst                //<<i<<
- 	,input	wire  [`ysyx_25060170_DATA]     ls_rd_data_i       //<<i<<
- 	,input   wire  [1:0]      		           wb_ctl_i           //<<i<<
- 	,input   wire  [`ysyx_25060170_DATA]     exu_res_i          //<<i<<
- 	,input   wire  [`ysyx_25060170_PC]       pc_i               //<<i<<
+ 	  input   wire                            clk                //<<i<<  
+ 	 ,input	wire            		           rst                //<<i<<
+ 	 ,input	wire  [`ysyx_25060170_DATA]     ls_rd_data_i       //<<i<<
+ 	 ,input   wire  [1:0]      		           wb_ctl_i           //<<i<<
+ 	 ,input   wire  [`ysyx_25060170_DATA]     exu_res_i          //<<i<<
+ 	 ,input   wire  [`ysyx_25060170_PC]       pc_i               //<<i<<
    ,input   wire  [`ysyx_25060170_INST]     inst_i             //<<i<<
    ,input   wire  [`ysyx_25060170_REGADDR]  rd_addr_i          //<<i<<
    ,input   wire                            rd_ena_i           //<<i<<
@@ -16,7 +16,7 @@
    ,input	wire					              ls_valid_i         //<<i<<
    ,input 	wire					              id_stall_i         //<<i<<
    //output to regfile  
- 	,output  wire  [`ysyx_25060170_DATA]     wb_data_o          //>>o>>  
+ 	 ,output  wire  [`ysyx_25060170_DATA]     wb_data_o          //>>o>>  
    ,output  wire                            wb_ready_o         //>>o>>
    ,output	wire                            wb_rd_ena_o        //>>o>>
    ,output	wire	[`ysyx_25060170_REGADDR]  wb_rd_addr_o       //>>o>> 
@@ -35,7 +35,7 @@
 
 );
 
-assign wb_ready_o = 1'b0;
+assign wb_ready_o = 1'b1;
 
 
 //***********************************csr**************************************//
@@ -60,27 +60,27 @@ assign write_csr_data = `ysyx_25060170_ZERO32  |
 
 ysyx_25060170_csr u_ysyx_25060170_csr (
     //<<i<<
-    .clk               (clk),
+     .clk               (clk)
     //<<i<<
-    .rst               (rst),
+    ,.rst               (rst)
     //<<i<<  {csr_wr_ena, csr_rd_ena, ecall_ena, mret_ena}
-    .csr_ctl           (csr_ctl_i[3:0]),
+    ,.csr_ctl           (csr_ctl_i[3:0])
     //<<i<<
-    .csr_addr          (csr_addr_i),
+    ,.csr_addr          (csr_addr_i)
     //<<i<<
-    .mcause_value      (mcause_value),
+    ,.mcause_value      (mcause_value)
     //<<i<<
-    .write_csr_data    (write_csr_data),
+    ,.write_csr_data    (write_csr_data)
     //>>o>>
-    .read_csr_data     (read_csr_data),
+    ,.read_csr_data     (read_csr_data)
     //>>o>>
-    .mstatus_o         (mstatus),
+    ,.mstatus_o         (mstatus)
     //>>o>>
-    .mepc_o            (mepc),
+    ,.mepc_o            (mepc)
     //>>o>>
-    .mtvec_o           (mtvec),
+    ,.mtvec_o           (mtvec)
     //>>o>>
-    .mcause_o          (mcause)
+    ,.mcause_o          (mcause)
 );
 
 //***********************************for DPIC**************************************//

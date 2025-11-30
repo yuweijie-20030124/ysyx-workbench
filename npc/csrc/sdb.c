@@ -81,7 +81,7 @@ static int cmd_si(char *args) {
     // int inst = get_inst();
     // printf("inst = 0x%08x\n",inst);
     // int pc = get_pc();
-    // printf("pc = 0x%08x\n",pc);
+    // printf("pc =??\n");
     cpu_exec(1);
     return 0;
   }
@@ -246,12 +246,13 @@ static int cmd_help(char *args) {
 
 void sdb_mainloop() {
   if (is_batch_mode) {
-    //printf("fuck npc\n");
+    
     cmd_c(NULL);
     return;
   }
-
+  
   for (char *str; (str = rl_gets()) != NULL; ) {
+    // printf("----------\n");
     char *str_end = str + strlen(str);
 
     /* extract the first token as the command */

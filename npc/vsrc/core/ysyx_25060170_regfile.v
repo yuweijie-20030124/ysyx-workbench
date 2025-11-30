@@ -1,15 +1,15 @@
 `include "define.v"
 
 module ysyx_25060170_regfile (
-     input   wire             					 clk   		//>>o>>
-    ,input   wire             					 rst   		//>>o>>
-    ,input   wire   [`ysyx_25060170_REGADDR]     waddr 		//>>o>>
-    ,input   wire   [`ysyx_25060170_REG]    	 wdata 		//>>o>>
-    ,input   wire             				     wen   		//>>o>>
-	,input	 wire             					 ren1  		//>>o>>
-	,input	 wire             					 ren2  		//>>o>>
-	,input   wire   [`ysyx_25060170_REGADDR]	 raddr1		//>>o>>
-	,input   wire   [`ysyx_25060170_REGADDR]	 raddr2		//>>o>>
+     input   wire             					 clk   		//>>i>>
+    ,input   wire             					 rst   		//>>i>>
+    ,input   wire   [`ysyx_25060170_REGADDR]     waddr 		//>>i>>
+    ,input   wire   [`ysyx_25060170_REG]    	 wdata 		//>>i>>
+    ,input   wire             				     wen   		//>>i>>
+	,input	 wire             					 ren1  		//>>i>>
+	,input	 wire             					 ren2  		//>>i>>
+	,input   wire   [`ysyx_25060170_REGADDR]	 raddr1		//>>i>>
+	,input   wire   [`ysyx_25060170_REGADDR]	 raddr2		//>>i>>
 	,output	 wire   [`ysyx_25060170_REG]	  	 rdata1		//<<o<<
 	,output	 wire   [`ysyx_25060170_REG]	  	 rdata2		//<<o<<
 

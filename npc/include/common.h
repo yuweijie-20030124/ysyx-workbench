@@ -55,7 +55,7 @@
 */
 // #define CONFIG_DIFFTEST 1
 
-// #define CONFIG_GTK 1
+#define CONFIG_GTK 1
 
 
 

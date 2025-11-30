@@ -13,6 +13,7 @@ module ysyx_25060170_lsu(
  	,output	wire					          ls_ready_o        //>>o>>
  	,output	wire					          ls_valid_o        //>>o>>
  	,output	wire					          ls_flush_o        //>>o>>
+    ,output wire                              ls_jump_o         //>>o>>
  	,output	wire [`ysyx_25060170_PC]          ls_jump_pc_o      //>>o>>
                   
     //about dpi-c for mtrace
@@ -170,9 +171,9 @@ end
 assign ls_data_o = re ? load_data : `ysyx_25060170_ZERO32;
 
 //out to ifu
-assign ls_flush_o = 1'b0;  
+assign ls_flush_o = ls_jump_o;  
 assign ls_jump_pc_o = alu_res_i;
-
+assign ls_jump_o = 1'b0;
 //out to idu
  assign ls_data_forward_o  = re ? load_data : alu_res_i ;
 

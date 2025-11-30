@@ -10,7 +10,6 @@ module ysyx_25060170_if_id_reg (
     //流水线控制信号
     ,input  wire                            if_valid_i      //<<i>>
     ,input  wire                            id_flush_i      //<<i>>
-    ,input  wire                            ex_flush_i      //<<i>>
     ,input  wire                            ls_flush_i      //<<i>>
     ,input  wire                            id_stall_i      //<<i>>
     ,input  wire                            id_ready_i      //<<i>>
@@ -21,7 +20,7 @@ module ysyx_25060170_if_id_reg (
 
  );
 
-    wire flush = (~id_stall_i & id_flush_i) | ex_flush_i | ls_flush_i ; //停顿的时候不要清空IF/ID
+    wire flush = (~id_stall_i & id_flush_i) | ls_flush_i ; //停顿的时候不要清空IF/ID
 
     always@(posedge clk) begin
         if (rst | flush) begin
@@ -29,7 +28,7 @@ module ysyx_25060170_if_id_reg (
             pc_o        <=  `ysyx_25060170_ZERO32;
             id_jump_o   <=  1'b0;
         end
-        else if (if_valid_i | id_stall_i | id_ready_i) begin
+        else if (if_valid_i | id_stall_i | ~id_ready_i) begin
             inst_o      <=  inst_o   ;
             pc_o        <=  pc_o     ;
             id_jump_o   <=  id_jump_o;

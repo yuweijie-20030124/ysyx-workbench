@@ -7,8 +7,9 @@
 	,input  wire 						 		rst			//<<i<<
 	/* verilator lint_on UNUSEDSIGNAL */
  	,input  wire	[`ysyx_25060170_INST]		pc_i		//<<i<<
-	,output reg	[`ysyx_25060170_PC]		 		inst_o		//>>o>>
+	,output reg	    [`ysyx_25060170_PC]		 	inst_o		//>>o>>
 	//for ftrace
+	,input wire     [`ysyx_25060170_PC]			ftrace_pc	//<<i<<
 	,input wire 	[`ysyx_25060170_REGADDR] 	rd_addr		//<<i<<
 	,input wire 	[`ysyx_25060170_IMM]	 	imm			//<<i<<
 	//for difftest
@@ -57,8 +58,10 @@
 	,input wire [7:0] 							rlen		//<<i<<
 	
 	//from wbu 表示已经完成一条指令
-	,input wire 						    	inst_finish	//<<i<<
-
+	,input wire		[`ysyx_25060170_INST]	    wbu_dpic_inst		//<<i<<
+	,input wire     [`ysyx_25060170_PC]	        wbu_dpic_pc			//<<i<<
+	,input wire                                	wbu_dpic_ls_valid	//<<i<<
+	,input wire                                	wbu_dpic_id_stall	//<<i<<
 	//to lsu
 	,output wire [`ysyx_25060170_DATA]     		data_o		//>>o>>
 	,input  wire [`ysyx_25060170_DATAADDR] 		raddr		//<<i<<
@@ -136,10 +139,6 @@ end
 always @(*) begin
     pmem_read(pc_i,inst_o,rlen);
     
-end
-
-always @(posedge inst_finish) begin
-	pc_inst_end(pc_i, inst_o);
 end
 
 //  always @(posedge clk) begin
@@ -230,7 +229,7 @@ task IDU_SEND_CALL_FLAG(
     // $display("jal = %d", jal);
     // $display("imm = 0x%08x", imm);
     // $display("PCx1 = %d", PCx1);
-    dnpc =  pc_i + imm;
+    dnpc =  ftrace_pc + imm;
 
 endtask
 
@@ -266,16 +265,65 @@ endtask
 /***********************************ebreak*************************************/
 
 
-always@(*) begin
-	  	// $display("pc_i = 0x%08x",pc_i);
-  		// $display("inst_o = 0x%08x",inst_o);
-	if(inst_o == `EBREAK_TRAP)begin
-  		set_npc_exit(pc_i,0);
-  	end
-	else if(magic_flag) begin
-		magic_instruction();
-  		//set_npc_exit(pc_i,1);
+// always@(*) begin
+// 	  	// $display("pc_i = 0x%08x",pc_i);
+//   		// $display("inst_o = 0x%08x",inst_o);
+// 	if(inst_o == `EBREAK_TRAP)begin
+//   		set_npc_exit(pc_i,0);
+//   	end
+// 	else if(magic_flag) begin
+// 		magic_instruction();
+//   		//set_npc_exit(pc_i,1);
 
-  	end
-  end
+//   	end
+//   end
+
+/*************************************finish inst & ebreak***********************************/
+reg delay;
+reg [`ysyx_25060170_PC] last_pc;
+
+always @(posedge clk) begin
+	if (rst == `ysyx_25060170_RSTABLE) begin
+		delay <= 1'b0;
+		last_pc <= `ysyx_25060170_ZERO32;
+	end
+	else begin
+		if (rst) begin
+			last_pc <= 32'b0;
+			delay <= 1'b0;
+		end
+		else if (wbu_dpic_id_stall & ~wbu_dpic_ls_valid) begin
+			delay <= 1'b1;
+			last_pc <= wbu_dpic_pc;
+		end
+		else begin
+			last_pc <= 32'b0;
+			delay <= 0;
+		end
+	end
+end
+
+	always @(posedge clk) begin
+		if(~wbu_dpic_id_stall & ~wbu_dpic_ls_valid) begin
+			// $display("pc_inst_end1/n");
+			$display("pc_finish = 0x%08x",wbu_dpic_pc);
+			$display("inst_finish = 0x%08x",wbu_dpic_inst);
+			pc_inst_end(wbu_dpic_pc, wbu_dpic_inst);
+		end
+		if(delay) begin
+			// $display("pc_inst_end2/n");
+			pc_inst_end(last_pc, wbu_dpic_inst);
+		end
+		if(wbu_dpic_inst == `EBREAK_TRAP) begin //32'b00000000000100000000000001110011
+			// $display("jinlailo/n");
+			set_npc_exit(wbu_dpic_pc,0);
+		end
+		if(magic_flag) begin
+			magic_instruction();
+		end
+		$display("delay = %d",delay);
+end
+
+
  endmodule
+

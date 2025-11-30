@@ -18,7 +18,6 @@ module ysyx_25060170_ex_ls_reg(
     //控制信号
     ,input	 wire				        	ex_valid_i		
 	,input	 wire				        	ls_ready_i	
-	,input	 wire				        	ex_flush_i	
 	,input	 wire				        	ls_flush_i	
     //output to lsu
     ,output  reg  [`ysyx_25060170_INST]     inst_o     
@@ -39,8 +38,8 @@ module ysyx_25060170_ex_ls_reg(
 	,output	wire  [`ysyx_25060170_DATA]		ex_rd_data_forward_o	
 
 );
-    wire flush = ex_flush_i | ls_flush_i;
-    wire stall = ex_valid_i | ls_ready_i;
+    wire flush = ls_flush_i;
+    wire stall = ex_valid_i | ~ls_ready_i;
     
     assign ex_rd_addr_forward_o = rd_addr_i	;
     assign ex_rd_data_forward_o = exu_res_i	;
