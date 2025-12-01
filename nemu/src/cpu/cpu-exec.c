@@ -102,11 +102,12 @@ static void execute(uint64_t n) {
   Decode s;
   initBuffer(&cb); // 初始化环形缓冲区，大小为BUFFER_SIZE
   for (;n > 0; n --) {
-    printf("execute_before_cpu.pc = 0x%08x\n",cpu.pc);
+    int temp_pc = cpu.pc;
+    // printf("execute_before_cpu.pc = 0x%08x\n",cpu.pc);
     exec_once(&s, cpu.pc);
-    printf("execute_after.pc = 0x%08x\n",cpu.pc);
+    // printf("execute_after.pc = 0x%08x\n",cpu.pc);
     g_nr_guest_inst ++;
-    trace_and_difftest(&s, cpu.pc);
+    trace_and_difftest(&s, temp_pc);
     if (nemu_state.state != NEMU_RUNNING) {break;}
     IFDEF(CONFIG_DEVICE, device_update());
   }
