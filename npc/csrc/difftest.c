@@ -34,8 +34,6 @@ const char *nemu_regs[] = {
   "a6", "a7", "s2", "s3", "s4", "s5", "s6", "s7",
   "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"
 };
-
-bool difftest_flag = 0;
                           
 #ifdef CONFIG_DIFFTEST
 
@@ -214,7 +212,7 @@ void difftest_step(vaddr_t pc, vaddr_t npc) {
   if (skip_dut_nr_inst > 0) {
     // printf("进来啦!!!!!!!!!>0\n");
     ref_difftest_regcpy(&ref_r, DIFFTEST_TO_DUT);
-    if (ref_r.pc == npc) {   
+    if (ref_r.pc == npc) {
       // printf("进来啦!!!!!!!!!=npc\n");
       skip_dut_nr_inst = 0;
       checkregs(&ref_r, npc);
@@ -225,32 +223,12 @@ void difftest_step(vaddr_t pc, vaddr_t npc) {
       panic("can not catch up with ref.pc = " FMT_WORD " at pc = " FMT_WORD, ref_r.pc, pc);
     return;
   }
-  NPC_reg temp_ref_r;
-  ref_r.pc = 0x80000000;
-  // printf("difftest_step1 ref_r.pc = 0x%08x\n",ref_r.pc);
-  if(difftest_flag == 0){
+
   ref_difftest_exec(1);
   ref_difftest_regcpy(&ref_r, DIFFTEST_TO_DUT);
-  temp_ref_r = ref_r;
-  // printf("difftest_step2 ref_r.pc = 0x%08x\n",ref_r.pc);
-  // printf("difftest_step npc       = 0x%08x\n",npc);
-    ref_r.pc = ref_r.pc - 4;
+
   checkregs(&ref_r, pc);
-  difftest_flag = 1;
-  }
-  else if(difftest_flag == 1){
-  temp_ref_r = ref_r;
-  ref_difftest_exec(1);
-  ref_difftest_regcpy(&temp_ref_r, DIFFTEST_TO_DUT);
-  
-  // printf("difftest_step2 ref_r.pc = 0x%08x\n",ref_r.pc);
-  // printf("difftest_step npc       = 0x%08x\n",npc);
-    // ref_r.pc = ref_f.pc - 4;
-  checkregs(&temp_ref_r, pc);
-  }
-
 }
-
 #else
 void init_difftest(char *ref_so_file, long img_size, int port) { }
 #endif
