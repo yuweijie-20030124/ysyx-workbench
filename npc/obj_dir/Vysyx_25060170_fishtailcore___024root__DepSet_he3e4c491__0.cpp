@@ -1,17 +1,29 @@
 // Verilated -*- C++ -*-
 // DESCRIPTION: Verilator output: Design implementation internals
-// See Vysyx_25060170_top.h for the primary calling header
+// See Vysyx_25060170_fishtailcore.h for the primary calling header
 
 #include "verilated.h"
 #include "verilated_dpi.h"
 
-#include "Vysyx_25060170_top__Syms.h"
-#include "Vysyx_25060170_top___024root.h"
+#include "Vysyx_25060170_fishtailcore__Syms.h"
+#include "Vysyx_25060170_fishtailcore___024root.h"
+
+extern "C" void pc_inst_end(int thepc_data, int the_inst);
+
+VL_INLINE_OPT void Vysyx_25060170_fishtailcore___024root____Vdpiimwrap_ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_DPIC__DOT__pc_inst_end_TOP(IData/*31:0*/ thepc_data, IData/*31:0*/ the_inst) {
+    VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_fishtailcore___024root____Vdpiimwrap_ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_DPIC__DOT__pc_inst_end_TOP\n"); );
+    // Body
+    int thepc_data__Vcvt;
+    for (size_t thepc_data__Vidx = 0; thepc_data__Vidx < 1; ++thepc_data__Vidx) thepc_data__Vcvt = thepc_data;
+    int the_inst__Vcvt;
+    for (size_t the_inst__Vidx = 0; the_inst__Vidx < 1; ++the_inst__Vidx) the_inst__Vcvt = the_inst;
+    pc_inst_end(thepc_data__Vcvt, the_inst__Vcvt);
+}
 
 extern "C" void pmem_read(int raddr, int* rdata, char rlen);
 
-VL_INLINE_OPT void Vysyx_25060170_top___024root____Vdpiimwrap_ysyx_25060170_top__DOT__lsu3__DOT__pmem_read_TOP(IData/*31:0*/ raddr, IData/*31:0*/ &rdata, CData/*7:0*/ rlen) {
-    VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_top___024root____Vdpiimwrap_ysyx_25060170_top__DOT__lsu3__DOT__pmem_read_TOP\n"); );
+VL_INLINE_OPT void Vysyx_25060170_fishtailcore___024root____Vdpiimwrap_ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_DPIC__DOT__pmem_read_TOP(IData/*31:0*/ raddr, IData/*31:0*/ &rdata, CData/*7:0*/ rlen) {
+    VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_fishtailcore___024root____Vdpiimwrap_ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_DPIC__DOT__pmem_read_TOP\n"); );
     // Body
     int raddr__Vcvt;
     for (size_t raddr__Vidx = 0; raddr__Vidx < 1; ++raddr__Vidx) raddr__Vcvt = raddr;
@@ -24,8 +36,8 @@ VL_INLINE_OPT void Vysyx_25060170_top___024root____Vdpiimwrap_ysyx_25060170_top_
 
 extern "C" void pmem_write(int waddr, int wdata, char wlen);
 
-VL_INLINE_OPT void Vysyx_25060170_top___024root____Vdpiimwrap_ysyx_25060170_top__DOT__lsu3__DOT__pmem_write_TOP(IData/*31:0*/ waddr, IData/*31:0*/ wdata, CData/*7:0*/ wlen) {
-    VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_top___024root____Vdpiimwrap_ysyx_25060170_top__DOT__lsu3__DOT__pmem_write_TOP\n"); );
+VL_INLINE_OPT void Vysyx_25060170_fishtailcore___024root____Vdpiimwrap_ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_DPIC__DOT__pmem_write_TOP(IData/*31:0*/ waddr, IData/*31:0*/ wdata, CData/*7:0*/ wlen) {
+    VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_fishtailcore___024root____Vdpiimwrap_ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_DPIC__DOT__pmem_write_TOP\n"); );
     // Body
     int waddr__Vcvt;
     for (size_t waddr__Vidx = 0; waddr__Vidx < 1; ++waddr__Vidx) waddr__Vcvt = waddr;
@@ -36,22 +48,10 @@ VL_INLINE_OPT void Vysyx_25060170_top___024root____Vdpiimwrap_ysyx_25060170_top_
     pmem_write(waddr__Vcvt, wdata__Vcvt, wlen__Vcvt);
 }
 
-extern "C" void pc_inst_end(int thepc_data, int the_inst);
-
-VL_INLINE_OPT void Vysyx_25060170_top___024root____Vdpiimwrap_ysyx_25060170_top__DOT__dpic__DOT__pc_inst_end_TOP(IData/*31:0*/ thepc_data, IData/*31:0*/ the_inst) {
-    VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_top___024root____Vdpiimwrap_ysyx_25060170_top__DOT__dpic__DOT__pc_inst_end_TOP\n"); );
-    // Body
-    int thepc_data__Vcvt;
-    for (size_t thepc_data__Vidx = 0; thepc_data__Vidx < 1; ++thepc_data__Vidx) thepc_data__Vcvt = thepc_data;
-    int the_inst__Vcvt;
-    for (size_t the_inst__Vidx = 0; the_inst__Vidx < 1; ++the_inst__Vidx) the_inst__Vcvt = the_inst;
-    pc_inst_end(thepc_data__Vcvt, the_inst__Vcvt);
-}
-
 extern "C" void set_npc_exit(int pc, int halt_ret);
 
-VL_INLINE_OPT void Vysyx_25060170_top___024root____Vdpiimwrap_ysyx_25060170_top__DOT__dpic__DOT__set_npc_exit_TOP(IData/*31:0*/ pc, IData/*31:0*/ halt_ret) {
-    VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_top___024root____Vdpiimwrap_ysyx_25060170_top__DOT__dpic__DOT__set_npc_exit_TOP\n"); );
+VL_INLINE_OPT void Vysyx_25060170_fishtailcore___024root____Vdpiimwrap_ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_DPIC__DOT__set_npc_exit_TOP(IData/*31:0*/ pc, IData/*31:0*/ halt_ret) {
+    VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_fishtailcore___024root____Vdpiimwrap_ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_DPIC__DOT__set_npc_exit_TOP\n"); );
     // Body
     int pc__Vcvt;
     for (size_t pc__Vidx = 0; pc__Vidx < 1; ++pc__Vidx) pc__Vcvt = pc;
@@ -62,16 +62,16 @@ VL_INLINE_OPT void Vysyx_25060170_top___024root____Vdpiimwrap_ysyx_25060170_top_
 
 extern "C" void magic_instruction();
 
-VL_INLINE_OPT void Vysyx_25060170_top___024root____Vdpiimwrap_ysyx_25060170_top__DOT__dpic__DOT__magic_instruction_TOP() {
-    VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_top___024root____Vdpiimwrap_ysyx_25060170_top__DOT__dpic__DOT__magic_instruction_TOP\n"); );
+VL_INLINE_OPT void Vysyx_25060170_fishtailcore___024root____Vdpiimwrap_ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_DPIC__DOT__magic_instruction_TOP() {
+    VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_fishtailcore___024root____Vdpiimwrap_ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_DPIC__DOT__magic_instruction_TOP\n"); );
     // Body
     magic_instruction();
 }
 
 extern "C" void difftest_dut_csr(int csr_mstatus, int csr_mtvec, int csr_mepc, int csr_mcause);
 
-VL_INLINE_OPT void Vysyx_25060170_top___024root____Vdpiimwrap_ysyx_25060170_top__DOT__dpic__DOT__difftest_dut_csr_TOP(IData/*31:0*/ csr_mstatus, IData/*31:0*/ csr_mtvec, IData/*31:0*/ csr_mepc, IData/*31:0*/ csr_mcause) {
-    VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_top___024root____Vdpiimwrap_ysyx_25060170_top__DOT__dpic__DOT__difftest_dut_csr_TOP\n"); );
+VL_INLINE_OPT void Vysyx_25060170_fishtailcore___024root____Vdpiimwrap_ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_DPIC__DOT__difftest_dut_csr_TOP(IData/*31:0*/ csr_mstatus, IData/*31:0*/ csr_mtvec, IData/*31:0*/ csr_mepc, IData/*31:0*/ csr_mcause) {
+    VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_fishtailcore___024root____Vdpiimwrap_ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_DPIC__DOT__difftest_dut_csr_TOP\n"); );
     // Body
     int csr_mstatus__Vcvt;
     for (size_t csr_mstatus__Vidx = 0; csr_mstatus__Vidx < 1; ++csr_mstatus__Vidx) csr_mstatus__Vcvt = csr_mstatus;
@@ -86,8 +86,8 @@ VL_INLINE_OPT void Vysyx_25060170_top___024root____Vdpiimwrap_ysyx_25060170_top_
 
 extern "C" void difftest_dut_regs(int regs0, int regs1, int regs2, int regs3, int regs4, int regs5, int regs6, int regs7, int regs8, int regs9, int regs10, int regs11, int regs12, int regs13, int regs14, int regs15, int regs16, int regs17, int regs18, int regs19, int regs20, int regs21, int regs22, int regs23, int regs24, int regs25, int regs26, int regs27, int regs28, int regs29, int regs30, int regs31);
 
-VL_INLINE_OPT void Vysyx_25060170_top___024root____Vdpiimwrap_ysyx_25060170_top__DOT__dpic__DOT__difftest_dut_regs_TOP(IData/*31:0*/ regs0, IData/*31:0*/ regs1, IData/*31:0*/ regs2, IData/*31:0*/ regs3, IData/*31:0*/ regs4, IData/*31:0*/ regs5, IData/*31:0*/ regs6, IData/*31:0*/ regs7, IData/*31:0*/ regs8, IData/*31:0*/ regs9, IData/*31:0*/ regs10, IData/*31:0*/ regs11, IData/*31:0*/ regs12, IData/*31:0*/ regs13, IData/*31:0*/ regs14, IData/*31:0*/ regs15, IData/*31:0*/ regs16, IData/*31:0*/ regs17, IData/*31:0*/ regs18, IData/*31:0*/ regs19, IData/*31:0*/ regs20, IData/*31:0*/ regs21, IData/*31:0*/ regs22, IData/*31:0*/ regs23, IData/*31:0*/ regs24, IData/*31:0*/ regs25, IData/*31:0*/ regs26, IData/*31:0*/ regs27, IData/*31:0*/ regs28, IData/*31:0*/ regs29, IData/*31:0*/ regs30, IData/*31:0*/ regs31) {
-    VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_top___024root____Vdpiimwrap_ysyx_25060170_top__DOT__dpic__DOT__difftest_dut_regs_TOP\n"); );
+VL_INLINE_OPT void Vysyx_25060170_fishtailcore___024root____Vdpiimwrap_ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_DPIC__DOT__difftest_dut_regs_TOP(IData/*31:0*/ regs0, IData/*31:0*/ regs1, IData/*31:0*/ regs2, IData/*31:0*/ regs3, IData/*31:0*/ regs4, IData/*31:0*/ regs5, IData/*31:0*/ regs6, IData/*31:0*/ regs7, IData/*31:0*/ regs8, IData/*31:0*/ regs9, IData/*31:0*/ regs10, IData/*31:0*/ regs11, IData/*31:0*/ regs12, IData/*31:0*/ regs13, IData/*31:0*/ regs14, IData/*31:0*/ regs15, IData/*31:0*/ regs16, IData/*31:0*/ regs17, IData/*31:0*/ regs18, IData/*31:0*/ regs19, IData/*31:0*/ regs20, IData/*31:0*/ regs21, IData/*31:0*/ regs22, IData/*31:0*/ regs23, IData/*31:0*/ regs24, IData/*31:0*/ regs25, IData/*31:0*/ regs26, IData/*31:0*/ regs27, IData/*31:0*/ regs28, IData/*31:0*/ regs29, IData/*31:0*/ regs30, IData/*31:0*/ regs31) {
+    VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_fishtailcore___024root____Vdpiimwrap_ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_DPIC__DOT__difftest_dut_regs_TOP\n"); );
     // Body
     int regs0__Vcvt;
     for (size_t regs0__Vidx = 0; regs0__Vidx < 1; ++regs0__Vidx) regs0__Vcvt = regs0;
@@ -156,56 +156,57 @@ VL_INLINE_OPT void Vysyx_25060170_top___024root____Vdpiimwrap_ysyx_25060170_top_
     difftest_dut_regs(regs0__Vcvt, regs1__Vcvt, regs2__Vcvt, regs3__Vcvt, regs4__Vcvt, regs5__Vcvt, regs6__Vcvt, regs7__Vcvt, regs8__Vcvt, regs9__Vcvt, regs10__Vcvt, regs11__Vcvt, regs12__Vcvt, regs13__Vcvt, regs14__Vcvt, regs15__Vcvt, regs16__Vcvt, regs17__Vcvt, regs18__Vcvt, regs19__Vcvt, regs20__Vcvt, regs21__Vcvt, regs22__Vcvt, regs23__Vcvt, regs24__Vcvt, regs25__Vcvt, regs26__Vcvt, regs27__Vcvt, regs28__Vcvt, regs29__Vcvt, regs30__Vcvt, regs31__Vcvt);
 }
 
-void Vysyx_25060170_top___024root____Vdpiexp_ysyx_25060170_top__DOT__dpic__DOT__IDU_SEND_CALL_FLAG_TOP(Vysyx_25060170_top__Syms* __restrict vlSymsp, IData/*31:0*/ &call_flag, IData/*31:0*/ &pc, IData/*31:0*/ &dnpc) {
-    VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_top___024root____Vdpiexp_ysyx_25060170_top__DOT__dpic__DOT__IDU_SEND_CALL_FLAG_TOP\n"); );
+void Vysyx_25060170_fishtailcore___024root____Vdpiexp_ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_DPIC__DOT__IDU_SEND_CALL_FLAG_TOP(Vysyx_25060170_fishtailcore__Syms* __restrict vlSymsp, IData/*31:0*/ &call_flag, IData/*31:0*/ &pc, IData/*31:0*/ &dnpc) {
+    VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_fishtailcore___024root____Vdpiexp_ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_DPIC__DOT__IDU_SEND_CALL_FLAG_TOP\n"); );
     // Init
     // Body
-    call_flag = (((IData)(((0x80U == (0xf80U & vlSymsp->TOP.ysyx_25060170_top__DOT__DPIC_if_inst)) 
-                           & ((0x6fU == (0x7fU & vlSymsp->TOP.ysyx_25060170_top__DOT__DPIC_if_inst)) 
-                              | (0x67U == (0x7fU & vlSymsp->TOP.ysyx_25060170_top__DOT__DPIC_if_inst))))) 
-                  | (IData)(((0x67U == (0xfffU & vlSymsp->TOP.ysyx_25060170_top__DOT__DPIC_if_inst)) 
-                             & (0U == vlSymsp->TOP.ysyx_25060170_top__DOT__id_ex_imm))))
+    call_flag = (((IData)(((0x80U == (0xf80U & vlSymsp->TOP.ysyx_25060170_fishtailcore__DOT__if_id_reg_inst)) 
+                           & ((0x6fU == (0x7fU & vlSymsp->TOP.ysyx_25060170_fishtailcore__DOT__dpic_ifu_inst)) 
+                              | (0x67U == (0x7fU & vlSymsp->TOP.ysyx_25060170_fishtailcore__DOT__dpic_ifu_inst))))) 
+                  | ((IData)(((0U == (0xf80U & vlSymsp->TOP.ysyx_25060170_fishtailcore__DOT__if_id_reg_inst)) 
+                              & (0U == vlSymsp->TOP.ysyx_25060170_fishtailcore__DOT__idu_imm))) 
+                     & (0x67U == (0x7fU & vlSymsp->TOP.ysyx_25060170_fishtailcore__DOT__dpic_ifu_inst))))
                   ? 1U : 0U);
-    dnpc = (vlSymsp->TOP.ysyx_25060170_top__DOT__if_id_pc 
-            + vlSymsp->TOP.ysyx_25060170_top__DOT__id_ex_imm);
+    dnpc = (vlSymsp->TOP.ysyx_25060170_fishtailcore__DOT__if_id_reg_pc 
+            + vlSymsp->TOP.ysyx_25060170_fishtailcore__DOT__idu_imm);
 }
 
-void Vysyx_25060170_top___024root____Vdpiexp_ysyx_25060170_top__DOT__dpic__DOT__IDU_SEND_RET_FLAG_TOP(Vysyx_25060170_top__Syms* __restrict vlSymsp, IData/*31:0*/ &ret_flag, IData/*31:0*/ &pc) {
-    VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_top___024root____Vdpiexp_ysyx_25060170_top__DOT__dpic__DOT__IDU_SEND_RET_FLAG_TOP\n"); );
+void Vysyx_25060170_fishtailcore___024root____Vdpiexp_ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_DPIC__DOT__IDU_SEND_RET_FLAG_TOP(Vysyx_25060170_fishtailcore__Syms* __restrict vlSymsp, IData/*31:0*/ &ret_flag, IData/*31:0*/ &pc) {
+    VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_fishtailcore___024root____Vdpiexp_ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_DPIC__DOT__IDU_SEND_RET_FLAG_TOP\n"); );
     // Init
     // Body
-    ret_flag = ((0x8067U == vlSymsp->TOP.ysyx_25060170_top__DOT__DPIC_if_inst)
+    ret_flag = ((0x8067U == vlSymsp->TOP.ysyx_25060170_fishtailcore__DOT__dpic_ifu_inst)
                  ? 1U : 0U);
-    pc = ((0x67U == (0x7fU & vlSymsp->TOP.ysyx_25060170_top__DOT__DPIC_if_inst))
-           ? (0xfffffffeU & vlSymsp->TOP.ysyx_25060170_top__DOT__if_id_pc)
-           : vlSymsp->TOP.ysyx_25060170_top__DOT__if_id_pc);
+    pc = ((0x67U == (0x7fU & vlSymsp->TOP.ysyx_25060170_fishtailcore__DOT__dpic_ifu_inst))
+           ? (0xfffffffeU & vlSymsp->TOP.ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_bpu__DOT__op1)
+           : vlSymsp->TOP.ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_bpu__DOT__op1);
 }
 
 #ifdef VL_DEBUG
-VL_ATTR_COLD void Vysyx_25060170_top___024root___dump_triggers__ico(Vysyx_25060170_top___024root* vlSelf);
+VL_ATTR_COLD void Vysyx_25060170_fishtailcore___024root___dump_triggers__ico(Vysyx_25060170_fishtailcore___024root* vlSelf);
 #endif  // VL_DEBUG
 
-void Vysyx_25060170_top___024root___eval_triggers__ico(Vysyx_25060170_top___024root* vlSelf) {
+void Vysyx_25060170_fishtailcore___024root___eval_triggers__ico(Vysyx_25060170_fishtailcore___024root* vlSelf) {
     if (false && vlSelf) {}  // Prevent unused
-    Vysyx_25060170_top__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
-    VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_top___024root___eval_triggers__ico\n"); );
+    Vysyx_25060170_fishtailcore__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
+    VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_fishtailcore___024root___eval_triggers__ico\n"); );
     // Body
     vlSelf->__VicoTriggered.at(0U) = (0U == vlSelf->__VicoIterCount);
 #ifdef VL_DEBUG
     if (VL_UNLIKELY(vlSymsp->_vm_contextp__->debug())) {
-        Vysyx_25060170_top___024root___dump_triggers__ico(vlSelf);
+        Vysyx_25060170_fishtailcore___024root___dump_triggers__ico(vlSelf);
     }
 #endif
 }
 
 #ifdef VL_DEBUG
-VL_ATTR_COLD void Vysyx_25060170_top___024root___dump_triggers__act(Vysyx_25060170_top___024root* vlSelf);
+VL_ATTR_COLD void Vysyx_25060170_fishtailcore___024root___dump_triggers__act(Vysyx_25060170_fishtailcore___024root* vlSelf);
 #endif  // VL_DEBUG
 
-void Vysyx_25060170_top___024root___eval_triggers__act(Vysyx_25060170_top___024root* vlSelf) {
+void Vysyx_25060170_fishtailcore___024root___eval_triggers__act(Vysyx_25060170_fishtailcore___024root* vlSelf) {
     if (false && vlSelf) {}  // Prevent unused
-    Vysyx_25060170_top__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
-    VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_top___024root___eval_triggers__act\n"); );
+    Vysyx_25060170_fishtailcore__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
+    VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_fishtailcore___024root___eval_triggers__act\n"); );
     // Body
     vlSelf->__VactTriggered.at(0U) = ((IData)(vlSelf->clk) 
                                       & (~ (IData)(vlSelf->__Vtrigrprev__TOP__clk)));
@@ -214,7 +215,7 @@ void Vysyx_25060170_top___024root___eval_triggers__act(Vysyx_25060170_top___024r
     vlSelf->__Vtrigrprev__TOP__clk = vlSelf->clk;
 #ifdef VL_DEBUG
     if (VL_UNLIKELY(vlSymsp->_vm_contextp__->debug())) {
-        Vysyx_25060170_top___024root___dump_triggers__act(vlSelf);
+        Vysyx_25060170_fishtailcore___024root___dump_triggers__act(vlSelf);
     }
 #endif
 }

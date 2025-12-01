@@ -1,20 +1,17 @@
 `include "define.v"
 
 module ysyx_25060170_csr(
-  //system signals
-  input  wire                        clk           , 
-  input  wire                        rst           ,
- 
-  //from  exu
-  input  wire [3:0]                  csr_ctl       ,   // {csr_wr_ena, csr_rd_ena, ecall_ena, mret_ena}
-  input  wire [11:0]                 csr_addr      ,   //csr地址
-  input  wire [`ysyx_25060170_REG]   mcause_value  ,
-  input  wire [`ysyx_25060170_DATA]  write_csr_data,
-  output wire [`ysyx_25060170_DATA]  read_csr_data ,
-  output wire [`ysyx_25060170_REG]   mstatus_o     ,
-  output wire [`ysyx_25060170_REG]   mepc_o        ,
-  output wire [`ysyx_25060170_REG]   mtvec_o       ,
-  output wire [`ysyx_25060170_REG]   mcause_o      
+   input  wire                        clk              //<<i<<
+  ,input  wire                        rst              //<<i<<
+  ,input  wire [3:0]                  csr_ctl          //<<i<<  {csr_wr_ena, csr_rd_ena, ecall_ena, mret_ena}
+  ,input  wire [11:0]                 csr_addr         //<<i<<
+  ,input  wire [`ysyx_25060170_REG]   mcause_value     //<<i<<
+  ,input  wire [`ysyx_25060170_DATA]  write_csr_data   //<<i<<
+  ,output wire [`ysyx_25060170_DATA]  read_csr_data    //>>o>>
+  ,output wire [`ysyx_25060170_REG]   mstatus_o        //>>o>>
+  ,output wire [`ysyx_25060170_REG]   mepc_o           //>>o>>
+  ,output wire [`ysyx_25060170_REG]   mtvec_o          //>>o>>
+  ,output wire [`ysyx_25060170_REG]   mcause_o         //>>o>>
 );
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

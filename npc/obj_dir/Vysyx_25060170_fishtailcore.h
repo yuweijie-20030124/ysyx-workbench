@@ -5,21 +5,21 @@
 // The class here is then constructed to instantiate the design.
 // See the Verilator manual for examples.
 
-#ifndef VERILATED_VYSYX_25060170_TOP_H_
-#define VERILATED_VYSYX_25060170_TOP_H_  // guard
+#ifndef VERILATED_VYSYX_25060170_FISHTAILCORE_H_
+#define VERILATED_VYSYX_25060170_FISHTAILCORE_H_  // guard
 
 #include "verilated.h"
 #include "svdpi.h"
 
-class Vysyx_25060170_top__Syms;
-class Vysyx_25060170_top___024root;
+class Vysyx_25060170_fishtailcore__Syms;
+class Vysyx_25060170_fishtailcore___024root;
 class VerilatedVcdC;
 
 // This class is the main interface to the Verilated model
-class Vysyx_25060170_top VL_NOT_FINAL : public VerilatedModel {
+class Vysyx_25060170_fishtailcore VL_NOT_FINAL : public VerilatedModel {
   private:
     // Symbol table holding complete model state (owned by this class)
-    Vysyx_25060170_top__Syms* const vlSymsp;
+    Vysyx_25060170_fishtailcore__Syms* const vlSymsp;
 
   public:
 
@@ -35,19 +35,19 @@ class Vysyx_25060170_top VL_NOT_FINAL : public VerilatedModel {
 
     // Root instance pointer to allow access to model internals,
     // including inlined /* verilator public_flat_* */ items.
-    Vysyx_25060170_top___024root* const rootp;
+    Vysyx_25060170_fishtailcore___024root* const rootp;
 
     // CONSTRUCTORS
     /// Construct the model; called by application code
     /// If contextp is null, then the model will use the default global context
     /// If name is "", then makes a wrapper with a
     /// single model invisible with respect to DPI scope names.
-    explicit Vysyx_25060170_top(VerilatedContext* contextp, const char* name = "TOP");
-    explicit Vysyx_25060170_top(const char* name = "TOP");
+    explicit Vysyx_25060170_fishtailcore(VerilatedContext* contextp, const char* name = "TOP");
+    explicit Vysyx_25060170_fishtailcore(const char* name = "TOP");
     /// Destroy the model; called (often implicitly) by application code
-    virtual ~Vysyx_25060170_top();
+    virtual ~Vysyx_25060170_fishtailcore();
   private:
-    VL_UNCOPYABLE(Vysyx_25060170_top);  ///< Copying not allowed
+    VL_UNCOPYABLE(Vysyx_25060170_fishtailcore);  ///< Copying not allowed
 
   public:
     // API METHODS

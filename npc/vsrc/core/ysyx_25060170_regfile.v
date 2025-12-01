@@ -1,56 +1,54 @@
 `include "define.v"
 
 module ysyx_25060170_regfile (
-    input    wire             					 clk   ,
-    input    wire             					 rst   ,
-
-    input    wire   [`ysyx_25060170_REGADDR]     waddr ,
-    input    wire   [`ysyx_25060170_REG]    	 wdata ,
-    input    wire             				     wen   ,
-   
-	input    wire   [`ysyx_25060170_REGADDR]	 raddr1,
-	output	 wire   [`ysyx_25060170_REG]	  	 rdata1,
-	input	 wire             					 ren1  ,
-
-	input    wire   [`ysyx_25060170_REGADDR]	 raddr2,
-	output	 wire   [`ysyx_25060170_REG]	  	 rdata2,
-	input	 wire             					 ren2  ,
+     input   wire             					 clk   		//>>i>>
+    ,input   wire             					 rst   		//>>i>>
+    ,input   wire   [`ysyx_25060170_REGADDR]     waddr 		//>>i>>
+    ,input   wire   [`ysyx_25060170_REG]    	 wdata 		//>>i>>
+    ,input   wire             				     wen   		//>>i>>
+	,input	 wire             					 ren1  		//>>i>>
+	,input	 wire             					 ren2  		//>>i>>
+	,input   wire   [`ysyx_25060170_REGADDR]	 raddr1		//>>i>>
+	,input   wire   [`ysyx_25060170_REGADDR]	 raddr2		//>>i>>
+	,output	 wire   [`ysyx_25060170_REG]	  	 rdata1		//<<o<<
+	,output	 wire   [`ysyx_25060170_REG]	  	 rdata2		//<<o<<
 
 	//to dpi-c for difftest
-	output  wire	[`ysyx_25060170_REG]		 regs0 ,
-	output  wire	[`ysyx_25060170_REG]		 regs1 ,
-	output  wire	[`ysyx_25060170_REG]		 regs2 ,
-	output  wire	[`ysyx_25060170_REG]		 regs3 ,
-	output  wire	[`ysyx_25060170_REG]		 regs4 ,
-	output  wire	[`ysyx_25060170_REG]		 regs5 ,
-	output  wire	[`ysyx_25060170_REG]		 regs6 ,
-	output  wire	[`ysyx_25060170_REG]		 regs7 ,
-	output  wire	[`ysyx_25060170_REG]		 regs8 ,
-	output  wire	[`ysyx_25060170_REG]		 regs9 ,
-	output  wire	[`ysyx_25060170_REG]		 regs10,
-	output  wire	[`ysyx_25060170_REG]		 regs11,
-	output  wire	[`ysyx_25060170_REG]		 regs12,
-	output  wire	[`ysyx_25060170_REG]		 regs13,
-	output  wire	[`ysyx_25060170_REG]		 regs14,
-	output  wire	[`ysyx_25060170_REG]		 regs15,
-	output  wire	[`ysyx_25060170_REG]		 regs16,
-	output  wire	[`ysyx_25060170_REG]		 regs17,
-	output  wire	[`ysyx_25060170_REG]		 regs18,
-	output  wire	[`ysyx_25060170_REG]		 regs19,
-	output  wire	[`ysyx_25060170_REG]		 regs20,
-	output  wire	[`ysyx_25060170_REG]		 regs21,
-	output  wire	[`ysyx_25060170_REG]		 regs22,
-	output  wire	[`ysyx_25060170_REG]		 regs23,
-	output  wire	[`ysyx_25060170_REG]		 regs24,
-	output  wire	[`ysyx_25060170_REG]		 regs25,
-	output  wire	[`ysyx_25060170_REG]		 regs26,
-	output  wire	[`ysyx_25060170_REG]		 regs27,
-	output  wire	[`ysyx_25060170_REG]		 regs28,
-	output  wire	[`ysyx_25060170_REG]		 regs29,
-	output  wire	[`ysyx_25060170_REG]		 regs30,
-	output  wire	[`ysyx_25060170_REG]		 regs31
+	,output  wire	[`ysyx_25060170_REG]		 regs0 		//<<o<<
+	,output  wire	[`ysyx_25060170_REG]		 regs1 		//<<o<<
+	,output  wire	[`ysyx_25060170_REG]		 regs2 		//<<o<<
+	,output  wire	[`ysyx_25060170_REG]		 regs3 		//<<o<<
+	,output  wire	[`ysyx_25060170_REG]		 regs4 		//<<o<<
+	,output  wire	[`ysyx_25060170_REG]		 regs5 		//<<o<<
+	,output  wire	[`ysyx_25060170_REG]		 regs6 		//<<o<<
+	,output  wire	[`ysyx_25060170_REG]		 regs7 		//<<o<<
+	,output  wire	[`ysyx_25060170_REG]		 regs8 		//<<o<<
+	,output  wire	[`ysyx_25060170_REG]		 regs9 		//<<o<<
+	,output  wire	[`ysyx_25060170_REG]		 regs10		//<<o<<
+	,output  wire	[`ysyx_25060170_REG]		 regs11		//<<o<<
+	,output  wire	[`ysyx_25060170_REG]		 regs12		//<<o<<
+	,output  wire	[`ysyx_25060170_REG]		 regs13		//<<o<<
+	,output  wire	[`ysyx_25060170_REG]		 regs14		//<<o<<
+	,output  wire	[`ysyx_25060170_REG]		 regs15		//<<o<<
+	,output  wire	[`ysyx_25060170_REG]		 regs16		//<<o<<
+	,output  wire	[`ysyx_25060170_REG]		 regs17		//<<o<<
+	,output  wire	[`ysyx_25060170_REG]		 regs18		//<<o<<
+	,output  wire	[`ysyx_25060170_REG]		 regs19		//<<o<<
+	,output  wire	[`ysyx_25060170_REG]		 regs20		//<<o<<
+	,output  wire	[`ysyx_25060170_REG]		 regs21		//<<o<<
+	,output  wire	[`ysyx_25060170_REG]		 regs22		//<<o<<
+	,output  wire	[`ysyx_25060170_REG]		 regs23		//<<o<<
+	,output  wire	[`ysyx_25060170_REG]		 regs24		//<<o<<
+	,output  wire	[`ysyx_25060170_REG]		 regs25		//<<o<<
+	,output  wire	[`ysyx_25060170_REG]		 regs26		//<<o<<
+	,output  wire	[`ysyx_25060170_REG]		 regs27		//<<o<<
+	,output  wire	[`ysyx_25060170_REG]		 regs28		//<<o<<
+	,output  wire	[`ysyx_25060170_REG]		 regs29		//<<o<<
+	,output  wire	[`ysyx_25060170_REG]		 regs30		//<<o<<
+	,output  wire	[`ysyx_25060170_REG]		 regs31		//<<o<<
 );
  
+
     reg [`ysyx_25060170_REG] regs [0:31];
 
  
