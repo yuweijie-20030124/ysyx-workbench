@@ -52,7 +52,7 @@ __EXPORT void difftest_regcpy(void *dut, bool direction) {
     }
   }
     else if(direction == DIFFTEST_TO_DUT) {
-  	printf("cpu.pc = %x\n",cpu.pc);
+  	// printf("cpu.pc = %x\n",cpu.pc);
     ((CPU_state *)dut)->pc = cpu.pc;
     for (int i = 0; i < 32; ++i) {
       ((CPU_state *)dut)->gpr[i] = cpu.gpr[i];
