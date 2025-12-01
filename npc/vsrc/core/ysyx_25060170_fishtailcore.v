@@ -750,7 +750,7 @@ ysyx_25060170_DPIC u_ysyx_25060170_DPIC (
     ,.data_o         ( dpic_ls_data         )//>>o>>
     ,.raddr          ( ls_dpic_raddr          )//<<i<<
     ,.waddr          ( ls_dpic_waddr          )//<<i<<
-    ,.ex_ls_reg_DPIC_pc_i    ( ex_ls_reg_pc    )//<<i<<
+    // ,.ex_ls_reg_DPIC_pc_i    ( ex_ls_reg_pc    )//<<i<<
     ,.magic_flag     ( magic_flag     )//<<i<<
 );
 

@@ -212,8 +212,8 @@ void difftest_step(vaddr_t pc, vaddr_t npc) {
   if (skip_dut_nr_inst > 0) {
     // printf("进来啦!!!!!!!!!>0\n");
     ref_difftest_regcpy(&ref_r, DIFFTEST_TO_DUT);
-    if (ref_r.pc == npc) {
-      // printf("进来啦!!!!!!!!!=npc\n");
+    if (ref_r.pc == npc) {   //在这里赋值，初步考虑是这里的问题导致初始pc0x80000004
+      printf("进来啦!!!!!!!!!=npc\n");
       skip_dut_nr_inst = 0;
       checkregs(&ref_r, npc);
       return;
@@ -226,6 +226,9 @@ void difftest_step(vaddr_t pc, vaddr_t npc) {
 
   ref_difftest_exec(1);
   ref_difftest_regcpy(&ref_r, DIFFTEST_TO_DUT);
+  
+  printf("difftest_step ref_r.pc = 0x%08x\n",ref_r.pc);
+  printf("difftest_step npc       = 0x%08x\n",npc);
 
   checkregs(&ref_r, pc);
 }
