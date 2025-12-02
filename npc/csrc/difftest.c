@@ -217,7 +217,8 @@ if (skip_dut_nr_inst > 0) {
 
   ref_difftest_exec(1);
   ref_difftest_regcpy(&ref_r, DIFFTEST_TO_DUT);
-
+  // printf("ref_r.pc = 0x%08x\n",ref_r.pc);
+  // printf("npc.pc   = 0x%08x\n",pc);
   checkregs(&ref_r, pc);
 }
 #else
