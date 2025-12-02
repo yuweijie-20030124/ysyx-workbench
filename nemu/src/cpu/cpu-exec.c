@@ -38,8 +38,8 @@ void device_update();
 int update_watchpoint(void);
 
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
-  printf("thispc = 0x%08x\n",_this->pc);
-  printf("dnpc   = 0x%08x\n",dnpc);
+  // printf("thispc = 0x%08x\n",_this->pc);
+  // printf("dnpc   = 0x%08x\n",dnpc);
 #ifdef CONFIG_ITRACE_COND
 //开了itrace就进去这个if里面
   if (ITRACE_COND) { log_write("%s\n", _this->logbuf); } //感觉在这里是输出指令的日志
