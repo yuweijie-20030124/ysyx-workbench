@@ -38,6 +38,8 @@ int flag = 0;
 int update_watchpoint(void);
 
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
+  printf("thispc = 0x%08x\n",_this->pc);
+  printf("dnpc   = 0x%08x\n",dnpc);
 #ifdef CONFIG_ITRACE
   log_write("%s\n", _this->logbuf); //感觉在这里是输出指令的日志
 #endif
