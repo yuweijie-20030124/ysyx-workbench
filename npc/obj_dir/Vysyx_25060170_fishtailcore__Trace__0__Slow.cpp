@@ -217,6 +217,7 @@ VL_ATTR_COLD void Vysyx_25060170_fishtailcore___024root__trace_init_sub__TOP__0(
     tracep->declBus(c+294,"data_o", false,-1, 31,0);
     tracep->declBus(c+23,"raddr", false,-1, 31,0);
     tracep->declBus(c+23,"waddr", false,-1, 31,0);
+    tracep->declBus(c+162,"ex_ls_reg_DPIC_pc_i", false,-1, 31,0);
     tracep->declBit(c+139,"magic_flag", false,-1);
     tracep->declBit(c+113,"jal", false,-1);
     tracep->declBit(c+114,"jalr", false,-1);
