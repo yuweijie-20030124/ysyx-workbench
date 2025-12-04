@@ -38,6 +38,8 @@ int flag = 0;
 int update_watchpoint(void);
 
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
+  // printf("thispc = 0x%08x\n",_this->pc);
+  // printf("dnpc   = 0x%08x\n",dnpc);
 #ifdef CONFIG_ITRACE
   log_write("%s\n", _this->logbuf); //感觉在这里是输出指令的日志
 #endif
@@ -77,7 +79,7 @@ static void exec_once(Decode *s, vaddr_t pc) {
     ret_trace(ftrace_pc);
   }
   
-  
+
   s->pc = cpu.pc;//当前指令地址
   // printf("pc=0x%08x\n",pc);
   // printf("进入！\n");
@@ -92,8 +94,8 @@ static void exec_once(Decode *s, vaddr_t pc) {
 
 #ifdef CONFIG_ITRACE
   char *p = s->logbuf;
-  
-  p += snprintf(p, sizeof(s->logbuf), FMT_WORD ":", s->snpc);
+  // printf("pc = 0x%08x\n",s->pc);
+  p += snprintf(p, sizeof(s->logbuf), FMT_WORD ":", s->pc);
   int ilen = 4;//s->snpc - s->pc;
   int i;
   uint8_t *inst = (uint8_t *)&s->val;

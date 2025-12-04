@@ -38,6 +38,8 @@ void device_update();
 int update_watchpoint(void);
 
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
+  // printf("thispc = 0x%08x\n",_this->pc);
+  // printf("dnpc   = 0x%08x\n",dnpc);
 #ifdef CONFIG_ITRACE_COND
 //开了itrace就进去这个if里面
   if (ITRACE_COND) { log_write("%s\n", _this->logbuf); } //感觉在这里是输出指令的日志
@@ -102,9 +104,12 @@ static void execute(uint64_t n) {
   Decode s;
   initBuffer(&cb); // 初始化环形缓冲区，大小为BUFFER_SIZE
   for (;n > 0; n --) {
+    int temp_pc = cpu.pc;
+    // printf("execute_before_cpu.pc = 0x%08x\n",cpu.pc);
     exec_once(&s, cpu.pc);
+    // printf("execute_after.pc = 0x%08x\n",cpu.pc);
     g_nr_guest_inst ++;
-    trace_and_difftest(&s, cpu.pc);
+    trace_and_difftest(&s, temp_pc);
     if (nemu_state.state != NEMU_RUNNING) {break;}
     IFDEF(CONFIG_DEVICE, device_update());
   }

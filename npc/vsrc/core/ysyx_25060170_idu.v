@@ -130,8 +130,8 @@ wire [`ysyx_25060170_DATA] op2_forward_data;
 
 assign op1_forward_data = `ysyx_25060170_ZERO32 |
 					{32{ex_op1_forward}} & ex_data_forward |
-					{32{ls_op1_forward}} & ls_data_forward |
-					{32{wb_op1_forward}} & wb_data_forward ;
+					{32{ls_op1_forward & (~ex_op1_forward)}} & ls_data_forward |
+					{32{wb_op1_forward & (~ex_op1_forward)   & (~ls_op1_forward)}} & wb_data_forward ;
 
 // assign op2_forward_data = 	ex_op2_forward ? ex_data_forward :
 // 				ls_op2_forward ? ls_data_forward :
@@ -140,8 +140,8 @@ assign op1_forward_data = `ysyx_25060170_ZERO32 |
 
 assign op2_forward_data = `ysyx_25060170_ZERO32 |
 					{32{ex_op2_forward}} & ex_data_forward |
-					{32{ls_op2_forward}} & ls_data_forward |
-					{32{wb_op2_forward}} & wb_data_forward ;
+					{32{ls_op2_forward & (~ex_op2_forward)}} & ls_data_forward |
+					{32{wb_op2_forward & (~ex_op2_forward)   & (~ls_op2_forward)}} & wb_data_forward ;
 
 //*************************************output*************************************//
 //out to id_ex_reg

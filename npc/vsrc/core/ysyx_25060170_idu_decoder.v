@@ -195,8 +195,17 @@ assign op1_sel = 2'b00 |
 assign op2_sel = 3'b000 |
 				{3{inst_jal}} 		& 3'b010 | 	//jal
 				{3{inst_jalr}} 		& 3'b010 | 	//jalr
-				{3{imm_ena}}	 	& 3'b10 | 	//imm
-				{3{rs2_ena}} 		& 3'b01 ; 	//rs2
+				{3{imm_ena}}	 	& 3'b100 | 	//imm
+				{3{rs2_ena}} 		& 3'b001 ; 	//rs2
+/*
+assign op1 = `ysyx_25060170_ZERO32 |
+             {32{op1_sel_i == 2'b01}} & op1_i |
+             {32{op1_sel_i == 2'b10}} & pc_i  ;
 
+assign op2 = `ysyx_25060170_ZERO32 |
+             {32{op2_sel_i == 3'b001}} & op2_i |
+             {32{op2_sel_i == 3'b010}} & 32'b100|
+             {32{op2_sel_i == 3'b100}} & imm_i ;  
+*/
 endmodule
 
