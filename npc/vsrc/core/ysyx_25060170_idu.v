@@ -117,8 +117,8 @@ assign ex_op2_forward  = (ex_load_ena | ~rs2_ena | (rs2_addr == 5'd0)) ? 1'b0 : 
 assign ls_op2_forward  = (~rs2_ena | (rs2_addr == 5'd0)) ? 1'b0 : (ls_addr_forward == rs2_addr);
 assign wb_op2_forward  = (~rs2_ena | (rs2_addr == 5'd0)) ? 1'b0 : (wb_addr_forward == rs2_addr);
 
-wire op1_forward_ena = ex_op1_forward | ls_op1_forward | wb_op1_forward;
-wire op2_forward_ena = ex_op2_forward | ls_op2_forward | wb_op2_forward;
+wire op1_forward_ena = (ex_op1_forward | ls_op1_forward | wb_op1_forward) & rs1_ena;
+wire op2_forward_ena = (ex_op2_forward | ls_op2_forward | wb_op2_forward) & rs2_ena;
 
 wire [`ysyx_25060170_DATA] op1_forward_data;
 wire [`ysyx_25060170_DATA] op2_forward_data;
@@ -150,14 +150,14 @@ assign inst_o = inst_i	;
 assign csr_imm = rs1;
 
 //rs1
-assign op1 = `ysyx_25060170_ZERO32 |
-			 {32{op1_forward_ena & rs1_ena}} & op1_forward_data |
-			 {32{rs1_ena}}					 & rs1_data;
+assign op1 = `ysyx_25060170_ZERO32 							|
+			 {32{op1_forward_ena}} & op1_forward_data 		|
+			 {32{rs1_ena & (~op1_forward_ena)}}	& rs1_data;
 
 //rs2  
-assign op2 = `ysyx_25060170_ZERO32 |
-			 {32{op2_forward_ena & rs2_ena}} & op2_forward_data |
-			 {32{rs2_ena}}					 & rs2_data;
+assign op2 = `ysyx_25060170_ZERO32 							|
+			 {32{op2_forward_ena}} & op2_forward_data 		|
+			 {32{rs2_ena & (~op2_forward_ena)}}	 & rs2_data;
 
  
 assign pc_o = rst == `ysyx_25060170_RSTABLE ? `ysyx_25060170_ZERO32 : pc_i	;

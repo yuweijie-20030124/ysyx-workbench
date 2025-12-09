@@ -1,24 +1,32 @@
 `include "define.v"
-
-//两位饱和计数器的动态分支预测方法 在里面加入加法器以提前获取分支预测会进行的pc
+//Branch History Table
+//两位饱和计数器的动态分支预测方法 在里面加入加法器以提前获取分支预测会进行的pc 
 
 
 module ysyx_25060170_bpu(
-     input  wire                        clk          //<<i<<
-    ,input  wire                        rst          //<<i<<
-    //form ifu 
-    ,input  wire [`ysyx_25060170_INST]  inst_i       //<<i<<
-    ,input  wire [`ysyx_25060170_PC]    pc_i         //<<i<<
-    //from regfile
-    // ,input  wire [`ysyx_25060170_REG]   bp_rd_data_i //<<i<<
+     input  wire                            clk                 //<<i<<
+    ,input  wire                            rst                 //<<i<<
+    //form ifu      
+    ,input  wire [`ysyx_25060170_INST]      inst_i              //<<i<<
+    ,input  wire [`ysyx_25060170_PC]        pc_i                //<<i<<
+    //from regfile 这里应该加上前递的数据 上一个操作reg[0]的数还没进去就取指出来了。
+    ,input  wire [`ysyx_25060170_REG]       ls_wb_forward_data  //<<i<<
+    ,input  wire [`ysyx_25060170_REGADDR]   ls_wb_forward_addr  //<<i<<
+    ,input  wire [`ysyx_25060170_REG]       ex_ls_forward_data  //<<i<<
+    ,input  wire [`ysyx_25060170_REGADDR]   ex_ls_forward_addr  //<<i<<
+    ,input  wire [`ysyx_25060170_REG]       bp_rs1_data_i       //<<i<<
     //to ifu
-    ,output reg [`ysyx_25060170_PC]     bp_pc_o      //>>o>>
+    ,output reg [`ysyx_25060170_PC]         bp_pc_o             //>>o>>
     //to regfile        
-    // ,output reg [`ysyx_25060170_REGADDR] bp_rd_addr_o //>>o>>
-    // ,output reg                         bp_rd_ena_o  //>>o>>
+    ,output reg [`ysyx_25060170_REGADDR]    bp_rs1_addr_o       //>>o>>
+    ,output reg                             bp_rs1_ena_o        //>>o>>
     //to if_id_reg
-    ,output reg                         bp_predict_o //>>o>>
+    ,output reg                             bp_predict_o        //>>o>>
 );
+
+    //jalr 译码模块
+    assign bp_rs1_ena_o = inst_jalr ? 1 : 0;
+    assign bp_rs1_addr_o =  bp_rs1_ena_o ? inst_i[19:15] : 5'b0;
 
     reg strongly_not_taken_state    ;
     reg weakly_not_taken_state      ;
@@ -134,7 +142,13 @@ wire [31:0] jal_offset  = {{11{jal_imm[20]}},  jal_imm};
 wire [31:0] br_offset   = {{19{b_imm[12]}},   b_imm};
 wire [31:0] jalr_offset = {{20{jalr_imm[11]}}, jalr_imm};
 
-assign op1 = pc_i;
+wire ls_wb_forward_en = (bp_rs1_addr_o == ls_wb_forward_addr) ? 1 : 0;
+wire ex_ls_forward_en = (bp_rs1_addr_o == ex_ls_forward_addr) ? 1 : 0;
+
+assign op1 =    (inst_jalr & ls_wb_forward_en) ?    ls_wb_forward_data  :
+                (inst_jalr & ex_ls_forward_en) ?    ex_ls_forward_data  :
+                inst_jalr                      ?    bp_rs1_data_i       :
+                pc_i;
 
 assign op2 = inst_jal  ? jal_offset  :
              inst_bxx  ? br_offset   :
@@ -169,9 +183,14 @@ always@(posedge clk) begin
         end
     end
 end
-
-//*********************************jalr 朝着着rd寄存器写回方向传递********************************//
-// assign bp_rd_ena_o = 
+//*********************************debug***********************************//
+	// always @(posedge clk) begin
+    //     $display("pc_i = 0x%08x", pc_i);
+    //     $display("inst_i = 0x%08x", inst_i);
+    //     $display("inst_jalr = %b", inst_jalr);
+    //     $display("bp_rs1_data_i = 0x%08x", bp_rs1_data_i);
+    //     $display("bp_rs1_addr_o = 0x%08x", bp_rs1_addr_o);
+    // end
 
 endmodule
 

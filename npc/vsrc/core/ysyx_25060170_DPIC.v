@@ -307,7 +307,7 @@ end
 
 	always @(posedge clk) begin
 		if(~wbu_dpic_id_stall & ~wbu_dpic_ls_valid) begin
-			// $display("pc_inst_end1/n");pc_i
+			// $display("inst = 0x%08x",inst_o);
 			// $display("pc_i = 0x%08x",pc_i);
 			// $display("pc_finish = 0x%08x",wbu_dpic_pc);
 			// $display("inst_finish = 0x%08x",wbu_dpic_inst);

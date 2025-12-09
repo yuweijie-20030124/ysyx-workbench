@@ -14,12 +14,22 @@ wire      [`ysyx_25060170_INST]     if_id_inst;
 // ysyx_25060170_bpu Outputs
 wire [`ysyx_25060170_PC]        bp_if_pc;  
 wire                            bp_predict;
+wire [`ysyx_25060170_REG]       bp_rs1_data;
+wire [`ysyx_25060170_REGADDR]   bp_rs1_addr;
+wire                            bp_rs1_ena;
 
 ysyx_25060170_bpu u_ysyx_25060170_bpu (
      .clk           ( clk          )//<<i<<  
     ,.rst           ( rst          )//<<i<<  
     ,.inst_i        ( if_id_inst   )//<<i<<  
-    ,.pc_i          ( if_next_pc     )//<<i<<  
+    ,.pc_i          ( if_next_pc     )//<<i<<
+    ,.ls_wb_forward_data(ls_rd_data_forward)//<<i<<
+    ,.ls_wb_forward_addr(ls_rd_addr_forward)//<<i<<
+    ,.ex_ls_forward_data(ex_rd_data_forward)//<<i<<
+    ,.ex_ls_forward_addr(ex_rd_addr_forward)//<<i<<
+    ,.bp_rs1_data_i ( bp_rs1_data)  //<<i<<
+    ,.bp_rs1_addr_o ( bp_rs1_addr)  //>>o>>
+    ,.bp_rs1_ena_o  ( bp_rs1_ena )   //>>o>>  
     ,.bp_pc_o       ( bp_if_pc     )//>>o>>  
     ,.bp_predict_o  ( bp_predict   )//>>o>>  
 );
@@ -607,38 +617,41 @@ ysyx_25060170_regfile u_ysyx_25060170_regfile (
     ,.rdata1 ( rf_id_rs1_data )//<<i<<
     ,.rdata2 ( rf_id_rs2_data )//<<i<<
 
-    ,.regs0  ( regs0  )//>>o>>
-    ,.regs1  ( regs1  )//>>o>>
-    ,.regs2  ( regs2  )//>>o>>
-    ,.regs3  ( regs3  )//>>o>>
-    ,.regs4  ( regs4  )//>>o>>
-    ,.regs5  ( regs5  )//>>o>>
-    ,.regs6  ( regs6  )//>>o>>
-    ,.regs7  ( regs7  )//>>o>>
-    ,.regs8  ( regs8  )//>>o>>
-    ,.regs9  ( regs9  )//>>o>>
-    ,.regs10 ( regs10 )//>>o>>
-    ,.regs11 ( regs11 )//>>o>>
-    ,.regs12 ( regs12 )//>>o>>
-    ,.regs13 ( regs13 )//>>o>>
-    ,.regs14 ( regs14 )//>>o>>
-    ,.regs15 ( regs15 )//>>o>>
-    ,.regs16 ( regs16 )//>>o>>
-    ,.regs17 ( regs17 )//>>o>>
-    ,.regs18 ( regs18 )//>>o>>
-    ,.regs19 ( regs19 )//>>o>>
-    ,.regs20 ( regs20 )//>>o>>
-    ,.regs21 ( regs21 )//>>o>>
-    ,.regs22 ( regs22 )//>>o>>
-    ,.regs23 ( regs23 )//>>o>>
-    ,.regs24 ( regs24 )//>>o>>
-    ,.regs25 ( regs25 )//>>o>>
-    ,.regs26 ( regs26 )//>>o>>
-    ,.regs27 ( regs27 )//>>o>>
-    ,.regs28 ( regs28 )//>>o>>
-    ,.regs29 ( regs29 )//>>o>>
-    ,.regs30 ( regs30 )//>>o>>
-    ,.regs31 ( regs31 )//>>o>>
+    ,.regs0_zero  ( regs0  )//>>o>>
+    ,.regs1_ra    ( regs1  )//>>o>>
+    ,.regs2_sp    ( regs2  )//>>o>>
+    ,.regs3_gp    ( regs3  )//>>o>>
+    ,.regs4_tp    ( regs4  )//>>o>>
+    ,.regs5_t0    ( regs5  )//>>o>>
+    ,.regs6_t1    ( regs6  )//>>o>>
+    ,.regs7_t2    ( regs7  )//>>o>>
+    ,.regs8_s0    ( regs8  )//>>o>>
+    ,.regs9_s1    ( regs9  )//>>o>>
+    ,.regs10_a0   ( regs10 )//>>o>>
+    ,.regs11_a1   ( regs11 )//>>o>>
+    ,.regs12_a2   ( regs12 )//>>o>>
+    ,.regs13_a3   ( regs13 )//>>o>>
+    ,.regs14_a4   ( regs14 )//>>o>>
+    ,.regs15_a5   ( regs15 )//>>o>>
+    ,.regs16_a6   ( regs16 )//>>o>>
+    ,.regs17_a7   ( regs17 )//>>o>>
+    ,.regs18_s2   ( regs18 )//>>o>>
+    ,.regs19_s3   ( regs19 )//>>o>>
+    ,.regs20_s4   ( regs20 )//>>o>>
+    ,.regs21_s5   ( regs21 )//>>o>>
+    ,.regs22_s6   ( regs22 )//>>o>>
+    ,.regs23_s7   ( regs23 )//>>o>>
+    ,.regs24_t3   ( regs24 )//>>o>>
+    ,.regs25_t4   ( regs25 )//>>o>>
+    ,.regs26_t5   ( regs26 )//>>o>>
+    ,.regs27_t6   ( regs27 )//>>o>>
+    ,.regs28_t3   ( regs28 )//>>o>>
+    ,.regs29_t4   ( regs29 )//>>o>>
+    ,.regs30_t5   ( regs30 )//>>o>>
+    ,.regs31_t6   ( regs31 )//>>o>>
+    ,.bp_rs1_data_o(bp_rs1_data)//<<i<<
+    ,.bp_rs1_addr_i(bp_rs1_addr)//>>o>>
+    ,.bp_rs1_ena_i (bp_rs1_ena )//>>o>>
 );
 
 // ysyx_25060170_DPIC Inputs (驱动信号用 reg)
