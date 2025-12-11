@@ -68,7 +68,10 @@
 	,input  wire [`ysyx_25060170_DATAADDR] 		waddr		//<<i<<
 
 	//for dpic difftest pc
+	/* verilator lint_off UNUSEDSIGNAL */
 	,input  wire [`ysyx_25060170_PC]            ex_ls_reg_DPIC_pc_i	//<<i<< 
+	/* verilator lint_on UNUSEDSIGNAL */
+
 	//for magic number
 	,input  wire                           		magic_flag	//<<i<<
 );
@@ -305,13 +308,14 @@ always @(posedge clk) begin
 	end
 end
 
+
 	always @(posedge clk) begin
 		if(~wbu_dpic_id_stall & ~wbu_dpic_ls_valid) begin
-			// $display("pc_inst_end1/n");pc_i
+			// $display("inst = 0x%08x",inst_o);
 			// $display("pc_i = 0x%08x",pc_i);
 			// $display("pc_finish = 0x%08x",wbu_dpic_pc);
 			// $display("inst_finish = 0x%08x",wbu_dpic_inst);
-			pc_inst_end(ex_ls_reg_DPIC_pc_i, wbu_dpic_inst);
+			pc_inst_end(wbu_dpic_pc, wbu_dpic_inst);
 		end
 		if(delay) begin
 			// $display("pc_inst_end2/n");

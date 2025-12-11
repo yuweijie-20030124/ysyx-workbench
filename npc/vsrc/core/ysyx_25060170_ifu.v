@@ -10,6 +10,7 @@ module ysyx_25060170_ifu(
     ,input  wire [`ysyx_25060170_PC]    ls_pc_i         //<<i<<
     ,input  wire [`ysyx_25060170_PC]    bp_pc_i         //<<i<<
     
+    
     //stage control signal
     // ,input  wire                        inst_valid_i //<<i<<
     ,input  wire                        id_ready_i      //<<i<<

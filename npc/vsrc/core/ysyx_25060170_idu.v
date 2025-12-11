@@ -45,11 +45,12 @@ module ysyx_25060170_idu(
 	//to ifu
 	,output wire								jump_ena_o			//>>o>>
 	,output wire [`ysyx_25060170_PC]			jump_pc_o			//>>o>>
+	,output wire     							ex_branch			//>>o>>
 	//竞争冒险
 	,input 	wire 								if_valid_i			//<<i<<
 	,input 	wire 								ex_ready_i			//<<i<<
 	,output wire								id_flush_o			//>>o>>
-	,output wire								id_ex_flush_o		//>>o>>
+	,output wire								id_stall_o		   //>>o>>
 	,output wire								id_ready_o			//>>o>>
 	,output wire								id_valid_o			//>>o>>
 	//magic flag for NEMU_STOP
@@ -117,8 +118,8 @@ assign ex_op2_forward  = (ex_load_ena | ~rs2_ena | (rs2_addr == 5'd0)) ? 1'b0 : 
 assign ls_op2_forward  = (~rs2_ena | (rs2_addr == 5'd0)) ? 1'b0 : (ls_addr_forward == rs2_addr);
 assign wb_op2_forward  = (~rs2_ena | (rs2_addr == 5'd0)) ? 1'b0 : (wb_addr_forward == rs2_addr);
 
-wire op1_forward_ena = ex_op1_forward | ls_op1_forward | wb_op1_forward;
-wire op2_forward_ena = ex_op2_forward | ls_op2_forward | wb_op2_forward;
+wire op1_forward_ena = (ex_op1_forward | ls_op1_forward | wb_op1_forward) & rs1_ena;
+wire op2_forward_ena = (ex_op2_forward | ls_op2_forward | wb_op2_forward) & rs2_ena;
 
 wire [`ysyx_25060170_DATA] op1_forward_data;
 wire [`ysyx_25060170_DATA] op2_forward_data;
@@ -130,8 +131,8 @@ wire [`ysyx_25060170_DATA] op2_forward_data;
 
 assign op1_forward_data = `ysyx_25060170_ZERO32 |
 					{32{ex_op1_forward}} & ex_data_forward |
-					{32{ls_op1_forward}} & ls_data_forward |
-					{32{wb_op1_forward}} & wb_data_forward ;
+					{32{ls_op1_forward & (~ex_op1_forward)}} & ls_data_forward |
+					{32{wb_op1_forward & (~ex_op1_forward)   & (~ls_op1_forward)}} & wb_data_forward ;
 
 // assign op2_forward_data = 	ex_op2_forward ? ex_data_forward :
 // 				ls_op2_forward ? ls_data_forward :
@@ -140,8 +141,8 @@ assign op1_forward_data = `ysyx_25060170_ZERO32 |
 
 assign op2_forward_data = `ysyx_25060170_ZERO32 |
 					{32{ex_op2_forward}} & ex_data_forward |
-					{32{ls_op2_forward}} & ls_data_forward |
-					{32{wb_op2_forward}} & wb_data_forward ;
+					{32{ls_op2_forward & (~ex_op2_forward)}} & ls_data_forward |
+					{32{wb_op2_forward & (~ex_op2_forward)   & (~ls_op2_forward)}} & wb_data_forward ;
 
 //*************************************output*************************************//
 //out to id_ex_reg
@@ -150,20 +151,20 @@ assign inst_o = inst_i	;
 assign csr_imm = rs1;
 
 //rs1
-assign op1 = `ysyx_25060170_ZERO32 |
-			 {32{op1_forward_ena & rs1_ena}} & op1_forward_data |
-			 {32{rs1_ena}}					 & rs1_data;
+assign op1 = `ysyx_25060170_ZERO32 							|
+			 {32{op1_forward_ena}} & op1_forward_data 		|
+			 {32{rs1_ena & (~op1_forward_ena)}}	& rs1_data;
 
 //rs2  
-assign op2 = `ysyx_25060170_ZERO32 |
-			 {32{op2_forward_ena & rs2_ena}} & op2_forward_data |
-			 {32{rs2_ena}}					 & rs2_data;
+assign op2 = `ysyx_25060170_ZERO32 							|
+			 {32{op2_forward_ena}} & op2_forward_data 		|
+			 {32{rs2_ena & (~op2_forward_ena)}}	 & rs2_data;
 
  
 assign pc_o = rst == `ysyx_25060170_RSTABLE ? `ysyx_25060170_ZERO32 : pc_i	;
 //*************************************branch calculate*************************************//
 
-reg ex_branch ;
+
 
 wire diff_sign = op1[31] ^ op2[31];
 
@@ -182,14 +183,14 @@ assign ex_branch =  1'b0 |
 
 
 //*************************************竞争冒险*************************************//
-assign id_flush_o 	 = jump_ena_o 	;
+assign id_flush_o 	 = ex_branch ^ bp_jump_i;
 assign id_ready_o 	 = ex_ready_i 	;
 assign id_valid_o 	 = if_valid_i 	; 
-assign id_ex_flush_o = id_stall_ena;
+assign id_stall_o    = id_stall_ena ;
 
 //*************************************out to ifu*************************************//
-// assign jump_ena_o =((alusrc_o == `INST_JALR)) | (ex_branch ^ bp_jump_i);
-assign jump_ena_o = (ex_branch ^ bp_jump_i);
+assign jump_ena_o =((alusrc_o == `INST_JALR)) | (ex_branch ^ bp_jump_i);
+// assign jump_ena_o = (ex_branch ^ bp_jump_i);
 
 wire [`ysyx_25060170_DATA] o1;
 wire [`ysyx_25060170_DATA] o2;

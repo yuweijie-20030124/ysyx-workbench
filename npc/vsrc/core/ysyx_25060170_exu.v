@@ -18,7 +18,7 @@ module ysyx_25060170_exu(
     ,input  wire                            id_valid_i	//<<i<<
     ,output wire                            ex_valid_o	//>>o>>
     ,output wire                            ex_ready_o	//>>o>>
-    //output to next ex_ls_reg
+    //output to next stage
     ,output wire [`ysyx_25060170_REG]       store_data_o//>>o>>
     ,output wire [`ysyx_25060170_DATA]      exu_res_o	  //>>o>>
     ,output wire [11:0]                     csr_addr_o	//>>o>>
@@ -70,6 +70,8 @@ wire [`ysyx_25060170_DATA] rem = $signed(op1) % $signed(op2);
 
 reg [`ysyx_25060170_DATA] alu_res;
 
+
+
 always@(*) begin
   if(rst == `ysyx_25060170_RSTABLE) begin
     alu_res = `ysyx_25060170_ZERO32;
@@ -85,6 +87,7 @@ always@(*) begin
       `INST_SH, `INST_SW: begin alu_res = op1 + imm_i; end
 
       `INST_SUB: begin alu_res = op1_sub_op2; end
+
 
       `INST_SLTI, `INST_SLT: begin alu_res = {31'd0, op1_lt_op2}; end
       `INST_SLTIU, `INST_SLTU: begin alu_res = {31'd0, (op1 < op2)}; end

@@ -16,6 +16,8 @@ module ysyx_25060170_ls_wb_reg(
     //pipeline control
     ,input   wire                           ls_valid_i          //<<i<<
     ,input   wire                           wb_ready_i          //<<i<<
+    // ,input   wire                           ex_flush_i          //<<i<<
+    // ,input   wire                           id_flush_i          //<<i<<
     //output to wbu
     ,output  reg  [`ysyx_25060170_INST]     inst_o              //>>o>>
     ,output  reg  [`ysyx_25060170_PC]       pc_o                //>>o>>

@@ -38,7 +38,7 @@ module ysyx_25060170_id_ex_reg(
     ,output  reg  [3:0]      		        lsctl_o     //>>o>>
     ,output  reg  [1:0]     			    wbctl_o     //>>o>>
     ,output  reg                            csr_ena_o   //>>o>>
-    ,output  reg                            load_flag_o //>>o>>   
+    ,output  reg                            load_flag_o //>>o>>  
 );
 
 wire flush = id_flush_i | ls_flush_i;
@@ -61,6 +61,7 @@ always@(posedge clk) begin
         wbctl_o         <=      2'b0                    ;
         csr_ena_o       <=      0                       ;
         load_flag_o     <=      0                       ;
+        // bp_jump_o       <=      1'b0                    ;
     end
     else if(stall) begin
         inst_o          <=      inst_o                  ;
@@ -78,6 +79,7 @@ always@(posedge clk) begin
         wbctl_o         <=      wbctl_o                 ;
         csr_ena_o       <=      csr_ena_o               ;
         load_flag_o     <=      load_flag_o             ;
+        // bp_jump_o       <=      bp_jump_o               ;
     end
     else begin
         inst_o          <=      inst_i                  ;
@@ -95,6 +97,7 @@ always@(posedge clk) begin
         wbctl_o         <=      wbctl_i                 ;
         csr_ena_o       <=      csr_ena_i               ;
         load_flag_o     <=      load_flag_i             ;
+        // bp_jump_o       <=      bp_jump_i               ;
     end
 end
 

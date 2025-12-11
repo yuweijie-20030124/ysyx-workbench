@@ -19,6 +19,7 @@ module ysyx_25060170_ex_ls_reg(
     ,input	 wire				        	ex_valid_i		
 	,input	 wire				        	ls_ready_i	
 	,input	 wire				        	ls_flush_i	
+    // ,input   wire                           id_flush_i
     //output to lsu
     ,output  reg  [`ysyx_25060170_INST]     inst_o     
     ,output  reg  [`ysyx_25060170_PC]       pc_o       

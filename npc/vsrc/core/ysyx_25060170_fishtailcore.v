@@ -14,12 +14,28 @@ wire      [`ysyx_25060170_INST]     if_id_inst;
 // ysyx_25060170_bpu Outputs
 wire [`ysyx_25060170_PC]        bp_if_pc;  
 wire                            bp_predict;
+wire [`ysyx_25060170_REG]       bp_rs1_data;
+wire [`ysyx_25060170_REGADDR]   bp_rs1_addr;
+wire                            bp_rs1_ena;
 
 ysyx_25060170_bpu u_ysyx_25060170_bpu (
      .clk           ( clk          )//<<i<<  
-    ,.rst           ( rst          )//<<i<<  
-    ,.inst_i        ( if_id_inst   )//<<i<<  
-    ,.pc_i          ( if_next_pc     )//<<i<<  
+    ,.rst           ( rst          )//<<i<<
+    ,.branch        ( id_jump    )//<<i<<  
+    ,.pc_before_bxx ( id_ex_reg_pc )//<<i<<
+    ,.branch_success( ex_branch    )//<<i<<
+    ,.bxx_imm       ( id_ex_reg_imm)//<<i<<  
+    ,.inst_i        ( if_id_inst   )//<<i<<      
+    ,.pc_i          ( if_next_pc     )//<<i<<
+    ,.ls_wb_forward_data(ls_rd_data_forward)//<<i<<
+    ,.ls_wb_forward_addr(ls_rd_addr_forward)//<<i<<
+    ,.ex_ls_forward_data(ex_rd_data_forward)//<<i<<
+    ,.ex_ls_forward_addr(ex_rd_addr_forward)//<<i<<
+    ,.wb_rd_addr_forward( wb_rd_addr_forward )//<<i<<
+    ,.wb_rd_data_forward( wb_rd_data_forward )//<<i<<
+    ,.bp_rs1_data_i ( bp_rs1_data)  //<<i<<
+    ,.bp_rs1_addr_o ( bp_rs1_addr)  //>>o>>
+    ,.bp_rs1_ena_o  ( bp_rs1_ena )   //>>o>>  
     ,.bp_pc_o       ( bp_if_pc     )//>>o>>  
     ,.bp_predict_o  ( bp_predict   )//>>o>>  
 );
@@ -32,7 +48,7 @@ wire  [`ysyx_25060170_PC]        ls_jump_pc;
 // reg  [`ysyx_25060170_PC]        bp_jump_pc;
 // reg                             inst_valid;
 wire                             id_ready;
-wire                             id_ex_flush;
+wire                             id_stall;
 // reg                             id_stall;
 // reg             inst_i                   ;
 // reg             pc_i                     ;
@@ -54,7 +70,7 @@ ysyx_25060170_ifu  u_ysyx_25060170_ifu (
     ,.bp_pc_i          (bp_if_pc         )//<<i<<  
     // ,.inst_valid_i     (inst_valid_i     )//<<i<<
     ,.id_ready_i       (id_ready       )//<<i<<
-    ,.id_stall_i       (id_ex_flush       )//<<i<<
+    ,.id_stall_i       (id_stall       )//<<i<<
     ,.inst_i           (dpic_ifu_inst             )//<<i<<
     // ,.pc_i             (id_pc            )//<<i<<
     ,.if_valid_o       (if_valid         )//>>o>>
@@ -71,7 +87,7 @@ ysyx_25060170_ifu  u_ysyx_25060170_ifu (
 // reg                             id_ready_i;
 wire                               ls_flush;
 wire                               id_flush;
-wire                               ls_flush;
+
 
 // ysyx_25060170_if_id_reg Outputs
 wire [`ysyx_25060170_PC]        if_id_reg_pc;
@@ -87,7 +103,7 @@ ysyx_25060170_if_id_reg u_ysyx_25060170_if_id_reg (
     ,.if_valid_i    ( if_valid   ) //<<i<<
     ,.id_flush_i    ( id_flush ) //<<i<<
     ,.ls_flush_i    ( ls_flush ) //<<i<<
-    ,.id_stall_i    ( id_ex_flush) //<<i<<
+    ,.id_stall_i    ( id_stall) //<<i<<
     ,.id_ready_i    ( id_ready ) //<<i<<
 
     ,.pc_o          ( if_id_reg_pc       ) //>>o>>
@@ -133,6 +149,7 @@ wire                            id_if_pc_jump;
 wire [`ysyx_25060170_PC]        id_jump_pc;
 wire                            id_flush;
 // wire                            id_ex_flush_o;
+wire                            ex_branch;
 wire                            magic_flag;
 
 ysyx_25060170_idu u_ysyx_25060170_idu (
@@ -180,13 +197,14 @@ ysyx_25060170_idu u_ysyx_25060170_idu (
     ,.csr_imm            (idu_csr_imm           )//>>O>>
 
     ,.jump_ena_o         (id_if_pc_jump     )//>>O>>    
-    ,.jump_pc_o          (id_jump_pc        )//>>O>>    
+    ,.jump_pc_o          (id_jump_pc        )//>>O>> 
+    ,.ex_branch          (ex_branch        )//>>O>>   
 
     ,.if_valid_i         (if_valid        )//<<i<<   
     ,.ex_ready_i         (ex_ready        )//<<i<<   
 
     ,.id_flush_o         (id_flush        )//>>O>>
-    ,.id_ex_flush_o      (id_ex_flush     )//>>O>>
+    ,.id_stall_o         (id_stall     )//>>O>>
     ,.id_ready_o         (id_ready          )//>>O>>
     ,.id_valid_o         (id_valid          )//>>O>>
 
@@ -247,7 +265,7 @@ ysyx_25060170_id_ex_reg u_ysyx_25060170_id_ex_reg (
     ,.csr_ena_i      (idu_csr_ena     )//<<i<<
     ,.load_flag_i    (idu_load_flag   )//<<i<<
     ,.id_valid_i     (id_valid    )//<<i<<
-    ,.id_flush_i     (id_ex_flush    )//<<i<<
+    ,.id_flush_i     (id_flush    )//<<i<<
     ,.ls_flush_i     (ls_flush    )//<<i<<
     ,.ex_ready_i     (ex_ready    )//<<i<<
     ,.inst_o         (id_ex_reg_inst        )//>>o>>
@@ -356,6 +374,7 @@ ysyx_25060170_ex_ls_reg u_ysyx_25060170_ex_ls_reg (
     ,.ex_valid_i             ( ex_valid             )//<<i<<
     ,.ls_ready_i             ( ls_ready             )//<<i<<
     ,.ls_flush_i             ( ls_flush             )//<<i<<
+    // ,.id_flush_i             ( id_flush             )//<<i<<
 
     ,.inst_o                 ( ex_ls_reg_inst                 )//>>o>>
     ,.pc_o                   ( ex_ls_reg_pc                   )//>>o>>
@@ -469,6 +488,8 @@ ysyx_25060170_ls_wb_reg u_ysyx_25060170_ls_wb_reg (
     ,.ls_data_forward_i      ( ls_data_forward    )//<<i<<
     ,.ls_valid_i             ( ls_valid           )//<<i<<
     ,.wb_ready_i             ( wb_ready           )//<<i<<
+    // ,.ex_flush_i             ( ex_flush           )//<<i<<
+    // ,.id_flush_i             ( id_flush           )//<<i<<
 
     ,.inst_o                 ( ls_wb_reg_inst               )//>>o>>
     ,.pc_o                   ( ls_wb_reg_pc                 )//>>o>>
@@ -528,7 +549,7 @@ ysyx_25060170_wbu u_ysyx_25060170_wbu (
     ,.csr_ctl_i             ( ls_wb_reg_csr_ctl             )//<<i<<
     ,.csr_addr_i            ( ls_wb_reg_csr_addr            )//<<i<<
     ,.ls_valid_i            ( ls_valid            )//<<i<<
-    ,.id_stall_i            ( id_ex_flush            )//<<i<<
+    ,.id_stall_i            ( id_stall            )//<<i<<
     //out for regfile
     ,.wb_data_o             ( wb_rf_data             )//>>o>>
     ,.wb_ready_o            ( wb_ready            )//>>o>>
@@ -607,38 +628,41 @@ ysyx_25060170_regfile u_ysyx_25060170_regfile (
     ,.rdata1 ( rf_id_rs1_data )//<<i<<
     ,.rdata2 ( rf_id_rs2_data )//<<i<<
 
-    ,.regs0  ( regs0  )//>>o>>
-    ,.regs1  ( regs1  )//>>o>>
-    ,.regs2  ( regs2  )//>>o>>
-    ,.regs3  ( regs3  )//>>o>>
-    ,.regs4  ( regs4  )//>>o>>
-    ,.regs5  ( regs5  )//>>o>>
-    ,.regs6  ( regs6  )//>>o>>
-    ,.regs7  ( regs7  )//>>o>>
-    ,.regs8  ( regs8  )//>>o>>
-    ,.regs9  ( regs9  )//>>o>>
-    ,.regs10 ( regs10 )//>>o>>
-    ,.regs11 ( regs11 )//>>o>>
-    ,.regs12 ( regs12 )//>>o>>
-    ,.regs13 ( regs13 )//>>o>>
-    ,.regs14 ( regs14 )//>>o>>
-    ,.regs15 ( regs15 )//>>o>>
-    ,.regs16 ( regs16 )//>>o>>
-    ,.regs17 ( regs17 )//>>o>>
-    ,.regs18 ( regs18 )//>>o>>
-    ,.regs19 ( regs19 )//>>o>>
-    ,.regs20 ( regs20 )//>>o>>
-    ,.regs21 ( regs21 )//>>o>>
-    ,.regs22 ( regs22 )//>>o>>
-    ,.regs23 ( regs23 )//>>o>>
-    ,.regs24 ( regs24 )//>>o>>
-    ,.regs25 ( regs25 )//>>o>>
-    ,.regs26 ( regs26 )//>>o>>
-    ,.regs27 ( regs27 )//>>o>>
-    ,.regs28 ( regs28 )//>>o>>
-    ,.regs29 ( regs29 )//>>o>>
-    ,.regs30 ( regs30 )//>>o>>
-    ,.regs31 ( regs31 )//>>o>>
+    ,.regs0_zero  ( regs0  )//>>o>>
+    ,.regs1_ra    ( regs1  )//>>o>>
+    ,.regs2_sp    ( regs2  )//>>o>>
+    ,.regs3_gp    ( regs3  )//>>o>>
+    ,.regs4_tp    ( regs4  )//>>o>>
+    ,.regs5_t0    ( regs5  )//>>o>>
+    ,.regs6_t1    ( regs6  )//>>o>>
+    ,.regs7_t2    ( regs7  )//>>o>>
+    ,.regs8_s0    ( regs8  )//>>o>>
+    ,.regs9_s1    ( regs9  )//>>o>>
+    ,.regs10_a0   ( regs10 )//>>o>>
+    ,.regs11_a1   ( regs11 )//>>o>>
+    ,.regs12_a2   ( regs12 )//>>o>>
+    ,.regs13_a3   ( regs13 )//>>o>>
+    ,.regs14_a4   ( regs14 )//>>o>>
+    ,.regs15_a5   ( regs15 )//>>o>>
+    ,.regs16_a6   ( regs16 )//>>o>>
+    ,.regs17_a7   ( regs17 )//>>o>>
+    ,.regs18_s2   ( regs18 )//>>o>>
+    ,.regs19_s3   ( regs19 )//>>o>>
+    ,.regs20_s4   ( regs20 )//>>o>>
+    ,.regs21_s5   ( regs21 )//>>o>>
+    ,.regs22_s6   ( regs22 )//>>o>>
+    ,.regs23_s7   ( regs23 )//>>o>>
+    ,.regs24_t3   ( regs24 )//>>o>>
+    ,.regs25_t4   ( regs25 )//>>o>>
+    ,.regs26_t5   ( regs26 )//>>o>>
+    ,.regs27_t6   ( regs27 )//>>o>>
+    ,.regs28_t3   ( regs28 )//>>o>>
+    ,.regs29_t4   ( regs29 )//>>o>>
+    ,.regs30_t5   ( regs30 )//>>o>>
+    ,.regs31_t6   ( regs31 )//>>o>>
+    ,.bp_rs1_data_o(bp_rs1_data)//<<i<<
+    ,.bp_rs1_addr_i(bp_rs1_addr)//>>o>>
+    ,.bp_rs1_ena_i (bp_rs1_ena )//>>o>>
 );
 
 // ysyx_25060170_DPIC Inputs (驱动信号用 reg)
