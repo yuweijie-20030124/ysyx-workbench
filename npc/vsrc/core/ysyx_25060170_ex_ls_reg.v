@@ -5,7 +5,8 @@ module ysyx_25060170_ex_ls_reg(
     ,input   wire                           rst                   
     //signals from exu
     ,input   wire [`ysyx_25060170_INST]     inst_i     
-    ,input   wire [`ysyx_25060170_PC]       pc_i       
+    ,input   wire [`ysyx_25060170_PC]       pc_i
+    ,input   wire [`ysyx_25060170_PC]       next_pc_i       
     ,input   wire [`ysyx_25060170_REG]      store_data_i
     ,input   wire [`ysyx_25060170_DATA]     exu_res_i
     ,input   wire [3:0]                     ls_ctl_i
@@ -22,7 +23,8 @@ module ysyx_25060170_ex_ls_reg(
     // ,input   wire                           id_flush_i
     //output to lsu
     ,output  reg  [`ysyx_25060170_INST]     inst_o     
-    ,output  reg  [`ysyx_25060170_PC]       pc_o       
+    ,output  reg  [`ysyx_25060170_PC]       pc_o   
+    ,output  reg  [`ysyx_25060170_PC]       next_pc_o
     ,output  reg  [`ysyx_25060170_REG]      store_data_o
     ,output  reg  [`ysyx_25060170_DATA]     exu_res_o
     ,output  reg  [3:0]                     ls_ctl_o
@@ -50,6 +52,7 @@ module ysyx_25060170_ex_ls_reg(
         if(rst | flush) begin
             inst_o          <=  `ysyx_25060170_ZERO32    ;
             pc_o            <=  `ysyx_25060170_ZERO32    ;
+            next_pc_o       <=  `ysyx_25060170_ZERO32    ;
             store_data_o    <=  `ysyx_25060170_ZERO32    ;
             exu_res_o       <=  `ysyx_25060170_ZERO32    ;
             ls_ctl_o        <=  4'b0                     ;
@@ -63,6 +66,7 @@ module ysyx_25060170_ex_ls_reg(
         else if(stall) begin
             inst_o          <=  inst_o                   ;
             pc_o            <=  pc_o                     ;
+            next_pc_o       <=  next_pc_o                ;
             store_data_o    <=  store_data_o             ;
             exu_res_o       <=  exu_res_o                ;
             ls_ctl_o        <=  ls_ctl_o                 ;
@@ -76,6 +80,7 @@ module ysyx_25060170_ex_ls_reg(
         else begin
             inst_o          <=  inst_i                   ;
             pc_o            <=  pc_i                     ;
+            next_pc_o       <=  next_pc_i                ;
             store_data_o    <=  store_data_i             ;
             exu_res_o       <=  exu_res_i                ;
             ls_ctl_o        <=  ls_ctl_i                 ;

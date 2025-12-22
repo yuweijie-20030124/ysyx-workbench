@@ -127,14 +127,16 @@ static void execute(uint64_t n) {
   initBuffer(&cb); // 初始化环形缓冲区，大小为BUFFER_SIZE
 #endif
   for (;n > 0; n --) {
-    // printf("execute_cpu.pc = 0x%08x\n",cpu.pc);
+    // int now_pc = cpu.pc;
+    // printf("execute_now.pc = 0x%08x\n",cpu.pc);
     exec_once(&s, cpu.pc);
     g_nr_guest_inst ++;
     
     trace_and_difftest(&s, cpu.pc);
     if (npc_state.state != NPC_RUNNING) break;
     IFDEF(CONFIG_DEVICE, device_update());
-  }/*条件编译宏，如果CONFIG_DEVICE被定义，则调用device_update函数，如果 CONFIG_DEVICE 没有被定义，
+  }
+  /*条件编译宏，如果CONFIG_DEVICE被定义，则调用device_update函数，如果 CONFIG_DEVICE 没有被定义，
   这一行什么都不会生成（等价于被注释掉）。*/
 
   #ifdef CONFIG_ITRACE_IRINGBUF

@@ -4,7 +4,8 @@ module ysyx_25060170_idu(
 	 input	wire		       					rst					//<<i<<					
 	//from if_id signal	
 	,input	wire [`ysyx_25060170_INST]			inst_i				//<<i<<
-	,input	wire [`ysyx_25060170_PC]			pc_i				//<<i<<		
+	,input	wire [`ysyx_25060170_PC]			pc_i				//<<i<<
+	,input  wire [`ysyx_25060170_PC]			next_pc_i			//<<i<<
 	//from bpu
 	,input 	wire 								bp_jump_i			//<<i<<
 	//data forward
@@ -26,7 +27,9 @@ module ysyx_25060170_idu(
 	,output wire						 		rs2_ena  			//>>o>>
 	,output wire				 				rd_ena  			//>>o>>
   	,output wire [`ysyx_25060170_REGADDR] 		rd_addr 			//>>o>>
-	//to exu out signal		
+	//to exu out signal
+	,output wire [`ysyx_25060170_PC]            pc_o				//>>o>>
+	,output wire [`ysyx_25060170_PC]            next_pc_o			//>>o>>	
 	,output wire [7:0]         					alusrc_o  			//>>o>>
 	,output wire [3:0]      					lsctl_o   			//>>o>>
 	,output wire [1:0]     						wbctl_o    			//>>o>>
@@ -39,7 +42,6 @@ module ysyx_25060170_idu(
 	,output reg  [`ysyx_25060170_DATA]  		op2 			 	//>>o>>
 	,output reg  [`ysyx_25060170_IMM]     		imm 				//>>o>>
 	,output	wire [`ysyx_25060170_REGADDR] 		idu_dpic_rd_addr	//>>o>>
-	,output	wire [`ysyx_25060170_PC]			pc_o				//>>o>>
 	,output wire [`ysyx_25060170_INST]       	inst_o				//>>o>>
 	,output wire [4:0] 							csr_imm				//>>o>>
 	//to ifu
@@ -146,6 +148,7 @@ assign op2_forward_data = `ysyx_25060170_ZERO32 |
 
 //*************************************output*************************************//
 //out to id_ex_reg
+assign next_pc_o = next_pc_i;
 assign pc_o = pc_i	;
 assign inst_o = inst_i	;
 assign csr_imm = rs1;
