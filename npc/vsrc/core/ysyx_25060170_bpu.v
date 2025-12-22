@@ -6,6 +6,11 @@
 module ysyx_25060170_bpu(
      input  wire                            clk                 //<<i<<
     ,input  wire                            rst                 //<<i<<
+    //for branch
+    ,input  wire [`ysyx_25060170_PC]        pc_before_bxx       //<<i<<
+    ,input  wire                            branch_success      //<<i<<
+    ,input  wire                            branch              //<<i<<
+    ,input  wire [`ysyx_25060170_IMM]       bxx_imm             //<<i<<
     //form ifu      
     ,input  wire [`ysyx_25060170_INST]      inst_i              //<<i<<
     ,input  wire [`ysyx_25060170_PC]        pc_i                //<<i<<
@@ -15,6 +20,8 @@ module ysyx_25060170_bpu(
     ,input  wire [`ysyx_25060170_REG]       ex_ls_forward_data  //<<i<<
     ,input  wire [`ysyx_25060170_REGADDR]   ex_ls_forward_addr  //<<i<<
     ,input  wire [`ysyx_25060170_REG]       bp_rs1_data_i       //<<i<<
+    ,input  wire [`ysyx_25060170_REGADDR]   wb_rd_addr_forward  //<<i<<
+    ,input  wire [`ysyx_25060170_REG]       wb_rd_data_forward  //<<i<<
     //to ifu
     ,output reg [`ysyx_25060170_PC]         bp_pc_o             //>>o>>
     //to regfile        
@@ -24,6 +31,7 @@ module ysyx_25060170_bpu(
     ,output reg                             bp_predict_o        //>>o>>
 );
 
+    wire   [`ysyx_25060170_REGADDR]         rd_addr = inst_i[11:7];
     //jalr 译码模块
     assign bp_rs1_ena_o = inst_jalr ? 1 : 0;
     assign bp_rs1_addr_o =  bp_rs1_ena_o ? inst_i[19:15] : 5'b0;
@@ -33,6 +41,7 @@ module ysyx_25060170_bpu(
     reg weakly_taken_state          ;
     reg strongly_taken_state        ;
 
+    // wire [1:0] predict_taken = {1'b0 , branch_success};
 
     //两位状态机预测逻辑
     always@(posedge clk) begin  
@@ -44,50 +53,56 @@ module ysyx_25060170_bpu(
         end
         else begin
             case({strongly_not_taken_state , weakly_not_taken_state , weakly_taken_state , strongly_taken_state})
-                4'b1000: begin //strongly not taken
-                    if(inst_i[6:2] == `ysyx_25060170_BRANCH) begin
+                4'b1000: begin //strongly not taken 
+                    if( branch & branch_success) begin  //预测成功
                         strongly_not_taken_state <= 1'b0;
                         weakly_not_taken_state   <= 1'b1;
+                        weakly_taken_state       <= 1'b0;
+                        strongly_taken_state     <= 1'b0;
+                    end
+                    else if( branch & ~branch_success )begin  //预测失败
+                        strongly_not_taken_state <= 1'b1;
+                        weakly_not_taken_state   <= 1'b0;
                         weakly_taken_state       <= 1'b0;
                         strongly_taken_state     <= 1'b0;
                     end
                 end
                 4'b0100: begin //weakly not taken
-                    if(inst_i[6:2] == `ysyx_25060170_BRANCH) begin//预测成功
+                    if( branch & branch_success) begin//预测成功
                         strongly_not_taken_state <= 1'b0;
                         weakly_not_taken_state   <= 1'b0;
                         weakly_taken_state       <= 1'b1;
                         strongly_taken_state     <= 1'b0;
                     end
-                    else begin
+                    else if ( branch & ~branch_success) begin//预测失败
+                        strongly_not_taken_state <= 1'b1;
+                        weakly_not_taken_state   <= 1'b0;
+                        weakly_taken_state       <= 1'b0;
+                        strongly_taken_state     <= 1'b0;
+                    end
+                end
+                4'b0010: begin //weakly taken
+                    if( branch & branch_success) begin//预测成功
+                        strongly_not_taken_state <= 1'b0;
+                        weakly_not_taken_state   <= 1'b0;
+                        weakly_taken_state       <= 1'b0;
+                        strongly_taken_state     <= 1'b1;
+                    end
+                    else if ( branch & ~branch_success) begin//预测失败
                         strongly_not_taken_state <= 1'b0;
                         weakly_not_taken_state   <= 1'b1;
                         weakly_taken_state       <= 1'b0;
                         strongly_taken_state     <= 1'b0;
                     end
                 end
-                4'b0010: begin //weakly taken
-                    if(inst_i[6:2] == `ysyx_25060170_BRANCH) begin
-                        strongly_not_taken_state <= 1'b0;
-                        weakly_not_taken_state   <= 1'b0;
-                        weakly_taken_state       <= 1'b0;
-                        strongly_taken_state     <= 1'b1;
-                    end
-                    else begin
-                        strongly_not_taken_state <= 1'b0;
-                        weakly_not_taken_state   <= 1'b0;
-                        weakly_taken_state       <= 1'b1;
-                        strongly_taken_state     <= 1'b0;
-                    end
-                end
                 4'b0001: begin //strongly taken
-                    if(inst_i[6:2] == `ysyx_25060170_BRANCH) begin
+                    if( branch & branch_success)  begin //预测成功
                         strongly_not_taken_state <= 1'b0;
                         weakly_not_taken_state   <= 1'b0;
                         weakly_taken_state       <= 1'b0;
                         strongly_taken_state     <= 1'b1;
                     end
-                    else begin
+                    else if ( branch & ~branch_success) begin//预测失败
                         strongly_not_taken_state <= 1'b0;
                         weakly_not_taken_state   <= 1'b0;
                         weakly_taken_state       <= 1'b1;
@@ -95,10 +110,10 @@ module ysyx_25060170_bpu(
                     end
                 end
                 default: begin
-                        strongly_not_taken_state <= 1'b1;
-                        weakly_not_taken_state   <= 1'b0;
-                        weakly_taken_state       <= 1'b0;
-                        strongly_taken_state     <= 1'b0;    
+                        strongly_not_taken_state <= strongly_not_taken_state;
+                        weakly_not_taken_state   <= weakly_not_taken_state  ;
+                        weakly_taken_state       <= weakly_taken_state      ;
+                        strongly_taken_state     <= strongly_taken_state    ;    
                 end
             endcase
         end
@@ -144,16 +159,19 @@ wire [31:0] jalr_offset = {{20{jalr_imm[11]}}, jalr_imm};
 
 wire ls_wb_forward_en = (bp_rs1_addr_o == ls_wb_forward_addr) ? 1 : 0;
 wire ex_ls_forward_en = (bp_rs1_addr_o == ex_ls_forward_addr) ? 1 : 0;
+wire wbu_forward_en   = (rd_addr == wb_rd_addr_forward) ? 1 : 0;
 
 assign op1 =    (inst_jalr & ls_wb_forward_en) ?    ls_wb_forward_data  :
                 (inst_jalr & ex_ls_forward_en) ?    ex_ls_forward_data  :
+                (inst_jalr & wbu_forward_en  ) ?    wb_rd_data_forward  :
                 inst_jalr                      ?    bp_rs1_data_i       :
                 pc_i;
 
-assign op2 = inst_jal  ? jal_offset  :
-             inst_bxx  ? br_offset   :
-             inst_jalr ? jalr_offset :
-                         32'd4;
+assign op2 = inst_jal                       ? jal_offset  :
+             inst_bxx                       ? br_offset   :
+             (inst_jalr & wbu_forward_en  ) ? 32'b0       :
+             inst_jalr                      ? jalr_offset :
+                                              32'd4;
 
 assign jump_pc = op1 + op2;
 assign jump_jalr_pc = (jump_pc) & (~1) ;
@@ -173,8 +191,20 @@ always@(posedge clk) begin
             bp_predict_o <= 1'b1 ;
             // $display("bpu predict jump from to pc = 0x%08x", jump_pc);
         end
-        else if( inst_jalr ) begin
+        else if( inst_jalr & ~wbu_forward_en) begin
             bp_pc_o      <= jump_jalr_pc ;
+            bp_predict_o <= 1'b0 ;
+        end
+        else if( branch & ~branch_success) begin
+            bp_pc_o      <= pc_before_bxx + `ysyx_25060170_PLUS4 ;
+            bp_predict_o <= 1'b0 ;
+        end
+        else if( ~branch & branch_success) begin
+            bp_pc_o      <= pc_before_bxx + bxx_imm ;
+            bp_predict_o <= 1'b1 ;
+        end
+        else if( inst_jalr & wbu_forward_en)begin
+            bp_pc_o      <= jump_pc ;
             bp_predict_o <= 1'b0 ;
         end
         else begin

@@ -68,7 +68,10 @@
 	,input  wire [`ysyx_25060170_DATAADDR] 		waddr		//<<i<<
 
 	//for dpic difftest pc
+	/* verilator lint_off UNUSEDSIGNAL */
 	,input  wire [`ysyx_25060170_PC]            ex_ls_reg_DPIC_pc_i	//<<i<< 
+	/* verilator lint_on UNUSEDSIGNAL */
+
 	//for magic number
 	,input  wire                           		magic_flag	//<<i<<
 );
@@ -304,6 +307,7 @@ always @(posedge clk) begin
 		end
 	end
 end
+
 
 	always @(posedge clk) begin
 		if(~wbu_dpic_id_stall & ~wbu_dpic_ls_valid) begin

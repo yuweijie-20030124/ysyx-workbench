@@ -45,11 +45,12 @@ module ysyx_25060170_idu(
 	//to ifu
 	,output wire								jump_ena_o			//>>o>>
 	,output wire [`ysyx_25060170_PC]			jump_pc_o			//>>o>>
+	,output wire     							ex_branch			//>>o>>
 	//竞争冒险
 	,input 	wire 								if_valid_i			//<<i<<
 	,input 	wire 								ex_ready_i			//<<i<<
 	,output wire								id_flush_o			//>>o>>
-	,output wire								id_ex_flush_o		//>>o>>
+	,output wire								id_stall_o		   //>>o>>
 	,output wire								id_ready_o			//>>o>>
 	,output wire								id_valid_o			//>>o>>
 	//magic flag for NEMU_STOP
@@ -163,7 +164,7 @@ assign op2 = `ysyx_25060170_ZERO32 							|
 assign pc_o = rst == `ysyx_25060170_RSTABLE ? `ysyx_25060170_ZERO32 : pc_i	;
 //*************************************branch calculate*************************************//
 
-reg ex_branch ;
+
 
 wire diff_sign = op1[31] ^ op2[31];
 
@@ -182,14 +183,14 @@ assign ex_branch =  1'b0 |
 
 
 //*************************************竞争冒险*************************************//
-assign id_flush_o 	 = jump_ena_o 	;
+assign id_flush_o 	 = ex_branch ^ bp_jump_i;
 assign id_ready_o 	 = ex_ready_i 	;
 assign id_valid_o 	 = if_valid_i 	; 
-assign id_ex_flush_o = id_stall_ena;
+assign id_stall_o    = id_stall_ena ;
 
 //*************************************out to ifu*************************************//
-// assign jump_ena_o =((alusrc_o == `INST_JALR)) | (ex_branch ^ bp_jump_i);
-assign jump_ena_o = (ex_branch ^ bp_jump_i);
+assign jump_ena_o =((alusrc_o == `INST_JALR)) | (ex_branch ^ bp_jump_i);
+// assign jump_ena_o = (ex_branch ^ bp_jump_i);
 
 wire [`ysyx_25060170_DATA] o1;
 wire [`ysyx_25060170_DATA] o2;
