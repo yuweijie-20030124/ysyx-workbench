@@ -60,6 +60,7 @@
 	//from wbu 表示已经完成一条指令
 	,input wire		[`ysyx_25060170_INST]	    wbu_dpic_inst		//<<i<<
 	,input wire     [`ysyx_25060170_PC]	        wbu_dpic_pc			//<<i<<
+	,input wire     [`ysyx_25060170_PC]        	wbu_dpic_next_pc	//<<i<<
 	,input wire                                	wbu_dpic_ls_valid	//<<i<<
 	,input wire                                	wbu_dpic_id_stall	//<<i<<
 	//to lsu
@@ -315,7 +316,7 @@ end
 			// $display("pc_i = 0x%08x",pc_i);
 			// $display("pc_finish = 0x%08x",wbu_dpic_pc);
 			// $display("inst_finish = 0x%08x",wbu_dpic_inst);
-			pc_inst_end(wbu_dpic_pc, wbu_dpic_inst);
+			pc_inst_end(wbu_dpic_next_pc, wbu_dpic_inst);
 		end
 		if(delay) begin
 			// $display("pc_inst_end2/n");

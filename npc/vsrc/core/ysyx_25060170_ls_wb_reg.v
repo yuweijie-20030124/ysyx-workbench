@@ -5,6 +5,7 @@ module ysyx_25060170_ls_wb_reg(
     //signals form lsu  //<<i<<
     ,input   wire [`ysyx_25060170_INST]     inst_i              //<<i<<
     ,input   wire [`ysyx_25060170_PC]       pc_i                //<<i<<
+    ,input   wire [`ysyx_25060170_PC]       next_pc_i           //<<i<<
     ,input   wire [1:0]                     wb_ctl_i            //<<i<<
     ,input   wire [`ysyx_25060170_DATA]     lsu_res_i           //<<i<<
     ,input   wire [`ysyx_25060170_DATA]     lsu_wb_data_i       //<<i<<
@@ -21,6 +22,7 @@ module ysyx_25060170_ls_wb_reg(
     //output to wbu
     ,output  reg  [`ysyx_25060170_INST]     inst_o              //>>o>>
     ,output  reg  [`ysyx_25060170_PC]       pc_o                //>>o>>
+    ,output  reg  [`ysyx_25060170_PC]       next_pc_o           //>>o>>
     ,output  reg  [1:0]                     wb_ctl_o            //>>o>>
     ,output  reg  [`ysyx_25060170_DATA]     lsu_res_o           //>>o>>
     ,output  reg  [`ysyx_25060170_DATA]     lsu_wb_data_o       //>>o>>
@@ -41,6 +43,7 @@ always@(posedge clk) begin
     if(rst | flush) begin
         inst_o              <=   `ysyx_25060170_ZERO32  ;
         pc_o                <=   `ysyx_25060170_ZERO32  ;
+        next_pc_o           <=   `ysyx_25060170_ZERO32  ;
         wb_ctl_o            <=   2'b0                   ;
         lsu_res_o           <=   `ysyx_25060170_ZERO32  ;
         lsu_wb_data_o       <=   `ysyx_25060170_ZERO32  ;
@@ -52,6 +55,7 @@ always@(posedge clk) begin
     else if(stall) begin
         inst_o              <=   inst_o                 ;
         pc_o                <=   pc_o                   ;
+        next_pc_o           <=   next_pc_o              ;
         wb_ctl_o            <=   wb_ctl_o               ;
         lsu_res_o           <=   lsu_res_o              ;
         lsu_wb_data_o       <=   lsu_wb_data_o          ;
@@ -63,6 +67,7 @@ always@(posedge clk) begin
     else begin
         inst_o              <=   inst_i                 ;
         pc_o                <=   pc_i                   ;
+        next_pc_o           <=   next_pc_i              ;
         wb_ctl_o            <=   wb_ctl_i               ;
         lsu_res_o           <=   lsu_res_i              ;
         lsu_wb_data_o       <=   lsu_wb_data_i          ;

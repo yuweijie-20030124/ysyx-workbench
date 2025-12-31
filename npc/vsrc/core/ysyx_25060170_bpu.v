@@ -23,7 +23,9 @@ module ysyx_25060170_bpu(
     ,input  wire [`ysyx_25060170_REGADDR]   wb_rd_addr_forward  //<<i<<
     ,input  wire [`ysyx_25060170_REG]       wb_rd_data_forward  //<<i<<
     //to ifu
-    ,output reg [`ysyx_25060170_PC]         bp_pc_o             //>>o>>
+    ,output reg  [`ysyx_25060170_PC]        bp_pc_o             //>>o>>
+    ,output wire                            jal_jalr_o          //>>o>>
+    ,output wire                            branch_o            //>>o>>
     //to regfile        
     ,output reg [`ysyx_25060170_REGADDR]    bp_rs1_addr_o       //>>o>>
     ,output reg                             bp_rs1_ena_o        //>>o>>
@@ -172,7 +174,8 @@ assign op2 = inst_jal                       ? jal_offset  :
              (inst_jalr & wbu_forward_en  ) ? 32'b0       :
              inst_jalr                      ? jalr_offset :
                                               32'd4;
-
+assign jal_jalr_o = inst_jal | inst_jalr ;
+assign branch_o   = inst_bxx ;
 assign jump_pc = op1 + op2;
 assign jump_jalr_pc = (jump_pc) & (~1) ;
 always@(posedge clk) begin

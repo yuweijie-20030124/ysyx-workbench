@@ -5,6 +5,7 @@ module ysyx_25060170_id_ex_reg(
     //signals about idu
     ,input   wire [`ysyx_25060170_INST]     inst_i      //<<i<<
     ,input   wire [`ysyx_25060170_PC]       pc_i        //<<i<<
+    ,input   wire [`ysyx_25060170_PC]       next_pc_i   //<<i<<
     ,input   wire [`ysyx_25060170_DATA]     op1_i       //<<i<<
     ,input   wire [`ysyx_25060170_DATA]     op2_i       //<<i<<
     ,input   wire [1:0]                     op1_sel_i   //<<i<<
@@ -26,6 +27,7 @@ module ysyx_25060170_id_ex_reg(
     //output to exu
     ,output  reg  [`ysyx_25060170_INST]     inst_o      //>>o>>
     ,output  reg  [`ysyx_25060170_PC]       pc_o        //>>o>>
+    ,output  reg  [`ysyx_25060170_PC]       next_pc_o   //>>o>>
     ,output  reg  [`ysyx_25060170_DATA]     op1_o       //>>o>>
     ,output  reg  [`ysyx_25060170_DATA]     op2_o       //>>o>>
     ,output  reg  [1:0]                     op1_sel_o   //>>o>>
@@ -48,6 +50,7 @@ always@(posedge clk) begin
     if(rst | flush) begin   
         inst_o          <=      `ysyx_25060170_ZERO32   ;
         pc_o            <=      `ysyx_25060170_ZERO32   ;
+        next_pc_o       <=      `ysyx_25060170_ZERO32   ;   
         op1_o           <=      `ysyx_25060170_ZERO32   ;
         op2_o           <=      `ysyx_25060170_ZERO32   ;
         op1_sel_o       <=      0                       ;   
@@ -66,6 +69,7 @@ always@(posedge clk) begin
     else if(stall) begin
         inst_o          <=      inst_o                  ;
         pc_o            <=      pc_o                    ;
+        next_pc_o       <=      next_pc_o               ;
         op1_o           <=      op1_o                   ;
         op2_o           <=      op2_o                   ;
         op1_sel_o       <=      op1_sel_o               ;
@@ -84,6 +88,7 @@ always@(posedge clk) begin
     else begin
         inst_o          <=      inst_i                  ;
         pc_o            <=      pc_i                    ;
+        next_pc_o       <=      next_pc_i               ;
         op1_o           <=      op1_i                   ;
         op2_o           <=      op2_i                   ;
         op1_sel_o       <=      op1_sel_i               ;

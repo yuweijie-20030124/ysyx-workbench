@@ -3,6 +3,9 @@
 module ysyx_25060170_lsu(
      input  wire                              clk               //<<i<<
     ,input  wire                              rst               //<<i<<
+    ,input  wire [`ysyx_25060170_PC]          pc_i              //<<i<<
+    ,input  wire [`ysyx_25060170_PC]          next_pc_i         //<<i<<
+    ,input  wire [`ysyx_25060170_INST]        inst_i            //<<i<<
     ,input  wire [`ysyx_25060170_DATA]        alu_res_i         //<<i<<
     ,input  wire [`ysyx_25060170_DATA]        store_data_i      //<<i<<
     ,input  wire [3:0]                        ls_ctl_i          //<<i<<
@@ -28,6 +31,10 @@ module ysyx_25060170_lsu(
     //forwarding
     ,output wire [`ysyx_25060170_DATA]        ls_data_forward_o //>>o>>
     ,output wire [`ysyx_25060170_DATA]        ls_data_o         //>>o>>
+    //output to ls_wb_reg
+    ,output wire [`ysyx_25060170_INST]        inst_o            //>>o>>
+    ,output wire [`ysyx_25060170_PC]          pc_o              //>>o>>
+    ,output wire [`ysyx_25060170_PC]          next_pc_o         //>>o>>
 );
 
 //*****************************pipeline control signals********************************//
@@ -176,5 +183,10 @@ assign ls_jump_pc_o = alu_res_i;
 assign ls_jump_o = 1'b0;
 //out to idu
  assign ls_data_forward_o  = re ? load_data : alu_res_i ;
+
+//***************************output to ls_wb_reg***********************************************//
+assign inst_o = inst_i;
+assign pc_o = pc_i;
+assign next_pc_o = next_pc_i;
 
 endmodule
