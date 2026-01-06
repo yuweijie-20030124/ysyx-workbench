@@ -197,6 +197,8 @@ assign csr_ctl_o = {csrrw_ena, csrrs_ena, csrrc_ena, csr_wr_ena, csr_rd_ena, eca
 
 assign inst_o =  inst_i;
 assign pc_o = pc_i;
+
+//for difftest next pc
 assign next_pc_o = next_pc_i;
 
 endmodule

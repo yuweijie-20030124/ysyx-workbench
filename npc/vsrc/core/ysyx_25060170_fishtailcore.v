@@ -17,6 +17,8 @@ wire                            bp_predict;
 wire [`ysyx_25060170_REG]       bp_rs1_data;
 wire [`ysyx_25060170_REGADDR]   bp_rs1_addr;
 wire                            bp_rs1_ena;
+wire                            bp_if_jal_jalr;        
+wire                            bp_if_branch;
 
 ysyx_25060170_bpu u_ysyx_25060170_bpu (
      .clk                ( clk                  )//<<i<<  
@@ -26,7 +28,7 @@ ysyx_25060170_bpu u_ysyx_25060170_bpu (
     ,.branch_success     ( ex_branch            )//<<i<<
     ,.bxx_imm            ( id_ex_reg_imm        )//<<i<<  
     ,.inst_i             ( if_id_inst           )//<<i<<      
-    ,.pc_i               ( if_next_pc           )//<<i<<
+    ,.pc_i               ( if_id_pc             )//<<i<<
     ,.ls_wb_forward_data ( ls_rd_data_forward   )//<<i<<
     ,.ls_wb_forward_addr ( ls_rd_addr_forward   )//<<i<<
     ,.ex_ls_forward_data ( ex_rd_data_forward   )//<<i<<
@@ -36,7 +38,9 @@ ysyx_25060170_bpu u_ysyx_25060170_bpu (
     ,.bp_rs1_data_i      ( bp_rs1_data          )//<<i<<
     ,.bp_rs1_addr_o      ( bp_rs1_addr          )//>>o>>
     ,.bp_rs1_ena_o       ( bp_rs1_ena           )//>>o>>  
-    ,.bp_pc_o            ( bp_if_pc             )//>>o>>  
+    ,.bp_pc_o            ( bp_if_pc             )//>>o>>
+    ,.jal_jalr_o         ( bp_if_jal_jalr       )//>>o>>
+    ,.branch_o           ( bp_if_branch         )//>>o>>
     ,.bp_predict_o       ( bp_predict           )//>>o>>  
 );
 
@@ -60,7 +64,7 @@ wire      [`ysyx_25060170_PC]       if_id_next_pc;
 // wire      [`ysyx_25060170_INST]     if_id_inst;
 wire      [`ysyx_25060170_INST]     dpic_ifu_inst             ;
 // wire      [`ysyx_25060170_PC]       if_pc;
-wire      [`ysyx_25060170_PC]       if_next_pc; //
+// wire      [`ysyx_25060170_PC]       if_next_pc; 
 //if_next_pc also use dpic to get instruction
 
 ysyx_25060170_ifu  u_ysyx_25060170_ifu (
@@ -72,6 +76,8 @@ ysyx_25060170_ifu  u_ysyx_25060170_ifu (
     ,.ls_pc_i          (ls_jump_pc       )//<<i<<
     ,.bp_pc_jump_i     (bp_predict       )//<<i<<  
     ,.bp_pc_i          (bp_if_pc         )//<<i<<  
+    ,.jal_jalr_i       (bp_if_jal_jalr   )//<<i<<
+    ,.branch_i         (bp_if_branch     )//<<i<<
     // ,.inst_valid_i     (inst_valid_i     )//<<i<<
     ,.id_ready_i       (id_ready         )//<<i<<
     ,.id_stall_i       (id_stall         )//<<i<<
@@ -510,9 +516,9 @@ wire [`ysyx_25060170_DATA]      ls_rd_data_forward;
 ysyx_25060170_ls_wb_reg u_ysyx_25060170_ls_wb_reg (
      .clk                    ( clk                     )//<<i<<
     ,.rst                    ( rst                     )//<<i<<
-    ,.inst_i                 ( ex_ls_reg_inst          )//<<i<<
-    ,.pc_i                   ( ex_ls_reg_pc            )//<<i<<
-    ,.next_pc_i              ( ex_ls_reg_next_pc       )//<<i<<
+    ,.inst_i                 ( ls_inst                 )//<<i<<
+    ,.pc_i                   ( ls_pc                   )//<<i<<
+    ,.next_pc_i              ( ls_next_pc              )//<<i<<
     ,.wb_ctl_i               ( ex_ls_reg_wb_ctl        )//<<i<<
     ,.lsu_res_i              ( ex_ls_reg_exu_res       )//<<i<<
     ,.lsu_wb_data_i          ( ls_wb_wbdata            )//<<i<<
@@ -760,7 +766,7 @@ wire                             magic_flag;
 ysyx_25060170_DPIC u_ysyx_25060170_DPIC (
      .clk                   ( clk               )//<<i<<
     ,.rst                   ( rst               )//<<i<<
-    ,.pc_i                  ( if_next_pc        )//<<i<<
+    ,.pc_i                  ( if_id_pc          )//<<i<<
     ,.inst_o                ( dpic_ifu_inst     )//>>o>>
     ,.ftrace_pc             ( if_id_reg_pc      )//>>o>>
     ,.rd_addr               ( idu_dpic_rd_addr  )//<<i<<

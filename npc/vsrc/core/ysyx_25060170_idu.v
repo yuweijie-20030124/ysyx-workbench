@@ -148,7 +148,10 @@ assign op2_forward_data = `ysyx_25060170_ZERO32 |
 
 //*************************************output*************************************//
 //out to id_ex_reg
-assign next_pc_o = next_pc_i;
+// assign next_pc_o = next_pc_i |
+// 				  ({32{jump_ena_o}} & (imm)) ;
+assign next_pc_o = ((alusrc_o == `INST_JALR) | (alusrc_o == `INST_JAL) | jump_ena_o) ? (pc_i + imm) : next_pc_i;
+
 assign pc_o = pc_i	;
 assign inst_o = inst_i	;
 assign csr_imm = rs1;
@@ -164,11 +167,8 @@ assign op2 = `ysyx_25060170_ZERO32 							|
 			 {32{rs2_ena & (~op2_forward_ena)}}	 & rs2_data;
 
  
-assign pc_o = rst == `ysyx_25060170_RSTABLE ? `ysyx_25060170_ZERO32 : pc_i	;
+assign pc_o = rst == `ysyx_25060170_RSTABLE ? `ysyx_25060170_STARTPC : pc_i	;
 //*************************************branch calculate*************************************//
-
-
-
 wire diff_sign = op1[31] ^ op2[31];
 
 wire op_ltu_op2 = op1 <  op2;
@@ -192,7 +192,7 @@ assign id_valid_o 	 = if_valid_i 	;
 assign id_stall_o    = id_stall_ena ;
 
 //*************************************out to ifu*************************************//
-assign jump_ena_o =((alusrc_o == `INST_JALR)) | (ex_branch ^ bp_jump_i);
+assign jump_ena_o = (ex_branch ^ bp_jump_i);
 // assign jump_ena_o = (ex_branch ^ bp_jump_i);
 
 wire [`ysyx_25060170_DATA] o1;
