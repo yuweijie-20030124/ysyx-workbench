@@ -33,7 +33,7 @@ module ysyx_25060170_ifu(
     ,output reg  [`ysyx_25060170_PC]    next_pc_o       //>>o>>
     
 );
-wire   stall      = (ls_pc_jump_i) ? 0 : id_stall_i  ;
+wire   stall      = id_stall_i  ;
 reg [`ysyx_25060170_PC]         pc; 
 // assign if_valid_o = (id_ready_i | stall) ? 0 : ~inst_valid_i        ;
 assign if_valid_o = (id_ready_i | stall) ? 1'b0 : 1'b1              ;
