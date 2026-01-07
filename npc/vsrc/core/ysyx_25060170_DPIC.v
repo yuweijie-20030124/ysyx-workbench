@@ -64,7 +64,7 @@
 	,input wire                                	wbu_dpic_ls_valid	//<<i<<
 	,input wire                                	wbu_dpic_id_stall	//<<i<<
 	//to lsu
-	,output wire [`ysyx_25060170_DATA]     		data_o		//>>o>>
+	,output reg  [`ysyx_25060170_DATA]     		data_o		//>>o>>
 	,input  wire [`ysyx_25060170_DATAADDR] 		raddr		//<<i<<
 	,input  wire [`ysyx_25060170_DATAADDR] 		waddr		//<<i<<
 
