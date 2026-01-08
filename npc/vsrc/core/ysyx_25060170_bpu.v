@@ -24,7 +24,7 @@ module ysyx_25060170_bpu(
     ,input  wire [`ysyx_25060170_REG]       wb_rd_data_forward  //<<i<<
     //to ifu
     ,output reg  [`ysyx_25060170_PC]        bp_pc_o             //>>o>>
-    ,output wire                            jal_jalr_o          //>>o>>
+    ,output reg                             jal_jalr_o          //>>o>>
     ,output wire                            branch_o            //>>o>>
     //to regfile        
     ,output reg [`ysyx_25060170_REGADDR]    bp_rs1_addr_o       //>>o>>
@@ -32,7 +32,8 @@ module ysyx_25060170_bpu(
     //to if_id_reg
     ,output reg                             bp_predict_o        //>>o>>
 );
-
+    reg                                     jal_jalr_temp;
+    // wire                                    jal_jalr;
     wire   [`ysyx_25060170_REGADDR]         rd_addr = inst_i[11:7];
     //jalr 译码模块
     assign bp_rs1_ena_o = inst_jalr ? 1 : 0;
@@ -174,7 +175,7 @@ assign op2 = inst_jal                       ? jal_offset  :
              (inst_jalr & wbu_forward_en  ) ? 32'b0       :
              inst_jalr                      ? jalr_offset :
                                               32'd4;
-assign jal_jalr_o = inst_jal | inst_jalr ;
+assign jal_jalr_temp = inst_jal | inst_jalr ;
 assign branch_o   = inst_bxx ;
 assign jump_pc = op1 + op2;
 assign jump_jalr_pc = (jump_pc) & (~1) ;
@@ -187,32 +188,39 @@ always@(posedge clk) begin
         if( inst_jal) begin
             bp_pc_o      <= jump_pc ;
             bp_predict_o <= 1'b0 ;
+            jal_jalr_o   <= jal_jalr_temp;
             // $display("bpu predict jump from to pc = 0x%08x", jump_pc);
         end
         else if( (inst_bxx & (weakly_taken_state | strongly_taken_state)) ) begin
             bp_pc_o      <= jump_pc ;
             bp_predict_o <= 1'b1 ;
+            jal_jalr_o   <= 1'b0 ;
             // $display("bpu predict jump from to pc = 0x%08x", jump_pc);
         end
         else if( inst_jalr & ~wbu_forward_en) begin
             bp_pc_o      <= jump_jalr_pc ;
             bp_predict_o <= 1'b0 ;
+            jal_jalr_o   <= jal_jalr_temp;
         end
         else if( branch & ~branch_success) begin
             bp_pc_o      <= pc_before_bxx + `ysyx_25060170_PLUS4 ;
             bp_predict_o <= 1'b0 ;
+            jal_jalr_o   <= 1'b0 ;
         end
         else if( ~branch & branch_success) begin
             bp_pc_o      <= pc_before_bxx + bxx_imm ;
             bp_predict_o <= 1'b1 ;
+            jal_jalr_o   <= 1'b0 ;
         end
         else if( inst_jalr & wbu_forward_en)begin
             bp_pc_o      <= jump_pc ;
             bp_predict_o <= 1'b0 ;
+            jal_jalr_o   <= jal_jalr_temp;
         end
         else begin
             bp_pc_o      <= pc_i + `ysyx_25060170_PLUS4 ;
             bp_predict_o <= 1'b0 ;
+            jal_jalr_o   <= 1'b0 ;
         end
     end
 end

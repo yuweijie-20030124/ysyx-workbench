@@ -33,8 +33,8 @@ module ysyx_25060170_ifu(
     ,output reg  [`ysyx_25060170_PC]    next_pc_o       //>>o>>
     
 );
-wire   stall      = (ls_pc_jump_i) ? 0 : id_stall_i  ;
-
+wire   stall      = id_stall_i  ;
+reg [`ysyx_25060170_PC]         pc; 
 // assign if_valid_o = (id_ready_i | stall) ? 0 : ~inst_valid_i        ;
 assign if_valid_o = (id_ready_i | stall) ? 1'b0 : 1'b1              ;
 assign inst_o     = inst_i                                          ;
@@ -45,34 +45,37 @@ assign inst_o     = inst_i                                          ;
 
 always@(posedge clk) begin
     if(rst) begin
-        pc_o <= `ysyx_25060170_STARTPC;
+        pc <= `ysyx_25060170_STARTPC;
     end
     else begin
-        if(ls_pc_jump_i) begin
-            pc_o <= ls_pc_i;
+        if(stall) begin
+           pc <= pc; 
+        end
+        else if(ls_pc_jump_i) begin
+            pc <= ls_pc_i;
             // $display("ls pc_o = 0x%h", pc_o); 
         end
-        else if(bp_pc_jump_i | jal_jalr_i) begin
-            pc_o <= bp_pc_i;
+        else if(bp_pc_jump_i) begin
+            pc <= bp_pc_i;
             // $display("bp pc_o = 0x%h", pc_o); 
         end
         else if(id_pc_jump_i) begin
-            pc_o <= id_pc_i;
+            pc <= id_pc_i;
             // $display("id pc_o = 0x%h", pc_o); 
         end
         else if(~stall & if_valid_o) begin 
             // $display("pc_o = 0x%h", pc_o); 
-            pc_o <= `ysyx_25060170_STARTPC;
+            pc <= `ysyx_25060170_STARTPC;
         end
         else begin
-            pc_o <= pc_o + `ysyx_25060170_PLUS4;
+            pc <= pc_o + `ysyx_25060170_PLUS4;
         end
     end
 end
 
 assign next_pc_o = pc_o + `ysyx_25060170_PLUS4;      
 
-
+assign pc_o = jal_jalr_i ? bp_pc_i : pc ;
 // assign next_pc_o =  pc_o + `ysyx_25060170_PLUS4 ;
 
 

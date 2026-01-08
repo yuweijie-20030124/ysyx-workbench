@@ -150,7 +150,13 @@ assign op2_forward_data = `ysyx_25060170_ZERO32 |
 //out to id_ex_reg
 // assign next_pc_o = next_pc_i |
 // 				  ({32{jump_ena_o}} & (imm)) ;
-assign next_pc_o = jump_ena_o ? (pc_i + imm) : next_pc_i;
+// assign next_pc_o = ((alusrc_o == `INST_JALR) | (alusrc_o == `INST_JAL) | jump_ena_o) ? (pc_i + imm) : next_pc_i;
+assign next_pc_o = ((alusrc_o == `INST_JAL) | jump_ena_o ) ?  (pc_i + imm)  		:
+				   (alusrc_o == `INST_JALR)                ?  ((op1 + imm)&(~1))	:
+				   next_pc_i;
+// assign next_pc_o =  next_pc_i |
+// 					{32{((alusrc_o == `INST_JAL) | jump_ena_o )}} 	&	(pc_i + imm) |
+// 					{32{(alusrc_o == `INST_JALR)}}					&	((op1 + imm)&(~1));
 
 assign pc_o = pc_i	;
 assign inst_o = inst_i	;
@@ -192,7 +198,7 @@ assign id_valid_o 	 = if_valid_i 	;
 assign id_stall_o    = id_stall_ena ;
 
 //*************************************out to ifu*************************************//
-assign jump_ena_o =((alusrc_o == `INST_JALR) | (alusrc_o == `INST_JAL)) | (ex_branch ^ bp_jump_i);
+assign jump_ena_o = (ex_branch ^ bp_jump_i);
 // assign jump_ena_o = (ex_branch ^ bp_jump_i);
 
 wire [`ysyx_25060170_DATA] o1;

@@ -64,7 +64,7 @@
 	,input wire                                	wbu_dpic_ls_valid	//<<i<<
 	,input wire                                	wbu_dpic_id_stall	//<<i<<
 	//to lsu
-	,output wire [`ysyx_25060170_DATA]     		data_o		//>>o>>
+	,output reg  [`ysyx_25060170_DATA]     		data_o		//>>o>>
 	,input  wire [`ysyx_25060170_DATAADDR] 		raddr		//<<i<<
 	,input  wire [`ysyx_25060170_DATAADDR] 		waddr		//<<i<<
 
@@ -285,29 +285,29 @@ endtask
 //   end
 
 /*************************************finish inst & ebreak***********************************/
-reg delay;
-reg [`ysyx_25060170_PC] last_pc;
+// reg delay;
+// reg [`ysyx_25060170_PC] last_pc;
 
-always @(posedge clk) begin
-	if (rst == `ysyx_25060170_RSTABLE) begin
-		delay <= 1'b0;
-		last_pc <= `ysyx_25060170_ZERO32;
-	end
-	else begin
-		if (rst) begin
-			last_pc <= 32'b0;
-			delay <= 1'b0;
-		end
-		else if (wbu_dpic_id_stall & ~wbu_dpic_ls_valid) begin
-			delay <= 1'b1;
-			last_pc <= wbu_dpic_pc;
-		end
-		else begin
-			last_pc <= 32'b0;
-			delay <= 0;
-		end
-	end
-end
+// always @(posedge clk) begin
+// 	if (rst == `ysyx_25060170_RSTABLE) begin
+// 		delay <= 1'b0;
+// 		last_pc <= `ysyx_25060170_ZERO32;
+// 	end
+// 	else begin
+// 		if (rst) begin
+// 			last_pc <= 32'b0;
+// 			delay <= 1'b0;
+// 		end
+// 		else if (wbu_dpic_id_stall & ~wbu_dpic_ls_valid) begin
+// 			delay <= 1'b1;
+// 			last_pc <= wbu_dpic_pc;
+// 		end
+// 		else begin
+// 			last_pc <= 32'b0;
+// 			delay <= 0;
+// 		end
+// 	end
+// end
 
 
 	always @(posedge clk) begin
@@ -318,10 +318,10 @@ end
 			// $display("inst_finish = 0x%08x",wbu_dpic_inst);
 			pc_inst_end(wbu_dpic_next_pc, wbu_dpic_inst);
 		end
-		if(delay) begin
-			// $display("pc_inst_end2/n");
-			pc_inst_end(last_pc, wbu_dpic_inst);
-		end
+		// if(delay) begin
+		// 	// $display("pc_inst_end2/n");
+		// 	pc_inst_end(last_pc, wbu_dpic_inst);
+		// end
 		if(wbu_dpic_inst == `EBREAK_TRAP) begin //32'b00000000000100000000000001110011
 			// $display("jinlailo/n");
 			set_npc_exit(wbu_dpic_pc,0);
