@@ -62,11 +62,7 @@
 	,input wire     [`ysyx_25060170_PC]	        wbu_dpic_pc			//<<i<<
 	,input wire     [`ysyx_25060170_PC]        	wbu_dpic_next_pc	//<<i<<
 	,input wire                                	wbu_dpic_ls_valid	//<<i<<
-
-	/* verilator lint_off UNUSEDSIGNAL */
 	,input wire                                	wbu_dpic_id_stall	//<<i<<
-	/* verilator lint_off UNUSEDSIGNAL */
-	
 	//to lsu
 	,output reg  [`ysyx_25060170_DATA]     		data_o		//>>o>>
 	,input  wire [`ysyx_25060170_DATAADDR] 		raddr		//<<i<<
@@ -315,7 +311,7 @@ endtask
 
 
 	always @(posedge clk) begin
-		if(~wbu_dpic_ls_valid) begin
+		if(~wbu_dpic_id_stall & ~wbu_dpic_ls_valid) begin
 			// $display("inst = 0x%08x",inst_o);
 			// $display("pc_i = 0x%08x",pc_i);
 			// $display("pc_finish = 0x%08x",wbu_dpic_pc);

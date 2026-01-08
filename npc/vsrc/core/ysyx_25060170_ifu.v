@@ -48,7 +48,10 @@ always@(posedge clk) begin
         pc <= `ysyx_25060170_STARTPC;
     end
     else begin
-        if(ls_pc_jump_i) begin
+        if(stall) begin
+           pc <= pc; 
+        end
+        else if(ls_pc_jump_i) begin
             pc <= ls_pc_i;
             // $display("ls pc_o = 0x%h", pc_o); 
         end
