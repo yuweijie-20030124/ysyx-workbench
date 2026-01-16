@@ -19,6 +19,7 @@ module ysyx_25060170_ls_wb_reg(
     //pipeline control
     ,input   wire                           ls_valid_i          //<<i<<
     ,input   wire                           wb_ready_i          //<<i<<
+    ,output  reg                            ls_valid_o          //>>o>>
     // ,input   wire                           ex_flush_i          //<<i<<
     // ,input   wire                           id_flush_i          //<<i<<
     //output to wbu
@@ -54,6 +55,7 @@ always@(posedge clk) begin
         rd_addr_o           <=   5'b0                   ;
         csr_ctl_o           <=   7'b0                   ;
         csr_addr_o          <=   12'b0                  ;
+        ls_valid_o          <=   1'b1                   ;
         pipeline_id_stall_o <=   1'b0                   ;
     end
     else if(stall) begin
@@ -67,6 +69,7 @@ always@(posedge clk) begin
         rd_addr_o           <=   rd_addr_o              ;
         csr_ctl_o           <=   csr_ctl_o              ;
         csr_addr_o          <=   csr_addr_o             ;
+        ls_valid_o          <=   ls_valid_o             ;
         pipeline_id_stall_o <=   pipeline_id_stall_o    ;        
     end
     else begin
@@ -80,6 +83,7 @@ always@(posedge clk) begin
         rd_addr_o           <=   rd_addr_i              ;
         csr_ctl_o           <=   csr_ctl_i              ;
         csr_addr_o          <=   csr_addr_i             ;
+        ls_valid_o          <=   ls_valid_i             ;
         pipeline_id_stall_o <=   pipeline_id_stall_i    ;
     end
 end

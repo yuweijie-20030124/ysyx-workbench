@@ -21,6 +21,7 @@ module ysyx_25060170_ex_ls_reg(
 	,input	 wire				        	ls_ready_i	            //<<i<<
 	,input	 wire				        	ls_flush_i              //<<i<<
     ,input   wire                           pipeline_id_stall_i	    //<<i<<
+    ,output  reg                            ex_valid_o              //>>o>>
     // ,input   wire                           id_flush_i   
     //output to lsu 
     ,output  reg  [`ysyx_25060170_INST]     inst_o                  //>>o>>
@@ -60,11 +61,12 @@ module ysyx_25060170_ex_ls_reg(
             ls_ctl_o            <=  4'b0                    ;
             wb_ctl_o            <=  2'b0                    ;
             csr_ctl_o           <=  7'b0                    ;
-            rd_ena_o            <=  0                       ;
+            rd_ena_o            <=  1'b0                    ;
             rd_addr_o           <=  5'b0                    ;
-            ls_csr_ena_o        <=  0                       ;    
-            csr_addr_o          <=  12'b0                   ;    
-            pipeline_id_stall_o <=  0                       ;
+            ls_csr_ena_o        <=  1'b0                    ;    
+            csr_addr_o          <=  12'b0                   ;
+            ex_valid_o          <=  1'b1                    ;
+            pipeline_id_stall_o <=  1'b0                    ;
         end
         else if(stall) begin
             inst_o              <=  inst_o                  ;
@@ -79,6 +81,7 @@ module ysyx_25060170_ex_ls_reg(
             rd_addr_o           <=  rd_addr_o               ;
             ls_csr_ena_o        <=  ls_csr_ena_o            ;    
             csr_addr_o          <=  csr_addr_o              ;
+            ex_valid_o          <=  ex_valid_o              ;
             pipeline_id_stall_o <=  pipeline_id_stall_o     ;
         end
         else begin  
@@ -94,6 +97,7 @@ module ysyx_25060170_ex_ls_reg(
             rd_addr_o           <=  rd_addr_i               ;
             ls_csr_ena_o        <=  ex_csr_ena_i            ;    
             csr_addr_o          <=  csr_addr_i              ;
+            ex_valid_o          <=  ex_valid_i              ;
             pipeline_id_stall_o <=  pipeline_id_stall_i     ;
         end 
     end 

@@ -14,7 +14,7 @@ Vysyx_25060170_fishtailcore__Syms::Vysyx_25060170_fishtailcore__Syms(VerilatedCo
     , TOP{this, namep}
 {
     // Check resources
-    Verilated::stackCheck(1744);
+    Verilated::stackCheck(1764);
     // Setup sub module instances
     // Configure time unit / time precision
     _vm_contextp__->timeunit(-12);

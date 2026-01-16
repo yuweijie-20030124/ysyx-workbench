@@ -103,6 +103,7 @@ wire [`ysyx_25060170_PC]        if_id_reg_pc;
 wire [`ysyx_25060170_PC]        if_id_reg_next_pc;
 wire [`ysyx_25060170_INST]      if_id_reg_inst;
 wire                            id_jump;
+wire                            if_id_valid;
 
 ysyx_25060170_if_id_reg u_ysyx_25060170_if_id_reg (
      .clk           ( clk               ) //<<i<<
@@ -117,6 +118,7 @@ ysyx_25060170_if_id_reg u_ysyx_25060170_if_id_reg (
     ,.id_stall_i    ( id_stall          ) //<<i<<
     ,.id_ready_i    ( id_ready          ) //<<i<<
     
+    ,.if_valid_o    ( if_id_valid       ) //>>o>>
     ,.pc_o          ( if_id_reg_pc      ) //>>o>>
     ,.next_pc_o     ( if_id_reg_next_pc ) //>>o>>
     ,.inst_o        ( if_id_reg_inst    ) //>>o>>
@@ -215,7 +217,7 @@ ysyx_25060170_idu u_ysyx_25060170_idu (
     ,.jump_pc_o          (id_jump_pc            )//>>O>> 
     ,.ex_branch          (ex_branch             )//>>O>>   
 
-    ,.if_valid_i         (if_valid              )//<<i<<   
+    ,.if_valid_i         (if_id_valid           )//<<i<<   
     ,.ex_ready_i         (ex_ready              )//<<i<<   
 
     ,.id_flush_o         (id_flush              )//>>O>>
@@ -261,7 +263,7 @@ wire [1:0]                      id_ex_reg_wbctl;
 // wire                            id_ex_reg_csr_ena;
 wire                            id_ex_reg_load_flag;
 wire                            id_ex_pipeline_idstall;
-
+wire                            id_ex_valid;
 ysyx_25060170_id_ex_reg u_ysyx_25060170_id_ex_reg (
      .clk                   (clk                   )//<<i<<
     ,.rst                   (rst                   )//<<i<<
@@ -286,6 +288,7 @@ ysyx_25060170_id_ex_reg u_ysyx_25060170_id_ex_reg (
     ,.id_flush_i            (id_flush              )//<<i<<
     ,.ls_flush_i            (ls_flush              )//<<i<<
     ,.ex_ready_i            (ex_ready              )//<<i<<
+    ,.id_valid_o            (id_ex_valid           )//>>o>>
 
     ,.inst_o                (id_ex_reg_inst        )//>>o>>
     ,.pc_o                  (id_ex_reg_pc          )//>>o>>
@@ -347,7 +350,7 @@ ysyx_25060170_exu u_ysyx_25060170_exu (
     ,.alu_sel_i             ( id_ex_reg_alusrc          )//<<i<<
     ,.pipeline_id_stall_i   ( id_ex_pipeline_idstall    )//<<i<<
     ,.ls_ready_i            ( ls_ready                  )//<<i<<
-    ,.id_valid_i            ( id_valid                  )//<<i<<
+    ,.id_valid_i            ( id_ex_valid               )//<<i<<
 
     ,.inst_o                ( exu_inst                  )//>>o>>
     ,.pc_o                  ( exu_pc                    )//>>o>>
@@ -364,15 +367,15 @@ ysyx_25060170_exu u_ysyx_25060170_exu (
 // ysyx_25060170_ex_ls_reg Inputs
 // reg                             clk;
 // reg                             rst;
-reg  [`ysyx_25060170_INST]      ex_ls_reg_inst;
+reg  [`ysyx_25060170_INST]       ex_ls_reg_inst;
 // reg  [`ysyx_25060170_PC]        pc_i;
 wire  [`ysyx_25060170_REG]       ex_ls_reg_store_data;
 wire  [`ysyx_25060170_DATA]      ex_ls_reg_exu_res;
 wire  [3:0]                      ex_ls_reg_ls_ctl;
 wire  [1:0]                      ex_ls_reg_wb_ctl;
 wire  [6:0]                      ex_ls_reg_csr_ctl;
-reg                             ex_ls_reg_rd_ena;
-reg  [`ysyx_25060170_REGADDR]   ex_ls_reg_rd_addr;
+reg                              ex_ls_reg_rd_ena;
+reg  [`ysyx_25060170_REGADDR]    ex_ls_reg_rd_addr;
 wire                             ex_ls_reg_ls_csr_ena;
 wire  [11:0]                     ex_ls_reg_csr_addr;
 // reg                             ls_ready_i;
@@ -381,8 +384,8 @@ wire  [11:0]                     ex_ls_reg_csr_addr;
 
 // ysyx_25060170_ex_ls_reg Outputs
 // wire [`ysyx_25060170_INST]      inst_o;
-wire [`ysyx_25060170_PC]        ex_ls_reg_pc;
-wire [`ysyx_25060170_PC]        ex_ls_reg_next_pc;
+wire [`ysyx_25060170_PC]         ex_ls_reg_pc;
+wire [`ysyx_25060170_PC]         ex_ls_reg_next_pc;
 // wire                            rd_ena_o;
 // wire [`ysyx_25060170_REGADDR]   rd_addr_o;
 // wire [11:0]                     csr_addr_o;
@@ -390,7 +393,7 @@ wire [`ysyx_25060170_PC]        ex_ls_reg_next_pc;
 wire  [`ysyx_25060170_REGADDR]   ex_rd_addr_forward;
 wire  [`ysyx_25060170_DATA]      ex_rd_data_forward;
 wire                             ex_ls_pipeline_idstall;
-
+wire                             ex_ls_valid;
 ysyx_25060170_ex_ls_reg u_ysyx_25060170_ex_ls_reg (
      .clk                    ( clk                    )//<<i<<
     ,.rst                    ( rst                    )//<<i<<
@@ -411,7 +414,8 @@ ysyx_25060170_ex_ls_reg u_ysyx_25060170_ex_ls_reg (
     ,.ls_flush_i             ( ls_flush               )//<<i<<
     ,.pipeline_id_stall_i    ( exu_pipeline_idstall   )//<<i<<
     // ,.id_flush_i             ( id_flush             )//<<i<<
-
+    
+    ,.ex_valid_o             ( ex_ls_valid            )//>>o>>
     ,.inst_o                 ( ex_ls_reg_inst         )//>>o>>
     ,.pc_o                   ( ex_ls_reg_pc           )//>>o>>
     ,.next_pc_o              ( ex_ls_reg_next_pc      )//>>o>>  
@@ -468,7 +472,7 @@ ysyx_25060170_lsu u_ysyx_25060170_lsu (
     ,.store_data_i          ( ex_ls_reg_store_data     )//<<i<<
     ,.ls_ctl_i              ( ex_ls_reg_ls_ctl         )//<<i<<
     ,.wb_ready_i            ( wb_ready                 )//<<i<<
-    ,.ex_valid_i            ( ex_valid                 )//<<i<<
+    ,.ex_valid_i            ( ex_ls_valid              )//<<i<<
     ,.pipeline_id_stall_i   ( ex_ls_pipeline_idstall   )//<<i<<
     //output
     ,.ls_ready_o            ( ls_ready                 )//>>o>> 
@@ -525,6 +529,7 @@ wire [11:0]                     ls_wb_reg_csr_addr;
 wire [`ysyx_25060170_REGADDR]   ls_rd_addr_forward;
 wire [`ysyx_25060170_DATA]      ls_rd_data_forward;
 wire                            ls_wb_pipeline_idstall;
+wire                            ls_wb_valid;    
 
 ysyx_25060170_ls_wb_reg u_ysyx_25060170_ls_wb_reg (
      .clk                    ( clk                     )//<<i<<
@@ -543,6 +548,7 @@ ysyx_25060170_ls_wb_reg u_ysyx_25060170_ls_wb_reg (
     ,.ls_data_forward_i      ( ls_data_forward         )//<<i<<
     ,.ls_valid_i             ( ls_valid                )//<<i<<
     ,.wb_ready_i             ( wb_ready                )//<<i<<
+    ,.ls_valid_o             ( ls_wb_valid             )//>>o>>
     // ,.ex_flush_i             ( ex_flush                )//<<i<<
     // ,.id_flush_i             ( id_flush                )//<<i<<
 
@@ -592,6 +598,7 @@ wire [`ysyx_25060170_PC]        wbu_dpic_pc;
 wire [`ysyx_25060170_PC]        wbu_dpic_next_pc;
 wire                            wbu_dpic_ls_valid;
 wire                            wbu_dpic_id_stall;
+wire                            wbu_dpic_valid;
 wire                            wbu_dpic_pipeline_idstall;
 
 ysyx_25060170_wbu u_ysyx_25060170_wbu (
@@ -609,7 +616,7 @@ ysyx_25060170_wbu u_ysyx_25060170_wbu (
     ,.csr_ctl_i                 ( ls_wb_reg_csr_ctl             )//<<i<<
     ,.csr_addr_i                ( ls_wb_reg_csr_addr            )//<<i<<
     ,.pipeline_id_stall_i       ( ls_wb_pipeline_idstall        )//<<i<<
-    ,.ls_valid_i                ( ls_valid                      )//<<i<<
+    ,.ls_valid_i                ( ls_wb_valid                   )//<<i<<
     ,.id_stall_i                ( id_stall                      )//<<i<<
     //out for regfile       
     ,.wb_data_o                 ( wb_rf_data                    )//>>o>>
@@ -629,6 +636,7 @@ ysyx_25060170_wbu u_ysyx_25060170_wbu (
     ,.wbu_dpic_next_pc_o        ( wbu_dpic_next_pc              )//>>o>>
     ,.wbu_dpic_ls_valid_o       ( wbu_dpic_ls_valid             )//>>o>>
     ,.wbu_dpic_id_stall_o       ( wbu_dpic_id_stall             )//>>o>>
+    ,.wbu_dpic_valid_o          ( wbu_dpic_valid                )//>>o>>
     ,.dpic_pipeline_id_stall_o  ( wbu_dpic_pipeline_idstall     )//>>o>>
 );
 
@@ -835,6 +843,7 @@ ysyx_25060170_DPIC u_ysyx_25060170_DPIC (
     ,.wbu_dpic_next_pc	    ( wbu_dpic_next_pc	        )//<<i<<
     ,.wbu_dpic_ls_valid     ( wbu_dpic_ls_valid	        )//<<i<<
     ,.wbu_dpic_id_stall     ( wbu_dpic_id_stall	        )//<<i<<
+    ,.wbu_dpic_valid        ( wbu_dpic_valid            )//<<i<<
     ,.pipeline_id_stall     ( wbu_dpic_pipeline_idstall )//<<i<<
     ,.data_o                ( dpic_ls_data              )//>>o>>
     ,.raddr                 ( ls_dpic_raddr             )//<<i<<

@@ -19,6 +19,7 @@ module ysyx_25060170_if_id_reg (
     ,output reg  [`ysyx_25060170_PC]        next_pc_o       //>>o>>
     ,output reg  [`ysyx_25060170_INST]      inst_o          //>>o>>
     ,output reg                             id_jump_o       //>>o>>
+    ,output reg                             if_valid_o      //>>o>>
 
  );
 
@@ -30,18 +31,22 @@ module ysyx_25060170_if_id_reg (
             pc_o        <=  `ysyx_25060170_ZERO32;
             next_pc_o   <=  `ysyx_25060170_ZERO32;
             id_jump_o   <=  1'b0;
+            if_valid_o  <=  1'b1;
+
         end
         else if (if_valid_i | id_stall_i | ~id_ready_i) begin
-            inst_o      <=  inst_o   ;
-            pc_o        <=  pc_o     ;
-            next_pc_o   <=  next_pc_o;
-            id_jump_o   <=  id_jump_o;
+            inst_o      <=  inst_o      ;
+            pc_o        <=  pc_o        ;
+            next_pc_o   <=  next_pc_o   ;
+            id_jump_o   <=  id_jump_o   ;
+            if_valid_o  <=  if_valid_o  ;
         end
         else begin
-            inst_o      <=  inst_i   ;
-            pc_o        <=  pc_i     ;
-            next_pc_o   <=  next_pc_i;
-            id_jump_o   <=  bp_jump_i;
+            inst_o      <=  inst_i      ;
+            pc_o        <=  pc_i        ;
+            next_pc_o   <=  next_pc_i   ;
+            id_jump_o   <=  bp_jump_i   ;
+            if_valid_o  <=  if_valid_i  ;
         end
     end
 endmodule
