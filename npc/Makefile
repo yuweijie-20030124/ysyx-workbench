@@ -25,7 +25,7 @@ NPC_IMG?=
 
 ##NPC_FLAGS?= -l=$(NPC_HOME)/npc-log.txt -b
 NPC_FLAGS ?= --log=$(NPC_HOME)/npc-log.txt
-# NPC_FLAGS += -b
+NPC_FLAGS += -b
 NPC_FLAGS += --diff=/home/yuweijie/ysyx-workbench/nemu/build/riscv32-nemu-interpreter-so
 
 
@@ -72,7 +72,8 @@ run:
 	./obj_dir/Vysyx_25060170_fishtailcore   $(NPC_FLAGS) $(NPC_IMG)
 
 gtk:	
-	$(GTK) waveform.vcd config.gtkw
+	$(GTK) waveform.vcd config.gtkw &
+	
 
 all:
 	$(VERILATOR) $(VERILATOR_FLAGS) $(SRC_FILES) $(VERILOG_FILES)

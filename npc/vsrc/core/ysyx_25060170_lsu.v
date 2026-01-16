@@ -1,40 +1,42 @@
 `include "define.v"
 
 module ysyx_25060170_lsu(
-     input  wire                              clk               //<<i<<
-    ,input  wire                              rst               //<<i<<
-    ,input  wire [`ysyx_25060170_PC]          pc_i              //<<i<<
-    ,input  wire [`ysyx_25060170_PC]          next_pc_i         //<<i<<
-    ,input  wire [`ysyx_25060170_INST]        inst_i            //<<i<<
-    ,input  wire [`ysyx_25060170_DATA]        alu_res_i         //<<i<<
-    ,input  wire [`ysyx_25060170_DATA]        store_data_i      //<<i<<
-    ,input  wire [3:0]                        ls_ctl_i          //<<i<<
-    //pipeline control
-	,input	wire					          wb_ready_i        //<<i<<
-	,input	wire					          ex_valid_i        //<<i<<
+     input  wire                              clk                   //<<i<<
+    ,input  wire                              rst                   //<<i<<
+    ,input  wire [`ysyx_25060170_PC]          pc_i                  //<<i<<
+    ,input  wire [`ysyx_25060170_PC]          next_pc_i             //<<i<<
+    ,input  wire [`ysyx_25060170_INST]        inst_i                //<<i<<
+    ,input  wire [`ysyx_25060170_DATA]        alu_res_i             //<<i<<
+    ,input  wire [`ysyx_25060170_DATA]        store_data_i          //<<i<<
+    ,input  wire [3:0]                        ls_ctl_i              //<<i<<
+    //pipeline control  
+	,input	wire					          wb_ready_i            //<<i<<
+	,input	wire					          ex_valid_i            //<<i<<
+    ,input  wire                              pipeline_id_stall_i   //<<i<<
     //output
- 	,output	wire					          ls_ready_o        //>>o>>
- 	,output	wire					          ls_valid_o        //>>o>>
- 	,output	wire					          ls_flush_o        //>>o>>
-    ,output wire                              ls_jump_o         //>>o>>
- 	,output	wire [`ysyx_25060170_PC]          ls_jump_pc_o      //>>o>>
-                  
-    //about dpi-c for mtrace
-    ,output wire                              re                //>>o>>
-    ,output wire                              we                //>>o>>
-    ,input  reg  [`ysyx_25060170_DATA]        data_i            //<<i<<
-    ,output reg  [`ysyx_25060170_DATA]        data_o            //>>o>>
-    ,output wire [`ysyx_25060170_DATAADDR]    raddr             //>>o>>
-    ,output wire [`ysyx_25060170_DATAADDR]    waddr             //>>o>>
-    ,output reg  [7:0]                        wlen              //>>o>>
-    ,output reg  [7:0]                        rlen              //>>o>>
-    //forwarding
-    ,output wire [`ysyx_25060170_DATA]        ls_data_forward_o //>>o>>
-    ,output wire [`ysyx_25060170_DATA]        ls_data_o         //>>o>>
-    //output to ls_wb_reg
-    ,output wire [`ysyx_25060170_INST]        inst_o            //>>o>>
-    ,output wire [`ysyx_25060170_PC]          pc_o              //>>o>>
-    ,output wire [`ysyx_25060170_PC]          next_pc_o         //>>o>>
+ 	,output	wire					          ls_ready_o            //>>o>>
+ 	,output	wire					          ls_valid_o            //>>o>>
+ 	,output	wire					          ls_flush_o            //>>o>>
+    ,output wire                              ls_jump_o             //>>o>>
+ 	,output	wire [`ysyx_25060170_PC]          ls_jump_pc_o          //>>o>>
+    ,output wire                              pipeline_id_stall_o   //>>o>>
+
+    //about dpi-c for mtrace    
+    ,output wire                              re                    //>>o>>
+    ,output wire                              we                    //>>o>>
+    ,input  reg  [`ysyx_25060170_DATA]        data_i                //<<i<<
+    ,output reg  [`ysyx_25060170_DATA]        data_o                //>>o>>
+    ,output wire [`ysyx_25060170_DATAADDR]    raddr                 //>>o>>
+    ,output wire [`ysyx_25060170_DATAADDR]    waddr                 //>>o>>
+    ,output reg  [7:0]                        wlen                  //>>o>>
+    ,output reg  [7:0]                        rlen                  //>>o>>
+    //forwarding    
+    ,output wire [`ysyx_25060170_DATA]        ls_data_forward_o     //>>o>>
+    ,output wire [`ysyx_25060170_DATA]        ls_data_o             //>>o>>
+    //output to ls_wb_reg   
+    ,output wire [`ysyx_25060170_INST]        inst_o                //>>o>>
+    ,output wire [`ysyx_25060170_PC]          pc_o                  //>>o>>
+    ,output wire [`ysyx_25060170_PC]          next_pc_o             //>>o>>
 );
 
 //*****************************pipeline control signals********************************//
@@ -185,8 +187,10 @@ assign ls_jump_o = 1'b0;
  assign ls_data_forward_o  = re ? load_data : alu_res_i ;
 
 //***************************output to ls_wb_reg***********************************************//
-assign inst_o = inst_i;
-assign pc_o = pc_i;
-assign next_pc_o = next_pc_i;
+assign inst_o               =   inst_i              ;
+assign pc_o                 =   pc_i                ;
+assign next_pc_o            =   next_pc_i           ;
+assign pipeline_id_stall_o  =   pipeline_id_stall_i ;
 
 endmodule
+

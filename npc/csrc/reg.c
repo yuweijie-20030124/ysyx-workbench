@@ -13,35 +13,17 @@ const char *regs[] = {
   "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"
 };
 
-
 void isa_reg_display() {
-  printf("\n");
-  printf("┌───────────────────┬───────────────┬────────────────┬───────────────────┐\n");
-  printf("│      Register     │  Hex Value    │  Decimal Value │      Notes        │\n");
-  printf("├───────────────────┼───────────────┼────────────────┼───────────────────┤\n");
-
-  for (int i = 0; i < 32; i++) {
-    // 特殊标记常用寄存器
-    const char *notes = "";
-    if (i == 1) notes = "Return Address";
-    if (i == 2) notes = "Stack Pointer";
-    if (i == 10) notes = "Argument/Return";
-    if (i == 15) notes = "MMIO Base Addr";
-
-    printf("│ %-17s │ 0x%08x    │ %-14d │ %-17s │\n", 
-           reg_name(i), gpr(i), gpr(i), notes);
-
-    // 每4个寄存器后加分隔线
-    if ((i + 1) % 4 == 0 && i != 31) {
-      printf("├───────────────────┼───────────────┼────────────────┼───────────────────┤\n");
+    printf("PC     : 0x%08x %d\n", cpu.pc, cpu.pc);
+    for (int i = 0; i < 32; i++) {
+        printf("%-4s   : 0x%08x %-11d  ", reg_name(i), gpr(i), gpr(i));
+        if ((i + 1) % 4 == 0) printf("\n");
     }
-  }
-
-  printf("└───────────────────┴───────────────┴────────────────┴───────────────────┘\n");
-  printf("\n");
-
+    printf("mcause : 0x%08x %-11d  "  , cpu.csr[0], cpu.csr[0]);
+    printf("mstatus: 0x%08x %-11d  "  , cpu.csr[1], cpu.csr[1]);
+    printf("mepc   : 0x%08x %-11d  "  , cpu.csr[2], cpu.csr[2]);
+    printf("mtvec  : 0x%08x %-11d  \n", cpu.csr[3], cpu.csr[3]);
 }
-
 
 //讲寄存器名字符转换为对应的寄存器值
 word_t isa_reg_str2val(const char *s, bool *success) {

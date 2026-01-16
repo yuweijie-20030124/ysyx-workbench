@@ -105,13 +105,16 @@ static void i8042_data_io_handler(uint32_t offset, int len, bool is_write) {
 /*分配4字节内存空间作为数据端口。
 注册端口/内存的IO处理函数。
 初始化键位映射（非AM平台时）。*/
+
 void init_i8042() {
   i8042_data_port_base = (uint32_t *)new_space(4);
   i8042_data_port_base[0] = NPC_KEY_NONE;
 #ifdef CONFIG_HAS_PORT_IO
   add_pio_map ("keyboard", CONFIG_I8042_DATA_PORT, i8042_data_port_base, 4, i8042_data_io_handler);
 #else
+  #ifdef CONFIG_DEVICE
   add_mmio_map("keyboard", CONFIG_I8042_DATA_MMIO, i8042_data_port_base, 4, i8042_data_io_handler);
+  #endif
 #endif
   IFNDEF(CONFIG_TARGET_AM, init_keymap());
 }

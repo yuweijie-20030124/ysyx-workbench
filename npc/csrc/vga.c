@@ -64,7 +64,11 @@ static inline void update_screen() {
 
 void vga_update_screen() {//更新屏幕
   if(vgactl_port_base[1] == 1){
+  
+    #ifdef CONFIG_HAS_VGA
   update_screen();
+  #endif
+
   vgactl_port_base[1]= 0;
   }
   // TODO: call `update_screen()` when the sync register is non-zero,

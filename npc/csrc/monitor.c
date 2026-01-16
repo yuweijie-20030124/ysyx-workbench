@@ -9,7 +9,9 @@ void init_ftrace(const char *elf_file);
 void init_rand();
 void init_mem();
 void init_difftest(char *ref_so_file, long img_size, int port);
+#ifdef CONFIG_DEVICE
 void init_device();
+#endif
 void init_sdb();
 void init_disasm();
 void init_isa();
@@ -121,6 +123,7 @@ void init_monitor(int argc, char *argv[]) {
   
   /* Initialize devices. */
   IFDEF(CONFIG_DEVICE, init_device());
+
 
   /* Perform ISA dependent initialization. */
   init_isa();
