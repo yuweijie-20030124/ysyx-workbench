@@ -18,15 +18,18 @@
 #include <device.h>
 #include <SDL2/SDL.h>
 
+
 void init_map();
 void init_serial();
 void init_timer();
 void init_vga();
 void init_i8042();
 void init_alarm();
-
 void send_key(uint8_t, bool);
 void vga_update_screen();
+
+
+
 
 //last是静态变量，记录上次更新时间。
 //now是当前时间，单位为微秒。
@@ -72,8 +75,8 @@ void sdl_clear_event_queue() {
 
 void init_device() {
   IFDEF(CONFIG_TARGET_AM, ioe_init());
-  init_map();
-
+  init_map();  
+  // IFDEF(CONFIG_HAS_VGA, init_map);
   IFDEF(CONFIG_HAS_SERIAL, init_serial());
   IFDEF(CONFIG_HAS_TIMER, init_timer());
   IFDEF(CONFIG_HAS_VGA, init_vga());

@@ -111,71 +111,32 @@ bool isa_difftest_checkregs(NPC_reg *ref_r, vaddr_t pc) {
         //  printf("进来啦!!!!!!!!!\n");
         //  printf("i = %d\n",i);
         //  printf("cpu.gpr = %d\n",cpu.gpr[i]);
-         printf("different reg is %s\n",nemu_regs[i]);
-         printf("error register is %08x\t%d\n",cpu.gpr[i],cpu.gpr[i]);
-         printf("right register is = %08x\t%d\n",ref_r->gpr[i],ref_r->gpr[i]);
-         printf("reg wrong!!!!!!!!!\n");
-         printf("\n");
-         printf("        nemu reg:\n");
-         printf("\n");
-  printf("┌───────────────────┬───────────────┬────────────────┬───────────────────┐\n");
-  printf("│      Register     │  Hex Value    │  Decimal Value │      Notes        │\n");
-  printf("├───────────────────┼───────────────┼────────────────┼───────────────────┤\n");
+    printf("PC get wrong at 0x%08x\n",cpu.pc);
+    printf("reg wrong!!!!!!!!!\n");
+    printf("different reg is %s\n",nemu_regs[i]);
+    printf("error register is 0x%08x\t%d\n",cpu.gpr[i],cpu.gpr[i]);
+    printf("right register is 0x%08x\t%d\n",ref_r->gpr[i],ref_r->gpr[i]);
+    
 
-  for (int i = 0; i < 32; i++) {
-    // 特殊标记常用寄存器
-    const char *notes = "";
-    if (i == 1) notes = "Return Address";
-    if (i == 2) notes = "Stack Pointer";
-    if (i == 10) notes = "Argument/Return";
-    if (i == 15) notes = "MMIO Base Addr";
-
-    printf("│ %-17s │ 0x%08x    │ %-14d │ %-17s │\n", 
-           nemu_regs[i], ref_r->gpr[i], ref_r->gpr[i], notes);
-
-    // 每4个寄存器后加分隔线
-    if ((i + 1) % 4 == 0 && i != 31) {
-      printf("├───────────────────┼───────────────┼────────────────┼───────────────────┤\n");
+    printf("\n");
+    printf("nemu reg:\n");
+    isa_reg_display();
+  
+    return false;
     }
   }
-        printf("\n");
-      return false;
-    }
-  }
+
+
   // printf("difftest cpu.pc    = 0x%08x\n",cpu.pc);
   // printf("difftest ref_r->pc = 0x%08x\n",ref_r->pc);
   if (cpu.pc != ref_r->pc) {
-        //printf("进来啦!!!!!!!!!\n");
-        printf("pc wrong!!!!!!!!!\n");
-        printf("wrong pc = 0x%08x\n",cpu.pc);
-        printf("right pc = 0x%08x\n",ref_r->pc);
-        printf("\n");
-        printf("        nemu reg:\n");
-        
-        printf("\n");
-  printf("┌───────────────────┬───────────────┬────────────────┬───────────────────┐\n");
-  printf("│      Register     │  Hex Value    │  Decimal Value │      Notes        │\n");
-  printf("├───────────────────┼───────────────┼────────────────┼───────────────────┤\n");
+    printf("pc wrong!!!!!!!!!\n");
+    printf("wrong pc = 0x%08x\n",cpu.pc);
+    printf("right pc = 0x%08x\n",ref_r->pc);
 
-  for (int j = 0; j < 32; j++) {
-    // 特殊标记常用寄存器
-    const char *notes = "";
-    if (j == 1) notes = "Return Address";
-    if (j == 2) notes = "Stack Pointer";
-    if (j == 10) notes = "Argument/Return";
-    if (j == 15) notes = "MMIO Base Addr";
-
-    printf("│ %-17s │ 0x%08x    │ %-14d │ %-17s │\n", 
-           nemu_regs[j], ref_r->gpr[j], ref_r->gpr[j], notes);
-      
-    // 每4个寄存器后加分隔线
-    if ((j + 1) % 4 == 0 && j != 31) {
-      printf("├───────────────────┼───────────────┼────────────────┼───────────────────┤\n");
-    }
-  }
-        printf("\n");
-
-        printf("\n");
+    printf("\n");
+    printf("nemu reg:\n"); 
+    isa_reg_display();
     return false;
   }
   return true;
@@ -184,12 +145,13 @@ bool isa_difftest_checkregs(NPC_reg *ref_r, vaddr_t pc) {
 static void checkregs(NPC_reg *ref, vaddr_t pc) {
     //printf("进来啦!!!!!!!!!\n");
   if (!isa_difftest_checkregs(ref, pc)) {
-    // printf("!!!!!!!!!************\n");
     npc_state.state = NPC_ABORT;
     npc_state.halt_pc = pc;
-    printf("        npc reg:\n");
+    printf("\n");
+    printf("npc reg:\n");
     
     isa_reg_display();
+    printf("\n");
   }
 }
 
