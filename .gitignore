@@ -7,6 +7,7 @@
 !/navy-apps/*
 !/npc/*
 !Makefile
+!1.png
 !README.md
 !.gitignore
 !init.sh
