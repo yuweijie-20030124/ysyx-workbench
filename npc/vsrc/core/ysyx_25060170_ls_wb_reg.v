@@ -13,6 +13,8 @@ module ysyx_25060170_ls_wb_reg(
     ,input   wire [`ysyx_25060170_REGADDR]  rd_addr_i           //<<i<<
     ,input   wire [6:0]                     csr_ctl_i           //<<i<<
     ,input   wire [11:0]                    csr_addr_i          //<<i<<
+    ,input   wire                           pipeline_id_stall_i //<<i<<
+    //forwarding
     ,input   wire [`ysyx_25060170_DATA]     ls_data_forward_i   //<<i<<
     //pipeline control
     ,input   wire                           ls_valid_i          //<<i<<
@@ -30,6 +32,7 @@ module ysyx_25060170_ls_wb_reg(
     ,output  reg  [`ysyx_25060170_REGADDR]  rd_addr_o           //>>o>>
     ,output  reg  [6:0]                     csr_ctl_o           //>>o>>
     ,output  reg  [11:0]                    csr_addr_o          //>>o>>
+    ,output  reg                            pipeline_id_stall_o //>>o>>
     //lsu forward to idu
     ,output  wire  [`ysyx_25060170_REGADDR]	ls_rd_addr_forward  //>>o>>
     ,output  wire  [`ysyx_25060170_DATA]	ls_rd_data_forward  //>>o>>
@@ -47,10 +50,11 @@ always@(posedge clk) begin
         wb_ctl_o            <=   2'b0                   ;
         lsu_res_o           <=   `ysyx_25060170_ZERO32  ;
         lsu_wb_data_o       <=   `ysyx_25060170_ZERO32  ;
-        rd_ena_o            <=   1'b0  ;
+        rd_ena_o            <=   1'b0                   ;
         rd_addr_o           <=   5'b0                   ;
         csr_ctl_o           <=   7'b0                   ;
         csr_addr_o          <=   12'b0                  ;
+        pipeline_id_stall_o <=   1'b0                   ;
     end
     else if(stall) begin
         inst_o              <=   inst_o                 ;
@@ -62,7 +66,8 @@ always@(posedge clk) begin
         rd_ena_o            <=   rd_ena_o               ;
         rd_addr_o           <=   rd_addr_o              ;
         csr_ctl_o           <=   csr_ctl_o              ;
-        csr_addr_o          <=   csr_addr_o             ;        
+        csr_addr_o          <=   csr_addr_o             ;
+        pipeline_id_stall_o <=   pipeline_id_stall_o    ;        
     end
     else begin
         inst_o              <=   inst_i                 ;
@@ -75,6 +80,7 @@ always@(posedge clk) begin
         rd_addr_o           <=   rd_addr_i              ;
         csr_ctl_o           <=   csr_ctl_i              ;
         csr_addr_o          <=   csr_addr_i             ;
+        pipeline_id_stall_o <=   pipeline_id_stall_i    ;
     end
 end
 

@@ -2,37 +2,40 @@
 
 module ysyx_25060170_exu(
     //system signals
-     input  wire                            rst         //<<i<<
-    //from id_ex_reg
-    ,input  wire [`ysyx_25060170_DATA]      op1_i      	//<<i<< 
-    ,input  wire [`ysyx_25060170_DATA]      op2_i       //<<i<<
-    ,input  wire [1:0]                      op1_sel_i	  //<<i<<
-    ,input  wire [2:0]                      op2_sel_i	  //<<i<<
-    ,input  wire [`ysyx_25060170_REGADDR]   rd_addr_i	  //<<i<<
-    ,input  wire [`ysyx_25060170_REGADDR]   rs1_addr_i	//<<i<<
-    ,input  wire [`ysyx_25060170_IMM]       imm_i		    //<<i<<
-    ,input  wire [`ysyx_25060170_PC]        pc_i		    //<<i<<
-    ,input  wire [`ysyx_25060170_PC]        next_pc_i	  //<<i<<
-    ,input  wire [`ysyx_25060170_INST]      inst_i	    //<<i<<
-    ,input  wire [7:0]                      alu_sel_i	  //<<i<<
+     input  wire                            rst               //<<i<<
+    //from id_ex_reg      
+    ,input  wire [`ysyx_25060170_DATA]      op1_i      	      //<<i<< 
+    ,input  wire [`ysyx_25060170_DATA]      op2_i             //<<i<<
+    ,input  wire [1:0]                      op1_sel_i	        //<<i<<
+    ,input  wire [2:0]                      op2_sel_i	        //<<i<<
+    ,input  wire [`ysyx_25060170_REGADDR]   rd_addr_i	        //<<i<<
+    ,input  wire [`ysyx_25060170_REGADDR]   rs1_addr_i	      //<<i<<
+    ,input  wire [`ysyx_25060170_IMM]       imm_i		          //<<i<<
+    ,input  wire [`ysyx_25060170_PC]        pc_i		          //<<i<<
+    ,input  wire [`ysyx_25060170_PC]        next_pc_i	        //<<i<<
+    ,input  wire [`ysyx_25060170_INST]      inst_i	          //<<i<<
+    ,input  wire [7:0]                      alu_sel_i	        //<<i<<
+    ,input  wire                            pipeline_id_stall_i  //<<i<<
     //控制冒险
-    ,input  wire                            ls_ready_i	//<<i<<
-    ,input  wire                            id_valid_i	//<<i<<
-    ,output wire                            ex_valid_o	//>>o>>
-    ,output wire                            ex_ready_o	//>>o>>
-    //output to next stage
-    ,output wire [`ysyx_25060170_INST]      inst_o     	//>>o>>
-    ,output wire [`ysyx_25060170_PC]        pc_o       	//>>o>>
-    ,output wire [`ysyx_25060170_PC]        next_pc_o  	//>>o>>
-    ,output wire [`ysyx_25060170_REG]       store_data_o//>>o>>
-    ,output wire [`ysyx_25060170_DATA]      exu_res_o	  //>>o>>
-    ,output wire [11:0]                     csr_addr_o	//>>o>>
-    ,output wire [6:0]                      csr_ctl_o	  //>>o>>
+    ,input  wire                            ls_ready_i	      //<<i<<
+    ,input  wire                            id_valid_i	      //<<i<<
+    ,output wire                            ex_valid_o	      //>>o>>
+    ,output wire                            ex_ready_o	      //>>o>>
+    //output to next stage      
+    ,output wire [`ysyx_25060170_INST]      inst_o     	      //>>o>>
+    ,output wire [`ysyx_25060170_PC]        pc_o       	      //>>o>>
+    ,output wire [`ysyx_25060170_PC]        next_pc_o  	      //>>o>>
+    ,output wire [`ysyx_25060170_REG]       store_data_o      //>>o>>
+    ,output wire [`ysyx_25060170_DATA]      exu_res_o	        //>>o>>
+    ,output wire [11:0]                     csr_addr_o	      //>>o>>
+    ,output wire [6:0]                      csr_ctl_o	        //>>o>>
+    ,output wire                            pipeline_id_stall_o  //>>o>>
 );
 
 //********************************控制冒险********************************//
 assign ex_valid_o = id_valid_i;
 assign ex_ready_o = ls_ready_i; 
+assign pipeline_id_stall_o = pipeline_id_stall_i;
 
 //!!!!!乘除法并没有办法被综合得很好，能乘除主要是因为有软件，最好还是用硬件乘除器!!!!!
 
