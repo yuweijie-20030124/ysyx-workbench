@@ -103,7 +103,7 @@ void init_difftest(char *ref_so_file, long img_size, int port) {
 
 bool isa_difftest_checkregs(NPC_reg *ref_r, vaddr_t pc) {
   int reg_num = (int)(sizeof(cpu.gpr) / sizeof(cpu.gpr[0]));
-  
+  int csr_num = (int)(sizeof(cpu.csr) / sizeof(cpu.csr[0]));
   // printf("pc = 0x%08x!!!!!\n",cpu.pc);
   // printf("进来啦!!!!!!!!!\n");
   for (int i = 0; i < reg_num; i++) {
@@ -120,7 +120,13 @@ bool isa_difftest_checkregs(NPC_reg *ref_r, vaddr_t pc) {
 
     printf("\n");
     printf("nemu reg:\n");
-    isa_reg_display();
+    // isa_reg_display();
+    printf("PC     : 0x%08x %d\n", ref_r->pc, ref_r->pc);
+    for (int i = 0; i < 32; i++) {
+        printf("%-4s   : 0x%08x %-11d  ", nemu_regs[i], ref_r->gpr[i], ref_r->gpr[i]);
+        if ((i + 1) % 4 == 0) printf("\n");
+    }
+
   
     return false;
     }
@@ -139,6 +145,21 @@ bool isa_difftest_checkregs(NPC_reg *ref_r, vaddr_t pc) {
     isa_reg_display();
     return false;
   }
+
+  // for (int k = 0; k < csr_num; k++) {
+  //   if(cpu.csr[k] != ref-r[k]){
+  //     printf("PC get wrong at 0x%08x\n",cpu.pc);
+  //     printf("csr reg wrong!!!!!!!!!\n");
+  //     printf("nemu csr regs value are\n")
+  //     printf("mcause : 0x%08x %-11d  "  , cpu.csr[0], cpu.csr[0]);
+  //     printf("mstatus: 0x%08x %-11d  "  , cpu.csr[1], cpu.csr[1]);
+  //     printf("mepc   : 0x%08x %-11d  "  , cpu.csr[2], cpu.csr[2]);
+  //     printf("mtvec  : 0x%08x %-11d  \n", cpu.csr[3], cpu.csr[3]);
+
+  //   }
+  // }
+
+    
   return true;
 }
 

@@ -39,14 +39,14 @@ module ysyx_25060170_if_id_reg (
             pc_o        <=  pc_o        ;
             next_pc_o   <=  next_pc_o   ;
             id_jump_o   <=  id_jump_o   ;
-            if_valid_o  <=  if_valid_o  ;
+            if_valid_o  <=  1'b1        ;
         end
         else begin
             inst_o      <=  inst_i      ;
             pc_o        <=  pc_i        ;
             next_pc_o   <=  next_pc_i   ;
             id_jump_o   <=  bp_jump_i   ;
-            if_valid_o  <=  if_valid_i  ;
+            if_valid_o  <=  1'b0        ;
         end
     end
 endmodule

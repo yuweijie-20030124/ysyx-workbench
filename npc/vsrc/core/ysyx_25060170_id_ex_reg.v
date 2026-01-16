@@ -89,7 +89,7 @@ always@(posedge clk) begin
         csr_ena_o           <=      csr_ena_o               ;
         load_flag_o         <=      load_flag_o             ;
         pipeline_id_stall_o <=      pipeline_id_stall_o     ;
-        id_valid_o          <=      id_valid_o              ;
+        id_valid_o          <=      1'b1              ;
         
         // bp_jump_o       <=      bp_jump_o               ;
     end
@@ -111,7 +111,7 @@ always@(posedge clk) begin
         csr_ena_o           <=      csr_ena_i               ;
         load_flag_o         <=      load_flag_i             ;
         pipeline_id_stall_o <=      pipeline_id_stall_i     ;
-        id_valid_o          <=      id_valid_i              ;
+        id_valid_o          <=      1'b0              ;
         // bp_jump_o       <=      bp_jump_i               ;
     end
 end

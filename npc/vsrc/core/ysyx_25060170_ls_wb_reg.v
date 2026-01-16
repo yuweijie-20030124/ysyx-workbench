@@ -69,7 +69,7 @@ always@(posedge clk) begin
         rd_addr_o           <=   rd_addr_o              ;
         csr_ctl_o           <=   csr_ctl_o              ;
         csr_addr_o          <=   csr_addr_o             ;
-        ls_valid_o          <=   ls_valid_o             ;
+        ls_valid_o          <=   1'b1                   ;
         pipeline_id_stall_o <=   pipeline_id_stall_o    ;        
     end
     else begin
@@ -83,7 +83,7 @@ always@(posedge clk) begin
         rd_addr_o           <=   rd_addr_i              ;
         csr_ctl_o           <=   csr_ctl_i              ;
         csr_addr_o          <=   csr_addr_i             ;
-        ls_valid_o          <=   ls_valid_i             ;
+        ls_valid_o          <=   1'b0                   ;
         pipeline_id_stall_o <=   pipeline_id_stall_i    ;
     end
 end
