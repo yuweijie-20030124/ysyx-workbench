@@ -147,15 +147,21 @@ bool isa_difftest_checkregs(NPC_reg *ref_r, vaddr_t pc) {
   }
 
   // for (int k = 0; k < csr_num; k++) {
-  //   if(cpu.csr[k] != ref-r[k]){
+  //   if(cpu.csr[k] != ref_r->csr[k]){
   //     printf("PC get wrong at 0x%08x\n",cpu.pc);
   //     printf("csr reg wrong!!!!!!!!!\n");
-  //     printf("nemu csr regs value are\n")
-  //     printf("mcause : 0x%08x %-11d  "  , cpu.csr[0], cpu.csr[0]);
-  //     printf("mstatus: 0x%08x %-11d  "  , cpu.csr[1], cpu.csr[1]);
-  //     printf("mepc   : 0x%08x %-11d  "  , cpu.csr[2], cpu.csr[2]);
-  //     printf("mtvec  : 0x%08x %-11d  \n", cpu.csr[3], cpu.csr[3]);
-
+  //     printf("nemu csr regs value are\n");
+  //     printf("NEMU REGS:\n");
+  //     printf("mcause : 0x%08x %-11d  "  , ref_r->csr[0], ref_r->csr[0]);
+  //     printf("mstatus: 0x%08x %-11d  "  , ref_r->csr[1], ref_r->csr[1]);
+  //     printf("mepc   : 0x%08x %-11d  "  , ref_r->csr[2], ref_r->csr[2]);
+  //     printf("mtvec  : 0x%08x %-11d  \n", ref_r->csr[3], ref_r->csr[3]);
+  //     printf("NPC REGS:\n");
+  //     printf("mcause : 0x%08x %-11d  "  , ref_r->csr[0], ref_r->csr[0]);
+  //     printf("mstatus: 0x%08x %-11d  "  , ref_r->csr[1], ref_r->csr[1]);
+  //     printf("mepc   : 0x%08x %-11d  "  , ref_r->csr[2], ref_r->csr[2]);
+  //     printf("mtvec  : 0x%08x %-11d  \n", ref_r->csr[3], ref_r->csr[3]);
+  //     return false;
   //   }
   // }
 

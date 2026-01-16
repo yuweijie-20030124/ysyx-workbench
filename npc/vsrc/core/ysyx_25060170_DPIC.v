@@ -66,6 +66,7 @@
 	,input wire                                	wbu_dpic_id_stall	//<<i<<
 	,input wire 								pipeline_id_stall	//<<i<<
 	,input wire                                	wbu_dpic_ls_valid	//<<i<<
+	
 	/* verilator lint_on UNUSEDSIGNAL */
 	//to lsu
 	,output reg  [`ysyx_25060170_DATA]     		data_o		//>>o>>
