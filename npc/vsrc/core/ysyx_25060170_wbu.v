@@ -13,10 +13,10 @@
     ,input  wire                             rd_ena_i                   //<<i<<
     ,input	wire	[6:0]				     csr_ctl_i	                //<<i<<
     ,input	wire	[11:0]				     csr_addr_i                 //<<i<<
-    ,input  wire                             pipeline_id_stall_i        //<<i<<  
+    // ,input  wire                             pipeline_id_stall_i        //<<i<<  
     // ,input	wire	[`ysyx_25060170_PC]		  ls_pc_i	            //<<i<<
     ,input	wire					         ls_valid_i                 //<<i<<
-    ,input 	wire					         id_stall_i                 //<<i<<
+    // ,input 	wire					         id_stall_i                 //<<i<<
     //output to regfile      
  	,output wire  [`ysyx_25060170_DATA]      wb_data_o                  //>>o>>  
     ,output wire                             wb_ready_o                 //>>o>>
@@ -96,9 +96,9 @@ assign mcause_o  = mcause ;
 assign wbu_dpic_inst_o          = inst_i             ;
 assign wbu_dpic_pc_o            = pc_i               ;
 assign wbu_dpic_next_pc_o       = next_pc_i          ;
-assign wbu_dpic_ls_valid_o      = ls_valid_i         ;
-assign wbu_dpic_id_stall_o      = id_stall_i         ;
-assign dpic_pipeline_id_stall_o = pipeline_id_stall_i;
+// assign wbu_dpic_ls_valid_o      = ls_valid_i         ;
+// assign wbu_dpic_id_stall_o      = id_stall_i         ;
+// assign dpic_pipeline_id_stall_o = pipeline_id_stall_i;
 assign wbu_dpic_valid_o         = ls_valid_i         ;
 
 //*************************************out**************************************//

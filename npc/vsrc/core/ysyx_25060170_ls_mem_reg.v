@@ -13,9 +13,9 @@ module ysyx_25060170_ls_mem_reg(
     ,input   wire [`ysyx_25060170_REGADDR]  rd_addr_i           //<<i<<
     ,input   wire [6:0]                     csr_ctl_i           //<<i<<
     ,input   wire [11:0]                    csr_addr_i          //<<i<<
-    ,input   wire                           pipeline_id_stall_i //<<i<<
+    // ,input   wire                           pipeline_id_stall_i //<<i<<
     //forwarding
-    ,input   wire [`ysyx_25060170_DATA]     ls_data_forward_i   //<<i<<
+    // ,input   wire [`ysyx_25060170_DATA]     ls_data_forward_i   //<<i<<
     //pipeline control
     ,input   wire                           ls_valid_i          //<<i<<
     ,input   wire                           wb_ready_i          //<<i<<
@@ -56,7 +56,7 @@ always@(posedge clk) begin
         csr_ctl_o           <=   7'b0                   ;
         csr_addr_o          <=   12'b0                  ;
         ls_valid_o          <=   1'b1                   ;
-        pipeline_id_stall_o <=   1'b0                   ;
+        // pipeline_id_stall_o <=   1'b0                   ;
     end
     else if(stall) begin
         inst_o              <=   inst_o                 ;
@@ -70,7 +70,7 @@ always@(posedge clk) begin
         csr_ctl_o           <=   csr_ctl_o              ;
         csr_addr_o          <=   csr_addr_o             ;
         ls_valid_o          <=   1'b1                   ;
-        pipeline_id_stall_o <=   pipeline_id_stall_o    ;        
+        // pipeline_id_stall_o <=   pipeline_id_stall_o    ;        
     end
     else begin
         inst_o              <=   inst_i                 ;
@@ -84,12 +84,12 @@ always@(posedge clk) begin
         csr_ctl_o           <=   csr_ctl_i              ;
         csr_addr_o          <=   csr_addr_i             ;
         ls_valid_o          <=   1'b0                   ;
-        pipeline_id_stall_o <=   pipeline_id_stall_i    ;
+        // pipeline_id_stall_o <=   pipeline_id_stall_i    ;
     end
 end
 
-assign ls_rd_addr_forward = rd_addr_i	                    ;
-assign ls_rd_data_forward = ls_data_forward_i	            ;
+// assign ls_rd_addr_forward = rd_addr_i	                    ;
+// assign ls_rd_data_forward = ls_data_forward_i	            ;
 // assign lsu_wb_data_o      = flush ? 0 : lsu_wb_data_i       ;
 
 
