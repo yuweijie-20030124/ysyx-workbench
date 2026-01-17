@@ -247,7 +247,6 @@ class alignas(VL_CACHE_LINE_BYTES) Vysyx_25060170_fishtailcore___024root final {
         IData/*31:0*/ ysyx_25060170_fishtailcore__DOT__ls_wb_reg_pc;
         IData/*31:0*/ ysyx_25060170_fishtailcore__DOT__ls_wb_reg_next_pc;
         IData/*31:0*/ ysyx_25060170_fishtailcore__DOT__ls_wb_reg_lsu_res;
-        IData/*31:0*/ ysyx_25060170_fishtailcore__DOT__ls_wb_reg_lsu_wb_data;
         IData/*31:0*/ ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_bpu__DOT__pc_i;
         IData/*31:0*/ ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_bpu__DOT__ls_wb_forward_data;
         IData/*31:0*/ ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_bpu__DOT__ex_ls_forward_data;
@@ -278,9 +277,9 @@ class alignas(VL_CACHE_LINE_BYTES) Vysyx_25060170_fishtailcore___024root final {
         IData/*31:0*/ ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_DPIC__DOT__raddr;
         IData/*31:0*/ __Vtask_ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_DPIC__DOT__pmem_read__2__rdata;
         IData/*31:0*/ __VdfgRegularize_h6e95ff9d_0_0;
+        IData/*31:0*/ __VdfgRegularize_h6e95ff9d_0_1;
     };
     struct {
-        IData/*31:0*/ __VdfgRegularize_h6e95ff9d_0_1;
         IData/*31:0*/ __VdfgRegularize_h6e95ff9d_0_2;
         IData/*31:0*/ __VdfgRegularize_h6e95ff9d_0_3;
         IData/*31:0*/ __VdfgRegularize_h6e95ff9d_0_4;

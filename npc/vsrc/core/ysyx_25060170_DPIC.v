@@ -63,9 +63,9 @@
 	,input wire     [`ysyx_25060170_PC]        	wbu_dpic_next_pc	//<<i<<
 	,input wire     							wbu_dpic_valid		//<<i<<
 	/* verilator lint_off UNUSEDSIGNAL */
-	,input wire                                	wbu_dpic_id_stall	//<<i<<
-	,input wire 								pipeline_id_stall	//<<i<<
-	,input wire                                	wbu_dpic_ls_valid	//<<i<<
+	// ,input wire                                	wbu_dpic_id_stall	//<<i<<
+	// ,input wire 								pipeline_id_stall	//<<i<<
+	// ,input wire                                	wbu_dpic_ls_valid	//<<i<<
 	
 	/* verilator lint_on UNUSEDSIGNAL */
 	//to lsu

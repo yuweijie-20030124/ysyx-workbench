@@ -33,10 +33,10 @@
     ,output wire  [`ysyx_25060170_INST]      wbu_dpic_inst_o            //>>o>>
     ,output wire  [`ysyx_25060170_PC]        wbu_dpic_pc_o              //>>o>>
     ,output wire  [`ysyx_25060170_PC]        wbu_dpic_next_pc_o         //>>o>>
-    ,output wire                             wbu_dpic_ls_valid_o        //>>o>>
-    ,output wire                             wbu_dpic_id_stall_o        //>>o>>
+    // ,output wire                             wbu_dpic_ls_valid_o        //>>o>>
+    // ,output wire                             wbu_dpic_id_stall_o        //>>o>>
     ,output wire                             wbu_dpic_valid_o           //>>o>>
-    ,output wire                             dpic_pipeline_id_stall_o   //>>o>>
+    // ,output wire                             dpic_pipeline_id_stall_o   //>>o>>
 );
 
 assign wb_ready_o = 1'b1;
@@ -106,7 +106,7 @@ assign wbu_dpic_valid_o         = ls_valid_i         ;
 assign wb_data_o = `ysyx_25060170_ZERO32 | 
                      {32{wb_ctl_i[0]}}          & ls_rd_data_i     | //load
                      {32{wb_ctl_i[1]}}          & exu_res_i        | //alu
-                     {32{csr_ctl_i[3:0] != 4'b0}} & read_csr_data    ; //alu
+                     {32{csr_ctl_i[3:0] != 4'b0}} & read_csr_data    ; //csr
 
 assign wb_rd_ena_o    = rd_ena_i;
 assign wb_rd_addr_o   = rd_addr_i;

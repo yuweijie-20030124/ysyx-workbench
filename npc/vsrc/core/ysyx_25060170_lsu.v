@@ -21,10 +21,10 @@ module ysyx_25060170_lsu(
  	,output	wire [`ysyx_25060170_PC]          ls_jump_pc_o          //>>o>>
     ,output wire                              pipeline_id_stall_o   //>>o>>
 
-    //about dpi-c for mtrace    
+    //about dpi-c for mtrace & DPIC访存
     ,output wire                              re                    //>>o>>
     ,output wire                              we                    //>>o>>
-    ,input  reg  [`ysyx_25060170_DATA]        data_i                //<<i<<
+    ,input  wire [`ysyx_25060170_DATA]        data_i                //<<i<<
     ,output reg  [`ysyx_25060170_DATA]        data_o                //>>o>>
     ,output wire [`ysyx_25060170_DATAADDR]    raddr                 //>>o>>
     ,output wire [`ysyx_25060170_DATAADDR]    waddr                 //>>o>>
@@ -32,8 +32,8 @@ module ysyx_25060170_lsu(
     ,output reg  [7:0]                        rlen                  //>>o>>
     //forwarding    
     ,output wire [`ysyx_25060170_DATA]        ls_data_forward_o     //>>o>>
-    ,output wire [`ysyx_25060170_DATA]        ls_data_o             //>>o>>
-    //output to ls_wb_reg   
+    //output to ls_wb_reg  
+    ,output wire [`ysyx_25060170_DATA]        ls_data_o             //>>o>> 
     ,output wire [`ysyx_25060170_INST]        inst_o                //>>o>>
     ,output wire [`ysyx_25060170_PC]          pc_o                  //>>o>>
     ,output wire [`ysyx_25060170_PC]          next_pc_o             //>>o>>
@@ -88,7 +88,7 @@ always @(*) begin
         case (ls_ctl_i[2:0])
             3'b001: load_data = {{24{data_byte[7]}}, data_byte};    // LB: sign-extended byte
             3'b010: load_data = {{16{data_half[15]}}, data_half};   // LH: sign-extended halfword
-            3'b011: load_data = data_word;                          // LW: word
+            3'b011: load_data = data_word;                          // LW: (word ls_ctl_i = B=1011)
             3'b101: load_data = {24'b0, data_byte};                 // LBU: zero-extended byte
             3'b110: load_data = {16'b0, data_half};                 // LHU: zero-extended halfword
             default: load_data = `ysyx_25060170_ZERO32;
