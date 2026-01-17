@@ -27,14 +27,22 @@ static int inst_end = 1;
 
 /******************************* DPI-C ********************************/
 
+//mode = 1 = 读指令
+//mode = 2 = 从内存中读数据
+//mode = 3 = 从mmio中读数据
 /**************************** read and write ****************************/
-extern "C" void pmem_read(paddr_t raddr, paddr_t* rdata, char rlen){
+extern "C" void pmem_read(paddr_t raddr, paddr_t* rdata, char rlen , int mode){
 
   if (raddr < CONFIG_MEM_BASE) return;
   if (likely(in_pmem(raddr))) {
     *rdata = host_read(guest_to_host(raddr),rlen);
 #ifdef CONFIG_MTRACE
-      Log("Read from memory at %#.8x for %d bytes,content is %#.8x cpu.pc is %#.8x.",raddr,rlen,*rdata,cpu.pc);
+    if(mode == 1){
+      Log("CPU fetch instruction :PC value %#.8x,content is %#.8x",raddr,*rdata);
+    }
+    else if(mode == 2){
+      Log("Load data:lsu get data at %#.8x for %d bytes,content is %#.8x",raddr,rlen,*rdata);
+    }
 #endif
 
     return;
@@ -42,6 +50,7 @@ extern "C" void pmem_read(paddr_t raddr, paddr_t* rdata, char rlen){
    IFDEF(CONFIG_DEVICE, *rdata = mmio_read(raddr, rlen);return);
    return;
 }
+
 
 static inline int maskToLen(uint8_t mask) {
   switch (mask) {
@@ -57,7 +66,7 @@ extern "C" void pmem_write(uint32_t waddr, uint32_t wdata, uint8_t wlen) {
   if (waddr < CONFIG_MEM_BASE) return;
   
 #ifdef CONFIG_MTRACE
-   Log("Write to memory at %#.8x with mask %x, content is %#.8x,cpu.pc is %#.8x", waddr, wlen, wdata,cpu.pc);
+   Log("Write to memory at %#.8x with mask %x, content is %#.8x", waddr, wlen, wdata);
 #endif
 
   int len = 0;

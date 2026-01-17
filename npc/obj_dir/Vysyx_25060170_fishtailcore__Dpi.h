@@ -16,9 +16,9 @@ extern "C" {
 
 
     // DPI EXPORTS
-    // DPI export at vsrc/core/ysyx_25060170_DPIC.v:230:6
+    // DPI export at vsrc/core/ysyx_25060170_DPIC.v:232:6
     extern void IDU_SEND_CALL_FLAG(int* call_flag, int* pc, int* dnpc);
-    // DPI export at vsrc/core/ysyx_25060170_DPIC.v:249:6
+    // DPI export at vsrc/core/ysyx_25060170_DPIC.v:251:6
     extern void IDU_SEND_RET_FLAG(int* ret_flag, int* pc);
 
     // DPI IMPORTS
@@ -31,7 +31,7 @@ extern "C" {
     // DPI import at vsrc/core/ysyx_25060170_DPIC.v:87:30
     extern void pc_inst_end(int thepc_data, int the_inst);
     // DPI import at vsrc/core/ysyx_25060170_DPIC.v:89:30
-    extern void pmem_read(int raddr, int* rdata, char rlen);
+    extern void pmem_read(int raddr, int* rdata, char rlen, int mode);
     // DPI import at vsrc/core/ysyx_25060170_DPIC.v:91:30
     extern void pmem_write(int waddr, int wdata, char wlen);
     // DPI import at vsrc/core/ysyx_25060170_DPIC.v:93:30

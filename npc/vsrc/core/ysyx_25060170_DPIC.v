@@ -86,7 +86,7 @@
 
 import "DPI-C" function void pc_inst_end(input int thepc_data, input int the_inst);
 
-import "DPI-C" function void pmem_read(input int raddr, output int rdata, input byte rlen);
+import "DPI-C" function void pmem_read(input int raddr, output int rdata, input byte rlen, input int mode);
 
 import "DPI-C" function void pmem_write(input int waddr, input int wdata, input byte wlen);
 
@@ -137,18 +137,20 @@ import "DPI-C" function void difftest_dut_regs(
  );
 
 /***********************************use dpic*************************************/
-
+wire [31:0] dpic_loadread = 32'd2;
 always @(posedge clk) begin
     if (re) begin
-        pmem_read(raddr, data_o, rlen);
+        pmem_read(raddr, data_o, rlen, dpic_loadread);
     end
     if (we) begin
         pmem_write(waddr, data_i, wlen);
     end
 end
 
+//取指，从pc_i中获取inst_o
+wire [31:0] dpic_fetch = 32'd1;
 always @(*) begin
-    pmem_read(pc_i,inst_o,rlen);
+    pmem_read(pc_i,inst_o,rlen,dpic_fetch);
     
 end
 
