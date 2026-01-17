@@ -138,7 +138,7 @@ import "DPI-C" function void difftest_dut_regs(
 
 /***********************************use dpic*************************************/
 
-always @(negedge clk) begin
+always @(posedge clk) begin
     if (re) begin
         pmem_read(raddr, data_o, rlen);
     end
@@ -171,16 +171,16 @@ end
  always@(*)begin
 	// pmem_read(pc_i,inst_o,rlen);
  	difftest_dut_regs(
- 		regs0  ,
- 		regs1  ,
- 		regs2  ,
- 		regs3  ,
- 		regs4  ,
- 		regs5  ,
- 		regs6  ,
- 		regs7  ,
- 		regs8  ,
- 		regs9  ,
+ 		regs0 ,
+ 		regs1 ,
+ 		regs2 ,
+ 		regs3 ,
+ 		regs4 ,
+ 		regs5 ,
+ 		regs6 ,
+ 		regs7 ,
+ 		regs8 ,
+ 		regs9 ,
  		regs10,
  		regs11,
  		regs12,

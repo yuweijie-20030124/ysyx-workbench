@@ -1751,9 +1751,6 @@ VL_ATTR_COLD void Vysyx_25060170_fishtailcore___024root___dump_triggers__act(con
     if ((1U & (IData)(triggers[0U]))) {
         VL_DBG_MSGS("         '" + tag + "' region trigger index 0 is active: @(posedge clk)\n");
     }
-    if ((1U & (IData)((triggers[0U] >> 1U)))) {
-        VL_DBG_MSGS("         '" + tag + "' region trigger index 1 is active: @(negedge clk)\n");
-    }
 }
 #endif  // VL_DEBUG
 
@@ -1765,8 +1762,6 @@ VL_ATTR_COLD void Vysyx_25060170_fishtailcore___024root____Vm_traceActivitySetAl
     vlSelfRef.__Vm_traceActivity[0U] = 1U;
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     vlSelfRef.__Vm_traceActivity[2U] = 1U;
-    vlSelfRef.__Vm_traceActivity[3U] = 1U;
-    vlSelfRef.__Vm_traceActivity[4U] = 1U;
 }
 
 VL_ATTR_COLD void Vysyx_25060170_fishtailcore___024root___ctor_var_reset(Vysyx_25060170_fishtailcore___024root* vlSelf) {
@@ -2051,7 +2046,7 @@ VL_ATTR_COLD void Vysyx_25060170_fishtailcore___024root___ctor_var_reset(Vysyx_2
     for (int __Vi0 = 0; __Vi0 < 1; ++__Vi0) {
         vlSelf->__VnbaTriggered[__Vi0] = 0;
     }
-    for (int __Vi0 = 0; __Vi0 < 5; ++__Vi0) {
+    for (int __Vi0 = 0; __Vi0 < 3; ++__Vi0) {
         vlSelf->__Vm_traceActivity[__Vi0] = 0;
     }
 }

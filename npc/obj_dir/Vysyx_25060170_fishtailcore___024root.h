@@ -293,7 +293,7 @@ class alignas(VL_CACHE_LINE_BYTES) Vysyx_25060170_fishtailcore___024root final {
         VlUnpacked<QData/*63:0*/, 1> __VicoTriggered;
         VlUnpacked<QData/*63:0*/, 1> __VactTriggered;
         VlUnpacked<QData/*63:0*/, 1> __VnbaTriggered;
-        VlUnpacked<CData/*0:0*/, 5> __Vm_traceActivity;
+        VlUnpacked<CData/*0:0*/, 3> __Vm_traceActivity;
     };
 
     // INTERNAL VARIABLES
