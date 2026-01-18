@@ -178,6 +178,8 @@ ysyx_25060170_idu u_ysyx_25060170_idu (
     ,.ex_data_forward    (ex_rd_data_forward    )//<<i<<
     ,.ls_addr_forward    (ls_rd_addr_forward    )//<<i<<
     ,.ls_data_forward    (ls_rd_data_forward    )//<<i<<
+    ,.mem_data_forward   (mem_rd_data_forward   )//<<i<<
+    ,.mem_addr_forward   (mem_rd_addr_forward   )//<<i<<
     ,.wb_addr_forward    (wb_rd_addr_forward    )//<<i<<
     ,.wb_data_forward    (wb_rd_data_forward    )//<<i<<
 
@@ -660,7 +662,8 @@ wire  [6:0]                     mem_wb_csr_ctl        ;
 wire  [11:0]                    mem_wb_csr_addr       ;
 // wire  [`ysyx_25060170_DATA]     mem_wb_wb_data        ;
 wire                            mem_valid_o           ;
-
+wire  [`ysyx_25060170_REGADDR]   mem_rd_addr_forward   ;
+wire  [`ysyx_25060170_DATA]      mem_rd_data_forward   ;
 
 ysyx_25060170_mem_wb_reg u_ysyx_25060170_mem_wb_reg(
      .clk                   (clk                        )//<<i<<
@@ -691,6 +694,8 @@ ysyx_25060170_mem_wb_reg u_ysyx_25060170_mem_wb_reg(
     ,.csr_ctl_o             (mem_wb_csr_ctl             )//>>o>>
     ,.csr_addr_o            (mem_wb_csr_addr            )//>>o>>
     // ,.wb_data_o             (mem_wb_wb_data             )//>>o>>
+    ,.mem_rd_addr_forward_o (mem_rd_addr_forward)//>>o>>
+    ,.mem_rd_data_forward_o (mem_rd_data_forward)//>>o>>
 );
 
 // ysyx_25060170_wbu Outputs 
@@ -718,7 +723,7 @@ ysyx_25060170_wbu u_ysyx_25060170_wbu (
 
     ,.ls_rd_data_i              ( mem_wb_lsu_res                )//<<i<<
     ,.wb_ctl_i                  ( mem_wb_wb_ctl                 )//<<i<<
-    ,.exu_res_i                 ( mem_wb_alures_data                )//<<i<<
+    ,.exu_res_i                 ( mem_wb_alures_data            )//<<i<<
     ,.pc_i                      ( mem_wb_pc                     )//<<i<<
     ,.next_pc_i                 ( mem_wb_next_pc                )//<<i<<
     ,.inst_i                    ( mem_wb_inst                   )//<<i<<

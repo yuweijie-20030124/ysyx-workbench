@@ -33,11 +33,21 @@ module ysyx_25060170_mem_wb_reg(
     ,output  reg  [6:0]                     csr_ctl_o           //>>o>>
     ,output  reg  [11:0]                    csr_addr_o          //>>o>>
     // ,output  wire [`ysyx_25060170_DATA]     wb_data_o           //>>o>>
+    //forwarding
+    ,output wire  [`ysyx_25060170_REGADDR]  mem_rd_addr_forward_o//>>o>>   
+    ,output wire  [`ysyx_25060170_DATA]     mem_rd_data_forward_o//>>o>>
 );
-
+    //harzard
     wire flush = 1'b0                        ;
     wire stall = mem_valid_i | ~wb_ready_i   ;
-
+    //forwarding
+    assign mem_rd_addr_forward_o = rd_addr_i ;
+    //TODO：根据wb_ctl判断要前递的是内存数据mem_data_i还是alu运算结果alu_res_i 
+    //wb_ctl=01 表示用load的mem_data
+    //wb_ctl=10 表示用alu_res_i
+    assign mem_rd_data_forward_o = `ysyx_25060170_ZERO32                 |
+                                    {32{wb_ctl_i == 2'b01}} & mem_data_i |
+                                    {32{wb_ctl_i == 2'b10}} & alu_res_i  ;
     always@(posedge clk) begin
         if(rst | flush) begin
             inst_o          <= `ysyx_25060170_ZERO32    ;
