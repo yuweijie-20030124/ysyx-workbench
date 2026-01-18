@@ -36,7 +36,7 @@ module ysyx_25060170_mem_wb_reg(
 );
 
     wire flush = 1'b0                       ;
-    wire stall = mem_valid_i | wb_ready_i   ;
+    wire stall = mem_valid_i | ~wb_ready_i   ;
 
     always@(posedge clk) begin
         if(rst|flush) begin

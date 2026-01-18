@@ -360,9 +360,7 @@ void Vysyx_25060170_fishtailcore___024root__trace_chg_0_sub_0(Vysyx_25060170_fis
         bufp->chgBit(oldp+183,(vlSelfRef.ysyx_25060170_fishtailcore__DOT__ls_mem_valid));
         bufp->chgBit(oldp+184,(vlSelfRef.ysyx_25060170_fishtailcore__DOT__ls_mem_reg_re));
         bufp->chgIData(oldp+185,(vlSelfRef.ysyx_25060170_fishtailcore__DOT__ls_mem_reg_alu_res),32);
-        bufp->chgBit(oldp+186,(((IData)(vlSelfRef.ysyx_25060170_fishtailcore__DOT__ls_mem_valid) 
-                                | ((IData)(vlSelfRef.ysyx_25060170_fishtailcore__DOT__ls_mem_reg_re) 
-                                   & (IData)(vlSelfRef.ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_mem__DOT__data_ok)))));
+        bufp->chgBit(oldp+186,(vlSelfRef.ysyx_25060170_fishtailcore__DOT__mem_valid));
         bufp->chgIData(oldp+187,(vlSelfRef.ysyx_25060170_fishtailcore__DOT__mem_wb_inst),32);
         bufp->chgIData(oldp+188,(vlSelfRef.ysyx_25060170_fishtailcore__DOT__mem_wb_pc),32);
         bufp->chgIData(oldp+189,(vlSelfRef.ysyx_25060170_fishtailcore__DOT__mem_wb_next_pc),32);

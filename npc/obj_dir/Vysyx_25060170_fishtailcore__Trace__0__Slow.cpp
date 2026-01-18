@@ -765,7 +765,7 @@ VL_ATTR_COLD void Vysyx_25060170_fishtailcore___024root__trace_init_sub__TOP__0(
     tracep->declBus(c+196,0,"csr_ctl_o",-1, VerilatedTraceSigDirection::OUTPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1, 6,0);
     tracep->declBus(c+197,0,"csr_addr_o",-1, VerilatedTraceSigDirection::OUTPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1, 11,0);
     tracep->declBit(c+348,0,"flush",-1, VerilatedTraceSigDirection::NONE, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1);
-    tracep->declBit(c+350,0,"stall",-1, VerilatedTraceSigDirection::NONE, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1);
+    tracep->declBit(c+187,0,"stall",-1, VerilatedTraceSigDirection::NONE, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1);
     tracep->popPrefix();
     tracep->pushPrefix("u_ysyx_25060170_regfile", VerilatedTracePrefixType::SCOPE_MODULE);
     tracep->declBit(c+337,0,"clk",-1, VerilatedTraceSigDirection::INPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1);
@@ -1280,9 +1280,7 @@ VL_ATTR_COLD void Vysyx_25060170_fishtailcore___024root__trace_full_0_sub_0(Vysy
     bufp->fullBit(oldp+184,(vlSelfRef.ysyx_25060170_fishtailcore__DOT__ls_mem_valid));
     bufp->fullBit(oldp+185,(vlSelfRef.ysyx_25060170_fishtailcore__DOT__ls_mem_reg_re));
     bufp->fullIData(oldp+186,(vlSelfRef.ysyx_25060170_fishtailcore__DOT__ls_mem_reg_alu_res),32);
-    bufp->fullBit(oldp+187,(((IData)(vlSelfRef.ysyx_25060170_fishtailcore__DOT__ls_mem_valid) 
-                             | ((IData)(vlSelfRef.ysyx_25060170_fishtailcore__DOT__ls_mem_reg_re) 
-                                & (IData)(vlSelfRef.ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_mem__DOT__data_ok)))));
+    bufp->fullBit(oldp+187,(vlSelfRef.ysyx_25060170_fishtailcore__DOT__mem_valid));
     bufp->fullIData(oldp+188,(vlSelfRef.ysyx_25060170_fishtailcore__DOT__mem_wb_inst),32);
     bufp->fullIData(oldp+189,(vlSelfRef.ysyx_25060170_fishtailcore__DOT__mem_wb_pc),32);
     bufp->fullIData(oldp+190,(vlSelfRef.ysyx_25060170_fishtailcore__DOT__mem_wb_next_pc),32);
