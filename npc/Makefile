@@ -19,7 +19,8 @@ SRC_FILES = $(wildcard csrc/*.c)
 VERILOG_FILES = $(wildcard vsrc/core/*.v vsrc/core/define.v)
 # vsrc/debug/*.v vsrc/utils/*.v
 
-VERILATOR = verilator
+VERILATOR = /home/yuweijie/required_software_ysyx/verilator/bin/verilator
+
 
 NPC_IMG?= 
 

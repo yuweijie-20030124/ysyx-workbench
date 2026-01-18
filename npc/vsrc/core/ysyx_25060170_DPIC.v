@@ -51,7 +51,9 @@
 	,input  wire	[`ysyx_25060170_REG] 		mcause		//<<i<<
 
 	//from lsu
+	/* verilator lint_off UNUSEDSIGNAL */
 	,input wire 								re			//<<i<<
+	/* verilator lint_on UNUSEDSIGNAL */
 	,input wire 								we			//<<i<<
 	,input wire [`ysyx_25060170_DATA] 			data_i		//<<i<<
 	,input wire [7:0] 							wlen		//<<i<<
@@ -138,6 +140,8 @@ import "DPI-C" function void difftest_dut_regs(
 
 /***********************************use dpic*************************************/
 wire [31:0] dpic_loadread = 32'd2;
+//DPIC最好用组合逻辑
+//用时序逻辑的话可能会导致赋值顺序的问题
 always @(posedge clk) begin
     if (re) begin
         pmem_read(raddr, data_o, rlen, dpic_loadread);
@@ -146,6 +150,10 @@ always @(posedge clk) begin
         pmem_write(waddr, data_i, wlen);
     end
 end
+
+// always @(*) begin
+// 	pmem_read(raddr, data_o, rlen, dpic_loadread);
+// end
 
 //取指，从pc_i中获取inst_o
 wire [31:0] dpic_fetch = 32'd1;

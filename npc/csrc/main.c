@@ -187,10 +187,16 @@ int main(int argc, char** argv) {
 	//sdb_mainloop();
 
   #ifdef CONFIG_GTK
-	tfp -> dump(main_time++); //多看一个周期波形以获取后续变化
-  // tfp -> dump(main_time++);
-  // tfp -> dump(main_time++);
-  // tfp -> dump(main_time++);
+  // fishtailcore-> clk = 0;
+  // fishtailcore -> eval();
+  // fishtailcore-> clk = 1;
+  // fishtailcore -> eval();
+  //多看一个周期波形以获取后续变化
+  fishtailcore -> clk = 0;
+  fishtailcore -> eval();
+  tfp -> dump(main_time++);
+  tfp -> dump(main_time++);
+  
   #endif 
 	//is_exit_status_bad();
 
@@ -212,7 +218,6 @@ void isa_exec_once(){
   fishtailcore -> clk = 1;
   fishtailcore -> eval();
 #ifdef CONFIG_GTK
-  tfp -> dump(main_time++);
   tfp -> dump(main_time++);
 #endif
   }

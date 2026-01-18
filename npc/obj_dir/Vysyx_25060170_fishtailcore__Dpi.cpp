@@ -1,5 +1,5 @@
 // Verilated -*- C++ -*-
-// DESCRIPTION: Verilator output: Implementation of DPI export functions
+// DESCRIPTION: Verilator output: Implementation of DPI export functions.
 //
 // Verilator compiles this file in when DPI functions are used.
 // If you have multiple Verilated designs with the same DPI exported
@@ -17,7 +17,7 @@
 #ifndef VL_DPIDECL_IDU_SEND_CALL_FLAG_
 #define VL_DPIDECL_IDU_SEND_CALL_FLAG_
 void IDU_SEND_CALL_FLAG(int* call_flag, int* pc, int* dnpc) {
-    // DPI export at vsrc/core/ysyx_25060170_DPIC.v:232:6
+    // DPI export at vsrc/core/ysyx_25060170_DPIC.v:238:6
     return Vysyx_25060170_fishtailcore::IDU_SEND_CALL_FLAG(call_flag, pc, dnpc);
 }
 #endif
@@ -25,7 +25,7 @@ void IDU_SEND_CALL_FLAG(int* call_flag, int* pc, int* dnpc) {
 #ifndef VL_DPIDECL_IDU_SEND_RET_FLAG_
 #define VL_DPIDECL_IDU_SEND_RET_FLAG_
 void IDU_SEND_RET_FLAG(int* ret_flag, int* pc) {
-    // DPI export at vsrc/core/ysyx_25060170_DPIC.v:251:6
+    // DPI export at vsrc/core/ysyx_25060170_DPIC.v:257:6
     return Vysyx_25060170_fishtailcore::IDU_SEND_RET_FLAG(ret_flag, pc);
 }
 #endif

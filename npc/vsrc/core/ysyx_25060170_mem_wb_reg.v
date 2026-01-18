@@ -22,16 +22,16 @@ module ysyx_25060170_mem_wb_reg(
     ,input   wire                           wb_ready_i          //<<i<<
     ,output  reg                            mem_valid_o         //<<i<<
     //output
-    ,output  wire [`ysyx_25060170_INST]     inst_o              //>>o>>
-    ,output  wire [`ysyx_25060170_PC]       pc_o                //>>o>>
-    ,output  wire [`ysyx_25060170_PC]       next_pc_o           //>>o>>
-    ,output  wire [`ysyx_25060170_DATA]     alu_res_o           //>>o>>
-    ,output  wire [`ysyx_25060170_DATA]     mem_data_o          //>>o>>
-    ,output  wire [1:0]                     wb_ctl_o            //>>o>>
-    ,output  wire                           rd_ena_o            //>>o>>
-    ,output  wire [`ysyx_25060170_REGADDR]  rd_addr_o           //>>o>>
-    ,output  wire [6:0]                     csr_ctl_o           //>>o>>
-    ,output  wire [11:0]                    csr_addr_o          //>>o>>
+    ,output  reg  [`ysyx_25060170_INST]     inst_o              //>>o>>
+    ,output  reg  [`ysyx_25060170_PC]       pc_o                //>>o>>
+    ,output  reg  [`ysyx_25060170_PC]       next_pc_o           //>>o>>
+    ,output  reg  [`ysyx_25060170_DATA]     alu_res_o           //>>o>>
+    ,output  reg  [`ysyx_25060170_DATA]     mem_data_o          //>>o>>
+    ,output  reg  [1:0]                     wb_ctl_o            //>>o>>
+    ,output  reg                            rd_ena_o            //>>o>>
+    ,output  reg  [`ysyx_25060170_REGADDR]  rd_addr_o           //>>o>>
+    ,output  reg  [6:0]                     csr_ctl_o           //>>o>>
+    ,output  reg  [11:0]                    csr_addr_o          //>>o>>
     // ,output  wire [`ysyx_25060170_DATA]     wb_data_o           //>>o>>
 );
 
