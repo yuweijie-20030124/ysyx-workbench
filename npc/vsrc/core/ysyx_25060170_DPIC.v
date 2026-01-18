@@ -53,8 +53,8 @@
 	//from lsu
 	/* verilator lint_off UNUSEDSIGNAL */
 	,input wire 								re			//<<i<<
-	/* verilator lint_on UNUSEDSIGNAL */
 	,input wire 								we			//<<i<<
+	/* verilator lint_on UNUSEDSIGNAL */
 	,input wire [`ysyx_25060170_DATA] 			data_i		//<<i<<
 	,input wire [7:0] 							wlen		//<<i<<
 	,input wire [7:0] 							rlen		//<<i<<
@@ -156,15 +156,30 @@ wire [31:0] dpic_loadread = 32'd2;
 // 	pmem_read(raddr, data_o, rlen, dpic_loadread);
 // end
 
+reg [`ysyx_25060170_DATA]	mem_data;//for delay
+
 //取指，从pc_i中获取inst_o
 wire [31:0] dpic_fetch = 32'd1;
 always @(*) begin
 	//mem访存读
-	pmem_read(raddr, data_o, rlen, dpic_loadread);
+	if(re) begin
+	pmem_read(raddr, mem_data, rlen, dpic_loadread);	
+	end
+	else begin
+	mem_data = 0;
+	end
+	if(we) begin
 	pmem_write(waddr, data_i, wlen);
+	end
+	// else if(!we) begin
+	// data_i = 0;
+	// end
 	//fetch取指
     pmem_read(pc_i,inst_o,rlen,dpic_fetch);
-    
+end
+
+always@(posedge clk) begin
+	data_o <= mem_data ;
 end
 
 //  always @(posedge clk) begin

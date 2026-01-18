@@ -629,7 +629,7 @@ ysyx_25060170_mem u_ysyx_25060170_mem (
     ,.ls_ctl_i               (ls_mem_reg_ls_ctl         )//<<i<<
     ,.mem_data_i             (DPIC_MEM_data             )//<<i<<
     // ,.lsu_wb_data_i          ()    
-    ,.ls_valid_i             (ls_mem_valid                  )//<<i<<
+    ,.ls_valid_i             (ls_mem_valid              )//<<i<<
     ,.wb_ready_i             (wb_ready                  )//<<i<<
     ,.mem_valid_o            (mem_valid                 )//>>o>>
     ,.mem_ready_o            (mem_ready                 )//>>o>>

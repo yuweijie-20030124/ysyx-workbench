@@ -43,7 +43,7 @@ module ysyx_25060170_lsu(
 //*****************************pipeline control signals********************************//
 
 assign ls_ready_o = mem_ready_i | (data_ok  & (re | we));
-assign ls_valid_o = ex_valid_i | (data_ok  & (re | we));
+assign ls_valid_o = ex_valid_i  | (data_ok  & (re | we));
 
 reg data_ok;
 
