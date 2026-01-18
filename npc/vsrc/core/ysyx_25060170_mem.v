@@ -92,6 +92,6 @@ end
     assign rd_addr_o            = rd_addr_i                              ;
     assign csr_ctl_o            = csr_ctl_i                              ;
     assign csr_addr_o           = csr_addr_i                             ;
-    assign mem_data_o           = mem_data_i                             ;
+    // assign mem_data_o           = mem_data_i                             ;
     
 endmodule

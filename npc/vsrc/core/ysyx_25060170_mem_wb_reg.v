@@ -10,7 +10,7 @@ module ysyx_25060170_mem_wb_reg(
     ,input   wire [`ysyx_25060170_PC]       pc_i                //<<i<<
     ,input   wire [`ysyx_25060170_PC]       next_pc_i           //<<i<<
     ,input   wire [1:0]                     wb_ctl_i            //<<i<<
-    ,input   wire [`ysyx_25060170_DATA]     mem_data_i       //<<i<<    
+    ,input   wire [`ysyx_25060170_DATA]     mem_data_i          //<<i<<    
     ,input   wire [`ysyx_25060170_DATA]     alu_res_i           //<<i<<
     ,input   wire                           rd_ena_i            //<<i<<
     ,input   wire [`ysyx_25060170_REGADDR]  rd_addr_i           //<<i<<
@@ -18,15 +18,15 @@ module ysyx_25060170_mem_wb_reg(
     ,input   wire [11:0]                    csr_addr_i          //<<i<<
     // ,input   wire [`ysyx_25060170_DATA]     wb_data_i           //<<i<<
     //pipeline
-    ,input   wire                           mem_valid_i          //<<i<<
-    ,input   wire                           wb_ready_i         //<<i<<
-    ,output  reg                            mem_valid_o          //<<i<<
+    ,input   wire                           mem_valid_i         //<<i<<
+    ,input   wire                           wb_ready_i          //<<i<<
+    ,output  reg                            mem_valid_o         //<<i<<
     //output
     ,output  wire [`ysyx_25060170_INST]     inst_o              //>>o>>
     ,output  wire [`ysyx_25060170_PC]       pc_o                //>>o>>
     ,output  wire [`ysyx_25060170_PC]       next_pc_o           //>>o>>
     ,output  wire [`ysyx_25060170_DATA]     alu_res_o           //>>o>>
-    ,output  wire [`ysyx_25060170_DATA]     mem_data_o       //>>o>>
+    ,output  wire [`ysyx_25060170_DATA]     mem_data_o          //>>o>>
     ,output  wire [1:0]                     wb_ctl_o            //>>o>>
     ,output  wire                           rd_ena_o            //>>o>>
     ,output  wire [`ysyx_25060170_REGADDR]  rd_addr_o           //>>o>>
@@ -35,11 +35,11 @@ module ysyx_25060170_mem_wb_reg(
     // ,output  wire [`ysyx_25060170_DATA]     wb_data_o           //>>o>>
 );
 
-    wire flush = 1'b0                       ;
+    wire flush = 1'b0                        ;
     wire stall = mem_valid_i | ~wb_ready_i   ;
 
     always@(posedge clk) begin
-        if(rst|flush) begin
+        if(rst | flush) begin
             inst_o          <= `ysyx_25060170_ZERO32    ;
             pc_o            <= `ysyx_25060170_ZERO32    ;
             next_pc_o       <= `ysyx_25060170_ZERO32    ;
@@ -65,14 +65,14 @@ module ysyx_25060170_mem_wb_reg(
             csr_ctl_o       <= csr_ctl_o                ;
             csr_addr_o      <= csr_addr_o               ;
             // wb_data_o       <= wb_data_o                ;
-            mem_valid_o     <= 1'b0                     ;
+            mem_valid_o     <= 1'b1                     ;
     end    
         else begin
             inst_o          <= inst_i                   ;
             pc_o            <= pc_i                     ;
             next_pc_o       <= next_pc_i                ;
-            alu_res_o       <= alu_res_i             ;
-            mem_data_o      <= mem_data_i            ;
+            alu_res_o       <= alu_res_i                ;
+            mem_data_o      <= mem_data_i               ;
             wb_ctl_o        <= wb_ctl_i                 ;
             rd_ena_o        <= rd_ena_i                 ;
             rd_addr_o       <= rd_addr_i                ;

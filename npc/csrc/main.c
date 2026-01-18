@@ -213,6 +213,7 @@ void isa_exec_once(){
   fishtailcore -> eval();
 #ifdef CONFIG_GTK
   tfp -> dump(main_time++);
+  tfp -> dump(main_time++);
 #endif
   }
   inst_end = 1;
