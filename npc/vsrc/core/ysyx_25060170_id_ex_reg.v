@@ -1,4 +1,7 @@
 `include "define.v"
+
+//流水线干级间流水 & forwarding的活
+
 module ysyx_25060170_id_ex_reg(
      input   wire                           clk                 //<<i<<
     ,input   wire                           rst                 //<<i<<
@@ -19,7 +22,7 @@ module ysyx_25060170_id_ex_reg(
     ,input   wire [1:0]     				wbctl_i             //<<i<<
     ,input   wire                           csr_ena_i           //<<i<<
     ,input   wire                           load_flag_i         //<<i<<
-    ,input   wire                           pipeline_id_stall_i //<<i<<
+    // ,input   wire                           pipeline_id_stall_i //<<i<<
     //pipeline control
    	,input	 wire					        id_valid_i	        //<<i<<
    	,input	 wire					        id_flush_i	        //<<i<<
@@ -42,7 +45,7 @@ module ysyx_25060170_id_ex_reg(
     ,output  reg  [1:0]     			    wbctl_o             //>>o>>
     ,output  reg                            csr_ena_o           //>>o>>
     ,output  reg                            load_flag_o         //>>o>>
-    ,output  reg                            pipeline_id_stall_o //>>o>>
+    // ,output  reg                            pipeline_id_stall_o //>>o>>
     ,output  reg                            id_valid_o          //>>o>>  
 );
 
@@ -67,7 +70,7 @@ always@(posedge clk) begin
         wbctl_o             <=      2'b0                    ;
         csr_ena_o           <=      0                       ;
         load_flag_o         <=      0                       ;
-        pipeline_id_stall_o <=      0                       ;
+        // pipeline_id_stall_o <=      0                       ;
         id_valid_o          <=      1'b1                    ;
         // bp_jump_o       <=       1'b0                    ;
     end
@@ -88,7 +91,7 @@ always@(posedge clk) begin
         wbctl_o             <=      wbctl_o                 ;
         csr_ena_o           <=      csr_ena_o               ;
         load_flag_o         <=      load_flag_o             ;
-        pipeline_id_stall_o <=      pipeline_id_stall_o     ;
+        // pipeline_id_stall_o <=      pipeline_id_stall_o     ;
         id_valid_o          <=      1'b1              ;
         
         // bp_jump_o       <=      bp_jump_o               ;
@@ -110,7 +113,7 @@ always@(posedge clk) begin
         wbctl_o             <=      wbctl_i                 ;
         csr_ena_o           <=      csr_ena_i               ;
         load_flag_o         <=      load_flag_i             ;
-        pipeline_id_stall_o <=      pipeline_id_stall_i     ;
+        // pipeline_id_stall_o <=      pipeline_id_stall_i     ;
         id_valid_o          <=      1'b0              ;
         // bp_jump_o       <=      bp_jump_i               ;
     end

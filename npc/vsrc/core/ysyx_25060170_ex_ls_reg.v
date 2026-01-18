@@ -1,4 +1,7 @@
 `include "define.v"
+
+//流水线干级间流水 & forwarding的活
+
 module ysyx_25060170_ex_ls_reg(
     //system signals
      input   wire                           clk                     //<<i<<
@@ -20,7 +23,7 @@ module ysyx_25060170_ex_ls_reg(
     ,input	 wire				        	ex_valid_i              //<<i<<		
 	,input	 wire				        	ls_ready_i	            //<<i<<
 	,input	 wire				        	ls_flush_i              //<<i<<
-    ,input   wire                           pipeline_id_stall_i	    //<<i<<
+    // ,input   wire                           pipeline_id_stall_i	    //<<i<<
     ,output  reg                            ex_valid_o              //>>o>>
     // ,input   wire                           id_flush_i   
     //output to lsu 
@@ -41,7 +44,7 @@ module ysyx_25060170_ex_ls_reg(
 	,output	wire  [`ysyx_25060170_REGADDR]	ex_rd_addr_forward_o    //>>o>>    
 	,output	wire  				            ex_csr_o		        //>>o>>    
 	,output	wire  [`ysyx_25060170_DATA]		ex_rd_data_forward_o    //>>o>>    
-    ,output wire                            pipeline_id_stall_o	    //>>o>>    
+    // ,output wire                            pipeline_id_stall_o	    //>>o>>    
 
 );
     wire flush = ls_flush_i;
@@ -66,7 +69,7 @@ module ysyx_25060170_ex_ls_reg(
             ls_csr_ena_o        <=  1'b0                    ;    
             csr_addr_o          <=  12'b0                   ;
             ex_valid_o          <=  1'b1                    ;
-            pipeline_id_stall_o <=  1'b0                    ;
+            // pipeline_id_stall_o <=  1'b0                    ;
         end
         else if(stall) begin
             inst_o              <=  inst_o                  ;
@@ -82,7 +85,7 @@ module ysyx_25060170_ex_ls_reg(
             ls_csr_ena_o        <=  ls_csr_ena_o            ;    
             csr_addr_o          <=  csr_addr_o              ;
             ex_valid_o          <=  1'b1                    ;
-            pipeline_id_stall_o <=  pipeline_id_stall_o     ;
+            // pipeline_id_stall_o <=  pipeline_id_stall_o     ;
         end
         else begin  
             inst_o              <=  inst_i                  ;
@@ -98,7 +101,7 @@ module ysyx_25060170_ex_ls_reg(
             ls_csr_ena_o        <=  ex_csr_ena_i            ;    
             csr_addr_o          <=  csr_addr_i              ;
             ex_valid_o          <=  1'b0                    ;
-            pipeline_id_stall_o <=  pipeline_id_stall_i     ;
+            // pipeline_id_stall_o <=  pipeline_id_stall_i     ;
         end 
     end 
 

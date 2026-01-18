@@ -1,5 +1,8 @@
 `include "define.v"
 
+
+//流水线干级间流水 & forwarding的活
+
 module ysyx_25060170_if_id_reg (
     //数据信号
      input  wire						    clk             //<<i<<
