@@ -292,6 +292,7 @@ ysyx_25060170_id_ex_reg u_ysyx_25060170_id_ex_reg (
     // ,.pipeline_id_stall_i   (id_stall              )//<<i<<         
     ,.id_valid_i            (id_valid              )//<<i<<
     ,.id_flush_i            (id_flush              )//<<i<<
+    ,.id_stall_i            (id_stall              )//<<i<<
     ,.ls_flush_i            (ls_flush              )//<<i<<
     ,.ex_ready_i            (ex_ready              )//<<i<<
     ,.id_valid_o            (id_ex_valid           )//>>o>>

@@ -353,7 +353,7 @@ endtask
 // 		delay_pipeline_id_stall <= 0;
 // 	end
 // end
-
+	//提交并不包含写，用时序应该没问题。
 	always @(posedge clk) begin
 		// if(~wbu_dpic_id_stall & ~wbu_dpic_ls_valid) begin
 		// if(~wbu_dpic_ls_valid && ~delay_pipeline_id_stall) begin
