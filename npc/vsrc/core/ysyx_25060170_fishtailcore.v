@@ -1,7 +1,5 @@
 `include "define.v"
 
-
-
 module ysyx_25060170_fishtailcore(
  input wire     clk			
 ,input wire     rst		    		
@@ -45,20 +43,20 @@ ysyx_25060170_bpu u_ysyx_25060170_bpu (
 );
 
 // ysyx_25060170_ifu Inputs
-wire                             id_if_pc_jump;  
+wire                             id_if_pc_jump  ;   
 wire  [`ysyx_25060170_PC]        id_jump_pc     ; 
-wire                             ls_pc_jump;  
-wire  [`ysyx_25060170_PC]        ls_jump_pc;  
+wire                             ls_pc_jump     ;  
+wire  [`ysyx_25060170_PC]        ls_jump_pc     ;  
 // reg  [`ysyx_25060170_PC]        bp_jump_pc;
 // reg                             inst_valid;
-wire                             id_ready;
-wire                             id_stall;
+wire                             id_ready       ;
+wire                             id_stall       ;
 // reg                             id_stall;
 // reg             inst_i                   ;
 // reg             pc_i                     ;
 
 // ysyx_25060170_ifu Outputs
-wire      if_valid;
+wire                                if_valid;
 wire      [`ysyx_25060170_PC]       if_id_pc;
 wire      [`ysyx_25060170_PC]       if_id_next_pc;
 // wire      [`ysyx_25060170_INST]     if_id_inst;
@@ -159,7 +157,8 @@ wire [`ysyx_25060170_REGADDR]   idu_dpic_rd_addr;
 wire [`ysyx_25060170_PC]        idu_pc;
 wire [`ysyx_25060170_PC]        idu_next_pc;
 wire [`ysyx_25060170_INST]      idu_inst;
-wire [4:0]                      idu_csr_imm;
+wire [`ysyx_25060170_REGADDR]   idu_csr_imm;
+// wire [`ysyx_25060170_REGADDR]   store_addr;
 // wire                            id_if_pc_jump;
 // wire [`ysyx_25060170_PC]        id_jump_pc;
 // wire                            id_flush;
@@ -176,6 +175,8 @@ ysyx_25060170_idu u_ysyx_25060170_idu (
 
     ,.ex_addr_forward    (ex_rd_addr_forward    )//<<i<<
     ,.ex_data_forward    (ex_rd_data_forward    )//<<i<<
+    // ,.ex_op2_addr_forward(ex_op2_addr_forward   )//<<i<<
+    // ,.ex_op2_data_forward(ex_op2_data_forward   )//<<i<<
     ,.ls_addr_forward    (ls_rd_addr_forward    )//<<i<<
     ,.ls_data_forward    (ls_rd_data_forward    )//<<i<<
     ,.mem_data_forward   (mem_rd_data_forward   )//<<i<<
@@ -213,7 +214,8 @@ ysyx_25060170_idu u_ysyx_25060170_idu (
     ,.pc_o               (idu_pc                )//>>O>>
     ,.next_pc_o          (idu_next_pc           )//>>O>>
     ,.inst_o             (idu_inst              )//>>O>>
-    ,.csr_imm            (idu_csr_imm           )//>>O>>
+    ,.csr_imm_o          (idu_csr_imm           )//>>O>>
+    // ,.store_addr_o       (store_addr            )//>>o>>
 
     ,.jump_ena_o         (id_if_pc_jump         )//>>O>>    
     ,.jump_pc_o          (id_jump_pc            )//>>O>> 
@@ -257,6 +259,7 @@ wire [2:0]                      id_ex_reg_op2_sel;
 wire                            id_ex_reg_rd_ena;
 wire [`ysyx_25060170_REGADDR]   id_ex_reg_rd_addr;
 wire [`ysyx_25060170_REGADDR]   id_ex_reg_rs1_addr;
+// wire [`ysyx_25060170_REGADDR]   id_ex_reg_rs2_addr;
 wire [`ysyx_25060170_IMM]       id_ex_reg_imm;
 // wire [7:0]                      alusrc_o;
 wire [3:0]                      id_ex_reg_lsctl;
@@ -278,6 +281,7 @@ ysyx_25060170_id_ex_reg u_ysyx_25060170_id_ex_reg (
     ,.rd_ena_i              (idu_rd_ena            )//<<i<<
     ,.rd_addr_i             (idu_rd_addr           )//<<i<<
     ,.rs1_addr_i            (idu_csr_imm           )//<<i<<
+    // ,.rs2_addr_i            (store_addr            )//<<i<<
     ,.imm_i                 (idu_imm               )//<<i<<
     ,.alusrc_i              (idu_alusrc            )//<<i<<
     ,.lsctl_i               (idu_lsctl             )//<<i<<
@@ -301,6 +305,7 @@ ysyx_25060170_id_ex_reg u_ysyx_25060170_id_ex_reg (
     ,.rd_ena_o              (id_ex_reg_rd_ena      )//>>o>>
     ,.rd_addr_o             (id_ex_reg_rd_addr     )//>>o>>
     ,.rs1_addr_o            (id_ex_reg_rs1_addr    )//>>o>>
+    // ,.rs2_addr_o            (id_ex_reg_rs2_addr    )//>>o>>
     ,.imm_o                 (id_ex_reg_imm         )//>>o>>
     ,.alusrc_o              (id_ex_reg_alusrc      )//>>o>>
     ,.lsctl_o               (id_ex_reg_lsctl       )//>>o>>
@@ -344,6 +349,7 @@ ysyx_25060170_exu u_ysyx_25060170_exu (
     ,.op2_sel_i             ( id_ex_reg_op2_sel         )//<<i<<
     ,.rd_addr_i             ( id_ex_reg_rd_addr         )//<<i<<
     ,.rs1_addr_i            ( id_ex_reg_rs1_addr        )//<<i<<
+    // ,.rs2_addr_i            ( id_ex_reg_rs2_addr        )//<<i<<
     ,.imm_i                 ( id_ex_reg_imm             )//<<i<<
     ,.inst_i                ( id_ex_reg_inst            )//<<i<<
     ,.pc_i                  ( id_ex_reg_pc              )//<<i<<
@@ -362,6 +368,7 @@ ysyx_25060170_exu u_ysyx_25060170_exu (
     ,.exu_res_o             ( exu_res                   )//>>o>>
     ,.csr_addr_o            ( exu_csr_addr              )//>>o>>
     ,.csr_ctl_o             ( exu_csr_ctl               )//>>o>>
+    // ,.rs2_addr_o            ( id_ex_reg_rs2_addr        )//>>o>>
     // ,.pipeline_id_stall_o   ( exu_pipeline_idstall      )//>>o>>
 );
 
@@ -393,6 +400,8 @@ wire [`ysyx_25060170_PC]         ex_ls_reg_next_pc;
 // wire                            ls_csr_ena_o;
 wire  [`ysyx_25060170_REGADDR]   ex_rd_addr_forward;
 wire  [`ysyx_25060170_DATA]      ex_rd_data_forward;
+// wire  [`ysyx_25060170_DATA]      ex_op2_data_forward;
+// wire  [`ysyx_25060170_REGADDR]   ex_op2_addr_forward;
 // wire                             ex_ls_pipeline_idstall;
 wire                             ex_ls_valid;
 ysyx_25060170_ex_ls_reg u_ysyx_25060170_ex_ls_reg (
@@ -410,12 +419,16 @@ ysyx_25060170_ex_ls_reg u_ysyx_25060170_ex_ls_reg (
     ,.rd_addr_i              ( id_ex_reg_rd_addr      )//<<i<<
     ,.ex_csr_ena_i           ( ex_ls_reg_ls_csr_ena   )//<<i<<
     ,.csr_addr_i             ( exu_csr_addr           )//<<i<<
+    // ,.store_addr_i           ( id_ex_reg_rs2_addr     )//<<i<<
     ,.ex_valid_i             ( ex_valid               )//<<i<<
     ,.ls_ready_i             ( ls_ready               )//<<i<<
     ,.ls_flush_i             ( ls_flush               )//<<i<<
     // ,.pipeline_id_stall_i    ( exu_pipeline_idstall   )//<<i<<
     // ,.id_flush_i             ( id_flush             )//<<i<<
-    
+    //forwarding
+    // ,.ex_op2_data_forward_o  ( ex_op2_data_forward    )//<<i<<
+    // ,.ex_op2_addr_forward_o  ( ex_op2_addr_forward    )//<<i<<
+    //output
     ,.ex_valid_o             ( ex_ls_valid            )//>>o>>
     ,.inst_o                 ( ex_ls_reg_inst         )//>>o>>
     ,.pc_o                   ( ex_ls_reg_pc           )//>>o>>

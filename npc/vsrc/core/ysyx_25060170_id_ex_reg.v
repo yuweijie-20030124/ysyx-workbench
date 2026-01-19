@@ -16,6 +16,7 @@ module ysyx_25060170_id_ex_reg(
     ,input   wire                           rd_ena_i            //<<i<<
     ,input   wire [`ysyx_25060170_REGADDR]  rd_addr_i           //<<i<<
     ,input   wire [`ysyx_25060170_REGADDR]  rs1_addr_i          //<<i<<
+    // ,input   wire [`ysyx_25060170_REGADDR]  rs2_addr_i          //<<i<<
     ,input   wire [`ysyx_25060170_IMM]      imm_i               //<<i<<
     ,input   wire [7:0]         			alusrc_i            //<<i<<
     ,input   wire [3:0]      			    lsctl_i             //<<i<<
@@ -39,6 +40,7 @@ module ysyx_25060170_id_ex_reg(
     ,output  reg                            rd_ena_o            //>>o>>
     ,output  reg  [`ysyx_25060170_REGADDR]  rd_addr_o           //>>o>>
     ,output  reg  [`ysyx_25060170_REGADDR]  rs1_addr_o          //>>o>>
+    // ,output  reg  [`ysyx_25060170_REGADDR]  rs2_addr_o          //>>o>>
     ,output  reg  [`ysyx_25060170_IMM]      imm_o               //>>o>>
     ,output  reg  [7:0]             	    alusrc_o            //>>o>>
     ,output  reg  [3:0]      		        lsctl_o             //>>o>>
@@ -64,6 +66,7 @@ always@(posedge clk) begin
         rd_ena_o            <=      0                       ;
         rd_addr_o           <=      5'b0                    ;
         rs1_addr_o          <=      5'b0                    ;
+        // rs2_addr_o          <=      5'b0                    ;
         imm_o               <=      `ysyx_25060170_ZERO32   ;
         alusrc_o            <=      8'b0                    ;
         lsctl_o             <=      4'b0                    ;
@@ -85,6 +88,7 @@ always@(posedge clk) begin
         rd_ena_o            <=      rd_ena_o                ;
         rd_addr_o           <=      rd_addr_o               ;
         rs1_addr_o          <=      rs1_addr_o              ;
+        // rs2_addr_o          <=      rs2_addr_o              ;
         imm_o               <=      imm_o                   ;
         alusrc_o            <=      alusrc_o                ;
         lsctl_o             <=      lsctl_o                 ;
@@ -107,6 +111,7 @@ always@(posedge clk) begin
         rd_ena_o            <=      rd_ena_i                ;
         rd_addr_o           <=      rd_addr_i               ;
         rs1_addr_o          <=      rs1_addr_i              ;
+        // rs2_addr_o          <=      rs2_addr_i              ;
         imm_o               <=      imm_i                   ;
         alusrc_o            <=      alusrc_i                ;
         lsctl_o             <=      lsctl_i                 ;

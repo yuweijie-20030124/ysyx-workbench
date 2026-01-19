@@ -10,6 +10,7 @@ module ysyx_25060170_exu(
     ,input  wire [2:0]                      op2_sel_i	        //<<i<<
     ,input  wire [`ysyx_25060170_REGADDR]   rd_addr_i	        //<<i<<
     ,input  wire [`ysyx_25060170_REGADDR]   rs1_addr_i	      //<<i<<
+    // ,input  wire [`ysyx_25060170_REGADDR]   rs2_addr_i        //<<i<<
     ,input  wire [`ysyx_25060170_IMM]       imm_i		          //<<i<<
     ,input  wire [`ysyx_25060170_PC]        pc_i		          //<<i<<
     ,input  wire [`ysyx_25060170_PC]        next_pc_i	        //<<i<<
@@ -29,6 +30,7 @@ module ysyx_25060170_exu(
     ,output wire [`ysyx_25060170_DATA]      exu_res_o	        //>>o>>
     ,output wire [11:0]                     csr_addr_o	      //>>o>>
     ,output wire [6:0]                      csr_ctl_o	        //>>o>>
+    // ,output wire [`ysyx_25060170_REGADDR]   rs2_addr_o        //>>o>>
     // ,output wire                            pipeline_id_stall_o  //>>o>>
 );
 
@@ -197,6 +199,8 @@ assign exu_res_o = alu_res |
                   {32{csrrxi_ena}} & csr_op ;
 
 assign csr_ctl_o = {csrrw_ena, csrrs_ena, csrrc_ena, csr_wr_ena, csr_rd_ena, ecall_ena, mret_ena};
+
+// assign rs2_addr_o = rs2_addr_i;
 
 assign inst_o =  inst_i;
 assign pc_o = pc_i;

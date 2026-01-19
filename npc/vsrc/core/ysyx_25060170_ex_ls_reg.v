@@ -19,6 +19,8 @@ module ysyx_25060170_ex_ls_reg(
     ,input   wire [`ysyx_25060170_REGADDR]  rd_addr_i               //<<i<<
     ,input	 wire					        ex_csr_ena_i	        //<<i<<
     ,input   wire [11:0]                    csr_addr_i              //<<i<<
+    // ,input   wire [`ysyx_25060170_REGADDR]  store_addr_i              //<<i<<
+    //靠这个rs2addr作为sw要往地址存的那个值，往这个寄存器地址中取值就是sw要存的值
     //控制信号  
     ,input	 wire				        	ex_valid_i              //<<i<<		
 	,input	 wire				        	ls_ready_i	            //<<i<<
@@ -43,16 +45,22 @@ module ysyx_25060170_ex_ls_reg(
     //ex forward to idu
 	,output	wire  [`ysyx_25060170_REGADDR]	ex_rd_addr_forward_o    //>>o>>    
 	,output	wire  				            ex_csr_o		        //>>o>>    
-	,output	wire  [`ysyx_25060170_DATA]		ex_rd_data_forward_o    //>>o>>    
+	,output	wire  [`ysyx_25060170_DATA]		ex_rd_data_forward_o    //>>o>>
+    // ,output wire  [`ysyx_25060170_DATA]     ex_op2_data_forward_o   //>>o>> 
+    // ,output wire  [`ysyx_25060170_REGADDR]  ex_op2_addr_forward_o   //>>o>>
+    // 这个op2前递是为了不仅仅计算结果需要前递，有可能前一条load进了某寄存器，
+    //下一条sw将该寄存器存到某地址，后面在lw访问地址中取值会导致difftest错误
     // ,output wire                            pipeline_id_stall_o	    //>>o>>    
 
 );
     wire flush = ls_flush_i;
     wire stall = ex_valid_i | ~ls_ready_i;
-    
-    assign ex_rd_addr_forward_o = rd_addr_i	;
-    assign ex_rd_data_forward_o = exu_res_i	;
-    assign ex_csr_o             = ex_csr_ena_i;
+    //forwarding
+    assign ex_rd_addr_forward_o  = rd_addr_i	;
+    assign ex_rd_data_forward_o  = exu_res_i	;
+    assign ex_csr_o              = ex_csr_ena_i ;
+    // assign ex_op2_addr_forward_o = store_addr_i ;
+    // assign ex_op2_data_forward_o = store_data_i ;
 
     always@(posedge clk) begin
         if(rst | flush) begin
