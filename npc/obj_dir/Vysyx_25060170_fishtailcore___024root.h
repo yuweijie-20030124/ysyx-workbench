@@ -224,7 +224,7 @@ class Vysyx_25060170_fishtailcore___024root final : public VerilatedModule {
         IData/*31:0*/ ysyx_25060170_fishtailcore__DOT__mem_wb_lsu_res;
         IData/*31:0*/ ysyx_25060170_fishtailcore__DOT__mem_wb_alures_data;
         IData/*31:0*/ ysyx_25060170_fishtailcore__DOT__mem_rd_data_forward;
-        IData/*31:0*/ ysyx_25060170_fishtailcore__DOT__wb_rf_data;
+        IData/*31:0*/ ysyx_25060170_fishtailcore__DOT__wb_rd_data_forward;
         IData/*31:0*/ ysyx_25060170_fishtailcore__DOT__DPIC_MEM_data;
         IData/*31:0*/ ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_bpu__DOT__jump_pc;
         IData/*31:0*/ ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_ifu__DOT__pc;
