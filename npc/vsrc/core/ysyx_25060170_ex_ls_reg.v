@@ -12,6 +12,7 @@ module ysyx_25060170_ex_ls_reg(
     ,input   wire [`ysyx_25060170_PC]       next_pc_i               //<<i<<
     ,input   wire [`ysyx_25060170_REG]      store_data_i            //<<i<<
     ,input   wire [`ysyx_25060170_DATA]     exu_res_i               //<<i<<
+    ,input   wire                           load_flag_i             //<<i<<
     ,input   wire [3:0]                     ls_ctl_i                //<<i<<
     ,input   wire [1:0]                     wb_ctl_i                //<<i<<
     ,input   wire [6:0]                     csr_ctl_i               //<<i<<
@@ -34,6 +35,7 @@ module ysyx_25060170_ex_ls_reg(
     ,output  reg  [`ysyx_25060170_PC]       next_pc_o               //>>o>>
     ,output  reg  [`ysyx_25060170_REG]      store_data_o            //>>o>>
     ,output  reg  [`ysyx_25060170_DATA]     exu_res_o               //>>o>>
+    ,output  reg                            load_flag_o             //>>o>>
     ,output  reg  [3:0]                     ls_ctl_o                //>>o>>
     ,output  reg  [1:0]                     wb_ctl_o                //>>o>>
     ,output  reg  [6:0]                     csr_ctl_o               //>>o>>
@@ -69,6 +71,7 @@ module ysyx_25060170_ex_ls_reg(
             next_pc_o           <=  `ysyx_25060170_ZERO32   ;
             store_data_o        <=  `ysyx_25060170_ZERO32   ;
             exu_res_o           <=  `ysyx_25060170_ZERO32   ;
+            load_flag_o         <=  1'b0                    ;
             ls_ctl_o            <=  4'b0                    ;
             wb_ctl_o            <=  2'b0                    ;
             csr_ctl_o           <=  7'b0                    ;
@@ -85,6 +88,7 @@ module ysyx_25060170_ex_ls_reg(
             next_pc_o           <=  next_pc_o               ;
             store_data_o        <=  store_data_o            ;
             exu_res_o           <=  exu_res_o               ;
+            load_flag_o         <=  load_flag_o             ;
             ls_ctl_o            <=  ls_ctl_o                ;
             wb_ctl_o            <=  wb_ctl_o                ;
             csr_ctl_o           <=  csr_ctl_o               ;
@@ -101,6 +105,7 @@ module ysyx_25060170_ex_ls_reg(
             next_pc_o           <=  next_pc_i               ;
             store_data_o        <=  store_data_i            ;
             exu_res_o           <=  exu_res_i               ;
+            load_flag_o         <=  load_flag_i             ;
             ls_ctl_o            <=  ls_ctl_i                ;
             wb_ctl_o            <=  wb_ctl_i                ;
             csr_ctl_o           <=  csr_ctl_i               ;

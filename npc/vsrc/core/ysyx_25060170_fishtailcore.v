@@ -185,6 +185,7 @@ ysyx_25060170_idu u_ysyx_25060170_idu (
     ,.wb_data_forward    (wb_rd_data_forward    )//<<i<<
 
     ,.ex_load_ena        (id_ex_reg_load_flag   )//<<i<<
+    ,.ls_load_ena        (ex_ls_reg_load_flag   )//<<i<<
     ,.ex_csr_ena         (ex_csr_ena            )//<<i<<
     ,.ls_csr_ena         (ls_csr_ena            )//<<i<<
 
@@ -404,6 +405,8 @@ wire  [`ysyx_25060170_DATA]      ex_rd_data_forward;
 // wire  [`ysyx_25060170_REGADDR]   ex_op2_addr_forward;
 // wire                             ex_ls_pipeline_idstall;
 wire                             ex_ls_valid;
+wire                             ex_ls_reg_load_flag;
+
 ysyx_25060170_ex_ls_reg u_ysyx_25060170_ex_ls_reg (
      .clk                    ( clk                    )//<<i<<
     ,.rst                    ( rst                    )//<<i<<
@@ -412,6 +415,7 @@ ysyx_25060170_ex_ls_reg u_ysyx_25060170_ex_ls_reg (
     ,.next_pc_i              ( exu_next_pc            )//<<i<<
     ,.store_data_i           ( exu_store_data         )//<<i<<
     ,.exu_res_i              ( exu_res                )//<<i<<
+    ,.load_flag_i            ( id_ex_reg_load_flag    )//<<i<<
     ,.ls_ctl_i               ( id_ex_reg_lsctl        )//<<i<<
     ,.wb_ctl_i               ( id_ex_reg_wbctl        )//<<i<<
     ,.csr_ctl_i              ( exu_csr_ctl            )//<<i<<
@@ -435,6 +439,7 @@ ysyx_25060170_ex_ls_reg u_ysyx_25060170_ex_ls_reg (
     ,.next_pc_o              ( ex_ls_reg_next_pc      )//>>o>>  
     ,.store_data_o           ( ex_ls_reg_store_data   )//>>o>>
     ,.exu_res_o              ( ex_ls_reg_exu_res      )//>>o>>
+    ,.load_flag_o            ( ex_ls_reg_load_flag    )//>>o>>
     ,.ls_ctl_o               ( ex_ls_reg_ls_ctl       )//>>o>>
     ,.wb_ctl_o               ( ex_ls_reg_wb_ctl       )//>>o>>
     ,.csr_ctl_o              ( ex_ls_reg_csr_ctl      )//>>o>>

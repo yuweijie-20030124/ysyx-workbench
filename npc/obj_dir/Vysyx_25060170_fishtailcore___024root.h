@@ -53,6 +53,7 @@ class Vysyx_25060170_fishtailcore___024root final : public VerilatedModule {
         CData/*4:0*/ ysyx_25060170_fishtailcore__DOT__ex_ls_reg_rd_addr;
         CData/*0:0*/ ysyx_25060170_fishtailcore__DOT__ex_ls_reg_ls_csr_ena;
         CData/*0:0*/ ysyx_25060170_fishtailcore__DOT__ex_ls_valid;
+        CData/*0:0*/ ysyx_25060170_fishtailcore__DOT__ex_ls_reg_load_flag;
         CData/*0:0*/ ysyx_25060170_fishtailcore__DOT__ls_dpic_we;
         CData/*7:0*/ ysyx_25060170_fishtailcore__DOT__ls_dpic_wlen;
         CData/*0:0*/ ysyx_25060170_fishtailcore__DOT__ls_mem_re;
@@ -78,9 +79,9 @@ class Vysyx_25060170_fishtailcore___024root final : public VerilatedModule {
         CData/*0:0*/ ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_bpu__DOT__inst_jalr;
         CData/*0:0*/ ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_bpu__DOT__inst_bxx;
         CData/*0:0*/ ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_bpu__DOT__wbu_forward_en;
-        CData/*0:0*/ ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_bpu__DOT____VdfgTmp_h15760a56__0;
     };
     struct {
+        CData/*0:0*/ ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_bpu__DOT____VdfgTmp_h15760a56__0;
         CData/*0:0*/ ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_if_id_reg__DOT__flush;
         CData/*0:0*/ ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_idu__DOT__branch;
         CData/*0:0*/ ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_idu__DOT__ex_op1_forward;
@@ -144,9 +145,9 @@ class Vysyx_25060170_fishtailcore___024root final : public VerilatedModule {
         CData/*0:0*/ ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_idu__DOT__decoder__DOT____VdfgTmp_h5f1400db__0;
         CData/*0:0*/ ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_idu__DOT__decoder__DOT____VdfgTmp_hed177170__0;
         CData/*0:0*/ ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_idu__DOT__decoder__DOT____VdfgTmp_hbd811272__0;
-        CData/*0:0*/ ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_idu__DOT__decoder__DOT____VdfgTmp_h893e271f__0;
     };
     struct {
+        CData/*0:0*/ ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_idu__DOT__decoder__DOT____VdfgTmp_h893e271f__0;
         CData/*0:0*/ ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_idu__DOT__decoder__DOT____VdfgTmp_h177d4809__0;
         CData/*0:0*/ ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_idu__DOT__decoder__DOT____VdfgTmp_hebf21d33__0;
         CData/*0:0*/ ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_idu__DOT__decoder__DOT____VdfgTmp_h8893bd80__0;
@@ -210,9 +211,9 @@ class Vysyx_25060170_fishtailcore___024root final : public VerilatedModule {
         IData/*31:0*/ ysyx_25060170_fishtailcore__DOT__ex_ls_reg_pc;
         IData/*31:0*/ ysyx_25060170_fishtailcore__DOT__ex_ls_reg_next_pc;
         IData/*31:0*/ ysyx_25060170_fishtailcore__DOT__ls_dpic_data;
-        IData/*31:0*/ ysyx_25060170_fishtailcore__DOT__ls_dpic_raddr;
     };
     struct {
+        IData/*31:0*/ ysyx_25060170_fishtailcore__DOT__ls_dpic_raddr;
         IData/*31:0*/ ysyx_25060170_fishtailcore__DOT__ls_mem_reg_inst;
         IData/*31:0*/ ysyx_25060170_fishtailcore__DOT__ls_mem_reg_pc;
         IData/*31:0*/ ysyx_25060170_fishtailcore__DOT__ls_mem_reg_next_pc;
