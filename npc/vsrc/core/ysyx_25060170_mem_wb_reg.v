@@ -10,7 +10,8 @@ module ysyx_25060170_mem_wb_reg(
     ,input   wire [`ysyx_25060170_PC]       pc_i                //<<i<<
     ,input   wire [`ysyx_25060170_PC]       next_pc_i           //<<i<<
     ,input   wire [1:0]                     wb_ctl_i            //<<i<<
-    ,input   wire [`ysyx_25060170_DATA]     mem_data_i          //<<i<<    
+    ,input   wire [`ysyx_25060170_DATA]     mem_data_i          //<<i<<
+    ,input   wire                           load_flag_i         //<<i<<    
     ,input   wire [`ysyx_25060170_DATA]     alu_res_i           //<<i<<
     ,input   wire                           rd_ena_i            //<<i<<
     ,input   wire [`ysyx_25060170_REGADDR]  rd_addr_i           //<<i<<
@@ -27,6 +28,7 @@ module ysyx_25060170_mem_wb_reg(
     ,output  reg  [`ysyx_25060170_PC]       next_pc_o           //>>o>>
     ,output  reg  [`ysyx_25060170_DATA]     alu_res_o           //>>o>>
     ,output  reg  [`ysyx_25060170_DATA]     mem_data_o          //>>o>>
+    ,output  reg                            load_flag_o         //>>o>>
     ,output  reg  [1:0]                     wb_ctl_o            //>>o>>
     ,output  reg                            rd_ena_o            //>>o>>
     ,output  reg  [`ysyx_25060170_REGADDR]  rd_addr_o           //>>o>>
@@ -55,6 +57,7 @@ module ysyx_25060170_mem_wb_reg(
             next_pc_o       <= `ysyx_25060170_ZERO32    ;
             alu_res_o       <= `ysyx_25060170_ZERO32    ;
             mem_data_o      <= `ysyx_25060170_ZERO32    ;
+            load_flag_o     <= 1'b0                     ;
             wb_ctl_o        <= 2'b0                     ;
             rd_ena_o        <= 1'b0                     ;
             rd_addr_o       <= 5'b0                     ;
@@ -69,6 +72,7 @@ module ysyx_25060170_mem_wb_reg(
             next_pc_o       <= next_pc_o                ;
             alu_res_o       <= alu_res_o                ;
             mem_data_o      <= mem_data_o               ;
+            load_flag_o     <= load_flag_o              ;
             wb_ctl_o        <= wb_ctl_o                 ;
             rd_ena_o        <= rd_ena_o                 ;
             rd_addr_o       <= rd_addr_o                ;
@@ -83,6 +87,7 @@ module ysyx_25060170_mem_wb_reg(
             next_pc_o       <= next_pc_i                ;
             alu_res_o       <= alu_res_i                ;
             mem_data_o      <= mem_data_i               ;
+            load_flag_o     <= load_flag_i              ;
             wb_ctl_o        <= wb_ctl_i                 ;
             rd_ena_o        <= rd_ena_i                 ;
             rd_addr_o       <= rd_addr_i                ;

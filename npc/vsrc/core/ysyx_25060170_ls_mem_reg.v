@@ -12,6 +12,7 @@ module ysyx_25060170_ls_mem_reg(
     ,input   wire [1:0]                     wb_ctl_i            //<<i<<
     // ,input   wire [`ysyx_25060170_DATA]     lsu_res_i           //<<i<<
     ,input   wire [`ysyx_25060170_DATA]     alu_res_i           //<<i<<
+    ,input   wire                           load_flag_i         //<<i<<
     // ,input   wire [`ysyx_25060170_DATA]     lsu_wb_data_i       //<<i<<
     ,input   wire                           re_i                //<<i<<
     ,input   wire                           rd_ena_i            //<<i<<
@@ -34,6 +35,7 @@ module ysyx_25060170_ls_mem_reg(
     ,output  reg  [3:0]                     ls_ctl_o            //>>o>>
     ,output  reg  [1:0]                     wb_ctl_o            //>>o>>
     ,output  reg  [`ysyx_25060170_DATA]     alu_res_o           //>>o>>
+    ,output  reg                            load_flag_o         //>>o>>
     // ,output  reg  [`ysyx_25060170_DATA]     lsu_res_o           //>>o>>
     // ,output  reg  [`ysyx_25060170_DATA]     lsu_wb_data_o       //>>o>>
     ,output  reg                            re_o                //>>o>>
@@ -59,6 +61,7 @@ always@(posedge clk) begin
         ls_ctl_o            <=   4'b0                   ;
         wb_ctl_o            <=   2'b0                   ;
         alu_res_o           <=   `ysyx_25060170_ZERO32  ;
+        load_flag_o         <=   1'b0                   ;
         // lsu_res_o           <=   `ysyx_25060170_ZERO32  ;
         // lsu_wb_data_o       <=   `ysyx_25060170_ZERO32  ;
         re_o                <=   1'b0                   ;
@@ -76,6 +79,7 @@ always@(posedge clk) begin
         ls_ctl_o            <=   ls_ctl_o               ;
         wb_ctl_o            <=   wb_ctl_o               ;
         alu_res_o           <=   alu_res_o              ;
+        load_flag_o         <=   load_flag_o            ;
         // lsu_res_o           <=   lsu_res_o              ;
         // lsu_wb_data_o       <=   lsu_wb_data_o          ;
         re_o                <=   re_o                   ;
@@ -93,6 +97,7 @@ always@(posedge clk) begin
         ls_ctl_o            <=   ls_ctl_i               ;
         wb_ctl_o            <=   wb_ctl_i               ;
         alu_res_o           <=   alu_res_i              ;
+        load_flag_o         <=  load_flag_i             ;
         // lsu_res_o           <=   lsu_res_i              ;
         // lsu_wb_data_o       <=   lsu_wb_data_i          ;
         re_o                <=   re_i                   ;

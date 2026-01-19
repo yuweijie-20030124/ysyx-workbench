@@ -21,6 +21,8 @@ module ysyx_25060170_idu(
 	,input	wire [`ysyx_25060170_DATA]			wb_data_forward		//<<i<<	
 	,input 	wire								ex_load_ena			//<<i<<	判断exu的指令是不是load
 	,input  wire      							ls_load_ena			//<<i<< 判断lsu的指令是不是load
+	,input  wire                                mem_load_ena		//<<i<< 判断mem的指令是不是load
+	,input  wire                                wb_load_ena         //<<i<< 判断wbu的指令是不是load
 	,input	wire								ex_csr_ena			//<<i<<
 	,input	wire								ls_csr_ena			//<<i<<
 	//regfile signal
@@ -217,8 +219,8 @@ assign ex_branch =  1'b0 |
 //若上一条指令是load访存后将值给通用寄存器，当前指令是add/store，此时产生数据依赖
 
 
-assign op1_relate = ((rst == 1) & (rs1_addr == 5'd0)) ? 1'b0 : rs1_ena & (ex_load_ena & (rs1_addr == ex_addr_forward)) | (ls_load_ena & (rs1_addr == ls_addr_forward));
-assign op2_relate = ((rst == 1) & (rs2_addr == 5'd0)) ? 1'b0 : rs2_ena & (ex_load_ena & (rs2_addr == ex_addr_forward)) | (ls_load_ena & (rs2_addr == ls_addr_forward));
+assign op1_relate = ((rst == 1) & (rs1_addr == 5'd0)) ? 1'b0 : rs1_ena & (ex_load_ena & (rs1_addr == ex_addr_forward)) | (ls_load_ena & (rs1_addr == ls_addr_forward)) | (mem_load_ena & (rs1_addr == mem_addr_forward)) | (wb_load_ena & (rs1_addr == wb_addr_forward));
+assign op2_relate = ((rst == 1) & (rs2_addr == 5'd0)) ? 1'b0 : rs2_ena & (ex_load_ena & (rs2_addr == ex_addr_forward)) | (ls_load_ena & (rs2_addr == ls_addr_forward)) | (mem_load_ena & (rs2_addr == mem_addr_forward)) | (wb_load_ena & (rs2_addr == wb_addr_forward));
 
 // assign csr_op1_stall = (ex_op1_forward & ex_csr_ena) | (ls_op1_forward & ls_csr_ena) | (mem_op1_forward & mem_csr_ena);
 // assign csr_op2_stall = (ex_op2_forward & ex_csr_ena) | (ls_op2_forward & ls_csr_ena) | (mem_op2_forward & mem_csr_ena);

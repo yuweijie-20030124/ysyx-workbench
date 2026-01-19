@@ -27,7 +27,11 @@ module ysyx_25060170_id_ex_reg(
     //pipeline control
    	,input	 wire					        id_valid_i	        //<<i<<
    	,input	 wire					        id_flush_i	        //<<i<<
+
+    /* verilator lint_off UNUSEDSIGNAL */
     ,input   wire                           id_stall_i          //<<i<<
+    /* verilator lint_on UNUSEDSIGNAL */
+    
    	,input	 wire					        ls_flush_i	        //<<i<<
    	,input	 wire					        ex_ready_i	        //<<i<<
     //output to exu     
@@ -53,7 +57,11 @@ module ysyx_25060170_id_ex_reg(
 );
 
 wire flush = id_flush_i | ls_flush_i;
-wire stall = id_stall_i | id_valid_i | ~ex_ready_i;
+
+// wire load_stall_finish = ~id_stall_i & id_valid_i ;
+// wire stall = id_stall_i | id_valid_i | ~ex_ready_i;
+wire stall = id_valid_i | ~ex_ready_i;
+
 
 always@(posedge clk) begin
     if(rst | flush) begin   
@@ -78,6 +86,28 @@ always@(posedge clk) begin
         id_valid_o          <=      1'b1                    ;
         // bp_jump_o       <=       1'b0                    ;
     end
+    // else if(load_stall_finish) begin
+    //     inst_o              <=      inst_i                  ;
+    //     pc_o                <=      pc_i                    ;
+    //     next_pc_o           <=      next_pc_i               ;
+    //     op1_o               <=      op1_i                   ;
+    //     op2_o               <=      op2_i                   ;
+    //     op1_sel_o           <=      op1_sel_i               ;
+    //     op2_sel_o           <=      op2_sel_i               ;
+    //     rd_ena_o            <=      rd_ena_i                ;
+    //     rd_addr_o           <=      rd_addr_i               ;
+    //     rs1_addr_o          <=      rs1_addr_i              ;
+    //     // rs2_addr_o          <=      rs2_addr_i              ;
+    //     imm_o               <=      imm_i                   ;
+    //     alusrc_o            <=      alusrc_i                ;
+    //     lsctl_o             <=      lsctl_i                 ;
+    //     wbctl_o             <=      wbctl_i                 ;
+    //     csr_ena_o           <=      csr_ena_i               ;
+    //     load_flag_o         <=      load_flag_i             ;
+    //     // pipeline_id_stall_o <=      pipeline_id_stall_i     ;
+    //     id_valid_o          <=      1'b1                  ;
+    //     // bp_jump_o       <=      bp_jump_i               ;
+    // end
     else if(stall) begin
         inst_o              <=      inst_o                  ;
         pc_o                <=      pc_o                    ;
