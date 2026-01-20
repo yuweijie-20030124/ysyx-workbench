@@ -686,9 +686,9 @@ wire  [6:0]                     mem_wb_csr_ctl        ;
 wire  [11:0]                    mem_wb_csr_addr       ;
 // wire  [`ysyx_25060170_DATA]     mem_wb_wb_data        ;
 wire                            mem_valid_o           ;
-wire  [`ysyx_25060170_REGADDR]   mem_rd_addr_forward   ;
-wire  [`ysyx_25060170_DATA]      mem_rd_data_forward   ;
-wire                            mem_wb_reg_load_flag       ;
+wire  [`ysyx_25060170_REGADDR]  mem_rd_addr_forward   ;
+wire  [`ysyx_25060170_DATA]     mem_rd_data_forward   ;
+wire                            mem_wb_reg_load_flag  ;
 
 ysyx_25060170_mem_wb_reg u_ysyx_25060170_mem_wb_reg(
      .clk                   (clk                        )//<<i<<
