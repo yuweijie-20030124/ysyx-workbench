@@ -12,10 +12,10 @@ module ysyx_25060170_ifu(
     ,input  wire                        ls_pc_jump_i    //<<i<<
     ,input  wire [`ysyx_25060170_PC]    ls_pc_i         //<<i<<
     ,input  wire                        bp_pc_jump_i    //<<i<<
-    ,input  wire [`ysyx_25060170_PC]    bp_pc_i         //<<i<<
+    ,input  wire [`ysyx_25060170_PC]    bp_pc_i         //<<i<< jal jalr bxx
 
     /* verilator lint_off UNUSEDSIGNAL */
-    ,input  wire                        jal_jalr_i      //<<i<<
+    // ,input  wire                        jal_jalr_i      //<<i<<
     ,input  wire                        branch_i        //<<i<<
     /* verilator lint_on  UNUSEDSIGNAL */
 
@@ -55,6 +55,9 @@ always@(posedge clk) begin
             pc <= bp_pc_i;
             // $display("bp pc_o = 0x%h", pc_o); 
         end
+        else if(branch_i) begin
+            pc <= bp_pc_i;
+        end
         else if(ls_pc_jump_i) begin
             pc <= ls_pc_i;
             // $display("ls pc_o = 0x%h", pc_o); 
@@ -65,17 +68,17 @@ always@(posedge clk) begin
         end
         else if(~stall & if_valid_o) begin 
             // $display("pc_o = 0x%h", pc_o); 
-            pc <= `ysyx_25060170_STARTPC;
+            pc <= `ysyx_25060170_ZERO32;
         end
         else begin
             pc <= pc_o + `ysyx_25060170_PLUS4;
         end
     end
 end
-
+// assign pc_o = rst ? 
 assign next_pc_o = pc_o + `ysyx_25060170_PLUS4;      
 
-assign pc_o = jal_jalr_i ? bp_pc_i : pc ;
+assign pc_o = pc ;
 // assign next_pc_o =  pc_o + `ysyx_25060170_PLUS4 ;
 
 

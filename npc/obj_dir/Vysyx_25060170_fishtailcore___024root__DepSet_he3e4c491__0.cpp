@@ -180,8 +180,8 @@ void Vysyx_25060170_fishtailcore___024root____Vdpiexp_ysyx_25060170_fishtailcore
     ret_flag = ((0x8067U == vlSymsp->TOP.ysyx_25060170_fishtailcore__DOT__dpic_ifu_inst)
                  ? 1U : 0U);
     pc = ((0x67U == (0x7fU & vlSymsp->TOP.ysyx_25060170_fishtailcore__DOT__dpic_ifu_inst))
-           ? (0xfffffffeU & vlSymsp->TOP.ysyx_25060170_fishtailcore__DOT__if_id_pc)
-           : vlSymsp->TOP.ysyx_25060170_fishtailcore__DOT__if_id_pc);
+           ? (0xfffffffeU & vlSymsp->TOP.ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_ifu__DOT__pc)
+           : vlSymsp->TOP.ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_ifu__DOT__pc);
 }
 
 #ifdef VL_DEBUG

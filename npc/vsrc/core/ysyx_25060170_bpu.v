@@ -2,41 +2,44 @@
 //Branch History Table
 //两位饱和计数器的动态分支预测方法 在里面加入加法器以提前获取分支预测会进行的pc 
 
-
+//output 
 module ysyx_25060170_bpu(
-     input  wire                            clk                 //<<i<<
-    ,input  wire                            rst                 //<<i<<
+     input  wire                            clk                 //<<i<< 系统时钟
+    ,input  wire                            rst                 //<<i<< 系统复位
     //for branch
-    ,input  wire [`ysyx_25060170_PC]        pc_before_bxx       //<<i<<
-    ,input  wire                            branch_success      //<<i<<
-    ,input  wire                            branch              //<<i<<
-    ,input  wire [`ysyx_25060170_IMM]       bxx_imm             //<<i<<
+    // ,input  wire [`ysyx_25060170_PC]        pc_before_bxx       //<<i<<
+    ,input  wire                            branch_success      //<<i<< bxx跳转的是否正确
+    ,input  wire                            branch              //<<i<< 上一个时钟周期是否有预测跳转
+    // ,input  wire [`ysyx_25060170_IMM]       bxx_imm             //<<i<<
     //form ifu      
-    ,input  wire [`ysyx_25060170_INST]      inst_i              //<<i<<
-    ,input  wire [`ysyx_25060170_PC]        pc_i                //<<i<<
-    //from regfile 这里应该加上前递的数据 上一个操作reg[0]的数还没进去就取指出来了。
+    ,input  wire [`ysyx_25060170_INST]      inst_i              //<<i<< 当前ifu的指令
+    ,input  wire [`ysyx_25060170_PC]        pc_i                //<<i<< 当前ifu的pc值
+    //forwarding
     ,input  wire [`ysyx_25060170_REG]       ls_wb_forward_data  //<<i<<
     ,input  wire [`ysyx_25060170_REGADDR]   ls_wb_forward_addr  //<<i<<
     ,input  wire [`ysyx_25060170_REG]       ex_ls_forward_data  //<<i<<
     ,input  wire [`ysyx_25060170_REGADDR]   ex_ls_forward_addr  //<<i<<
     ,input  wire [`ysyx_25060170_REG]       ls_mem_forward_data //<<i<<
     ,input  wire [`ysyx_25060170_REGADDR]   ls_mem_forward_addr //<<i<<
-    ,input  wire [`ysyx_25060170_REG]       bp_rs1_data_i       //<<i<<
     ,input  wire [`ysyx_25060170_REGADDR]   wb_rd_addr_forward  //<<i<<
     ,input  wire [`ysyx_25060170_REG]       wb_rd_data_forward  //<<i<<
     //to ifu
-    ,output reg  [`ysyx_25060170_PC]        bp_pc_o             //>>o>>
-    ,output reg                             jal_jalr_o          //>>o>>
-    ,output wire                            branch_o            //>>o>>
-    //to regfile        
-    ,output reg [`ysyx_25060170_REGADDR]    bp_rs1_addr_o       //>>o>>
-    ,output reg                             bp_rs1_ena_o        //>>o>>
+    ,output wire [`ysyx_25060170_PC]        bp_pc_o             //>>o>> 要跳转的值
+    // ,output reg                             jal_jalr_o          //>>o>>
+    ,output wire                            branch_o            //>>o>> 是否要进行跳转，包含jalr，jal，bxx
+    //regfile  
+    ,input  wire [`ysyx_25060170_REG]       bp_rs1_data_i       //<<i<< 得rs1值          
+    ,output wire [`ysyx_25060170_REGADDR]   bp_rs1_addr_o       //>>o>> 取rs1地址
+    ,output wire                            bp_rs1_ena_o        //>>o>> 取rs1使能
     //to if_id_reg
-    ,output reg                             bp_predict_o        //>>o>>
+    ,output wire                            bp_predict_o        //>>o>> 我们预测bxx跳转则1，预测bxx不跳转则0
 );
-    reg                                     jal_jalr_temp;
+    // reg                                     jal_jalr_temp;
     // reg                                     pre_branch;//1的话说明刚刚预测跳转，为0的话说明预测不跳转
     // wire                                    jal_jalr;
+    //************************************中间wire和reg变量********************************************//
+    // reg    [`ysyx_25060170_PC]              PC_before_bxx;
+    // reg    [`ysyx_25060170_DATA]            pre_bxx_imm;
     wire   [`ysyx_25060170_REGADDR]         rd_addr = inst_i[11:7];
     //jalr 译码模块
     assign bp_rs1_ena_o = inst_jalr ? 1 : 0;
@@ -176,60 +179,105 @@ assign op1 =    (inst_jalr & ls_wb_forward_en ) ?    ls_wb_forward_data  :
                 pc_i;
 
 assign op2 =    inst_jal                        ?    jal_offset          :
+                inst_jalr                       ?    jalr_offset         :
                 inst_bxx                        ?    br_offset           :
                 (inst_jalr & wbu_forward_en   ) ?    32'b0               :
-                inst_jalr                       ?    jalr_offset         :
                 32'd4;
-                
-assign jal_jalr_temp = inst_jal | inst_jalr ;
-assign branch_o   = inst_bxx ;
+
+//预测PC逻辑
+//记录在bxx指令跳转时的PC值 PC_before_bxx
+// always @(posedge clk) begin
+//     if(rst) begin
+//         PC_before_bxx <= 0;
+//         pre_bxx_imm   <= 0;
+//     end
+//     else if(inst_bxx) begin
+//         PC_before_bxx <= pc_i;
+//         pre_bxx_imm   <= br_offset;
+//     end
+
+// end
+// assign jal_jalr_temp = inst_jal | inst_jalr ;
+// assign branch_o   = inst_bxx | inst_jal | inst_jalr;
+
 assign jump_pc = op1 + op2;
 assign jump_jalr_pc = (jump_pc) & (~1) ;
-always@(posedge clk) begin
-    if(rst) begin
-        bp_pc_o       <= `ysyx_25060170_STARTPC ;
-        bp_predict_o  <= 1'b0 ;
-    end
-    else begin
-        if( inst_jal) begin
-            bp_pc_o      <= jump_pc ;
-            bp_predict_o <= 1'b0 ;
-            jal_jalr_o   <= jal_jalr_temp;
-            // $display("bpu predict jump from to pc = 0x%08x", jump_pc);
-        end
-        else if( (inst_bxx & (weakly_taken_state | strongly_taken_state)) ) begin
-            bp_pc_o      <= jump_pc ;
-            bp_predict_o <= 1'b1 ;
-            jal_jalr_o   <= 1'b0 ;
-            // $display("bpu predict jump from to pc = 0x%08x", jump_pc);
-        end
-        else if( inst_jalr & ~wbu_forward_en) begin
-            bp_pc_o      <= jump_jalr_pc ;
-            bp_predict_o <= 1'b0 ;
-            jal_jalr_o   <= jal_jalr_temp;
-        end
-        else if( branch & ~branch_success) begin
-            bp_pc_o      <= pc_before_bxx + `ysyx_25060170_PLUS4 ;
-            bp_predict_o <= 1'b0 ;
-            jal_jalr_o   <= 1'b0 ;
-        end
-        else if( ~branch & branch_success) begin
-            bp_pc_o      <= pc_before_bxx + bxx_imm ;
-            bp_predict_o <= 1'b1 ;
-            jal_jalr_o   <= 1'b0 ;
-        end
-        else if( inst_jalr & wbu_forward_en)begin
-            bp_pc_o      <= jump_pc ;
-            bp_predict_o <= 1'b0 ;
-            jal_jalr_o   <= jal_jalr_temp;
-        end
-        else begin
-            bp_pc_o      <= pc_i + `ysyx_25060170_PLUS4 ;
-            bp_predict_o <= 1'b0 ;
-            jal_jalr_o   <= 1'b0 ;
-        end
-    end
-end
+wire   bxx_taken = inst_bxx & (weakly_taken_state | strongly_taken_state);
+wire   bxx_not_taken = inst_bxx & (weakly_taken_state | strongly_taken_state);
+
+
+assign bp_pc_o = 32'b0 |
+                {32{rst}}           & `ysyx_25060170_STARTPC |
+                {32{inst_jal }}     & jump_pc                |
+                {32{inst_jalr}}     & jump_jalr_pc           |
+                {32{bxx_taken}}     & jump_pc                |
+                {32{bxx_not_taken}} & pc_i + 4               ;
+
+assign branch_o = 1'b0 |
+                {1{rst}}           & 1'b0 |
+                {1{inst_jal }}     & 1'b1 |
+                {1{inst_jalr}}     & 1'b1 |
+                {1{bxx_taken}}     & 1'b1 |
+                {1{bxx_not_taken}} & 1'b1 ;
+
+assign bp_predict_o = 1'b0 |
+                {1{rst}}           & 1'b0 |
+                {1{inst_jal }}     & 1'b0 |
+                {1{inst_jalr}}     & 1'b0 |
+                {1{bxx_taken}}     & 1'b1 |
+                {1{bxx_not_taken}} & 1'b0 ;
+
+// always@(posedge clk) begin
+//     if(rst) begin
+//         bp_pc_o       <= `ysyx_25060170_STARTPC ;
+//         branch_o      <= 1'b0 ;
+//         bp_predict_o  <= 1'b0 ;
+//     end
+//     else begin
+//         if( inst_jal) begin
+//             bp_pc_o      <= jump_pc         ;
+//             branch_o     <= 1'b1            ;
+//             bp_predict_o <= 1'b0            ;   
+//             // jal_jalr_o   <= jal_jalr_temp   ;
+//             // $display("bpu predict jump from to pc = 0x%08x", jump_pc);
+//         end
+//         else if (inst_jalr) begin
+//             bp_pc_o      <= jump_jalr_pc    ;
+//             branch_o     <= 1'b1            ;
+//             bp_predict_o <= 1'b0            ;
+//         end
+//         else if( (inst_bxx & (weakly_taken_state | strongly_taken_state)) ) begin //预测执行
+//             bp_pc_o      <= jump_pc ;
+//             branch_o     <= 1'b1            ;
+//             bp_predict_o <= 1'b1 ;      //表明我是预测taken还是not taken
+//             // jal_jalr_o   <= 1'b0 ;
+//             // $display("bpu predict jump from to pc = 0x%08x", jump_pc);
+//         end
+//         // else if( inst_jalr & ~wbu_forward_en) begin
+//         //     bp_pc_o      <= jump_jalr_pc ;
+//         //     bp_predict_o <= 1'b0 ;
+//         //     // jal_jalr_o   <= jal_jalr_temp;
+//         // end
+//         // else if( inst_jalr & wbu_forward_en)begin
+//         //     bp_pc_o      <= jump_pc ;
+//         //     bp_predict_o <= 1'b0 ;
+//         //     // jal_jalr_o   <= jal_jalr_temp;
+//         // end
+//         else if( (inst_bxx & (weakly_not_taken_state | strongly_not_taken_state)) ) begin //预测不执行
+//             bp_pc_o      <= pc_i + 4 ;
+//             branch_o     <= 1'b1            ;
+//             bp_predict_o <= 1'b0 ;      //表明我是预测taken还是not taken
+//             // jal_jalr_o   <= 1'b0 ;
+//             // $display("bpu predict jump from to pc = 0x%08x", jump_pc);
+//         end
+//         else begin
+//             bp_pc_o      <= `ysyx_25060170_ZERO32 ;
+//             branch_o     <= 1'b0 ;
+//             bp_predict_o <= 1'b0 ;
+//             // jal_jalr_o   <= 1'b0 ;
+//         end
+//     end
+// end
 //*********************************debug***********************************//
 	// always @(posedge clk) begin
     //     $display("pc_i = 0x%08x", pc_i);

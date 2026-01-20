@@ -15,16 +15,16 @@ wire                            bp_predict;
 wire [`ysyx_25060170_REG]       bp_rs1_data;
 wire [`ysyx_25060170_REGADDR]   bp_rs1_addr;
 wire                            bp_rs1_ena;
-wire                            bp_if_jal_jalr;        
+// wire                            bp_if_jal_jalr;        
 wire                            bp_if_branch;
 
 ysyx_25060170_bpu u_ysyx_25060170_bpu (
      .clk                ( clk                  )//<<i<<  
     ,.rst                ( rst                  )//<<i<<
     ,.branch             ( id_jump              )//<<i<<  
-    ,.pc_before_bxx      ( id_ex_reg_pc         )//<<i<<
+    // ,.pc_before_bxx      ( id_ex_reg_pc         )//<<i<<
     ,.branch_success     ( ex_branch            )//<<i<<
-    ,.bxx_imm            ( id_ex_reg_imm        )//<<i<<  
+    // ,.bxx_imm            ( id_ex_reg_imm        )//<<i<<  
     ,.inst_i             ( if_id_inst           )//<<i<<      
     ,.pc_i               ( if_id_pc             )//<<i<<
     ,.ls_wb_forward_data ( ls_rd_data_forward   )//<<i<<
@@ -39,7 +39,7 @@ ysyx_25060170_bpu u_ysyx_25060170_bpu (
     ,.bp_rs1_addr_o      ( bp_rs1_addr          )//>>o>>
     ,.bp_rs1_ena_o       ( bp_rs1_ena           )//>>o>>  
     ,.bp_pc_o            ( bp_if_pc             )//>>o>>
-    ,.jal_jalr_o         ( bp_if_jal_jalr       )//>>o>>
+    // ,.jal_jalr_o         ( bp_if_jal_jalr       )//>>o>>
     ,.branch_o           ( bp_if_branch         )//>>o>>
     ,.bp_predict_o       ( bp_predict           )//>>o>>  
 );
@@ -74,10 +74,10 @@ ysyx_25060170_ifu  u_ysyx_25060170_ifu (
     ,.id_pc_i          (id_jump_pc       )//<<i<<  
     ,.ls_pc_jump_i     (ls_pc_jump       )//<<i<<  
     ,.ls_pc_i          (ls_jump_pc       )//<<i<<
-    ,.bp_pc_jump_i     (bp_predict       )//<<i<<  
+    ,.bp_pc_jump_i     (bp_if_branch       )//<<i<<  
     ,.bp_pc_i          (bp_if_pc         )//<<i<<  
-    ,.jal_jalr_i       (bp_if_jal_jalr   )//<<i<<
-    ,.branch_i         (bp_if_branch     )//<<i<<
+    // ,.jal_jalr_i       (bp_if_jal_jalr   )//<<i<<
+    ,.branch_i         (bp_predict     )//<<i<<
     // ,.inst_valid_i     (inst_valid_i     )//<<i<<
     ,.id_ready_i       (id_ready         )//<<i<<
     ,.id_stall_i       (id_stall         )//<<i<<
