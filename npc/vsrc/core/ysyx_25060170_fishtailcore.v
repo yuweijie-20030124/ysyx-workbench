@@ -182,10 +182,13 @@ ysyx_25060170_idu u_ysyx_25060170_idu (
     ,.mem_data_forward   (mem_rd_data_forward   )//<<i<<
     ,.mem_addr_forward   (mem_rd_addr_forward   )//<<i<<
     ,.wb_addr_forward    (wb_rd_addr_forward    )//<<i<<
+
     ,.wb_data_forward    (wb_rd_data_forward    )//<<i<<
 
     ,.ex_load_ena        (id_ex_reg_load_flag   )//<<i<<
     ,.ls_load_ena        (ex_ls_reg_load_flag   )//<<i<<
+    ,.ex_valid_i         (ex_ls_valid           )//<<i<<
+    ,.ls_valid_i         (ls_mem_valid          )//<<i<<
     ,.mem_load_ena       (ls_mem_reg_load_flag  )//<<i<<
     ,.wb_load_ena        (mem_wb_reg_load_flag  )//<<i<<
     ,.ex_csr_ena         (ex_csr_ena            )//<<i<<

@@ -66,6 +66,9 @@ module ysyx_25060170_mem_wb_reg(
             // wb_data_o       <= `ysyx_25060170_ZERO32    ;
             mem_valid_o     <= 1'b1                     ;
     end
+        else if (wb_ready_i & mem_valid_i) begin
+            mem_valid_o <= 1'b1;
+        end
         else if(stall) begin
             inst_o          <= inst_o                   ;
             pc_o            <= pc_o                     ;
@@ -79,7 +82,7 @@ module ysyx_25060170_mem_wb_reg(
             csr_ctl_o       <= csr_ctl_o                ;
             csr_addr_o      <= csr_addr_o               ;
             // wb_data_o       <= wb_data_o                ;
-            mem_valid_o     <= 1'b1                     ;
+            mem_valid_o     <= mem_valid_o              ;
     end    
         else begin
             inst_o          <= inst_i                   ;

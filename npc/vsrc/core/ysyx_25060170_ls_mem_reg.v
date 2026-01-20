@@ -72,6 +72,9 @@ always@(posedge clk) begin
         ls_valid_o          <=   1'b1                   ;
         // pipeline_id_stall_o <=   1'b0                   ;
     end
+    else if (mem_ready_i & ls_valid_i) begin
+            ls_valid_o <= 1'b1;
+        end
     else if(stall) begin
         inst_o              <=   inst_o                 ;
         pc_o                <=   pc_o                   ;
@@ -87,7 +90,7 @@ always@(posedge clk) begin
         rd_addr_o           <=   rd_addr_o              ;
         csr_ctl_o           <=   csr_ctl_o              ;
         csr_addr_o          <=   csr_addr_o             ;
-        ls_valid_o          <=   1'b1                   ;
+        ls_valid_o          <=   ls_valid_o             ;
         // pipeline_id_stall_o <=   pipeline_id_stall_o    ;        
     end
     else begin

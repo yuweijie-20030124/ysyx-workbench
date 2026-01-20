@@ -36,7 +36,7 @@ module ysyx_25060170_ifu(
 wire   stall      = id_stall_i  ;
 reg [`ysyx_25060170_PC]         pc; 
 // assign if_valid_o = (id_ready_i | stall) ? 0 : ~inst_valid_i        ;
-assign if_valid_o = (id_ready_i | stall) ? 1'b0 : 1'b1              ;
+assign if_valid_o = (~id_ready_i | stall) ? 1'b1 : 1'b0             ;
 assign inst_o     = inst_i                                          ;
 // assign pc_o       = pc_i                                            ;
 

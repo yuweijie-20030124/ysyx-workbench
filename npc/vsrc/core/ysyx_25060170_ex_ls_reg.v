@@ -82,6 +82,9 @@ module ysyx_25060170_ex_ls_reg(
             ex_valid_o          <=  1'b1                    ;
             // pipeline_id_stall_o <=  1'b0                    ;
         end
+        else if (ls_ready_i & ex_valid_i) begin
+            ex_valid_o <= 1'b1;
+        end
         else if(stall) begin
             inst_o              <=  inst_o                  ;
             pc_o                <=  pc_o                    ;
@@ -96,7 +99,7 @@ module ysyx_25060170_ex_ls_reg(
             rd_addr_o           <=  rd_addr_o               ;
             ls_csr_ena_o        <=  ls_csr_ena_o            ;    
             csr_addr_o          <=  csr_addr_o              ;
-            ex_valid_o          <=  1'b1                    ;
+            ex_valid_o          <=  ex_valid_o                    ;
             // pipeline_id_stall_o <=  pipeline_id_stall_o     ;
         end
         else begin  

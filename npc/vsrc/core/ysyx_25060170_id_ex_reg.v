@@ -60,6 +60,7 @@ wire flush = id_flush_i | ls_flush_i;
 
 // wire load_stall_finish = ~id_stall_i & id_valid_i ;
 // wire stall = id_stall_i | id_valid_i | ~ex_ready_i;
+// 前递的信号，要少给一个stall的时钟周期，用来流水线传值
 wire stall = id_valid_i | ~ex_ready_i;
 
 
@@ -86,6 +87,9 @@ always@(posedge clk) begin
         id_valid_o          <=      1'b1                    ;
         // bp_jump_o       <=       1'b0                    ;
     end
+    else if (ex_ready_i & id_valid_i) begin
+            id_valid_o <= 1'b1;
+        end
     // else if(load_stall_finish) begin
     //     inst_o              <=      inst_i                  ;
     //     pc_o                <=      pc_i                    ;
@@ -127,7 +131,7 @@ always@(posedge clk) begin
         csr_ena_o           <=      csr_ena_o               ;
         load_flag_o         <=      load_flag_o             ;
         // pipeline_id_stall_o <=      pipeline_id_stall_o     ;
-        id_valid_o          <=      1'b1              ;
+        id_valid_o          <=      id_valid_o           ;
         
         // bp_jump_o       <=      bp_jump_o               ;
     end
