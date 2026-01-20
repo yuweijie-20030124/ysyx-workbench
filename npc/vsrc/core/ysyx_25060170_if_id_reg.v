@@ -1,5 +1,8 @@
 `include "define.v"
 
+
+//流水线干级间流水 & forwarding的活
+
 module ysyx_25060170_if_id_reg (
     //数据信号
      input  wire						    clk             //<<i<<
@@ -24,6 +27,7 @@ module ysyx_25060170_if_id_reg (
  );
 
     wire flush = (~id_stall_i & id_flush_i) | ls_flush_i ; //停顿的时候不要清空IF/ID
+    wire stall = if_valid_i | id_stall_i | ~id_ready_i   ;
 
     always@(posedge clk) begin
         if (rst | flush) begin
@@ -34,12 +38,15 @@ module ysyx_25060170_if_id_reg (
             if_valid_o  <=  1'b1;
 
         end
-        else if (if_valid_i | id_stall_i | ~id_ready_i) begin
+        else if (id_ready_i & if_valid_i) begin
+            if_valid_o <= 1'b1;
+        end
+        else if (stall) begin
             inst_o      <=  inst_o      ;
             pc_o        <=  pc_o        ;
             next_pc_o   <=  next_pc_o   ;
             id_jump_o   <=  id_jump_o   ;
-            if_valid_o  <=  1'b1        ;
+            if_valid_o  <=  if_valid_o  ;
         end
         else begin
             inst_o      <=  inst_i      ;

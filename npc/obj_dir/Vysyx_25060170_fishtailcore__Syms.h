@@ -21,7 +21,7 @@ using Vysyx_25060170_fishtailcore__Vcb_IDU_SEND_CALL_FLAG_t = void (*) (Vysyx_25
 using Vysyx_25060170_fishtailcore__Vcb_IDU_SEND_RET_FLAG_t = void (*) (Vysyx_25060170_fishtailcore__Syms* __restrict vlSymsp, IData/*31:0*/ &ret_flag, IData/*31:0*/ &pc);
 
 // SYMS CLASS (contains all model state)
-class alignas(VL_CACHE_LINE_BYTES) Vysyx_25060170_fishtailcore__Syms final : public VerilatedSyms {
+class Vysyx_25060170_fishtailcore__Syms final : public VerilatedSyms {
   public:
     // INTERNAL STATE
     Vysyx_25060170_fishtailcore* const __Vm_modelp;
@@ -34,14 +34,14 @@ class alignas(VL_CACHE_LINE_BYTES) Vysyx_25060170_fishtailcore__Syms final : pub
     Vysyx_25060170_fishtailcore___024root TOP;
 
     // SCOPE NAMES
-    VerilatedScope* __Vscopep_ysyx_25060170_fishtailcore__u_ysyx_25060170_DPIC;
+    VerilatedScope __Vscope_ysyx_25060170_fishtailcore__u_ysyx_25060170_DPIC;
 
     // CONSTRUCTORS
     Vysyx_25060170_fishtailcore__Syms(VerilatedContext* contextp, const char* namep, Vysyx_25060170_fishtailcore* modelp);
     ~Vysyx_25060170_fishtailcore__Syms();
 
     // METHODS
-    const char* name() const { return TOP.vlNamep; }
-};
+    const char* name() { return TOP.name(); }
+} VL_ATTR_ALIGNED(VL_CACHE_LINE_BYTES);
 
 #endif  // guard

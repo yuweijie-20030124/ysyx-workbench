@@ -15,7 +15,7 @@ module ysyx_25060170_ifu(
     ,input  wire [`ysyx_25060170_PC]    bp_pc_i         //<<i<<
 
     /* verilator lint_off UNUSEDSIGNAL */
-    ,input  wire                        jal_jalr_i      //<<i<<
+    // ,input  wire                        jal_jalr_i      //<<i<<
     ,input  wire                        branch_i        //<<i<<
     /* verilator lint_on  UNUSEDSIGNAL */
 
@@ -36,7 +36,7 @@ module ysyx_25060170_ifu(
 wire   stall      = id_stall_i  ;
 reg [`ysyx_25060170_PC]         pc; 
 // assign if_valid_o = (id_ready_i | stall) ? 0 : ~inst_valid_i        ;
-assign if_valid_o = (id_ready_i | stall) ? 1'b0 : 1'b1              ;
+assign if_valid_o = (~id_ready_i | stall) ? 1'b1 : 1'b0             ;
 assign inst_o     = inst_i                                          ;
 // assign pc_o       = pc_i                                            ;
 
@@ -49,15 +49,15 @@ always@(posedge clk) begin
     end
     else begin
         if(stall) begin
-           pc <= pc; 
-        end
-        else if(ls_pc_jump_i) begin
-            pc <= ls_pc_i;
-            // $display("ls pc_o = 0x%h", pc_o); 
+            pc <= pc; 
         end
         else if(bp_pc_jump_i) begin
             pc <= bp_pc_i;
             // $display("bp pc_o = 0x%h", pc_o); 
+        end
+        else if(ls_pc_jump_i) begin
+            pc <= ls_pc_i;
+            // $display("ls pc_o = 0x%h", pc_o); 
         end
         else if(id_pc_jump_i) begin
             pc <= id_pc_i;
@@ -65,17 +65,17 @@ always@(posedge clk) begin
         end
         else if(~stall & if_valid_o) begin 
             // $display("pc_o = 0x%h", pc_o); 
-            pc <= `ysyx_25060170_STARTPC;
+            pc <= `ysyx_25060170_ZERO32;
         end
         else begin
             pc <= pc_o + `ysyx_25060170_PLUS4;
         end
     end
 end
-
+// assign pc_o = rst ? 
 assign next_pc_o = pc_o + `ysyx_25060170_PLUS4;      
 
-assign pc_o = jal_jalr_i ? bp_pc_i : pc ;
+assign pc_o = pc ;
 // assign next_pc_o =  pc_o + `ysyx_25060170_PLUS4 ;
 
 

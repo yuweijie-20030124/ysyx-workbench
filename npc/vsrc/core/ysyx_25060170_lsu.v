@@ -10,40 +10,40 @@ module ysyx_25060170_lsu(
     ,input  wire [`ysyx_25060170_DATA]        store_data_i          //<<i<<
     ,input  wire [3:0]                        ls_ctl_i              //<<i<<
     //pipeline control  
-	,input	wire					          wb_ready_i            //<<i<<
+	,input	wire					          mem_ready_i           //<<i<<
 	,input	wire					          ex_valid_i            //<<i<<
-    ,input  wire                              pipeline_id_stall_i   //<<i<<
+    // ,input  wire                              pipeline_id_stall_i   //<<i<<
     //output
  	,output	wire					          ls_ready_o            //>>o>>
  	,output	wire					          ls_valid_o            //>>o>>
  	,output	wire					          ls_flush_o            //>>o>>
     ,output wire                              ls_jump_o             //>>o>>
  	,output	wire [`ysyx_25060170_PC]          ls_jump_pc_o          //>>o>>
-    ,output wire                              pipeline_id_stall_o   //>>o>>
+    // ,output wire                              pipeline_id_stall_o   //>>o>>
 
-    //about dpi-c for mtrace    
+    //about dpi-c for mtrace & DPIC访存
     ,output wire                              re                    //>>o>>
     ,output wire                              we                    //>>o>>
-    ,input  reg  [`ysyx_25060170_DATA]        data_i                //<<i<<
+    // ,input  wire [`ysyx_25060170_DATA]        data_i                //<<i<<
     ,output reg  [`ysyx_25060170_DATA]        data_o                //>>o>>
     ,output wire [`ysyx_25060170_DATAADDR]    raddr                 //>>o>>
     ,output wire [`ysyx_25060170_DATAADDR]    waddr                 //>>o>>
     ,output reg  [7:0]                        wlen                  //>>o>>
     ,output reg  [7:0]                        rlen                  //>>o>>
     //forwarding    
-    ,output wire [`ysyx_25060170_DATA]        ls_data_forward_o     //>>o>>
-    ,output wire [`ysyx_25060170_DATA]        ls_data_o             //>>o>>
-    //output to ls_wb_reg   
+    // ,output wire [`ysyx_25060170_DATA]        ls_data_forward_o     //>>o>>
+    //output to ls_wb_reg  
+    // ,output wire [`ysyx_25060170_DATA]        ls_data_o             //>>o>> 
     ,output wire [`ysyx_25060170_INST]        inst_o                //>>o>>
     ,output wire [`ysyx_25060170_PC]          pc_o                  //>>o>>
     ,output wire [`ysyx_25060170_PC]          next_pc_o             //>>o>>
+    // ,output wire [`ysyx_25060170_DATA]        ls_alu_res_o          //>>o>>
 );
 
 //*****************************pipeline control signals********************************//
- reg  [`ysyx_25060170_DATA]     load_data ;
 
-assign ls_ready_o = wb_ready_i | (data_ok  & (re | we));
-assign ls_valid_o = ex_valid_i | (data_ok  & (re | we));
+assign ls_ready_o = mem_ready_i | (data_ok  & (re | we));
+assign ls_valid_o = ex_valid_i  | (data_ok  & (re | we));
 
 reg data_ok;
 
@@ -76,27 +76,27 @@ wire [1:0] byte_sel = alu_res_i[1:0];  // 32-bit: 2 bits for byte selection
 wire [1:0] half_sel = alu_res_i[1:0];  // 32-bit: 2 bits for halfword selection
 // word selection not needed for 32-bit as it's always aligned to 4 bytes
 
-reg [7:0] data_byte = data_i[7:0];
-reg [15:0] data_half = data_i[15:0];
-wire [31:0] data_word = data_i;  // 32-bit word
+// reg [7:0] data_byte = data_i[7:0];
+// reg [15:0] data_half = data_i[15:0];
+// wire [31:0] data_word = data_i;  // 32-bit word
 
-always @(*) begin
-    if (rst == `ysyx_25060170_RSTABLE) begin
-        load_data = `ysyx_25060170_ZERO32;
-    end 
-    else if (ls_ctl_i[3] == 1'b1) begin
-        case (ls_ctl_i[2:0])
-            3'b001: load_data = {{24{data_byte[7]}}, data_byte};    // LB: sign-extended byte
-            3'b010: load_data = {{16{data_half[15]}}, data_half};   // LH: sign-extended halfword
-            3'b011: load_data = data_word;                          // LW: word
-            3'b101: load_data = {24'b0, data_byte};                 // LBU: zero-extended byte
-            3'b110: load_data = {16'b0, data_half};                 // LHU: zero-extended halfword
-            default: load_data = `ysyx_25060170_ZERO32;
-        endcase
-    end else begin
-        load_data = `ysyx_25060170_ZERO32;
-    end
-end
+// always @(*) begin
+//     if (rst == `ysyx_25060170_RSTABLE) begin
+//         load_data = `ysyx_25060170_ZERO32;
+//     end 
+//     else if (ls_ctl_i[3] == 1'b1) begin
+//         case (ls_ctl_i[2:0])
+//             3'b001: load_data = {{24{data_byte[7]}}, data_byte};    // LB: sign-extended byte
+//             3'b010: load_data = {{16{data_half[15]}}, data_half};   // LH: sign-extended halfword
+//             3'b011: load_data = data_word;                          // LW: (word ls_ctl_i = B=1011)
+//             3'b101: load_data = {24'b0, data_byte};                 // LBU: zero-extended byte
+//             3'b110: load_data = {16'b0, data_half};                 // LHU: zero-extended halfword
+//             default: load_data = `ysyx_25060170_ZERO32;
+//         endcase
+//     end else begin
+//         load_data = `ysyx_25060170_ZERO32;
+//     end
+// end
 
 //--------------------------store--------------------------------------------------------------------//
 reg [3:0] sb_mask;  // 32-bit: 4 bytes
@@ -140,17 +140,19 @@ always @(*) begin
     if (rst == `ysyx_25060170_RSTABLE) begin
         data_o = `ysyx_25060170_ZERO32;
         wlen = 8'd0;
-    end else begin
-        case (ls_ctl_i)
-            4'b0001: begin  // SB
+    end
+    else if (ls_ctl_i[3] == 1'b0) begin
+        
+        case (ls_ctl_i[2:0])
+            3'b001: begin  // SB
                 data_o = {4{store_data_i[7:0]}};  // Replicate byte to all positions
                 wlen = {{4{1'b0}}, sb_mask}; 
             end
-            4'b0010: begin  // SH
+            3'b010: begin  // SH
                 data_o = {2{store_data_i[15:0]}};  // Replicate halfword to both positions
                 wlen = {{4{1'b0}}, sh_mask}; 
             end
-            4'b0100: begin  // SW
+            3'b100: begin  // SW
                 data_o = store_data_i;
                 wlen = {{4{1'b0}}, sw_mask};
             end
@@ -177,20 +179,21 @@ end
 
 //------------------------output----------------------------------------------------------------------//
 //out to wbu
-assign ls_data_o = re ? load_data : `ysyx_25060170_ZERO32;
+// assign ls_data_o = re ? load_data : `ysyx_25060170_ZERO32;
 
 //out to ifu
 assign ls_flush_o = ls_jump_o;  
 assign ls_jump_pc_o = alu_res_i;
 assign ls_jump_o = 1'b0;
 //out to idu
- assign ls_data_forward_o  = re ? load_data : alu_res_i ;
+//  assign ls_data_forward_o  = alu_res_i ;
 
-//***************************output to ls_wb_reg***********************************************//
+//***************************output to ls_mem_reg***********************************************//
 assign inst_o               =   inst_i              ;
 assign pc_o                 =   pc_i                ;
 assign next_pc_o            =   next_pc_i           ;
-assign pipeline_id_stall_o  =   pipeline_id_stall_i ;
+// assign ls_alu_res_o         =   alu_res_i           ;
+// assign pipeline_id_stall_o  =   pipeline_id_stall_i ;
 
 endmodule
 

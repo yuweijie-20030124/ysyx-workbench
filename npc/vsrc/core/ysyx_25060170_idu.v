@@ -10,12 +10,23 @@ module ysyx_25060170_idu(
 	,input 	wire 								bp_jump_i			//<<i<<
 	//data forward
 	,input	wire [`ysyx_25060170_REGADDR]		ex_addr_forward		//<<i<<	
-	,input	wire [`ysyx_25060170_DATA]			ex_data_forward		//<<i<<	
+	,input	wire [`ysyx_25060170_DATA]			ex_data_forward		//<<i<<
+	// ,input  wire [`ysyx_25060170_REGADDR]		ex_op2_addr_forward //<<I<<
+	// ,input  wire [`ysyx_25060170_DATA]			ex_op2_data_forward	//<<I<<
 	,input	wire [`ysyx_25060170_REGADDR]		ls_addr_forward		//<<i<<	
-	,input	wire [`ysyx_25060170_DATA]			ls_data_forward		//<<i<<	
+	,input	wire [`ysyx_25060170_DATA]			ls_data_forward		//<<i<<
+	,input	wire [`ysyx_25060170_REGADDR]		mem_addr_forward	//<<i<<	
+	,input	wire [`ysyx_25060170_DATA]			mem_data_forward	//<<i<<	
 	,input	wire [`ysyx_25060170_REGADDR]		wb_addr_forward		//<<i<<	
 	,input	wire [`ysyx_25060170_DATA]			wb_data_forward		//<<i<<	
-	,input 	wire								ex_load_ena			//<<i<<
+	,input 	wire								ex_load_ena			//<<i<<	判断exu的指令是不是load
+	,input  wire      							ls_load_ena			//<<i<< 判断lsu的指令是不是load
+	/* verilator lint_off UNUSEDSIGNAL */
+	,input  wire                                mem_load_ena		//<<i<< 判断mem的指令是不是load
+	,input  wire                                wb_load_ena         //<<i<< 判断wbu的指令是不是load
+	/* verilator lint_on  UNUSEDSIGNAL */
+	,input  wire								ex_valid_i			//<<i<< 
+	,input  wire								ls_valid_i			//<<i<< 
 	,input	wire								ex_csr_ena			//<<i<<
 	,input	wire								ls_csr_ena			//<<i<<
 	//regfile signal
@@ -43,7 +54,8 @@ module ysyx_25060170_idu(
 	,output reg  [`ysyx_25060170_IMM]     		imm 				//>>o>>
 	,output	wire [`ysyx_25060170_REGADDR] 		idu_dpic_rd_addr	//>>o>>
 	,output wire [`ysyx_25060170_INST]       	inst_o				//>>o>>
-	,output wire [4:0] 							csr_imm				//>>o>>
+	,output wire [4:0] 							csr_imm_o			//>>o>>
+	// ,output wire [`ysyx_25060170_REGADDR]		store_addr_o		//>>o>>
 	//to ifu
 	,output wire								jump_ena_o			//>>o>>
 	,output wire [`ysyx_25060170_PC]			jump_pc_o			//>>o>>
@@ -95,33 +107,31 @@ wire csr_op1_stall;
 wire csr_op2_stall;
 wire id_stall_ena;
 
-assign op1_relate = ((rst == 1) & (rs1_addr == 5'd0)) ? 1'b0 : rs1_ena & ex_load_ena & (rs1_addr == ex_addr_forward) ;
-assign op2_relate = ((rst == 1) & (rs2_addr == 5'd0)) ? 1'b0 : rs2_ena & ex_load_ena & (rs2_addr == ex_addr_forward) ;
-
-assign csr_op1_stall = (ex_op1_forward & ex_csr_ena) | (ls_op1_forward & ls_csr_ena);
-assign csr_op2_stall = (ex_op2_forward & ex_csr_ena) | (ls_op2_forward & ls_csr_ena);
-
-assign id_stall_ena = (rst == 1) ? 1'b0 : op1_relate | op2_relate | csr_op1_stall | csr_op2_stall;
-
 //forward
-wire ex_op1_forward ;
-wire ls_op1_forward;  
-wire wb_op1_forward;
+wire  ex_op1_forward;
+wire  ls_op1_forward;
+wire mem_op1_forward;  
+wire  wb_op1_forward;
 
-assign ex_op1_forward  = (ex_load_ena | ~rs1_ena | (rs1_addr == 5'd0)) ? 1'b0 : (ex_addr_forward == rs1_addr);
-assign ls_op1_forward  = (~rs1_ena | (rs1_addr == 5'd0)) ? 1'b0 : (ls_addr_forward == rs1_addr);
-assign wb_op1_forward  = (~rs1_ena | (rs1_addr == 5'd0)) ? 1'b0 : (wb_addr_forward == rs1_addr);
+assign  ex_op1_forward  = (ex_load_ena | ~rs1_ena | (rs1_addr == 5'd0)) ? 1'b0 : (ex_addr_forward == rs1_addr);
+assign  ls_op1_forward  = (ls_load_ena | ~rs1_ena | (rs1_addr == 5'd0)) ? 1'b0 : ( ls_addr_forward == rs1_addr);
+assign mem_op1_forward  = (~rs1_ena | (rs1_addr == 5'd0)) ? 1'b0 : (mem_addr_forward == rs1_addr);
+assign  wb_op1_forward  = (~rs1_ena | (rs1_addr == 5'd0)) ? 1'b0 : ( wb_addr_forward == rs1_addr);
 
-wire ex_op2_forward ;
-wire ls_op2_forward;  
-wire wb_op2_forward;
+wire  ex_op2_forward;
+wire  ls_op2_forward;
+wire mem_op2_forward;  
+wire  wb_op2_forward;
 
-assign ex_op2_forward  = (ex_load_ena | ~rs2_ena | (rs2_addr == 5'd0)) ? 1'b0 : (ex_addr_forward == rs2_addr);
-assign ls_op2_forward  = (~rs2_ena | (rs2_addr == 5'd0)) ? 1'b0 : (ls_addr_forward == rs2_addr);
-assign wb_op2_forward  = (~rs2_ena | (rs2_addr == 5'd0)) ? 1'b0 : (wb_addr_forward == rs2_addr);
+assign  ex_op2_forward  = (ex_load_ena | ~rs2_ena | (rs2_addr == 5'd0)) ? 1'b0 : (ex_addr_forward == rs2_addr);
+assign  ls_op2_forward  = (ls_load_ena | ~rs2_ena | (rs2_addr == 5'd0)) ? 1'b0 : ( ls_addr_forward == rs2_addr);
+assign mem_op2_forward  = (~rs2_ena | (rs2_addr == 5'd0)) ? 1'b0 : (mem_addr_forward == rs2_addr);
+assign  wb_op2_forward  = (~rs2_ena | (rs2_addr == 5'd0)) ? 1'b0 : ( wb_addr_forward == rs2_addr);
 
-wire op1_forward_ena = (ex_op1_forward | ls_op1_forward | wb_op1_forward) & rs1_ena;
-wire op2_forward_ena = (ex_op2_forward | ls_op2_forward | wb_op2_forward) & rs2_ena;
+wire op1_forward_ena = (ex_op1_forward | ls_op1_forward | mem_op1_forward | wb_op1_forward) & rs1_ena;
+wire op2_forward_ena = (ex_op2_forward | ls_op2_forward | mem_op2_forward | wb_op2_forward) & rs2_ena;
+
+//译码取操作数的时候 当前处于执行中的指令是要晚发射的，于是优先取ex中的操作数
 
 wire [`ysyx_25060170_DATA] op1_forward_data;
 wire [`ysyx_25060170_DATA] op2_forward_data;
@@ -131,20 +141,36 @@ wire [`ysyx_25060170_DATA] op2_forward_data;
 // 				wb_op1_forward ? wb_data_forward :
 // 				`ysyx_25060170_ZERO32;
 
-assign op1_forward_data = `ysyx_25060170_ZERO32 |
-					{32{ex_op1_forward}} & ex_data_forward |
-					{32{ls_op1_forward & (~ex_op1_forward)}} & ls_data_forward |
-					{32{wb_op1_forward & (~ex_op1_forward)   & (~ls_op1_forward)}} & wb_data_forward ;
+// assign op1_forward_data = `ysyx_25060170_ZERO32 |
+// 					{32{ex_op1_forward}} & ex_data_forward |
+// 					{32{ls_op1_forward & (~ex_op1_forward)}} & ls_data_forward 							   		          |
+// 					{32{ls_op1_forward & (~ex_op1_forward)   & (~mem_op1_forward)}} 				   & mem_data_forward |
+// 					{32{wb_op1_forward & (~ex_op1_forward)   & (~mem_op1_forward) &(~ls_op1_forward)}} &  wb_data_forward ;
+
+assign op1_forward_data =  ex_op1_forward ?  ex_data_forward :
+						   ls_op1_forward ?  ls_data_forward :
+						  mem_op1_forward ? mem_data_forward :
+						   wb_op1_forward ?  wb_data_forward :	`ysyx_25060170_ZERO32 ;
 
 // assign op2_forward_data = 	ex_op2_forward ? ex_data_forward :
 // 				ls_op2_forward ? ls_data_forward :
 // 				wb_op2_forward ? wb_data_forward :
 // 				`ysyx_25060170_ZERO32;
 
-assign op2_forward_data = `ysyx_25060170_ZERO32 |
-					{32{ex_op2_forward}} & ex_data_forward |
-					{32{ls_op2_forward & (~ex_op2_forward)}} & ls_data_forward |
-					{32{wb_op2_forward & (~ex_op2_forward)   & (~ls_op2_forward)}} & wb_data_forward ;
+// assign op2_forward_data = `ysyx_25060170_ZERO32 |
+// 					{32{ex_op2_forward}} & ex_data_forward |
+// 					{32{ls_op2_forward & (~ex_op2_forward)}} & ls_data_forward |
+// 					{32{wb_op2_forward & (~ex_op2_forward)   & (~ls_op2_forward)}} & wb_data_forward ;
+// assign op2_forward_data = `ysyx_25060170_ZERO32 |
+// 					{32{ex_op2_forward}} & ex_data_forward |
+// 					{32{ls_op2_forward & (~ex_op2_forward)}} & ls_data_forward 							   		          |
+// 					{32{ls_op2_forward & (~ex_op2_forward)   & (~mem_op2_forward)}} 				   & mem_data_forward |
+// 					{32{wb_op2_forward & (~ex_op2_forward)   & (~mem_op2_forward) &(~ls_op1_forward)}} & wb_data_forward  ;
+
+assign op2_forward_data =  ex_op2_forward ?  ex_data_forward :
+						   ls_op2_forward ?  ls_data_forward :
+						  mem_op2_forward ? mem_data_forward :
+						   wb_op2_forward ?  wb_data_forward :	`ysyx_25060170_ZERO32 ;
 
 //*************************************output*************************************//
 //out to id_ex_reg
@@ -158,9 +184,10 @@ assign next_pc_o = ((alusrc_o == `INST_JAL) | jump_ena_o ) ?  (pc_i + imm)  		:
 // 					{32{((alusrc_o == `INST_JAL) | jump_ena_o )}} 	&	(pc_i + imm) |
 // 					{32{(alusrc_o == `INST_JALR)}}					&	((op1 + imm)&(~1));
 
-assign pc_o = pc_i	;
-assign inst_o = inst_i	;
-assign csr_imm = rs1;
+assign pc_o 	 	= pc_i		;
+assign inst_o 	 	= inst_i	;
+assign csr_imm_o 	= rs1		;
+// assign store_addr_o = rs2		;
 
 //rs1
 assign op1 = `ysyx_25060170_ZERO32 							|
@@ -168,6 +195,7 @@ assign op1 = `ysyx_25060170_ZERO32 							|
 			 {32{rs1_ena & (~op1_forward_ena)}}	& rs1_data;
 
 //rs2  
+//特殊情况，如果
 assign op2 = `ysyx_25060170_ZERO32 							|
 			 {32{op2_forward_ena}} & op2_forward_data 		|
 			 {32{rs2_ena & (~op2_forward_ena)}}	 & rs2_data;
@@ -192,10 +220,28 @@ assign ex_branch =  1'b0 |
 
 
 //*************************************竞争冒险*************************************//
-assign id_flush_o 	 = ex_branch ^ bp_jump_i;
-assign id_ready_o 	 = ex_ready_i 	;
-assign id_valid_o 	 = if_valid_i 	; 
-assign id_stall_o    = id_stall_ena ;
+//若上一条指令是load访存后将值给通用寄存器，当前指令是add/store，此时产生数据依赖
+
+// assign op1_relate = ((rst == 1) & (rs1_addr == 5'd0)) ? 1'b0 : rs1_ena & (ex_load_ena & (rs1_addr == ex_addr_forward)) | (ls_load_ena & (rs1_addr == ls_addr_forward)) | (mem_load_ena & (rs1_addr == mem_addr_forward)) | (wb_load_ena & (rs1_addr == wb_addr_forward));
+// assign op2_relate = ((rst == 1) & (rs2_addr == 5'd0)) ? 1'b0 : rs2_ena & (ex_load_ena & (rs2_addr == ex_addr_forward)) | (ls_load_ena & (rs2_addr == ls_addr_forward)) | (mem_load_ena & (rs2_addr == mem_addr_forward)) | (wb_load_ena & (rs2_addr == wb_addr_forward));
+assign op1_relate = ((rst == 1) & (rs1_addr == 5'd0)) ? 1'b0 : rs1_ena & (ex_load_ena & ~ex_valid_i & (rs1_addr == ex_addr_forward)) | (ls_load_ena & ~ls_valid_i & (rs1_addr == ls_addr_forward)) ;
+// | (mem_load_ena & (rs1_addr == mem_addr_forward)) | (wb_load_ena & (rs1_addr == wb_addr_forward));
+assign op2_relate = ((rst == 1) & (rs2_addr == 5'd0)) ? 1'b0 : rs2_ena & (ex_load_ena & ~ex_valid_i & (rs2_addr == ex_addr_forward)) | (ls_load_ena & ~ls_valid_i & (rs2_addr == ls_addr_forward)) ;
+// | (mem_load_ena & (rs2_addr == mem_addr_forward)) | (wb_load_ena & (rs2_addr == wb_addr_forward));
+
+
+// assign csr_op1_stall = (ex_op1_forward & ex_csr_ena) | (ls_op1_forward & ls_csr_ena) | (mem_op1_forward & mem_csr_ena);
+// assign csr_op2_stall = (ex_op2_forward & ex_csr_ena) | (ls_op2_forward & ls_csr_ena) | (mem_op2_forward & mem_csr_ena);
+assign csr_op1_stall = (ex_op1_forward & ex_csr_ena & ~ex_valid_i ) | (ls_op1_forward & ls_csr_ena & ~ls_valid_i );
+assign csr_op2_stall = (ex_op2_forward & ex_csr_ena & ~ex_valid_i ) | (ls_op2_forward & ls_csr_ena & ~ls_valid_i );
+
+assign id_stall_ena  = (rst == 1) ? 1'b0 : op1_relate | op2_relate | csr_op1_stall | csr_op2_stall;
+
+
+assign id_flush_o 	 = ex_branch ^ bp_jump_i  	;
+assign id_ready_o 	 = ex_ready_i & ~id_stall_o ;
+assign id_valid_o 	 = if_valid_i | id_stall_o	; 
+assign id_stall_o    = id_stall_ena 		  	;
 
 //*************************************out to ifu*************************************//
 assign jump_ena_o = (ex_branch ^ bp_jump_i);
@@ -213,10 +259,10 @@ assign jump_pc_o = jump_ena_o ? (o1 + o2) :
 
 //*************************************regfile*************************************//
 //output to regfile
-assign rs1_addr = rs1_ena ? rs1 : 5'd0 ;
-assign rs2_addr = rs2_ena ? rs2 : 5'd0 ;
-assign rd_ena  = (rd == 5'd0) ? 1'b0 : (wbctl_o == 2'b00) ? 1'b0 : 1'b1 ;
-assign rd_addr = rd_ena ? rd : 5'd0 ;
+assign rs1_addr = rs1_ena 		? rs1 	: 5'd0 								;
+assign rs2_addr = rs2_ena 		? rs2 	: 5'd0 								;
+assign rd_ena  = (rd == 5'd0) 	? 1'b0 	: (wbctl_o == 2'b00) ? 1'b0 : 1'b1  ;
+assign rd_addr = rd_ena 		? rd 	: 5'd0 								;
 
 
 endmodule

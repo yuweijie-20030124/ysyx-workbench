@@ -20,9 +20,9 @@ VL_INLINE_OPT void Vysyx_25060170_fishtailcore___024root____Vdpiimwrap_ysyx_2506
     pc_inst_end(thepc_data__Vcvt, the_inst__Vcvt);
 }
 
-extern "C" void pmem_read(int raddr, int* rdata, char rlen);
+extern "C" void pmem_read(int raddr, int* rdata, char rlen, int mode);
 
-VL_INLINE_OPT void Vysyx_25060170_fishtailcore___024root____Vdpiimwrap_ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_DPIC__DOT__pmem_read_TOP(IData/*31:0*/ raddr, IData/*31:0*/ &rdata, CData/*7:0*/ rlen) {
+VL_INLINE_OPT void Vysyx_25060170_fishtailcore___024root____Vdpiimwrap_ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_DPIC__DOT__pmem_read_TOP(IData/*31:0*/ raddr, IData/*31:0*/ &rdata, CData/*7:0*/ rlen, IData/*31:0*/ mode) {
     VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_fishtailcore___024root____Vdpiimwrap_ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_DPIC__DOT__pmem_read_TOP\n"); );
     // Body
     int raddr__Vcvt;
@@ -30,7 +30,9 @@ VL_INLINE_OPT void Vysyx_25060170_fishtailcore___024root____Vdpiimwrap_ysyx_2506
     int rdata__Vcvt;
     char rlen__Vcvt;
     for (size_t rlen__Vidx = 0; rlen__Vidx < 1; ++rlen__Vidx) rlen__Vcvt = rlen;
-    pmem_read(raddr__Vcvt, &rdata__Vcvt, rlen__Vcvt);
+    int mode__Vcvt;
+    for (size_t mode__Vidx = 0; mode__Vidx < 1; ++mode__Vidx) mode__Vcvt = mode;
+    pmem_read(raddr__Vcvt, &rdata__Vcvt, rlen__Vcvt, mode__Vcvt);
     rdata = rdata__Vcvt;
 }
 
@@ -178,8 +180,8 @@ void Vysyx_25060170_fishtailcore___024root____Vdpiexp_ysyx_25060170_fishtailcore
     ret_flag = ((0x8067U == vlSymsp->TOP.ysyx_25060170_fishtailcore__DOT__dpic_ifu_inst)
                  ? 1U : 0U);
     pc = ((0x67U == (0x7fU & vlSymsp->TOP.ysyx_25060170_fishtailcore__DOT__dpic_ifu_inst))
-           ? (0xfffffffeU & vlSymsp->TOP.ysyx_25060170_fishtailcore__DOT__if_id_pc)
-           : vlSymsp->TOP.ysyx_25060170_fishtailcore__DOT__if_id_pc);
+           ? (0xfffffffeU & vlSymsp->TOP.ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_ifu__DOT__pc)
+           : vlSymsp->TOP.ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_ifu__DOT__pc);
 }
 
 #ifdef VL_DEBUG
@@ -210,8 +212,6 @@ void Vysyx_25060170_fishtailcore___024root___eval_triggers__act(Vysyx_25060170_f
     // Body
     vlSelf->__VactTriggered.at(0U) = ((IData)(vlSelf->clk) 
                                       & (~ (IData)(vlSelf->__Vtrigrprev__TOP__clk)));
-    vlSelf->__VactTriggered.at(1U) = ((~ (IData)(vlSelf->clk)) 
-                                      & (IData)(vlSelf->__Vtrigrprev__TOP__clk));
     vlSelf->__Vtrigrprev__TOP__clk = vlSelf->clk;
 #ifdef VL_DEBUG
     if (VL_UNLIKELY(vlSymsp->_vm_contextp__->debug())) {

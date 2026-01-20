@@ -51,8 +51,10 @@
 	,input  wire	[`ysyx_25060170_REG] 		mcause		//<<i<<
 
 	//from lsu
+	/* verilator lint_off UNUSEDSIGNAL */
 	,input wire 								re			//<<i<<
 	,input wire 								we			//<<i<<
+	/* verilator lint_on UNUSEDSIGNAL */
 	,input wire [`ysyx_25060170_DATA] 			data_i		//<<i<<
 	,input wire [7:0] 							wlen		//<<i<<
 	,input wire [7:0] 							rlen		//<<i<<
@@ -63,9 +65,9 @@
 	,input wire     [`ysyx_25060170_PC]        	wbu_dpic_next_pc	//<<i<<
 	,input wire     							wbu_dpic_valid		//<<i<<
 	/* verilator lint_off UNUSEDSIGNAL */
-	,input wire                                	wbu_dpic_id_stall	//<<i<<
-	,input wire 								pipeline_id_stall	//<<i<<
-	,input wire                                	wbu_dpic_ls_valid	//<<i<<
+	// ,input wire                                	wbu_dpic_id_stall	//<<i<<
+	// ,input wire 								pipeline_id_stall	//<<i<<
+	// ,input wire                                	wbu_dpic_ls_valid	//<<i<<
 	
 	/* verilator lint_on UNUSEDSIGNAL */
 	//to lsu
@@ -86,7 +88,7 @@
 
 import "DPI-C" function void pc_inst_end(input int thepc_data, input int the_inst);
 
-import "DPI-C" function void pmem_read(input int raddr, output int rdata, input byte rlen);
+import "DPI-C" function void pmem_read(input int raddr, output int rdata, input byte rlen, input int mode);
 
 import "DPI-C" function void pmem_write(input int waddr, input int wdata, input byte wlen);
 
@@ -137,19 +139,47 @@ import "DPI-C" function void difftest_dut_regs(
  );
 
 /***********************************use dpic*************************************/
+wire [31:0] dpic_loadread = 32'd2;
+//DPIC最好用组合逻辑
+//用时序逻辑的话可能会导致赋值顺序的问题
+// always @(posedge clk) begin
+// always @(posedge clk) begin
+//     if (re) begin
+//         pmem_read(raddr, data_o, rlen, dpic_loadread);
+//     end
+//     if (we) begin
+//         pmem_write(waddr, data_i, wlen);
+//     end
+// end
 
-always @(negedge clk) begin
-    if (re) begin
-        pmem_read(raddr, data_o, rlen);
-    end
-    if (we) begin
-        pmem_write(waddr, data_i, wlen);
-    end
+// always @(*) begin
+// 	pmem_read(raddr, data_o, rlen, dpic_loadread);
+// end
+
+reg [`ysyx_25060170_DATA]	mem_data;//for delay
+
+//取指，从pc_i中获取inst_o
+wire [31:0] dpic_fetch = 32'd1;
+always @(*) begin
+	//mem访存读
+	if(re) begin
+	pmem_read(raddr, mem_data, rlen, dpic_loadread);	
+	end
+	else begin
+	mem_data = 0;
+	end
+	if(we) begin
+	pmem_write(waddr, data_i, wlen);
+	end
+	// else if(!we) begin
+	// data_i = 0;
+	// end
+	//fetch取指
+    pmem_read(pc_i,inst_o,rlen,dpic_fetch);
 end
 
-always @(*) begin
-    pmem_read(pc_i,inst_o,rlen);
-    
+always@(posedge clk) begin
+	data_o <= mem_data ;
 end
 
 //  always @(posedge clk) begin
@@ -171,16 +201,16 @@ end
  always@(*)begin
 	// pmem_read(pc_i,inst_o,rlen);
  	difftest_dut_regs(
- 		regs0  ,
- 		regs1  ,
- 		regs2  ,
- 		regs3  ,
- 		regs4  ,
- 		regs5  ,
- 		regs6  ,
- 		regs7  ,
- 		regs8  ,
- 		regs9  ,
+ 		regs0 ,
+ 		regs1 ,
+ 		regs2 ,
+ 		regs3 ,
+ 		regs4 ,
+ 		regs5 ,
+ 		regs6 ,
+ 		regs7 ,
+ 		regs8 ,
+ 		regs9 ,
  		regs10,
  		regs11,
  		regs12,
@@ -323,7 +353,7 @@ endtask
 // 		delay_pipeline_id_stall <= 0;
 // 	end
 // end
-
+	//提交并不包含写，用时序应该没问题。
 	always @(posedge clk) begin
 		// if(~wbu_dpic_id_stall & ~wbu_dpic_ls_valid) begin
 		// if(~wbu_dpic_ls_valid && ~delay_pipeline_id_stall) begin

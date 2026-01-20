@@ -8,7 +8,7 @@ endif
 
 # Makefile for NPC simulation
 # 检查语法可以用
-TEST_MODULE = ysyx_25060170_idu
+TEST_MODULE = ysyx_25060170_bpu
 TEST_FILE   = vsrc/core/$(TEST_MODULE).v
 
 SRC_FILES = $(wildcard csrc/*.c)
@@ -19,7 +19,8 @@ SRC_FILES = $(wildcard csrc/*.c)
 VERILOG_FILES = $(wildcard vsrc/core/*.v vsrc/core/define.v)
 # vsrc/debug/*.v vsrc/utils/*.v
 
-VERILATOR = verilator
+VERILATOR = /home/yuweijie/required_software_ysyx/verilator/bin/verilator
+
 
 NPC_IMG?= 
 

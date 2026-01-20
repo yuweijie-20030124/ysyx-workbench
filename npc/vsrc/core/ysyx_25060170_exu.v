@@ -10,12 +10,13 @@ module ysyx_25060170_exu(
     ,input  wire [2:0]                      op2_sel_i	        //<<i<<
     ,input  wire [`ysyx_25060170_REGADDR]   rd_addr_i	        //<<i<<
     ,input  wire [`ysyx_25060170_REGADDR]   rs1_addr_i	      //<<i<<
+    // ,input  wire [`ysyx_25060170_REGADDR]   rs2_addr_i        //<<i<<
     ,input  wire [`ysyx_25060170_IMM]       imm_i		          //<<i<<
     ,input  wire [`ysyx_25060170_PC]        pc_i		          //<<i<<
     ,input  wire [`ysyx_25060170_PC]        next_pc_i	        //<<i<<
     ,input  wire [`ysyx_25060170_INST]      inst_i	          //<<i<<
     ,input  wire [7:0]                      alu_sel_i	        //<<i<<
-    ,input  wire                            pipeline_id_stall_i  //<<i<<
+    // ,input  wire                            pipeline_id_stall_i  //<<i<<
     //控制冒险
     ,input  wire                            ls_ready_i	      //<<i<<
     ,input  wire                            id_valid_i	      //<<i<<
@@ -29,13 +30,14 @@ module ysyx_25060170_exu(
     ,output wire [`ysyx_25060170_DATA]      exu_res_o	        //>>o>>
     ,output wire [11:0]                     csr_addr_o	      //>>o>>
     ,output wire [6:0]                      csr_ctl_o	        //>>o>>
-    ,output wire                            pipeline_id_stall_o  //>>o>>
+    // ,output wire [`ysyx_25060170_REGADDR]   rs2_addr_o        //>>o>>
+    // ,output wire                            pipeline_id_stall_o  //>>o>>
 );
 
 //********************************控制冒险********************************//
 assign ex_valid_o = id_valid_i;
 assign ex_ready_o = ls_ready_i; 
-assign pipeline_id_stall_o = pipeline_id_stall_i;
+// assign pipeline_id_stall_o = pipeline_id_stall_i;
 
 //!!!!!乘除法并没有办法被综合得很好，能乘除主要是因为有软件，最好还是用硬件乘除器!!!!!
 
@@ -197,6 +199,8 @@ assign exu_res_o = alu_res |
                   {32{csrrxi_ena}} & csr_op ;
 
 assign csr_ctl_o = {csrrw_ena, csrrs_ena, csrrc_ena, csr_wr_ena, csr_rd_ena, ecall_ena, mret_ena};
+
+// assign rs2_addr_o = rs2_addr_i;
 
 assign inst_o =  inst_i;
 assign pc_o = pc_i;
