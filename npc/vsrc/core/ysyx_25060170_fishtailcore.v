@@ -31,6 +31,8 @@ ysyx_25060170_bpu u_ysyx_25060170_bpu (
     ,.ls_wb_forward_addr ( ls_rd_addr_forward   )//<<i<<
     ,.ex_ls_forward_data ( ex_rd_data_forward   )//<<i<<
     ,.ex_ls_forward_addr ( ex_rd_addr_forward   )//<<i<<
+    ,.ls_mem_forward_data( ls_rd_data_forward   )//<<i<<
+    ,.ls_mem_forward_addr( ls_rd_addr_forward   )//<<i<<
     ,.wb_rd_addr_forward ( wb_rd_addr_forward   )//<<i<<
     ,.wb_rd_data_forward ( wb_rd_data_forward   )//<<i<<
     ,.bp_rs1_data_i      ( bp_rs1_data          )//<<i<<
@@ -60,7 +62,7 @@ wire                                if_valid;
 wire      [`ysyx_25060170_PC]       if_id_pc;
 wire      [`ysyx_25060170_PC]       if_id_next_pc;
 // wire      [`ysyx_25060170_INST]     if_id_inst;
-wire      [`ysyx_25060170_INST]     dpic_ifu_inst             ;
+wire      [`ysyx_25060170_INST]     dpic_ifu_inst        ;
 // wire      [`ysyx_25060170_PC]       if_pc;
 // wire      [`ysyx_25060170_PC]       if_next_pc; 
 //if_next_pc also use dpic to get instruction

@@ -19,6 +19,8 @@ module ysyx_25060170_bpu(
     ,input  wire [`ysyx_25060170_REGADDR]   ls_wb_forward_addr  //<<i<<
     ,input  wire [`ysyx_25060170_REG]       ex_ls_forward_data  //<<i<<
     ,input  wire [`ysyx_25060170_REGADDR]   ex_ls_forward_addr  //<<i<<
+    ,input  wire [`ysyx_25060170_REG]       ls_mem_forward_data //<<i<<
+    ,input  wire [`ysyx_25060170_REGADDR]   ls_mem_forward_addr //<<i<<
     ,input  wire [`ysyx_25060170_REG]       bp_rs1_data_i       //<<i<<
     ,input  wire [`ysyx_25060170_REGADDR]   wb_rd_addr_forward  //<<i<<
     ,input  wire [`ysyx_25060170_REG]       wb_rd_data_forward  //<<i<<
@@ -33,6 +35,7 @@ module ysyx_25060170_bpu(
     ,output reg                             bp_predict_o        //>>o>>
 );
     reg                                     jal_jalr_temp;
+    // reg                                     pre_branch;//1的话说明刚刚预测跳转，为0的话说明预测不跳转
     // wire                                    jal_jalr;
     wire   [`ysyx_25060170_REGADDR]         rd_addr = inst_i[11:7];
     //jalr 译码模块
@@ -160,21 +163,24 @@ wire [31:0] jal_offset  = {{11{jal_imm[20]}},  jal_imm};
 wire [31:0] br_offset   = {{19{b_imm[12]}},   b_imm};
 wire [31:0] jalr_offset = {{20{jalr_imm[11]}}, jalr_imm};
 
-wire ls_wb_forward_en = (bp_rs1_addr_o == ls_wb_forward_addr) ? 1 : 0;
-wire ex_ls_forward_en = (bp_rs1_addr_o == ex_ls_forward_addr) ? 1 : 0;
-wire wbu_forward_en   = (rd_addr == wb_rd_addr_forward) ? 1 : 0;
+wire ls_wb_forward_en  = (bp_rs1_addr_o == ls_wb_forward_addr ) ? 1 : 0;
+wire ex_ls_forward_en  = (bp_rs1_addr_o == ex_ls_forward_addr ) ? 1 : 0;
+wire ls_mem_forward_en = (bp_rs1_addr_o == ls_mem_forward_addr) ? 1 : 0;
+wire wbu_forward_en    = (rd_addr == wb_rd_addr_forward       ) ? 1 : 0;
 
-assign op1 =    (inst_jalr & ls_wb_forward_en) ?    ls_wb_forward_data  :
-                (inst_jalr & ex_ls_forward_en) ?    ex_ls_forward_data  :
-                (inst_jalr & wbu_forward_en  ) ?    wb_rd_data_forward  :
-                inst_jalr                      ?    bp_rs1_data_i       :
+assign op1 =    (inst_jalr & ls_wb_forward_en ) ?    ls_wb_forward_data  :
+                (inst_jalr & ex_ls_forward_en ) ?    ex_ls_forward_data  :
+                (inst_jalr & ls_mem_forward_en) ?    ls_mem_forward_data :
+                (inst_jalr & wbu_forward_en   ) ?    wb_rd_data_forward  :
+                inst_jalr                       ?    bp_rs1_data_i       :
                 pc_i;
 
-assign op2 = inst_jal                       ? jal_offset  :
-             inst_bxx                       ? br_offset   :
-             (inst_jalr & wbu_forward_en  ) ? 32'b0       :
-             inst_jalr                      ? jalr_offset :
-                                              32'd4;
+assign op2 =    inst_jal                        ?    jal_offset          :
+                inst_bxx                        ?    br_offset           :
+                (inst_jalr & wbu_forward_en   ) ?    32'b0               :
+                inst_jalr                       ?    jalr_offset         :
+                32'd4;
+                
 assign jal_jalr_temp = inst_jal | inst_jalr ;
 assign branch_o   = inst_bxx ;
 assign jump_pc = op1 + op2;

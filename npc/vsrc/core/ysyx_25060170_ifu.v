@@ -49,15 +49,15 @@ always@(posedge clk) begin
     end
     else begin
         if(stall) begin
-           pc <= pc; 
-        end
-        else if(ls_pc_jump_i) begin
-            pc <= ls_pc_i;
-            // $display("ls pc_o = 0x%h", pc_o); 
+            pc <= pc; 
         end
         else if(bp_pc_jump_i) begin
             pc <= bp_pc_i;
             // $display("bp pc_o = 0x%h", pc_o); 
+        end
+        else if(ls_pc_jump_i) begin
+            pc <= ls_pc_i;
+            // $display("ls pc_o = 0x%h", pc_o); 
         end
         else if(id_pc_jump_i) begin
             pc <= id_pc_i;

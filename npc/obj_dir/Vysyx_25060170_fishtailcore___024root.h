@@ -191,6 +191,7 @@ class Vysyx_25060170_fishtailcore___024root final : public VerilatedModule {
         CData/*0:0*/ ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_wbu__DOT__u_ysyx_25060170_csr__DOT__mie_set;
         CData/*0:0*/ ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_wbu__DOT__u_ysyx_25060170_csr__DOT__mpie_set;
         CData/*1:0*/ ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_wbu__DOT__u_ysyx_25060170_csr__DOT__mpp_set;
+        CData/*0:0*/ __VdfgTmp_h46471f4e__0;
         CData/*2:0*/ __Vtableidx2;
         CData/*0:0*/ __Vtrigrprev__TOP__clk;
         CData/*0:0*/ __VactContinue;
@@ -210,9 +211,9 @@ class Vysyx_25060170_fishtailcore___024root final : public VerilatedModule {
         IData/*31:0*/ ysyx_25060170_fishtailcore__DOT__id_ex_reg_inst;
         IData/*31:0*/ ysyx_25060170_fishtailcore__DOT__id_ex_reg_next_pc;
         IData/*31:0*/ ysyx_25060170_fishtailcore__DOT__id_ex_reg_op1;
-        IData/*31:0*/ ysyx_25060170_fishtailcore__DOT__id_ex_reg_op2;
     };
     struct {
+        IData/*31:0*/ ysyx_25060170_fishtailcore__DOT__id_ex_reg_op2;
         IData/*31:0*/ ysyx_25060170_fishtailcore__DOT__id_ex_reg_imm;
         IData/*31:0*/ ysyx_25060170_fishtailcore__DOT__exu_res;
         IData/*31:0*/ ysyx_25060170_fishtailcore__DOT__ex_ls_reg_inst;

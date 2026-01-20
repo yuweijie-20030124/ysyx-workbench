@@ -287,6 +287,8 @@ VL_ATTR_COLD void Vysyx_25060170_fishtailcore___024root__trace_init_sub__TOP__0(
     tracep->declBus(c+188,"ls_wb_forward_addr", false,-1, 4,0);
     tracep->declBus(c+30,"ex_ls_forward_data", false,-1, 31,0);
     tracep->declBus(c+175,"ex_ls_forward_addr", false,-1, 4,0);
+    tracep->declBus(c+153,"ls_mem_forward_data", false,-1, 31,0);
+    tracep->declBus(c+188,"ls_mem_forward_addr", false,-1, 4,0);
     tracep->declBus(c+349,"bp_rs1_data_i", false,-1, 31,0);
     tracep->declBus(c+215,"wb_rd_addr_forward", false,-1, 4,0);
     tracep->declBus(c+221,"wb_rd_data_forward", false,-1, 31,0);
@@ -318,6 +320,7 @@ VL_ATTR_COLD void Vysyx_25060170_fishtailcore___024root__trace_init_sub__TOP__0(
     tracep->declBus(c+56,"jalr_offset", false,-1, 31,0);
     tracep->declBit(c+57,"ls_wb_forward_en", false,-1);
     tracep->declBit(c+58,"ex_ls_forward_en", false,-1);
+    tracep->declBit(c+57,"ls_mem_forward_en", false,-1);
     tracep->declBit(c+59,"wbu_forward_en", false,-1);
     tracep->popNamePrefix(1);
     tracep->pushNamePrefix("u_ysyx_25060170_ex_ls_reg ");
@@ -1715,23 +1718,25 @@ VL_ATTR_COLD void Vysyx_25060170_fishtailcore___024root__trace_full_sub_0(Vysyx_
                                 ? vlSelf->ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_regfile__DOT__regs
                                [vlSelf->ysyx_25060170_fishtailcore__DOT__idu_rs2_addr]
                                 : 0U)),32);
-    bufp->fullIData(oldp+352,((((IData)(vlSelf->ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_bpu__DOT__inst_jalr) 
-                                & ((IData)(vlSelf->ysyx_25060170_fishtailcore__DOT__bp_rs1_addr) 
-                                   == (IData)(vlSelf->ysyx_25060170_fishtailcore__DOT__ex_ls_reg_rd_addr)))
+    bufp->fullIData(oldp+352,(((IData)(vlSelf->__VdfgTmp_h46471f4e__0)
                                 ? vlSelf->ysyx_25060170_fishtailcore__DOT__ex_ls_reg_exu_res
                                 : (((IData)(vlSelf->ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_bpu__DOT__inst_jalr) 
                                     & ((IData)(vlSelf->ysyx_25060170_fishtailcore__DOT__bp_rs1_addr) 
                                        == (IData)(vlSelf->ysyx_25060170_fishtailcore__DOT__id_ex_reg_rd_addr)))
                                     ? vlSelf->ysyx_25060170_fishtailcore__DOT__exu_res
-                                    : ((IData)(vlSelf->ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_bpu__DOT____VdfgTmp_h15760a56__0)
-                                        ? vlSelf->ysyx_25060170_fishtailcore__DOT__wb_rd_data_forward
-                                        : ((IData)(vlSelf->ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_bpu__DOT__inst_jalr)
-                                            ? (((~ (IData)(vlSelf->rst)) 
-                                                & (IData)(vlSelf->ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_bpu__DOT__inst_jalr))
-                                                ? vlSelf->ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_regfile__DOT__regs
-                                               [vlSelf->ysyx_25060170_fishtailcore__DOT__bp_rs1_addr]
-                                                : 0U)
-                                            : vlSelf->ysyx_25060170_fishtailcore__DOT__if_id_pc))))),32);
+                                    : ((IData)(vlSelf->__VdfgTmp_h46471f4e__0)
+                                        ? vlSelf->ysyx_25060170_fishtailcore__DOT__ex_ls_reg_exu_res
+                                        : ((IData)(vlSelf->ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_bpu__DOT____VdfgTmp_h15760a56__0)
+                                            ? vlSelf->ysyx_25060170_fishtailcore__DOT__wb_rd_data_forward
+                                            : ((IData)(vlSelf->ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_bpu__DOT__inst_jalr)
+                                                ? (
+                                                   ((~ (IData)(vlSelf->rst)) 
+                                                    & (IData)(vlSelf->ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_bpu__DOT__inst_jalr))
+                                                    ? 
+                                                   vlSelf->ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_regfile__DOT__regs
+                                                   [vlSelf->ysyx_25060170_fishtailcore__DOT__bp_rs1_addr]
+                                                    : 0U)
+                                                : vlSelf->ysyx_25060170_fishtailcore__DOT__if_id_pc)))))),32);
     bufp->fullBit(oldp+353,(((~ ((IData)(vlSelf->rst) 
                                  & (0U == (IData)(vlSelf->ysyx_25060170_fishtailcore__DOT__idu_rs1_addr)))) 
                              & (((IData)(vlSelf->ysyx_25060170_fishtailcore__DOT__idu_rs1_ena) 
