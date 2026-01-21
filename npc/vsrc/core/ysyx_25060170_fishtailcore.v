@@ -26,6 +26,7 @@ ysyx_25060170_bpu u_ysyx_25060170_bpu (
     // ,.branch             ( id_jump              )//<<i<<  
     // ,.pc_before_bxx      ( id_ex_reg_pc         )//<<i<<
     ,.branch_success     ( ex_branch            )//<<i<<
+    ,.idu_bxx_inst       ( if_id_reg_inst_bxx   )//<<i<<
     // ,.bxx_imm            ( id_ex_reg_imm        )//<<i<<  
     ,.inst_i             ( if_id_inst           )//<<i<<      
     ,.pc_i               ( if_id_pc             )//<<i<<

@@ -10,7 +10,7 @@ module ysyx_25060170_bpu(
     // ,input  wire [`ysyx_25060170_PC]        pc_before_bxx       //<<i<<
     ,input  wire                            branch_success      //<<i<< bxx跳转的是否正确
     // ,input  wire                            branch              //<<i<< 上一个时钟周期是否有预测跳转
-    // ,input  wire [`ysyx_25060170_IMM]       bxx_imm             //<<i<<
+    ,input  wire                            idu_bxx_inst             //<<i<<
     //form ifu      
     ,input  wire [`ysyx_25060170_INST]      inst_i              //<<i<< 当前ifu的指令
     ,input  wire [`ysyx_25060170_PC]        pc_i                //<<i<< 当前ifu的pc值
@@ -64,13 +64,13 @@ module ysyx_25060170_bpu(
         else begin
             case({strongly_not_taken_state , weakly_not_taken_state , weakly_taken_state , strongly_taken_state})
                 4'b1000: begin //strongly not taken 
-                    if(branch_success) begin  //预测成功
+                    if(idu_bxx_inst & branch_success) begin  //预测成功
                         strongly_not_taken_state <= 1'b0;
                         weakly_not_taken_state   <= 1'b1;
                         weakly_taken_state       <= 1'b0;
                         strongly_taken_state     <= 1'b0;
                     end
-                    else if(~branch_success )begin  //预测失败
+                    else if(idu_bxx_inst & ~branch_success )begin  //预测失败
                         strongly_not_taken_state <= 1'b1;
                         weakly_not_taken_state   <= 1'b0;
                         weakly_taken_state       <= 1'b0;
@@ -78,13 +78,13 @@ module ysyx_25060170_bpu(
                     end
                 end
                 4'b0100: begin //weakly not taken
-                    if(branch_success) begin//预测成功
+                    if(idu_bxx_inst & branch_success) begin//预测成功
                         strongly_not_taken_state <= 1'b0;
                         weakly_not_taken_state   <= 1'b0;
                         weakly_taken_state       <= 1'b1;
                         strongly_taken_state     <= 1'b0;
                     end
-                    else if (~branch_success) begin//预测失败
+                    else if (idu_bxx_inst & ~branch_success) begin//预测失败
                         strongly_not_taken_state <= 1'b1;
                         weakly_not_taken_state   <= 1'b0;
                         weakly_taken_state       <= 1'b0;
@@ -92,13 +92,13 @@ module ysyx_25060170_bpu(
                     end
                 end
                 4'b0010: begin //weakly taken
-                    if(branch_success) begin//预测成功
+                    if(idu_bxx_inst & branch_success) begin//预测成功
                         strongly_not_taken_state <= 1'b0;
                         weakly_not_taken_state   <= 1'b0;
                         weakly_taken_state       <= 1'b0;
                         strongly_taken_state     <= 1'b1;
                     end
-                    else if (~branch_success) begin//预测失败
+                    else if (idu_bxx_inst & ~branch_success) begin//预测失败
                         strongly_not_taken_state <= 1'b0;
                         weakly_not_taken_state   <= 1'b1;
                         weakly_taken_state       <= 1'b0;
@@ -106,13 +106,13 @@ module ysyx_25060170_bpu(
                     end
                 end
                 4'b0001: begin //strongly taken
-                    if(branch_success)  begin //预测成功
+                    if(idu_bxx_inst & branch_success)  begin //预测成功
                         strongly_not_taken_state <= 1'b0;
                         weakly_not_taken_state   <= 1'b0;
                         weakly_taken_state       <= 1'b0;
                         strongly_taken_state     <= 1'b1;
                     end
-                    else if (~branch_success) begin//预测失败
+                    else if (idu_bxx_inst & ~branch_success) begin//预测失败
                         strongly_not_taken_state <= 1'b0;
                         weakly_not_taken_state   <= 1'b0;
                         weakly_taken_state       <= 1'b1;
@@ -203,8 +203,8 @@ assign op2 =    inst_jal                        ?    jal_offset          :
 
 assign jump_pc = op1 + op2;
 assign jump_jalr_pc = (jump_pc) & (~1) ;
-wire   bxx_taken = inst_bxx & (weakly_taken_state | strongly_taken_state);
-wire   bxx_not_taken = inst_bxx & (weakly_taken_state | strongly_taken_state);
+wire   bxx_taken     = inst_bxx & (weakly_taken_state | strongly_taken_state);
+wire   bxx_not_taken = inst_bxx & (weakly_not_taken_state | strongly_not_taken_state);
 
 
 assign bp_pc_o = 32'b0 |

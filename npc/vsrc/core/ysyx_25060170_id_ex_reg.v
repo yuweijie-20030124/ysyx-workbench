@@ -26,9 +26,10 @@ module ysyx_25060170_id_ex_reg(
     // ,input   wire                           pipeline_id_stall_i //<<i<<
     //pipeline control
    	,input	 wire					        id_valid_i	        //<<i<<
-   	,input	 wire					        id_flush_i	        //<<i<<
+   	
 
     /* verilator lint_off UNUSEDSIGNAL */
+    ,input	 wire					        id_flush_i	        //<<i<<
     ,input   wire                           id_stall_i          //<<i<<
     /* verilator lint_on UNUSEDSIGNAL */
     
@@ -56,7 +57,7 @@ module ysyx_25060170_id_ex_reg(
     ,output  reg                            id_valid_o          //>>o>>  
 );
 
-wire flush = id_flush_i | ls_flush_i;
+wire flush =  ls_flush_i;
 
 // wire load_stall_finish = ~id_stall_i & id_valid_i ;
 // wire stall = id_stall_i | id_valid_i | ~ex_ready_i;

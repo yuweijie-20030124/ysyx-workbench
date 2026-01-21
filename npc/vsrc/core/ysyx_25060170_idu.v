@@ -180,8 +180,10 @@ assign op2_forward_data =  ex_op2_forward ?  ex_data_forward :
 // assign next_pc_o = next_pc_i |
 // 				  ({32{predict_error_o}} & (imm)) ;
 // assign next_pc_o = ((alusrc_o == `INST_JALR) | (alusrc_o == `INST_JAL) | predict_error_o) ? (pc_i + imm) : next_pc_i;
-assign next_pc_o = ((alusrc_o == `INST_JAL) | predict_error_ctl[0] ) ?  (pc_i + imm)  		:
-				   (alusrc_o == `INST_JALR)                ?  ((op1 + imm)&(~1))	:
+assign next_pc_o = ((alusrc_o == `INST_JAL) ) 				?  (pc_i + imm)  		:
+				   (alusrc_o == `INST_JALR)                 ?  ((op1 + imm)&(~1))	:
+				   inst_bxx_i & now_bxx_jump_yes			?  (pc_i + imm)         :
+				   inst_bxx_i & ~now_bxx_jump_yes			?  (pc_i + 32'b100)		:
 				   next_pc_i;
 
 assign pc_o 	 	= pc_i		;
