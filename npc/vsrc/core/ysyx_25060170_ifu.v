@@ -7,16 +7,18 @@ module ysyx_25060170_ifu(
     //pc jump signals
      input wire                         rst             //<<i<<      
     ,input wire                         clk             //<<i<<
-    ,input  wire                        id_pc_jump_i    //<<i<<
-    ,input  wire [`ysyx_25060170_PC]    id_pc_i         //<<i<<
+    // ,input  wire                        id_pc_jump_i    //<<i<<
+    // ,input  wire [`ysyx_25060170_PC]    id_pc_i         //<<i<<
     ,input  wire                        ls_pc_jump_i    //<<i<<
     ,input  wire [`ysyx_25060170_PC]    ls_pc_i         //<<i<<
     ,input  wire                        bp_pc_jump_i    //<<i<<
-    ,input  wire [`ysyx_25060170_PC]    bp_pc_i         //<<i<< jal jalr bxx
+    ,input  wire [`ysyx_25060170_PC]    bp_pc_i         //<<i<< jal jalr
+    ,input  wire                        id_bxx_error_i  //<<i<<
+    ,input  wire [`ysyx_25060170_PC]    id_bxx_error_pc_i//<<i<<
 
     /* verilator lint_off UNUSEDSIGNAL */
     // ,input  wire                        jal_jalr_i      //<<i<<
-    ,input  wire                        branch_i        //<<i<<
+    ,input  wire                        branch_i        //<<i<< bxx
     /* verilator lint_on  UNUSEDSIGNAL */
 
     //stage control signal  
@@ -25,12 +27,13 @@ module ysyx_25060170_ifu(
     ,input  wire                        id_stall_i      //<<i<<
     ,output wire                        if_valid_o      //>>o>>
 
-    //out for idu
+    //out for if_id_reg
     ,input  wire [`ysyx_25060170_INST]  inst_i          //<<i<<
     // ,input  wire [`ysyx_25060170_PC]    pc_i            //<<i<<
     ,output reg  [`ysyx_25060170_PC]    pc_o            //>>o>>
     ,output wire [`ysyx_25060170_INST]  inst_o          //>>o>>
     ,output reg  [`ysyx_25060170_PC]    next_pc_o       //>>o>>
+    ,output wire                        inst_bxx_o      //>>o>>
     
 );
 wire   stall      = id_stall_i  ;
@@ -51,21 +54,24 @@ always@(posedge clk) begin
         if(stall) begin
             pc <= pc; 
         end
+        else if(id_bxx_error_i) begin
+            pc <= id_bxx_error_pc_i;
+        end
         else if(bp_pc_jump_i) begin
             pc <= bp_pc_i;
             // $display("bp pc_o = 0x%h", pc_o); 
         end
-        else if(branch_i) begin
-            pc <= bp_pc_i;
-        end
+        // else if(branch_i) begin
+        //     pc <= bp_pc_i;
+        // end
         else if(ls_pc_jump_i) begin
             pc <= ls_pc_i;
             // $display("ls pc_o = 0x%h", pc_o); 
         end
-        else if(id_pc_jump_i) begin
-            pc <= id_pc_i;
-            // $display("id pc_o = 0x%h", pc_o); 
-        end
+        // else if(id_pc_jump_i) begin
+        //     pc <= id_pc_i;
+        //     // $display("id pc_o = 0x%h", pc_o); 
+        // end
         else if(~stall & if_valid_o) begin 
             // $display("pc_o = 0x%h", pc_o); 
             pc <= `ysyx_25060170_ZERO32;
@@ -79,6 +85,8 @@ end
 assign next_pc_o = pc_o + `ysyx_25060170_PLUS4;      
 
 assign pc_o = pc ;
+
+assign inst_bxx_o = branch_i;
 // assign next_pc_o =  pc_o + `ysyx_25060170_PLUS4 ;
 
 

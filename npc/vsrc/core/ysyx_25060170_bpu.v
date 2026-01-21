@@ -9,7 +9,7 @@ module ysyx_25060170_bpu(
     //for branch
     // ,input  wire [`ysyx_25060170_PC]        pc_before_bxx       //<<i<<
     ,input  wire                            branch_success      //<<i<< bxx跳转的是否正确
-    ,input  wire                            branch              //<<i<< 上一个时钟周期是否有预测跳转
+    // ,input  wire                            branch              //<<i<< 上一个时钟周期是否有预测跳转
     // ,input  wire [`ysyx_25060170_IMM]       bxx_imm             //<<i<<
     //form ifu      
     ,input  wire [`ysyx_25060170_INST]      inst_i              //<<i<< 当前ifu的指令
@@ -25,8 +25,9 @@ module ysyx_25060170_bpu(
     ,input  wire [`ysyx_25060170_REG]       wb_rd_data_forward  //<<i<<
     //to ifu
     ,output wire [`ysyx_25060170_PC]        bp_pc_o             //>>o>> 要跳转的值
+    ,output wire                            inst_bxx_o          //>>o>>
     // ,output reg                             jal_jalr_o          //>>o>>
-    ,output wire                            branch_o            //>>o>> 是否要进行跳转，包含jalr，jal，bxx
+    ,output wire                            jal_jalr_o            //>>o>> 是否要进行跳转，包含jalr，jal，bxx
     //regfile  
     ,input  wire [`ysyx_25060170_REG]       bp_rs1_data_i       //<<i<< 得rs1值          
     ,output wire [`ysyx_25060170_REGADDR]   bp_rs1_addr_o       //>>o>> 取rs1地址
@@ -36,7 +37,7 @@ module ysyx_25060170_bpu(
 );
     // reg                                     jal_jalr_temp;
     // reg                                     pre_branch;//1的话说明刚刚预测跳转，为0的话说明预测不跳转
-    // wire                                    jal_jalr;
+    // wire                                    jal_jalr_o;
     //************************************中间wire和reg变量********************************************//
     // reg    [`ysyx_25060170_PC]              PC_before_bxx;
     // reg    [`ysyx_25060170_DATA]            pre_bxx_imm;
@@ -63,13 +64,13 @@ module ysyx_25060170_bpu(
         else begin
             case({strongly_not_taken_state , weakly_not_taken_state , weakly_taken_state , strongly_taken_state})
                 4'b1000: begin //strongly not taken 
-                    if( branch & branch_success) begin  //预测成功
+                    if(branch_success) begin  //预测成功
                         strongly_not_taken_state <= 1'b0;
                         weakly_not_taken_state   <= 1'b1;
                         weakly_taken_state       <= 1'b0;
                         strongly_taken_state     <= 1'b0;
                     end
-                    else if( branch & ~branch_success )begin  //预测失败
+                    else if(~branch_success )begin  //预测失败
                         strongly_not_taken_state <= 1'b1;
                         weakly_not_taken_state   <= 1'b0;
                         weakly_taken_state       <= 1'b0;
@@ -77,13 +78,13 @@ module ysyx_25060170_bpu(
                     end
                 end
                 4'b0100: begin //weakly not taken
-                    if( branch & branch_success) begin//预测成功
+                    if(branch_success) begin//预测成功
                         strongly_not_taken_state <= 1'b0;
                         weakly_not_taken_state   <= 1'b0;
                         weakly_taken_state       <= 1'b1;
                         strongly_taken_state     <= 1'b0;
                     end
-                    else if ( branch & ~branch_success) begin//预测失败
+                    else if (~branch_success) begin//预测失败
                         strongly_not_taken_state <= 1'b1;
                         weakly_not_taken_state   <= 1'b0;
                         weakly_taken_state       <= 1'b0;
@@ -91,13 +92,13 @@ module ysyx_25060170_bpu(
                     end
                 end
                 4'b0010: begin //weakly taken
-                    if( branch & branch_success) begin//预测成功
+                    if(branch_success) begin//预测成功
                         strongly_not_taken_state <= 1'b0;
                         weakly_not_taken_state   <= 1'b0;
                         weakly_taken_state       <= 1'b0;
                         strongly_taken_state     <= 1'b1;
                     end
-                    else if ( branch & ~branch_success) begin//预测失败
+                    else if (~branch_success) begin//预测失败
                         strongly_not_taken_state <= 1'b0;
                         weakly_not_taken_state   <= 1'b1;
                         weakly_taken_state       <= 1'b0;
@@ -105,13 +106,13 @@ module ysyx_25060170_bpu(
                     end
                 end
                 4'b0001: begin //strongly taken
-                    if( branch & branch_success)  begin //预测成功
+                    if(branch_success)  begin //预测成功
                         strongly_not_taken_state <= 1'b0;
                         weakly_not_taken_state   <= 1'b0;
                         weakly_taken_state       <= 1'b0;
                         strongly_taken_state     <= 1'b1;
                     end
-                    else if ( branch & ~branch_success) begin//预测失败
+                    else if (~branch_success) begin//预测失败
                         strongly_not_taken_state <= 1'b0;
                         weakly_not_taken_state   <= 1'b0;
                         weakly_taken_state       <= 1'b1;
@@ -198,7 +199,7 @@ assign op2 =    inst_jal                        ?    jal_offset          :
 
 // end
 // assign jal_jalr_temp = inst_jal | inst_jalr ;
-// assign branch_o   = inst_bxx | inst_jal | inst_jalr;
+// assign jal_jalr_o   = inst_bxx | inst_jal | inst_jalr;
 
 assign jump_pc = op1 + op2;
 assign jump_jalr_pc = (jump_pc) & (~1) ;
@@ -213,12 +214,8 @@ assign bp_pc_o = 32'b0 |
                 {32{bxx_taken}}     & jump_pc                |
                 {32{bxx_not_taken}} & pc_i + 4               ;
 
-assign branch_o = 1'b0 |
-                {1{rst}}           & 1'b0 |
-                {1{inst_jal }}     & 1'b1 |
-                {1{inst_jalr}}     & 1'b1 |
-                {1{bxx_taken}}     & 1'b1 |
-                {1{bxx_not_taken}} & 1'b1 ;
+assign jal_jalr_o = inst_jal | inst_jalr;
+assign inst_bxx_o = inst_bxx;
 
 assign bp_predict_o = 1'b0 |
                 {1{rst}}           & 1'b0 |
@@ -230,25 +227,25 @@ assign bp_predict_o = 1'b0 |
 // always@(posedge clk) begin
 //     if(rst) begin
 //         bp_pc_o       <= `ysyx_25060170_STARTPC ;
-//         branch_o      <= 1'b0 ;
+//         jal_jalr_o      <= 1'b0 ;
 //         bp_predict_o  <= 1'b0 ;
 //     end
 //     else begin
 //         if( inst_jal) begin
 //             bp_pc_o      <= jump_pc         ;
-//             branch_o     <= 1'b1            ;
+//             jal_jalr_o     <= 1'b1            ;
 //             bp_predict_o <= 1'b0            ;   
 //             // jal_jalr_o   <= jal_jalr_temp   ;
 //             // $display("bpu predict jump from to pc = 0x%08x", jump_pc);
 //         end
 //         else if (inst_jalr) begin
 //             bp_pc_o      <= jump_jalr_pc    ;
-//             branch_o     <= 1'b1            ;
+//             jal_jalr_o     <= 1'b1            ;
 //             bp_predict_o <= 1'b0            ;
 //         end
 //         else if( (inst_bxx & (weakly_taken_state | strongly_taken_state)) ) begin //预测执行
 //             bp_pc_o      <= jump_pc ;
-//             branch_o     <= 1'b1            ;
+//             jal_jalr_o     <= 1'b1            ;
 //             bp_predict_o <= 1'b1 ;      //表明我是预测taken还是not taken
 //             // jal_jalr_o   <= 1'b0 ;
 //             // $display("bpu predict jump from to pc = 0x%08x", jump_pc);
@@ -265,14 +262,14 @@ assign bp_predict_o = 1'b0 |
 //         // end
 //         else if( (inst_bxx & (weakly_not_taken_state | strongly_not_taken_state)) ) begin //预测不执行
 //             bp_pc_o      <= pc_i + 4 ;
-//             branch_o     <= 1'b1            ;
+//             jal_jalr_o     <= 1'b1            ;
 //             bp_predict_o <= 1'b0 ;      //表明我是预测taken还是not taken
 //             // jal_jalr_o   <= 1'b0 ;
 //             // $display("bpu predict jump from to pc = 0x%08x", jump_pc);
 //         end
 //         else begin
 //             bp_pc_o      <= `ysyx_25060170_ZERO32 ;
-//             branch_o     <= 1'b0 ;
+//             jal_jalr_o     <= 1'b0 ;
 //             bp_predict_o <= 1'b0 ;
 //             // jal_jalr_o   <= 1'b0 ;
 //         end
