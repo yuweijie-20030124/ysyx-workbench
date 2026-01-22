@@ -197,9 +197,9 @@ static int decode_exec(Decode *s) {
     // printf("imm =0x%08x\n",imm);
     // printf("dnpc =0x%08x\n",s->dnpc);  
     // }
-    printf("src1 =%d\n",src1);printf("src2 =%d\n",src2);
-    printf("pc =0x%08x\n",s->pc);printf("imm =0x%08x\n",imm);
-    printf("dnpc =0x%08x\n",s->dnpc);
+    // printf("src1 =%d\n",src1);printf("src2 =%d\n",src2);
+    // printf("pc =0x%08x\n",s->pc);printf("imm =0x%08x\n",imm);
+    // printf("dnpc =0x%08x\n",s->dnpc);
     if(src1 == src2) s->dnpc = s->pc + (int32_t)imm);
   INSTPAT("??????? ????? ????? 001 ????? 11000 11", bne    , B, if(src1 != src2) s->dnpc = s->pc + imm);
   INSTPAT("??????? ????? ????? 100 ????? 11000 11", blt    , B, s->dnpc = ((int32_t)src1< (int32_t)src2) ? s->pc + imm : s->dnpc);  
