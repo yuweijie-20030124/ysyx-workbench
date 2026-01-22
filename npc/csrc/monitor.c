@@ -5,7 +5,7 @@
 #include "stdio.h"
 
 void init_log(const char *log_file);
-void init_ftrace(const char *elf_file);
+void parse_elf(const char *elf_file);
 void init_rand();
 void init_mem();
 void init_difftest(char *ref_so_file, long img_size, int port);
@@ -115,7 +115,7 @@ void init_monitor(int argc, char *argv[]) {
 
   #ifdef CONFIG_FTRACE
   /* Open the elf file. */
-  init_ftrace(elf_file);
+  parse_elf(elf_file);
   #endif
 
   /* Initialize memory. */

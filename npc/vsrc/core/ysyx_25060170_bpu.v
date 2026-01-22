@@ -27,7 +27,7 @@ module ysyx_25060170_bpu(
     ,output wire [`ysyx_25060170_PC]        bp_pc_o             //>>o>> 要跳转的值
     ,output wire                            inst_bxx_o          //>>o>>
     // ,output reg                             jal_jalr_o          //>>o>>
-    ,output wire                            jal_jalr_o            //>>o>> 是否要进行跳转，包含jalr，jal，bxx
+    ,output wire                            jal_jalr_o            //>>o>> 是否要进行跳转，包含jalr，jal
     //regfile  
     ,input  wire [`ysyx_25060170_REG]       bp_rs1_data_i       //<<i<< 得rs1值          
     ,output wire [`ysyx_25060170_REGADDR]   bp_rs1_addr_o       //>>o>> 取rs1地址
@@ -41,7 +41,7 @@ module ysyx_25060170_bpu(
     //************************************中间wire和reg变量********************************************//
     // reg    [`ysyx_25060170_PC]              PC_before_bxx;
     // reg    [`ysyx_25060170_DATA]            pre_bxx_imm;
-    wire   [`ysyx_25060170_REGADDR]         rd_addr = inst_i[11:7];
+    // wire   [`ysyx_25060170_REGADDR]         rd_addr = inst_i[11:7];
     //jalr 译码模块
     assign bp_rs1_ena_o = inst_jalr ? 1 : 0;
     assign bp_rs1_addr_o =  bp_rs1_ena_o ? inst_i[19:15] : 5'b0;
@@ -170,7 +170,7 @@ wire [31:0] jalr_offset = {{20{jalr_imm[11]}}, jalr_imm};
 wire ls_wb_forward_en  = (bp_rs1_addr_o == ls_wb_forward_addr ) ? 1 : 0;
 wire ex_ls_forward_en  = (bp_rs1_addr_o == ex_ls_forward_addr ) ? 1 : 0;
 wire ls_mem_forward_en = (bp_rs1_addr_o == ls_mem_forward_addr) ? 1 : 0;
-wire wbu_forward_en    = (rd_addr == wb_rd_addr_forward       ) ? 1 : 0;
+wire wbu_forward_en    = (bp_rs1_addr_o == wb_rd_addr_forward ) ? 1 : 0;
 
 assign op1 =    (inst_jalr & ls_wb_forward_en ) ?    ls_wb_forward_data  :
                 (inst_jalr & ex_ls_forward_en ) ?    ex_ls_forward_data  :

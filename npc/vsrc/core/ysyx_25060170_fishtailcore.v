@@ -45,7 +45,7 @@ ysyx_25060170_bpu u_ysyx_25060170_bpu (
     // ,.jal_jalr_o         ( bp_if_jal_jalr       )//>>o>>
     ,.inst_bxx_o         ( bpu_ifu_inst_bxx    )//>>o>>
     ,.jal_jalr_o         ( bpu_ifu_jal_jalr     )//>>o>>
-    // ,.branch_o           ( bp_if_branch         )//>>o>> jal jalr bxx
+    // ,.branch_o           ( bp_if_branch         )//>>o>> jal jalr
     ,.bp_predict_o       ( bp_predict           )//>>o>> 预测bxx跳转则1，不调转则2
 );
 
@@ -80,12 +80,13 @@ ysyx_25060170_ifu  u_ysyx_25060170_ifu (
     // ,.id_pc_i          (id_jump_pc       )//<<i<<  
     ,.ls_pc_jump_i     (ls_pc_jump       )//<<i<<  
     ,.ls_pc_i          (ls_jump_pc       )//<<i<<
-    ,.bp_pc_jump_i     (bpu_ifu_jal_jalr )//<<i<<  
-    ,.bp_pc_i          (bp_if_pc         )//<<i<<  jal jlar bxx
+    ,.bp_pc_jump_i     (bpu_ifu_jal_jalr )//<<i<<  jal jalr
+    ,.bp_predict_i     (bp_predict       )//<<i<<  bpu预测指令会跳转
+    ,.bp_pc_i          (bp_if_pc         )//<<i<<  
     ,.id_bxx_error_i   (id_predict_error )//<<i<<
     ,.id_bxx_error_pc_i(id_jump_pc       )//<<i<<
     // ,.jal_jalr_i       (bp_if_jal_jalr   )//<<i<<
-    ,.branch_i         (bpu_ifu_inst_bxx )//<<i<< bxx
+    ,.inst_bxx_i       (bpu_ifu_inst_bxx )//<<i<< bxx
     // ,.inst_valid_i     (inst_valid_i     )//<<i<<
     ,.id_ready_i       (id_ready         )//<<i<<
     ,.id_stall_i       (id_stall         )//<<i<<   bp_if_pc
@@ -205,8 +206,10 @@ ysyx_25060170_idu u_ysyx_25060170_idu (
 
     ,.ex_load_ena        (id_ex_reg_load_flag   )//<<i<<
     ,.ls_load_ena        (ex_ls_reg_load_flag   )//<<i<<
-    ,.ex_valid_i         (ex_ls_valid           )//<<i<<
-    ,.ls_valid_i         (ls_mem_valid          )//<<i<<
+    // ,.ex_valid_i         (ex_ls_valid           )//<<i<<
+    ,.ex_valid_i         (ex_valid           )//<<i<<
+    // ,.ls_valid_i         (ls_mem_valid          )//<<i<<
+    ,.ls_valid_i         (ls_valid          )//<<i<<
     ,.mem_load_ena       (ls_mem_reg_load_flag  )//<<i<<
     ,.wb_load_ena        (mem_wb_reg_load_flag  )//<<i<<
     ,.ex_csr_ena         (ex_csr_ena            )//<<i<<

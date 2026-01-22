@@ -12,13 +12,14 @@ module ysyx_25060170_ifu(
     ,input  wire                        ls_pc_jump_i    //<<i<<
     ,input  wire [`ysyx_25060170_PC]    ls_pc_i         //<<i<<
     ,input  wire                        bp_pc_jump_i    //<<i<<
+    ,input  wire                        bp_predict_i    //<<i<< bpu预测指令会跳转
     ,input  wire [`ysyx_25060170_PC]    bp_pc_i         //<<i<< jal jalr
     ,input  wire                        id_bxx_error_i  //<<i<<
     ,input  wire [`ysyx_25060170_PC]    id_bxx_error_pc_i//<<i<<
 
     /* verilator lint_off UNUSEDSIGNAL */
     // ,input  wire                        jal_jalr_i      //<<i<<
-    ,input  wire                        branch_i        //<<i<< bxx
+    ,input  wire                        inst_bxx_i        //<<i<< inst_bxx
     /* verilator lint_on  UNUSEDSIGNAL */
 
     //stage control signal  
@@ -57,11 +58,11 @@ always@(posedge clk) begin
         else if(id_bxx_error_i) begin
             pc <= id_bxx_error_pc_i;
         end
-        else if(bp_pc_jump_i) begin
+        else if(bp_pc_jump_i | (bp_predict_i & inst_bxx_i)) begin
             pc <= bp_pc_i;
             // $display("bp pc_o = 0x%h", pc_o); 
         end
-        // else if(branch_i) begin
+        // else if(inst_bxx_i) begin
         //     pc <= bp_pc_i;
         // end
         else if(ls_pc_jump_i) begin
@@ -86,7 +87,7 @@ assign next_pc_o = pc_o + `ysyx_25060170_PLUS4;
 
 assign pc_o = pc ;
 
-assign inst_bxx_o = branch_i;
+assign inst_bxx_o = inst_bxx_i;
 // assign next_pc_o =  pc_o + `ysyx_25060170_PLUS4 ;
 
 
