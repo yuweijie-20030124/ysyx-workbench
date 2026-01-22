@@ -22,8 +22,8 @@ module ysyx_25060170_idu(
 	,input	wire [`ysyx_25060170_DATA]			mem_data_forward	//<<i<<	
 	,input	wire [`ysyx_25060170_REGADDR]		wb_addr_forward		//<<i<<	
 	,input	wire [`ysyx_25060170_DATA]			wb_data_forward		//<<i<<	
-	,input 	wire								ex_load_ena			//<<i<<	判断exu的指令是不是load
-	,input  wire      							ls_load_ena			//<<i<< 判断lsu的指令是不是load
+	,input 	wire								ex_load_ena			//<<i<<	判断exu中的指令是不是load
+	,input  wire      							ls_load_ena			//<<i<< 判断lsu中的指令是不是load
 	/* verilator lint_off UNUSEDSIGNAL */
 	,input  wire                                mem_load_ena		//<<i<< 判断mem的指令是不是load
 	,input  wire                                wb_load_ena         //<<i<< 判断wbu的指令是不是load

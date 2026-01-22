@@ -23,13 +23,14 @@ void init_symtab_entrys(FILE *elf_file) {
 	assert(&ehdr != NULL && result == 1);
 
     // 检查 ELF 魔数 16进制打开所有的elf文件前四个必须是这四个
-    if (ehdr.e_ident[0] != 0x7F ||
-        ehdr.e_ident[1] != 'E' ||
-        ehdr.e_ident[2] != 'L' ||
-        ehdr.e_ident[3] != 'F') {
+    if (ehdr.e_ident[0] != 0x7F   ||
+        ehdr.e_ident[1] != 'E'    ||
+        ehdr.e_ident[2] != 'L'    ||
+        ehdr.e_ident[3] != 'F') 
+		{
         printf("Not a ELF file\n");
         exit(0);
-    }
+    	}
     Elf32_Shdr *shdrs = (Elf32_Shdr*)malloc(sizeof(Elf32_Shdr) * ehdr.e_shnum);//申请节头表的内存空间
     assert(shdrs != 0);
 	result = fseek(elf_file, ehdr.e_shoff, SEEK_SET); //根据文件的开头和偏移跳转到段表

@@ -472,8 +472,8 @@ VL_ATTR_COLD void Vysyx_25060170_fishtailcore___024root__trace_init_sub__TOP__0(
     tracep->declBit(c+193,"ls_load_ena", false,-1);
     tracep->declBit(c+206,"mem_load_ena", false,-1);
     tracep->declBit(c+219,"wb_load_ena", false,-1);
-    tracep->declBit(c+192,"ex_valid_i", false,-1);
-    tracep->declBit(c+203,"ls_valid_i", false,-1);
+    tracep->declBit(c+181,"ex_valid_i", false,-1);
+    tracep->declBit(c+35,"ls_valid_i", false,-1);
     tracep->declBit(c+161,"ex_csr_ena", false,-1);
     tracep->declBit(c+162,"ls_csr_ena", false,-1);
     tracep->declBus(c+350,"rs1_data", false,-1, 31,0);

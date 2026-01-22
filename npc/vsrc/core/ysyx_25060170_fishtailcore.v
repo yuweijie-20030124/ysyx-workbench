@@ -206,8 +206,10 @@ ysyx_25060170_idu u_ysyx_25060170_idu (
 
     ,.ex_load_ena        (id_ex_reg_load_flag   )//<<i<<
     ,.ls_load_ena        (ex_ls_reg_load_flag   )//<<i<<
-    ,.ex_valid_i         (ex_ls_valid           )//<<i<<
-    ,.ls_valid_i         (ls_mem_valid          )//<<i<<
+    // ,.ex_valid_i         (ex_ls_valid           )//<<i<<
+    ,.ex_valid_i         (ex_valid           )//<<i<<
+    // ,.ls_valid_i         (ls_mem_valid          )//<<i<<
+    ,.ls_valid_i         (ls_valid          )//<<i<<
     ,.mem_load_ena       (ls_mem_reg_load_flag  )//<<i<<
     ,.wb_load_ena        (mem_wb_reg_load_flag  )//<<i<<
     ,.ex_csr_ena         (ex_csr_ena            )//<<i<<
