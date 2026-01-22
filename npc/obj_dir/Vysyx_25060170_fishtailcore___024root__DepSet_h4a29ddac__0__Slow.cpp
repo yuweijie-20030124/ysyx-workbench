@@ -319,12 +319,6 @@ VL_ATTR_COLD void Vysyx_25060170_fishtailcore___024root___stl_sequent__TOP__0(Vy
         [vlSelf->__Vtableidx2];
     vlSelf->ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_lsu__DOT____VdfgTmp_h72104a67__0 
         = (1U & (~ ((IData)(vlSelf->rst) | (0U == (IData)(vlSelf->ysyx_25060170_fishtailcore__DOT__ex_ls_reg_ls_ctl)))));
-    vlSelf->ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_idu__DOT__decoder__DOT____VdfgTmp_h70f4116c__0 
-        = ((~ (IData)(vlSelf->rst)) & (0x18U == (0x7cU 
-                                                 & vlSelf->ysyx_25060170_fishtailcore__DOT__if_id_reg_inst)));
-    vlSelf->ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_idu__DOT__decoder__DOT__inst_jalr 
-        = ((~ (IData)(vlSelf->rst)) & (0x64U == (0x7cU 
-                                                 & vlSelf->ysyx_25060170_fishtailcore__DOT__if_id_reg_inst)));
     vlSelf->ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_exu__DOT__op1 
         = (((- (IData)((1U == (IData)(vlSelf->ysyx_25060170_fishtailcore__DOT__id_ex_reg_op1_sel)))) 
             & vlSelf->ysyx_25060170_fishtailcore__DOT__id_ex_reg_op1) 
@@ -336,6 +330,12 @@ VL_ATTR_COLD void Vysyx_25060170_fishtailcore___024root___stl_sequent__TOP__0(Vy
            | ((4U & (- (IData)((2U == (IData)(vlSelf->ysyx_25060170_fishtailcore__DOT__id_ex_reg_op2_sel))))) 
               | ((- (IData)((4U == (IData)(vlSelf->ysyx_25060170_fishtailcore__DOT__id_ex_reg_op2_sel)))) 
                  & vlSelf->ysyx_25060170_fishtailcore__DOT__id_ex_reg_imm)));
+    vlSelf->ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_idu__DOT__decoder__DOT____VdfgTmp_h70f4116c__0 
+        = ((~ (IData)(vlSelf->rst)) & (0x18U == (0x7cU 
+                                                 & vlSelf->ysyx_25060170_fishtailcore__DOT__if_id_reg_inst)));
+    vlSelf->ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_idu__DOT__decoder__DOT__inst_jalr 
+        = ((~ (IData)(vlSelf->rst)) & (0x64U == (0x7cU 
+                                                 & vlSelf->ysyx_25060170_fishtailcore__DOT__if_id_reg_inst)));
     vlSelf->ysyx_25060170_fishtailcore__DOT__idu_load_flag 
         = ((~ (IData)(vlSelf->rst)) & (IData)((3U == 
                                                (0x7fU 
@@ -2031,9 +2031,16 @@ VL_ATTR_COLD void Vysyx_25060170_fishtailcore___024root___stl_sequent__TOP__0(Vy
     vlSelf->ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_id_ex_reg__DOT__stall 
         = (1U & ((~ (IData)(vlSelf->ysyx_25060170_fishtailcore__DOT__ex_ready)) 
                  | (IData)(vlSelf->ysyx_25060170_fishtailcore__DOT__id_valid)));
+    vlSelf->ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_idu__DOT____VdfgTmp_hd158f2b5__0 
+        = (vlSelf->ysyx_25060170_fishtailcore__DOT__idu_op1 
+           + vlSelf->ysyx_25060170_fishtailcore__DOT__idu_imm);
     vlSelf->ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_idu__DOT__op_ltu_op2 
         = (vlSelf->ysyx_25060170_fishtailcore__DOT__idu_op1 
            < vlSelf->ysyx_25060170_fishtailcore__DOT__idu_op2);
+    vlSelf->ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_idu__DOT__jalr_bpu_jump_error 
+        = ((0x42U == (IData)(vlSelf->ysyx_25060170_fishtailcore__DOT__idu_alusrc)) 
+           & (vlSelf->ysyx_25060170_fishtailcore__DOT__if_id_reg_next_pc 
+              != (0xfffffffeU & vlSelf->ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_idu__DOT____VdfgTmp_hd158f2b5__0)));
     vlSelf->ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_idu__DOT__op1_lt_op2 
         = (1U & (((vlSelf->ysyx_25060170_fishtailcore__DOT__idu_op1 
                    ^ vlSelf->ysyx_25060170_fishtailcore__DOT__idu_op2) 
@@ -2064,8 +2071,9 @@ VL_ATTR_COLD void Vysyx_25060170_fishtailcore___024root___stl_sequent__TOP__0(Vy
                                & (IData)(vlSelf->ysyx_25060170_fishtailcore__DOT__if_id_reg_bp_jump))))));
     vlSelf->ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_if_id_reg__DOT__flush 
         = ((~ (IData)(vlSelf->ysyx_25060170_fishtailcore__DOT__id_stall)) 
-           & ((IData)(vlSelf->ysyx_25060170_fishtailcore__DOT__if_id_reg_bp_jump) 
-              ^ (IData)(vlSelf->ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_idu__DOT__now_bxx_jump_yes)));
+           & (((IData)(vlSelf->ysyx_25060170_fishtailcore__DOT__if_id_reg_bp_jump) 
+               ^ (IData)(vlSelf->ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_idu__DOT__now_bxx_jump_yes)) 
+              | (IData)(vlSelf->ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_idu__DOT__jalr_bpu_jump_error)));
 }
 
 VL_ATTR_COLD void Vysyx_25060170_fishtailcore___024root___eval_stl(Vysyx_25060170_fishtailcore___024root* vlSelf) {
@@ -2250,11 +2258,13 @@ VL_ATTR_COLD void Vysyx_25060170_fishtailcore___024root___ctor_var_reset(Vysyx_2
     vlSelf->ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_idu__DOT__wb_op2_forward = VL_RAND_RESET_I(1);
     vlSelf->ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_idu__DOT__op1_forward_ena = VL_RAND_RESET_I(1);
     vlSelf->ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_idu__DOT__op2_forward_ena = VL_RAND_RESET_I(1);
+    vlSelf->ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_idu__DOT__jalr_bpu_jump_error = VL_RAND_RESET_I(1);
     vlSelf->ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_idu__DOT__op_ltu_op2 = VL_RAND_RESET_I(1);
     vlSelf->ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_idu__DOT__op1_lt_op2 = VL_RAND_RESET_I(1);
     vlSelf->ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_idu__DOT__now_bxx_jump_yes = VL_RAND_RESET_I(1);
     vlSelf->ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_idu__DOT__predict_error_ctl = VL_RAND_RESET_I(2);
     vlSelf->ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_idu__DOT____VdfgTmp_h71cc746e__0 = 0;
+    vlSelf->ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_idu__DOT____VdfgTmp_hd158f2b5__0 = 0;
     vlSelf->ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_idu__DOT____VdfgTmp_h068a7135__0 = 0;
     vlSelf->ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_idu__DOT____VdfgTmp_hd71610cc__0 = 0;
     vlSelf->ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_idu__DOT____VdfgTmp_h5a345cf6__0 = 0;

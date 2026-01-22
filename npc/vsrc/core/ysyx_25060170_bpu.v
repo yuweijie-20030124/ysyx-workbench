@@ -33,6 +33,7 @@ module ysyx_25060170_bpu(
     ,output wire [`ysyx_25060170_REGADDR]   bp_rs1_addr_o       //>>o>> 取rs1地址
     ,output wire                            bp_rs1_ena_o        //>>o>> 取rs1使能
     //to if_id_reg
+    // ,output wire                            bp_valid_o          //>>o>> 表示jalr的那个寄存器数还没到，bpu还没准备好
     ,output wire                            bp_predict_o        //>>o>> 我们预测bxx跳转则1，预测bxx不跳转则0
 );
     // reg                                     jal_jalr_temp;

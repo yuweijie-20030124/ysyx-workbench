@@ -6,6 +6,7 @@ module ysyx_25060170_idu(
 	,input	wire [`ysyx_25060170_INST]			inst_i				//<<i<<
 	,input	wire [`ysyx_25060170_PC]			pc_i				//<<i<<
 	,input  wire [`ysyx_25060170_PC]			next_pc_i			//<<i<<
+	// ,input  wire [`ysyx_25060170_PC]			bpu_jalr_pc_i		//<<i<<
 	//from bpu
 	,input 	wire 								bp_jump_i			//<<i<<	我们当时是否预测跳转
 	/* verilator lint_off UNUSEDSIGNAL */
@@ -60,7 +61,7 @@ module ysyx_25060170_idu(
 	,output wire [4:0] 							csr_imm_o			//>>o>>
 	// ,output wire [`ysyx_25060170_REGADDR]		store_addr_o		//>>o>>
 	//to ifu
-	,output wire     							predict_error_o		//>>o>>
+	,output wire     							predict_error_o			//>>o>>
 	,output wire [`ysyx_25060170_PC]			predict_revise_pc		//>>o>>
 	,output wire     							bp_predict_success		//>>o>>
 	//竞争冒险
@@ -175,6 +176,8 @@ assign op2_forward_data =  ex_op2_forward ?  ex_data_forward :
 						  mem_op2_forward ? mem_data_forward :
 						   wb_op2_forward ?  wb_data_forward :	`ysyx_25060170_ZERO32 ;
 
+wire jalr_bpu_jump_error = (alusrc_o == `INST_JALR) & (next_pc_i != ((op1 + imm)&(~1)));
+
 //*************************************output*************************************//
 //out to id_ex_reg
 // assign next_pc_o = next_pc_i |
@@ -241,7 +244,7 @@ assign csr_op2_stall = (ex_op2_forward & ex_csr_ena & ~ex_valid_i ) | (ls_op2_fo
 
 assign id_stall_ena  = (rst == 1) ? 1'b0 : op1_relate | op2_relate | csr_op1_stall | csr_op2_stall;
 
-assign id_flush_o 	 = bp_jump_i ^ now_bxx_jump_yes;
+assign id_flush_o 	 = (bp_jump_i ^ now_bxx_jump_yes) | jalr_bpu_jump_error;
 assign id_ready_o 	 = ex_ready_i & ~id_stall_o ;
 assign id_valid_o 	 = if_valid_i | id_stall_o	; 
 assign id_stall_o    = id_stall_ena 		  	;
@@ -255,12 +258,14 @@ assign id_stall_o    = id_stall_ena 		  	;
 // assign o2 =	bp_jump_i ? `ysyx_25060170_PLUS4 : imm;
 
 // assign predict_revise_pc = predict_error_ctl[0] ? pc_i + 4 : pc_i 
+// wire jalr_bpu_jump_error = (alusrc_o == `INST_JALR) & (next_pc_i != ((op1 + imm)&(~1)));
 
 wire [1:0] predict_error_ctl;
-assign predict_error_o = predict_error_ctl[1];
-assign predict_revise_pc = `ysyx_25060170_ZERO32 						 |	
+assign predict_error_o = predict_error_ctl[1] | jalr_bpu_jump_error;
+assign predict_revise_pc = `ysyx_25060170_ZERO32 						   |	
 						   {32{predict_error_ctl==2'b11}} & pc_i + 32'b100 |
-						   {32{predict_error_ctl==2'b10}} & pc_i + imm 	 ;
+						   {32{predict_error_ctl==2'b10}} & pc_i + imm 	   |
+						   {32{jalr_bpu_jump_error}}      & ((op1 + imm)&(~1));
 
 		 
 
