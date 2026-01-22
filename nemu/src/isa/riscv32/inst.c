@@ -38,9 +38,9 @@ static void etrace() {
 #define immU() do { *imm = SEXT(BITS(i, 31, 12), 20) << 12; } while(0)
 #define immS() do { *imm = (SEXT(BITS(i, 31, 25), 7) << 5) | BITS(i, 11, 7); } while(0)
 #define immJ() do { *imm = SEXT(((BITS(i, 31, 31) << 19) | BITS(i, 30, 21) | (BITS(i, 20, 20) << 10) | (BITS(i, 19, 12) << 11)) << 1, 21);} while(0)
-#define immB() do { *imm = (SEXT(BITS(i, 31, 31), 1) & 0x7FF << 11) | (SEXT(BITS(i, 7, 7), 1) & 0x3FF << 10) | (SEXT(BITS(i, 30, 25), 6) & 0x3F << 4) | ((SEXT(BITS(i, 11, 8), 4) & 0xF));*imm = *imm << 1;} while (0)
+// #define immB() do { *imm = (SEXT(BITS(i, 31, 31), 1) & 0x7FF << 11) | (SEXT(BITS(i, 7, 7), 1) & 0x3FF << 10) | (SEXT(BITS(i, 30, 25), 6) & 0x3F << 4) | ((SEXT(BITS(i, 11, 8), 4) & 0xF));*imm = *imm << 1;} while (0)
 //immB有问题
-// #define immB() do { *imm = SEXT(BITS(i, 31, 31), 1) << 11 | SEXT(BITS(i, 7, 7), 1) << 10 | SEXT(BITS(i, 30, 25), 6) << 4 | SEXT(BITS(i, 11, 8), 4); *imm = *imm << 1; } while (0)
+#define immB() do { *imm = SEXT(BITS(i, 31, 31), 1) << 11 | SEXT(BITS(i, 7, 7), 1) << 10 | SEXT(BITS(i, 30, 25), 6) << 4 | SEXT(BITS(i, 11, 8), 4); *imm = *imm << 1; } while (0)
 
 
 static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_t *imm, int type) {
