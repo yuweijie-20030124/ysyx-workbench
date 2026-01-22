@@ -116,6 +116,8 @@ wire [`ysyx_25060170_INST]      if_id_reg_inst;
 wire                            if_id_reg_inst_bxx  ;
 wire                            if_id_reg_bp_jump;
 wire                            if_id_valid;
+// wire [`ysyx_25060170_PC]        bp_jalr_pc_i;
+// wire [`ysyx_25060170_PC]        bp_jalr_pc_o;
 
 ysyx_25060170_if_id_reg u_ysyx_25060170_if_id_reg (
      .clk           ( clk               ) //<<i<<
@@ -125,6 +127,7 @@ ysyx_25060170_if_id_reg u_ysyx_25060170_if_id_reg (
     ,.inst_i        ( if_id_inst        ) //<<i<<
     ,.bxx_inst_i    ( if_id_inst_bxx    ) //<<i<< 上一条指令是不是bxx
     ,.bp_jump_i     ( bp_predict        ) //<<i<< 上一条bxx指令bpu预测成功与否
+    // ,.bp_jalr_pc_i  ( bp_jalr_pc_i      )
     ,.if_valid_i    ( if_valid          ) //<<i<<
     ,.id_flush_i    ( id_flush          ) //<<i<<
     ,.ls_flush_i    ( ls_flush          ) //<<i<<
@@ -137,6 +140,7 @@ ysyx_25060170_if_id_reg u_ysyx_25060170_if_id_reg (
     ,.inst_o        ( if_id_reg_inst    ) //>>o>>
     ,.inst_bxx_o    ( if_id_reg_inst_bxx    ) //>>o>>
     ,.bp_jump_o     ( if_id_reg_bp_jump  ) //>>o>>
+    // ,.bp_jalr_pc_o  ( bp_jalr_pc_o      ) //>>o>>
     // ,.id_jump_o     ( id_jump           ) //>>o>>
 );
 

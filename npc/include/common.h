@@ -28,19 +28,19 @@
 //monitor那里的#ifndef CONFIG_ITRACEinit_disasm("riscv64-pc-linux-gnu");#endif
 
 
- 
+ #define CONFIG_TRACE 1
 
-// #define CONFIG_TRACE_END 10000
-// #define CONFIG_TRACE_START 0
-// #define CONFIG_ITRACE 1
-// #define CONFIG_MTRACE 1
-// #define CONFIG_DIFFTEST 1
-// #define CONFIG_ITRACE_IRINGBUF 1
+#define CONFIG_TRACE_END 10000
+#define CONFIG_TRACE_START 0
+#define CONFIG_ITRACE 1
+#define CONFIG_MTRACE 1
+#define CONFIG_DIFFTEST 1
+#define CONFIG_ITRACE_IRINGBUF 1
 
 
 // #define CONFIG_WATCHPOINT 1
 
-#define CONFIG_TRACE 1
+/*
 
 #ifdef CONFIG_TRACE
 #define CONFIG_ITRACE 1
@@ -52,8 +52,8 @@
 #define CONFIG_MTRACE 1
 #define CONFIG_DTRACE
 #endif
-
-#define CONFIG_DIFFTEST 1
+*/
+// #define CONFIG_DIFFTEST 1
 
 #define CONFIG_GTK 1
 
