@@ -6,6 +6,7 @@
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 
 char buf[1024];
+
 void putch(char ch);
 
 int printf(const char *fmt, ...) {

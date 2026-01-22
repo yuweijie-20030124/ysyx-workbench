@@ -38,8 +38,8 @@ static void etrace() {
 #define immU() do { *imm = SEXT(BITS(i, 31, 12), 20) << 12; } while(0)
 #define immS() do { *imm = (SEXT(BITS(i, 31, 25), 7) << 5) | BITS(i, 11, 7); } while(0)
 #define immJ() do { *imm = SEXT(((BITS(i, 31, 31) << 19) | BITS(i, 30, 21) | (BITS(i, 20, 20) << 10) | (BITS(i, 19, 12) << 11)) << 1, 21);} while(0)
-#define immB() do { *imm = SEXT(BITS(i, 31, 31), 1) << 11 | SEXT(BITS(i, 7, 7), 1) << 10 | SEXT(BITS(i, 30, 25), 6) << 4 | (SEXT(BITS(i, 11, 8), 4) & 0xF); *imm = *imm << 1; *imm = (*imm==0xfffffdf0 ? 0x5f0 : *imm);} while (0)
-
+#define immB() do { *imm = SEXT(BITS(i, 31, 31), 1) << 11 | SEXT(BITS(i, 7, 7), 1) << 10 | SEXT(BITS(i, 30, 25), 6) << 4 | (SEXT(BITS(i, 11, 8), 4) & 0xF); *imm = *imm << 1;} while (0)
+//immB有问题
 // #define immB() do { *imm = SEXT(BITS(i, 31, 31), 1) << 11 | SEXT(BITS(i, 7, 7), 1) << 10 | SEXT(BITS(i, 30, 25), 6) << 4 | SEXT(BITS(i, 11, 8), 4); *imm = *imm << 1; } while (0)
 
 
@@ -202,7 +202,7 @@ static int decode_exec(Decode *s) {
     // printf("dnpc =0x%08x\n",s->dnpc);
     if(src1 == src2) s->dnpc = s->pc + imm);
   INSTPAT("??????? ????? ????? 001 ????? 11000 11", bne    , B, if(src1 != src2) s->dnpc = s->pc + imm);
-  INSTPAT("??????? ????? ????? 100 ????? 11000 11", blt    , B, s->dnpc = ((int32_t)src1< (int32_t)src2) ? s->pc + imm : s->dnpc); 
+  INSTPAT("??????? ????? ????? 100 ????? 11000 11", blt    , B, s->dnpc = ((int32_t)src1< (int32_t)src2) ? s->pc + imm : s->dnpc;printf("s->pc = 0x%08x\n",s->pc);printf("imm = 0x%08x\n",imm););  
   INSTPAT("??????? ????? ????? 101 ????? 11000 11", bge    , B, s->dnpc = ((int32_t)src1>=(int32_t)src2) ? s->pc + imm : s->dnpc); 
   INSTPAT("??????? ????? ????? 110 ????? 11000 11", bltu   , B, s->dnpc = (src1< src2) ? s->pc + imm : s->dnpc); 
   INSTPAT("??????? ????? ????? 111 ????? 11000 11", bgeu   , B, s->dnpc = (src1>=src2) ? s->pc + imm : s->dnpc); 
