@@ -25,6 +25,10 @@
     //output for forwarding
     ,output	wire	[`ysyx_25060170_REGADDR] wb_rd_addr_forward	        //>>o>>
     ,output	wire	[`ysyx_25060170_DATA]    wb_rd_data_forward	        //>>o>>
+    //output for wb_flush
+    ,output wire                             wb_flush_o                 //>>o>>
+    ,output wire                             wb_if_changepc             //>>o>>
+    ,output wire  [`ysyx_25060170_PC]        wb_mepc_pc_o               //>>o>>
     //out for difftest 
     ,output wire  [`ysyx_25060170_REG]       mstatus_o                  //>>o>>
     ,output wire  [`ysyx_25060170_REG]       mepc_o                     //>>o>>
@@ -62,32 +66,35 @@ assign write_csr_data = `ysyx_25060170_ZERO32  |
                         {32{csr_ctl_i[4]}} & clear_data      | //csr clear
                         {32{csr_ctl_i[1]}} & pc_i            ; 
 
-ysyx_25060170_csr u_ysyx_25060170_csr (
-    //<<i<<
-     .clk               (clk)
-    //<<i<<
-    ,.rst               (rst)
-    //<<i<<  {csr_wr_ena, csr_rd_ena, ecall_ena, mret_ena}
-    ,.csr_ctl           (csr_ctl_i[3:0])
-    //<<i<<
-    ,.csr_addr          (csr_addr_i)
-    //<<i<<
-    ,.mcause_value      (mcause_value)
-    //<<i<<
-    ,.write_csr_data    (write_csr_data)
-    //>>o>>
-    ,.read_csr_data     (read_csr_data)
-    //>>o>>
-    ,.mstatus_o         (mstatus)
-    //>>o>>
-    ,.mepc_o            (mepc)
-    //>>o>>
-    ,.mtvec_o           (mtvec)
-    //>>o>>
-    ,.mcause_o          (mcause)
-);
+// ysyx_25060170_csr u_ysyx_25060170_csr (
+//     //<<i<<
+//      .clk               (clk)
+//     //<<i<<
+//     ,.rst               (rst)
+//     //<<i<<  {csr_wr_ena, csr_rd_ena, ecall_ena, mret_ena}
+//     ,.csr_ctl           (csr_ctl_i[3:0])
+//     //<<i<<
+//     ,.csr_addr          (csr_addr_i)
+//     //<<i<<
+//     ,.mcause_value      (mcause_value)
+//     //<<i<<
+//     ,.write_csr_data    (write_csr_data)
+//     //>>o>>
+//     ,.read_csr_data     (read_csr_data)
+//     //>>o>>
+//     ,.mstatus_o         (mstatus)
+//     //>>o>>
+//     ,.mepc_o            (mepc)
+//     //>>o>>
+//     ,.mtvec_o           (mtvec)
+//     //>>o>>
+//     ,.mcause_o          (mcause)
+// );
 
 //***********************************for DPIC**************************************//
+//简单debug ecall//
+// assign 
+
 assign mstatus_o = mstatus;
 assign mepc_o    = mepc   ;
 assign mtvec_o   = mtvec  ;
