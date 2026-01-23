@@ -864,6 +864,8 @@ wire [`ysyx_25060170_REG]       regs30;
 wire [`ysyx_25060170_REG]       regs31;
 //to mem for从地址中取完值为了避免
 
+
+
 ysyx_25060170_regfile u_ysyx_25060170_regfile (
      .clk           ( clk              )//<<i<<
     ,.rst           ( rst              )//<<i<<
