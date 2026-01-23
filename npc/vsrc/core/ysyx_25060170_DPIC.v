@@ -158,8 +158,10 @@ wire [31:0] dpic_loadread = 32'd2;
 
 reg [`ysyx_25060170_DATA]	mem_data;//for delay
 
+//读改成组合逻辑，写时序
 //取指，从pc_i中获取inst_o
 wire [31:0] dpic_fetch = 32'd1;
+
 always @(*) begin
 	//mem访存读
 	if(re) begin
@@ -168,14 +170,20 @@ always @(*) begin
 	else begin
 	mem_data = 0;
 	end
-	if(we) begin
-	pmem_write(waddr, data_i, wlen);
-	end
 	// else if(!we) begin
 	// data_i = 0;
 	// end
 	//fetch取指
-    pmem_read(pc_i,inst_o,rlen,dpic_fetch);
+end
+
+always @(*) begin
+	pmem_read(pc_i,inst_o,rlen,dpic_fetch);
+end
+
+always @(*) begin
+	if(we) begin
+	pmem_write(waddr, data_i, wlen);
+	end
 end
 
 always@(posedge clk) begin

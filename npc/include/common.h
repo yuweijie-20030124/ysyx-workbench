@@ -53,13 +53,13 @@
 #define CONFIG_DTRACE
 #endif
 
-#define CONFIG_DIFFTEST 1
+// #define CONFIG_DIFFTEST 1
 
 #define CONFIG_GTK 1
 
 
 
-#define CONFIG_DEVICE 1
+// #define CONFIG_DEVICE 1
 
 #ifdef CONFIG_DEVICE
 #define CONFIG_HAS_SERIAL 1
