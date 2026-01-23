@@ -40,7 +40,7 @@
 
 // #define CONFIG_WATCHPOINT 1
 
- #define CONFIG_TRACE 1
+//  #define CONFIG_TRACE 1
 
 #ifdef CONFIG_TRACE
 #define CONFIG_ITRACE 1
