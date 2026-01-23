@@ -15,7 +15,9 @@ void cpu_reset();
 void sdb_mainloop();
 int is_exit_status_bad();
 bool log_enable();
-
+#ifdef CONFIG_DIFFTEST
+void difftest_skip_ref();
+#endif
 Vysyx_25060170_fishtailcore* fishtailcore;
 VerilatedContext* contextp;
 #ifdef CONFIG_GTK
@@ -122,10 +124,18 @@ extern "C" void magic_instruction(){
   // printf("exit\n");
 }
 
-extern "C" void pc_inst_end(int thepc_data, int the_inst){
+extern "C" void pc_inst_end(int thepc_data, int the_inst, int diff_skip_flag){
   if(thepc_data != 0 && the_inst != 0){
   cpu.pc = thepc_data;
   s.val = the_inst;
+  #ifdef CONFIG_DIFFTEST
+  if(diff_skip_flag){
+    difftest_skip_ref();
+  }
+  printf("pc   = 0x%08x\n",thepc_data);
+  printf("inst = 0x%08x\n",the_inst);
+  printf("flag = 0x%08x\n",diff_skip_flag);
+  #endif
   // printf("pc=0x%08x,inst=0x%08x\n",thepc_data,the_inst);
   inst_end = 0;
   }

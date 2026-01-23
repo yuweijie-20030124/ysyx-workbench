@@ -717,6 +717,8 @@ wire                            mem_valid_o           ;
 wire  [`ysyx_25060170_REGADDR]  mem_rd_addr_forward   ;
 wire  [`ysyx_25060170_DATA]     mem_rd_data_forward   ;
 wire                            mem_wb_reg_load_flag  ;
+wire  [`ysyx_25060170_DATA]     dpi_wb_skip_flag      ;
+wire  [`ysyx_25060170_DATA]     mem_wb_skip_flag      ;
 
 ysyx_25060170_mem_wb_reg u_ysyx_25060170_mem_wb_reg(
      .clk                   (clk                        )//<<i<<
@@ -732,6 +734,7 @@ ysyx_25060170_mem_wb_reg u_ysyx_25060170_mem_wb_reg(
     ,.rd_addr_i             (mem_rd_addr                )//<<i<<
     ,.csr_ctl_i             (mem_csr_ctl                )//<<i<<
     ,.csr_addr_i            (mem_csr_addr               )//<<i<<
+    ,.dpic_diff_skip_flag_i (dpi_wb_skip_flag           )//<<i<<
     // ,.wb_data_i             (mem_data                   )//<<i<<
     ,.mem_valid_i           (mem_valid                  )//<<i<<
     ,.wb_ready_i            (wb_ready                   )//<<i<<
@@ -745,6 +748,7 @@ ysyx_25060170_mem_wb_reg u_ysyx_25060170_mem_wb_reg(
     ,.alu_res_o             (mem_wb_alures_data         )//>>o>>
     ,.wb_ctl_o              (mem_wb_wb_ctl              )//>>o>>
     ,.rd_ena_o              (mem_wb_rd_ena              )//>>o>>
+    ,.dpic_diff_skip_flag_o (mem_wb_skip_flag           )//>>o>>
     ,.rd_addr_o             (mem_wb_rd_addr             )//>>o>>
     ,.csr_ctl_o             (mem_wb_csr_ctl             )//>>o>>
     ,.csr_addr_o            (mem_wb_csr_addr            )//>>o>>
@@ -1011,6 +1015,8 @@ ysyx_25060170_DPIC u_ysyx_25060170_DPIC (
     ,.data_i                ( ls_dpic_data              )//<<i<<
     ,.wlen                  ( ls_dpic_wlen              )//<<i<<
     ,.rlen                  ( ls_dpic_rlen              )//<<i<<
+    ,.dpic_difftest_skip_flag    (dpi_wb_skip_flag      )//>>o>>
+    ,.wbu_DPIC_difftest_skip_flag(mem_wb_skip_flag      )//<<i<<
     ,.wbu_dpic_inst	        ( wbu_dpic_inst	            )//<<i<<
     ,.wbu_dpic_pc		    ( wbu_dpic_pc	            )//<<i<<
     ,.wbu_dpic_next_pc	    ( wbu_dpic_next_pc	        )//<<i<<

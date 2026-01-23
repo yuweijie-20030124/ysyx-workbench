@@ -1,5 +1,7 @@
 `include "define.v"
 
+//在这里写内存
+
 module ysyx_25060170_lsu(
      input  wire                              clk                   //<<i<<
     ,input  wire                              rst                   //<<i<<
