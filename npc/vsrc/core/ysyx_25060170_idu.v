@@ -101,6 +101,7 @@ ysyx_25060170_idu_decoder decoder(
 	.op1_sel(op1_sel),
  	.op2_sel(op2_sel),
 	.alu_ctl(alusrc_o)
+	// .INST_ecall(inst_ecall_o)
 );
 
 //*************************************dataforward*************************************//

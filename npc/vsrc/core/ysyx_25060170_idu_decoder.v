@@ -15,8 +15,10 @@ module ysyx_25060170_idu_decoder(
 	,output wire  [1:0]						op1_sel		//>>o>>
 	,output wire  [2:0]						op2_sel		//>>o>>
     ,output wire  [7:0]					    alu_ctl		//>>o>>
+	// ,output wire 							INST_ecall  //>>o>>
 );
 
+// assign INST_ecall = inst_ecall;
 
 wire [6:0] opcode ;
 wire [2:0] funct3 ;

@@ -16,6 +16,8 @@ module ysyx_25060170_ifu(
     ,input  wire [`ysyx_25060170_PC]    bp_pc_i         //<<i<< jal jalr
     ,input  wire                        id_bxx_error_i  //<<i<<
     ,input  wire [`ysyx_25060170_PC]    id_bxx_error_pc_i//<<i<<
+    // ,input  wire                        wb_pc_jump_i    //<<i<<
+    // ,input  wire [`ysyx_25060170_PC]    wb_pc_i         //<<i<<
 
     /* verilator lint_off UNUSEDSIGNAL */
     // ,input  wire                        jal_jalr_i      //<<i<<
