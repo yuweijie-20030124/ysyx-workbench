@@ -192,6 +192,10 @@ typedef struct{
 
 extern NPC_State npc_state;
 
+// ----------- difftest_skip_ref_flag -----------
+
+extern int difftest_skip_ref_flag;
+
 // ----------- timer -----------
 
 uint64_t get_time();

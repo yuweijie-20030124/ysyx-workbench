@@ -58,6 +58,7 @@
 	,input wire [`ysyx_25060170_DATA] 			data_i		//<<i<<
 	,input wire [7:0] 							wlen		//<<i<<
 	,input wire [7:0] 							rlen		//<<i<<
+	,output reg [`ysyx_25060170_DATA]			dpic_difftest_skip_flag//>>o>>
 	
 	//from wbu 表示已经完成一条指令
 	,input wire		[`ysyx_25060170_INST]	    wbu_dpic_inst		//<<i<<
@@ -88,9 +89,9 @@
 
 import "DPI-C" function void pc_inst_end(input int thepc_data, input int the_inst);
 
-import "DPI-C" function void pmem_read(input int raddr, output int rdata, input byte rlen, input int mode);
+import "DPI-C" function void pmem_read(input int raddr, output int rdata, input byte rlen, input int mode, output int dpic_difftest_skip_flag);
 
-import "DPI-C" function void pmem_write(input int waddr, input int wdata, input byte wlen);
+import "DPI-C" function void pmem_write(input int waddr, input int wdata, input byte wlen, output int dpic_difftest_skip_flag);
 
 import "DPI-C" function void set_npc_exit(int pc, int halt_ret);
 
@@ -157,7 +158,7 @@ wire [31:0] dpic_loadread = 32'd2;
 // end
 
 reg [`ysyx_25060170_DATA]	mem_data;//for delay
-
+// reg [`ysyx_25060170_DATA]	dpic_difftest_skip_flag;
 //读改成组合逻辑，写时序
 //取指，从pc_i中获取inst_o
 wire [31:0] dpic_fetch = 32'd1;
@@ -166,20 +167,21 @@ wire [31:0] dpic_fetch = 32'd1;
 always @(*) begin
 	//mem访存读
 	if(re) begin
-	pmem_read(raddr, mem_data, rlen, dpic_loadread);	
+	pmem_read(raddr, mem_data, rlen, dpic_loadread,dpic_difftest_skip_flag);	
 	end
 	else begin
-	mem_data = 0;
+	mem_data 				= 0;
+	dpic_difftest_skip_flag = 0;
 	end
 end
 
 always @(*) begin
-	pmem_read(pc_i,inst_o,rlen,dpic_fetch);
+	pmem_read(pc_i,inst_o,rlen,dpic_fetch,dpic_difftest_skip_flag);
 end
 
 always @(posedge clk) begin
 	if(we) begin
-	pmem_write(waddr, data_i, wlen);
+	pmem_write(waddr, data_i, wlen,dpic_difftest_skip_flag);
 	end
 end
 

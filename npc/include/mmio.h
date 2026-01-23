@@ -6,7 +6,7 @@
 #ifdef CONFIG_DIFFTEST
 void difftest_skip_ref();
 #endif
-
+extern int difftest_skip_ref_flag;
 typedef void(*io_callback_t)(uint32_t, int, bool);
 uint8_t* new_space(int size);
 
@@ -41,7 +41,9 @@ static inline int find_mapid_by_addr(IOMap *maps, int size, paddr_t addr) {
 
       #ifdef CONFIG_DIFFTEST
       difftest_skip_ref();
+      difftest_skip_ref_flag = 1;
       #endif
+      
       return i;
     }
   }
