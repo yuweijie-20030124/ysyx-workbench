@@ -19,6 +19,7 @@ module ysyx_25060170_ls_mem_reg(
     ,input   wire [`ysyx_25060170_REGADDR]  rd_addr_i           //<<i<<
     ,input   wire [6:0]                     csr_ctl_i           //<<i<<
     ,input   wire [11:0]                    csr_addr_i          //<<i<<
+    ,input   wire [`ysyx_25060170_DATA]     diff_test_skip_i    //<<i<<
     // ,input   wire                           pipeline_id_stall_i //<<i<<
     //forwarding
     // ,input   wire [`ysyx_25060170_DATA]     ls_data_forward_i   //<<i<<
@@ -43,6 +44,7 @@ module ysyx_25060170_ls_mem_reg(
     ,output  reg  [`ysyx_25060170_REGADDR]  rd_addr_o           //>>o>>
     ,output  reg  [6:0]                     csr_ctl_o           //>>o>>
     ,output  reg  [11:0]                    csr_addr_o          //>>o>>
+    ,output  reg  [`ysyx_25060170_DATA]     diff_test_skip_o    //>>o>>
     // ,output  reg                            pipeline_id_stall_o //>>o>>
     //lsu forward to idu
     ,output  wire  [`ysyx_25060170_REGADDR]	ls_rd_addr_forward  //>>o>>
@@ -69,6 +71,7 @@ always@(posedge clk) begin
         rd_addr_o           <=   5'b0                   ;
         csr_ctl_o           <=   7'b0                   ;
         csr_addr_o          <=   12'b0                  ;
+        diff_test_skip_o    <=   `ysyx_25060170_ZERO32  ;
         ls_valid_o          <=   1'b1                   ;
         // pipeline_id_stall_o <=   1'b0                   ;
     end
@@ -88,6 +91,7 @@ always@(posedge clk) begin
         re_o                <=   re_o                   ;
         rd_ena_o            <=   rd_ena_o               ;
         rd_addr_o           <=   rd_addr_o              ;
+        diff_test_skip_o    <=   diff_test_skip_o       ;
         csr_ctl_o           <=   csr_ctl_o              ;
         csr_addr_o          <=   csr_addr_o             ;
         ls_valid_o          <=   ls_valid_o             ;
@@ -108,6 +112,7 @@ always@(posedge clk) begin
         rd_addr_o           <=   rd_addr_i              ;
         csr_ctl_o           <=   csr_ctl_i              ;
         csr_addr_o          <=   csr_addr_i             ;
+        diff_test_skip_o    <=   diff_test_skip_i       ;
         ls_valid_o          <=   1'b0                   ;
         // pipeline_id_stall_o <=   pipeline_id_stall_i    ;
     end

@@ -34,7 +34,7 @@
 // #define CONFIG_TRACE_START 0
 // #define CONFIG_ITRACE 1
 // #define CONFIG_MTRACE 1
-// #define CONFIG_DIFFTEST 1
+#define CONFIG_DIFFTEST 1
 // #define CONFIG_ITRACE_IRINGBUF 1
 
 
@@ -53,7 +53,7 @@
 #define CONFIG_DTRACE
 #endif
 
-// #define CONFIG_DIFFTEST 1
+
 
 #define CONFIG_GTK 1
 

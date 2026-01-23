@@ -592,6 +592,7 @@ wire [`ysyx_25060170_DATA]      ls_rd_data_forward  ;
 wire                            ls_mem_reg_re       ;
 wire [`ysyx_25060170_DATA]      ls_mem_reg_alu_res  ;
 wire                            ls_mem_reg_load_flag;
+wire [`ysyx_25060170_DATA]      ls_mem_reg_diff_skip;
 
 ysyx_25060170_ls_mem_reg u_ysyx_25060170_ls_mem_reg (
      .clk                    ( clk                     )//<<i<<
@@ -610,6 +611,7 @@ ysyx_25060170_ls_mem_reg u_ysyx_25060170_ls_mem_reg (
     ,.rd_addr_i              ( ex_ls_reg_rd_addr       )//<<i<<
     ,.csr_ctl_i              ( ex_ls_reg_csr_ctl       )//<<i<<
     ,.csr_addr_i             ( ex_ls_reg_csr_addr      )//<<i<<
+    ,.diff_test_skip_i       ( dpi_ls_mem_skip_flag    )//<<i<<
     // ,.pipeline_id_stall_i    ( ls_pipeline_idstall     )//<<i<<
     // ,.ls_data_forward_i      ( ls_data_forward         )//<<i<<
     ,.ls_valid_i             ( ls_valid                 )//<<i<<
@@ -632,6 +634,7 @@ ysyx_25060170_ls_mem_reg u_ysyx_25060170_ls_mem_reg (
     ,.rd_addr_o              ( ls_mem_reg_rd_addr       )//>>o>>
     ,.csr_ctl_o              ( ls_mem_reg_csr_ctl       )//>>o>>
     ,.csr_addr_o             ( ls_mem_reg_csr_addr      )//>>o>>
+    ,.diff_test_skip_o       ( ls_mem_reg_diff_skip     )//>>o>>
     // ,.pipeline_id_stall_o    ( ls_mem_pipeline_idstall  )//>>o>>
     ,.ls_rd_addr_forward     ( ls_rd_addr_forward       )//>>o>>
     ,.ls_rd_data_forward     ( ls_rd_data_forward       )//>>o>>
@@ -717,7 +720,7 @@ wire                            mem_valid_o           ;
 wire  [`ysyx_25060170_REGADDR]  mem_rd_addr_forward   ;
 wire  [`ysyx_25060170_DATA]     mem_rd_data_forward   ;
 wire                            mem_wb_reg_load_flag  ;
-wire  [`ysyx_25060170_DATA]     dpi_wb_skip_flag      ;
+wire  [`ysyx_25060170_DATA]     dpi_ls_mem_skip_flag      ;
 wire  [`ysyx_25060170_DATA]     mem_wb_skip_flag      ;
 
 ysyx_25060170_mem_wb_reg u_ysyx_25060170_mem_wb_reg(
@@ -734,7 +737,7 @@ ysyx_25060170_mem_wb_reg u_ysyx_25060170_mem_wb_reg(
     ,.rd_addr_i             (mem_rd_addr                )//<<i<<
     ,.csr_ctl_i             (mem_csr_ctl                )//<<i<<
     ,.csr_addr_i            (mem_csr_addr               )//<<i<<
-    ,.dpic_diff_skip_flag_i (dpi_wb_skip_flag           )//<<i<<
+    ,.dpic_diff_skip_flag_i (ls_mem_reg_diff_skip       )//<<i<<
     // ,.wb_data_i             (mem_data                   )//<<i<<
     ,.mem_valid_i           (mem_valid                  )//<<i<<
     ,.wb_ready_i            (wb_ready                   )//<<i<<
@@ -1015,7 +1018,7 @@ ysyx_25060170_DPIC u_ysyx_25060170_DPIC (
     ,.data_i                ( ls_dpic_data              )//<<i<<
     ,.wlen                  ( ls_dpic_wlen              )//<<i<<
     ,.rlen                  ( ls_dpic_rlen              )//<<i<<
-    ,.dpic_difftest_skip_flag    (dpi_wb_skip_flag      )//>>o>>
+    ,.dpic_difftest_skip_flag    (dpi_ls_mem_skip_flag      )//>>o>>
     ,.wbu_DPIC_difftest_skip_flag(mem_wb_skip_flag      )//<<i<<
     ,.wbu_dpic_inst	        ( wbu_dpic_inst	            )//<<i<<
     ,.wbu_dpic_pc		    ( wbu_dpic_pc	            )//<<i<<
