@@ -162,6 +162,7 @@ reg [`ysyx_25060170_DATA]	mem_data;//for delay
 //取指，从pc_i中获取inst_o
 wire [31:0] dpic_fetch = 32'd1;
 
+//dpic同一时钟周期多读几次没啥关系
 always @(*) begin
 	//mem访存读
 	if(re) begin
@@ -170,10 +171,6 @@ always @(*) begin
 	else begin
 	mem_data = 0;
 	end
-	// else if(!we) begin
-	// data_i = 0;
-	// end
-	//fetch取指
 end
 
 always @(*) begin
