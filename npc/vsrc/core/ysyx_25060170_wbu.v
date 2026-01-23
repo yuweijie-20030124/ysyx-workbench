@@ -1,8 +1,8 @@
  `include "define.v"
 
  module ysyx_25060170_wbu(
- 	 input  wire                             clk                        //<<i<<  
-    ,input	wire            		         rst                        //<<i<<
+ 	//  input  wire                             clk                        //<<i<<  
+    // ,input	wire            		         rst                        //<<i<<
     ,input	wire  [`ysyx_25060170_DATA]      ls_rd_data_i               //<<i<<
     ,input  wire  [1:0]      		         wb_ctl_i                   //<<i<<
     ,input  wire  [`ysyx_25060170_DATA]      exu_res_i                  //<<i<<
@@ -25,15 +25,16 @@
     //output for forwarding
     ,output	wire	[`ysyx_25060170_REGADDR] wb_rd_addr_forward	        //>>o>>
     ,output	wire	[`ysyx_25060170_DATA]    wb_rd_data_forward	        //>>o>>
-    //output for wb_flush
-    ,output wire                             wb_flush_o                 //>>o>>
-    ,output wire                             wb_if_changepc             //>>o>>
-    ,output wire  [`ysyx_25060170_PC]        wb_mepc_pc_o               //>>o>>
+    //output to csr_reg
+    ,output wire [6:0]                       csr_ctl_o                  //>>o>>
+    ,output wire [`ysyx_25060170_DATA]       wb_csr_data_o              //>>o>>
+    ,output wire [11:0]                      wb_csr_write_addr_o        //>>o>>
+    ,output wire                             wb_csr_ena_o               //>>o>>
     //out for difftest 
-    ,output wire  [`ysyx_25060170_REG]       mstatus_o                  //>>o>>
-    ,output wire  [`ysyx_25060170_REG]       mepc_o                     //>>o>>
-    ,output wire  [`ysyx_25060170_REG]       mtvec_o                    //>>o>>
-    ,output wire  [`ysyx_25060170_REG]       mcause_o                   //>>o>>
+    // ,output wire  [`ysyx_25060170_REG]       mstatus_o                  //>>o>>
+    // ,output wire  [`ysyx_25060170_REG]       mepc_o                     //>>o>>
+    // ,output wire  [`ysyx_25060170_REG]       mtvec_o                    //>>o>>
+    // ,output wire  [`ysyx_25060170_REG]       mcause_o                   //>>o>>
     ,output wire  [`ysyx_25060170_INST]      wbu_dpic_inst_o            //>>o>>
     ,output wire  [`ysyx_25060170_PC]        wbu_dpic_pc_o              //>>o>>
     ,output wire  [`ysyx_25060170_PC]        wbu_dpic_next_pc_o         //>>o>>
@@ -47,20 +48,20 @@ assign wb_ready_o = 1'b1;
 
 
 //***********************************csr**************************************//
-wire [`ysyx_25060170_DATA] mstatus;
-wire [`ysyx_25060170_DATA] mepc;
-wire [`ysyx_25060170_DATA] mtvec;
-wire [`ysyx_25060170_DATA] mcause;
-wire [`ysyx_25060170_DATA] read_csr_data;
-wire [`ysyx_25060170_DATA] write_csr_data;
-wire [`ysyx_25060170_DATA] mcause_value;
+// wire [`ysyx_25060170_DATA] mstatus;
+// wire [`ysyx_25060170_DATA] mepc;
+// wire [`ysyx_25060170_DATA] mtvec;
+// wire [`ysyx_25060170_DATA] mcause;
+// wire [`ysyx_25060170_DATA] read_csr_data;
+// wire [`ysyx_25060170_DATA] write_csr_data;
+// wire [`ysyx_25060170_DATA] mcause_value;
 
-wire [`ysyx_25060170_DATA] set_data    = read_csr_data | exu_res_i;
-wire [`ysyx_25060170_DATA] clear_data  = read_csr_data & (~exu_res_i) ;
+// wire [`ysyx_25060170_DATA] set_data    = read_csr_data | exu_res_i;
+// wire [`ysyx_25060170_DATA] clear_data  = read_csr_data & (~exu_res_i) ;
 
 assign mcause_value = csr_ctl_i[1] ? 32'd11 : `ysyx_25060170_ZERO32; //ecall from m-mode
 
-assign write_csr_data = `ysyx_25060170_ZERO32  |
+assign wb_csr_data_o   = `ysyx_25060170_ZERO32  |
                         {32{csr_ctl_i[6]}} & exu_res_i       | //csr write
                         {32{csr_ctl_i[5]}} & set_data        | //csr set
                         {32{csr_ctl_i[4]}} & clear_data      | //csr clear
@@ -95,10 +96,10 @@ assign write_csr_data = `ysyx_25060170_ZERO32  |
 //简单debug ecall//
 // assign 
 
-assign mstatus_o = mstatus;
-assign mepc_o    = mepc   ;
-assign mtvec_o   = mtvec  ;
-assign mcause_o  = mcause ;
+// assign mstatus_o = mstatus;
+// assign mepc_o    = mepc   ;
+// assign mtvec_o   = mtvec  ;
+// assign mcause_o  = mcause ;
 
 assign wbu_dpic_inst_o          = inst_i             ;
 assign wbu_dpic_pc_o            = pc_i               ;
