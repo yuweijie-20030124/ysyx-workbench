@@ -93,7 +93,7 @@ ysyx_25060170_csr u_ysyx_25060170_csr (
 
 //***********************************for DPIC**************************************//
 //简单debug ecall//
-assign 
+// assign 
 
 assign mstatus_o = mstatus;
 assign mepc_o    = mepc   ;
