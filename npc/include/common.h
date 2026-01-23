@@ -34,7 +34,7 @@
 // #define CONFIG_TRACE_START 0
 // #define CONFIG_ITRACE 1
 // #define CONFIG_MTRACE 1
-// #define CONFIG_DIFFTEST 1
+#define CONFIG_DIFFTEST 1
 // #define CONFIG_ITRACE_IRINGBUF 1
 
 
@@ -53,13 +53,13 @@
 #define CONFIG_DTRACE
 #endif
 
-// #define CONFIG_DIFFTEST 1
+
 
 #define CONFIG_GTK 1
 
 
 
-// #define CONFIG_DEVICE 1
+#define CONFIG_DEVICE 1
 
 #ifdef CONFIG_DEVICE
 #define CONFIG_HAS_SERIAL 1
@@ -191,6 +191,10 @@ typedef struct{
 } NPC_State;
 
 extern NPC_State npc_state;
+
+// ----------- difftest_skip_ref_flag -----------
+
+extern int difftest_skip_ref_flag;
 
 // ----------- timer -----------
 

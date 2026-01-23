@@ -25,6 +25,10 @@
     //output for forwarding
     ,output	wire	[`ysyx_25060170_REGADDR] wb_rd_addr_forward	        //>>o>>
     ,output	wire	[`ysyx_25060170_DATA]    wb_rd_data_forward	        //>>o>>
+    //output for wb_flush
+    ,output wire                             wb_flush_o                 //>>o>>
+    ,output wire                             wb_if_changepc             //>>o>>
+    ,output wire  [`ysyx_25060170_PC]        wb_mepc_pc_o               //>>o>>
     //out for difftest 
     ,output wire  [`ysyx_25060170_REG]       mstatus_o                  //>>o>>
     ,output wire  [`ysyx_25060170_REG]       mepc_o                     //>>o>>
@@ -88,6 +92,9 @@ ysyx_25060170_csr u_ysyx_25060170_csr (
 );
 
 //***********************************for DPIC**************************************//
+//简单debug ecall//
+assign 
+
 assign mstatus_o = mstatus;
 assign mepc_o    = mepc   ;
 assign mtvec_o   = mtvec  ;

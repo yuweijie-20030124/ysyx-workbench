@@ -15,7 +15,9 @@ void cpu_reset();
 void sdb_mainloop();
 int is_exit_status_bad();
 bool log_enable();
-
+#ifdef CONFIG_DIFFTEST
+void difftest_skip_ref();
+#endif
 Vysyx_25060170_fishtailcore* fishtailcore;
 VerilatedContext* contextp;
 #ifdef CONFIG_GTK
@@ -25,13 +27,14 @@ vluint64_t main_time = 0;
 
 static int inst_end = 1;
 
+int difftest_skip_ref_flag;
 /******************************* DPI-C ********************************/
 
 //mode = 1 = 读指令
 //mode = 2 = 从内存中读数据
 //mode = 3 = 从mmio中读数据
 /**************************** read and write ****************************/
-extern "C" void pmem_read(paddr_t raddr, paddr_t* rdata, char rlen , int mode){
+extern "C" void pmem_read(paddr_t raddr, paddr_t* rdata, char rlen , int mode, int* dpic_difftest_skip_flag){
 
   if (raddr < CONFIG_MEM_BASE) return;
   if (likely(in_pmem(raddr))) {
@@ -47,7 +50,12 @@ extern "C" void pmem_read(paddr_t raddr, paddr_t* rdata, char rlen , int mode){
 
     return;
     }
-   IFDEF(CONFIG_DEVICE, *rdata = mmio_read(raddr, rlen);return);
+   IFDEF(CONFIG_DEVICE, *rdata = mmio_read(raddr, rlen);
+   if(difftest_skip_ref_flag == 1){
+    difftest_skip_ref_flag  = 0;
+    *dpic_difftest_skip_flag = 1;
+   };
+   return);
    return;
 }
 
@@ -62,7 +70,7 @@ static inline int maskToLen(uint8_t mask) {
 }
 
 // Memory Write for 32-bit system
-extern "C" void pmem_write(uint32_t waddr, uint32_t wdata, uint8_t wlen) {
+extern "C" void pmem_write(uint32_t waddr, uint32_t wdata, uint8_t wlen, int* dpic_difftest_skip_flag) {
   if (waddr < CONFIG_MEM_BASE) return;
   
 #ifdef CONFIG_MTRACE
@@ -91,6 +99,10 @@ extern "C" void pmem_write(uint32_t waddr, uint32_t wdata, uint8_t wlen) {
   
 #ifdef CONFIG_DEVICE
   mmio_write(waddr, len, wdata);
+  if(difftest_skip_ref_flag == 1){
+    difftest_skip_ref_flag  = 0;
+    *dpic_difftest_skip_flag = 1;
+   }
 #endif
   return;
 }
@@ -112,10 +124,18 @@ extern "C" void magic_instruction(){
   // printf("exit\n");
 }
 
-extern "C" void pc_inst_end(int thepc_data, int the_inst){
+extern "C" void pc_inst_end(int thepc_data, int the_inst, int diff_skip_flag){
   if(thepc_data != 0 && the_inst != 0){
   cpu.pc = thepc_data;
   s.val = the_inst;
+  #ifdef CONFIG_DIFFTEST
+  if(diff_skip_flag){
+    difftest_skip_ref();
+  // printf("pc   = 0x%08x\n",thepc_data);
+  // printf("inst = 0x%08x\n",the_inst);
+  // printf("flag = 0x%08x\n",diff_skip_flag);
+  }
+  #endif
   // printf("pc=0x%08x,inst=0x%08x\n",thepc_data,the_inst);
   inst_end = 0;
   }

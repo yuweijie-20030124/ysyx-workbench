@@ -17,6 +17,7 @@ module ysyx_25060170_mem_wb_reg(
     ,input   wire [`ysyx_25060170_REGADDR]  rd_addr_i           //<<i<<
     ,input   wire [6:0]                     csr_ctl_i           //<<i<<
     ,input   wire [11:0]                    csr_addr_i          //<<i<<
+    ,input   wire [`ysyx_25060170_DATA]     dpic_diff_skip_flag_i//<<i<<
     // ,input   wire [`ysyx_25060170_DATA]     wb_data_i           //<<i<<
     //pipeline
     ,input   wire                           mem_valid_i         //<<i<<
@@ -34,6 +35,7 @@ module ysyx_25060170_mem_wb_reg(
     ,output  reg  [`ysyx_25060170_REGADDR]  rd_addr_o           //>>o>>
     ,output  reg  [6:0]                     csr_ctl_o           //>>o>>
     ,output  reg  [11:0]                    csr_addr_o          //>>o>>
+    ,output  reg  [`ysyx_25060170_DATA]     dpic_diff_skip_flag_o//>>o>>
     // ,output  wire [`ysyx_25060170_DATA]     wb_data_o           //>>o>>
     //forwarding
     ,output wire  [`ysyx_25060170_REGADDR]  mem_rd_addr_forward_o//>>o>>   
@@ -63,6 +65,7 @@ module ysyx_25060170_mem_wb_reg(
             rd_addr_o       <= 5'b0                     ;
             csr_ctl_o       <= 7'b0                     ;
             csr_addr_o      <= 12'b0                    ;
+            dpic_diff_skip_flag_o <= `ysyx_25060170_ZERO32;
             // wb_data_o       <= `ysyx_25060170_ZERO32    ;
             mem_valid_o     <= 1'b1                     ;
     end
@@ -81,6 +84,7 @@ module ysyx_25060170_mem_wb_reg(
             rd_addr_o       <= rd_addr_o                ;
             csr_ctl_o       <= csr_ctl_o                ;
             csr_addr_o      <= csr_addr_o               ;
+            dpic_diff_skip_flag_o <= dpic_diff_skip_flag_o;
             // wb_data_o       <= wb_data_o                ;
             mem_valid_o     <= mem_valid_o              ;
     end    
@@ -96,6 +100,7 @@ module ysyx_25060170_mem_wb_reg(
             rd_addr_o       <= rd_addr_i                ;
             csr_ctl_o       <= csr_ctl_i                ;
             csr_addr_o      <= csr_addr_i               ;
+            dpic_diff_skip_flag_o <= dpic_diff_skip_flag_i;
             // wb_data_o       <= wb_data_i                ;
             mem_valid_o     <= 1'b0                     ;     
     end

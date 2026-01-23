@@ -8,21 +8,23 @@
 #include "Vysyx_25060170_fishtailcore__Syms.h"
 #include "Vysyx_25060170_fishtailcore___024root.h"
 
-extern "C" void pc_inst_end(int thepc_data, int the_inst);
+extern "C" void pc_inst_end(int thepc_data, int the_inst, int diff_skip_flag);
 
-VL_INLINE_OPT void Vysyx_25060170_fishtailcore___024root____Vdpiimwrap_ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_DPIC__DOT__pc_inst_end_TOP(IData/*31:0*/ thepc_data, IData/*31:0*/ the_inst) {
+VL_INLINE_OPT void Vysyx_25060170_fishtailcore___024root____Vdpiimwrap_ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_DPIC__DOT__pc_inst_end_TOP(IData/*31:0*/ thepc_data, IData/*31:0*/ the_inst, IData/*31:0*/ diff_skip_flag) {
     VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_fishtailcore___024root____Vdpiimwrap_ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_DPIC__DOT__pc_inst_end_TOP\n"); );
     // Body
     int thepc_data__Vcvt;
     for (size_t thepc_data__Vidx = 0; thepc_data__Vidx < 1; ++thepc_data__Vidx) thepc_data__Vcvt = thepc_data;
     int the_inst__Vcvt;
     for (size_t the_inst__Vidx = 0; the_inst__Vidx < 1; ++the_inst__Vidx) the_inst__Vcvt = the_inst;
-    pc_inst_end(thepc_data__Vcvt, the_inst__Vcvt);
+    int diff_skip_flag__Vcvt;
+    for (size_t diff_skip_flag__Vidx = 0; diff_skip_flag__Vidx < 1; ++diff_skip_flag__Vidx) diff_skip_flag__Vcvt = diff_skip_flag;
+    pc_inst_end(thepc_data__Vcvt, the_inst__Vcvt, diff_skip_flag__Vcvt);
 }
 
-extern "C" void pmem_read(int raddr, int* rdata, char rlen, int mode);
+extern "C" void pmem_read(int raddr, int* rdata, char rlen, int mode, int* dpic_difftest_skip_flag);
 
-VL_INLINE_OPT void Vysyx_25060170_fishtailcore___024root____Vdpiimwrap_ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_DPIC__DOT__pmem_read_TOP(IData/*31:0*/ raddr, IData/*31:0*/ &rdata, CData/*7:0*/ rlen, IData/*31:0*/ mode) {
+VL_INLINE_OPT void Vysyx_25060170_fishtailcore___024root____Vdpiimwrap_ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_DPIC__DOT__pmem_read_TOP(IData/*31:0*/ raddr, IData/*31:0*/ &rdata, CData/*7:0*/ rlen, IData/*31:0*/ mode, IData/*31:0*/ &dpic_difftest_skip_flag) {
     VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_fishtailcore___024root____Vdpiimwrap_ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_DPIC__DOT__pmem_read_TOP\n"); );
     // Body
     int raddr__Vcvt;
@@ -32,13 +34,15 @@ VL_INLINE_OPT void Vysyx_25060170_fishtailcore___024root____Vdpiimwrap_ysyx_2506
     for (size_t rlen__Vidx = 0; rlen__Vidx < 1; ++rlen__Vidx) rlen__Vcvt = rlen;
     int mode__Vcvt;
     for (size_t mode__Vidx = 0; mode__Vidx < 1; ++mode__Vidx) mode__Vcvt = mode;
-    pmem_read(raddr__Vcvt, &rdata__Vcvt, rlen__Vcvt, mode__Vcvt);
+    int dpic_difftest_skip_flag__Vcvt;
+    pmem_read(raddr__Vcvt, &rdata__Vcvt, rlen__Vcvt, mode__Vcvt, &dpic_difftest_skip_flag__Vcvt);
     rdata = rdata__Vcvt;
+    dpic_difftest_skip_flag = dpic_difftest_skip_flag__Vcvt;
 }
 
-extern "C" void pmem_write(int waddr, int wdata, char wlen);
+extern "C" void pmem_write(int waddr, int wdata, char wlen, int* dpic_difftest_skip_flag);
 
-VL_INLINE_OPT void Vysyx_25060170_fishtailcore___024root____Vdpiimwrap_ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_DPIC__DOT__pmem_write_TOP(IData/*31:0*/ waddr, IData/*31:0*/ wdata, CData/*7:0*/ wlen) {
+VL_INLINE_OPT void Vysyx_25060170_fishtailcore___024root____Vdpiimwrap_ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_DPIC__DOT__pmem_write_TOP(IData/*31:0*/ waddr, IData/*31:0*/ wdata, CData/*7:0*/ wlen, IData/*31:0*/ &dpic_difftest_skip_flag) {
     VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_fishtailcore___024root____Vdpiimwrap_ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_DPIC__DOT__pmem_write_TOP\n"); );
     // Body
     int waddr__Vcvt;
@@ -47,7 +51,9 @@ VL_INLINE_OPT void Vysyx_25060170_fishtailcore___024root____Vdpiimwrap_ysyx_2506
     for (size_t wdata__Vidx = 0; wdata__Vidx < 1; ++wdata__Vidx) wdata__Vcvt = wdata;
     char wlen__Vcvt;
     for (size_t wlen__Vidx = 0; wlen__Vidx < 1; ++wlen__Vidx) wlen__Vcvt = wlen;
-    pmem_write(waddr__Vcvt, wdata__Vcvt, wlen__Vcvt);
+    int dpic_difftest_skip_flag__Vcvt;
+    pmem_write(waddr__Vcvt, wdata__Vcvt, wlen__Vcvt, &dpic_difftest_skip_flag__Vcvt);
+    dpic_difftest_skip_flag = dpic_difftest_skip_flag__Vcvt;
 }
 
 extern "C" void set_npc_exit(int pc, int halt_ret);
