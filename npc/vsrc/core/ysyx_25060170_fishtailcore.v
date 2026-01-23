@@ -865,27 +865,16 @@ wire [`ysyx_25060170_REG]       regs31;
 //to mem for从地址中取完值为了避免
 
 ysyx_25060170_csr u_ysyx_25060170_csr (
-    
      .clk               (clk)//<<i<<
-    
     ,.rst               (rst)//<<i<<
-    
     ,.csr_ctl           ()//<<i<<  {csr_wr_ena, csr_rd_ena, ecall_ena, mret_ena}
-    
     ,.csr_addr          ()//<<i<<
-    
     ,.mcause_value      ()//<<i<<
-    
     ,.write_csr_data    ()//<<i<<
-    
     ,.read_csr_data     ()//>>o>>
-    
     ,.mstatus_o         ()//>>o>>
-    
     ,.mepc_o            ()//>>o>>
-    
     ,.mtvec_o           ()//>>o>>
-    
     ,.mcause_o          ()//>>o>>
 );
 
