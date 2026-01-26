@@ -28,6 +28,7 @@ typedef struct {
   word_t mepc;       // 存放触发异常的PC             0x341
   word_t mtvec;      // 指向trap处理函数的入口地址    0x305
   word_t mhartid;    // 存放hart编号                0xf12
+  word_t mscratch;   // 临时寄存器可读可写            0x340
 } MUXDEF(CONFIG_RV64, riscv64_CPU_state, riscv32_CPU_state);
 
 // decode

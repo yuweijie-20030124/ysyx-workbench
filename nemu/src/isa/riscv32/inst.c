@@ -113,6 +113,10 @@ static int decode_exec(Decode *s) {
   if(imm == 0xf12){ //mhartid
     R(rd) = cpu.mhartid;
   };
+  if(imm == 0x340){ //mscratch
+    R(rd) = cpu.mscratch;
+    cpu.mscratch = src1;
+  }
 );
 
   INSTPAT("??????? ????? ????? 101 ????? 11100 11", csrrwi  , I,  
@@ -135,6 +139,10 @@ static int decode_exec(Decode *s) {
   if(imm == 0xf12){ //mhartid
     R(rd) = cpu.mhartid;
   };
+  if(imm == 0x340){ //mscratch
+    R(rd) = cpu.mscratch;
+    cpu.mscratch = BITS(s->isa.inst, 19, 15);
+  }
 );
 
 
@@ -159,6 +167,10 @@ static int decode_exec(Decode *s) {
   if(imm == 0xf12){ //mhartid
     R(rd) = cpu.mhartid;
   };
+  if(imm == 0x340){ //mscratch
+    R(rd) = cpu.mscratch;
+    cpu.mscratch |=  src1;
+  }
 );
 
 
@@ -181,6 +193,10 @@ static int decode_exec(Decode *s) {
   };
   if(imm == 0xf12){ //mhartid
     R(rd) = cpu.mhartid;
+  };
+  if(imm == 0x340){ //mscratch
+    R(rd) = cpu.mscratch;
+    cpu.mscratch |=  BITS(s->isa.inst, 19, 15);
   };
 );
 
@@ -208,6 +224,11 @@ static int decode_exec(Decode *s) {
   if(imm == 0xf12){ //mhartid
     R(rd) = cpu.mhartid;
   };
+  if(imm == 0x340){ //mscratch
+    int t = cpu.mscratch;
+    cpu.mscratch = t & ~src1;
+    R(rd) = t;
+  };
 );
 
   INSTPAT("??????? ????? ????? 111 ????? 11100 11", csrrwi  , I,  
@@ -229,6 +250,10 @@ static int decode_exec(Decode *s) {
   };
   if(imm == 0xf12){ //mhartid
     R(rd) = cpu.mhartid;
+  };
+  if(imm == 0x340){ //mscratch
+    R(rd) = cpu.mscratch;
+    cpu.mscratch &=  ~BITS(s->isa.inst, 19, 15);
   };
 );
 
