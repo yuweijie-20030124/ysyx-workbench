@@ -38,6 +38,8 @@ static void restart() {
 
   /* initialize mstatus */
   cpu.mstatus = 0x00001800;
+  
+  cpu.mhartid = 0;
 }
 
 void init_isa() {

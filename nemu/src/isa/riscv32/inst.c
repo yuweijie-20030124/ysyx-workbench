@@ -22,6 +22,8 @@
 #define Mr vaddr_read
 #define Mw vaddr_write
 
+void difftest_skip_ref();
+
 enum {
   TYPE_I, TYPE_U, TYPE_S, TYPE_J, TYPE_B, TYPE_R, 
   TYPE_N, // none 
@@ -91,6 +93,11 @@ static int decode_exec(Decode *s) {
   INSTPAT("??????? ????? ????? 110 ????? 00100 11", ori    , I, R(rd) = src1 | imm);
 
   //CSR寄存器
+
+  INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , I, s->dnpc = isa_raise_intr(11,s->pc);etrace());
+
+
+
   INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw  , I,  
   if(imm == 0x305){  //mtvec
     R(rd) = cpu.mtvec;
@@ -99,6 +106,7 @@ static int decode_exec(Decode *s) {
   if(imm == 0x300){ //mstatus
     R(rd) = cpu.mstatus;
     cpu.mstatus =  src1;
+
   };
   if(imm == 0x341){ //mepc
     R(rd) = cpu.mepc;
@@ -108,9 +116,42 @@ static int decode_exec(Decode *s) {
     R(rd) = cpu.mcause;
     cpu.mcause =  src1;
   };
+  if(imm == 0xf12){ //mhartid
+    R(rd) = cpu.mhartid;
+  };
+  if(imm == 0x340){ //mscratch
+    R(rd) = cpu.mscratch;
+    cpu.mscratch = src1;
+  }
 );
 
-  INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , I, s->dnpc = isa_raise_intr(11,s->pc);etrace());
+  INSTPAT("??????? ????? ????? 101 ????? 11100 11", csrrwi  , I,  
+  if(imm == 0x305){  //mtvec
+    R(rd) = cpu.mtvec;
+    cpu.mtvec =  BITS(s->isa.inst, 19, 15);
+  };
+  if(imm == 0x300){ //mstatus
+    R(rd) = cpu.mstatus;
+    cpu.mstatus =  BITS(s->isa.inst, 19, 15);
+  };
+  if(imm == 0x341){ //mepc
+    R(rd) = cpu.mepc;
+    cpu.mepc =  BITS(s->isa.inst, 19, 15);
+  };
+  if(imm == 0x342){ //mcause
+    R(rd) = cpu.mcause;
+    cpu.mcause =  BITS(s->isa.inst, 19, 15);
+  };
+  if(imm == 0xf12){ //mhartid
+    R(rd) = cpu.mhartid;
+  };
+  if(imm == 0x340){ //mscratch
+    R(rd) = cpu.mscratch;
+    cpu.mscratch = BITS(s->isa.inst, 19, 15);
+  }
+);
+
+
   INSTPAT("??????? ????? ????? 010 ????? 11100 11", csrrs  , I, 
   if(imm == 0x305){  //mtvec
     R(rd) = cpu.mtvec;
@@ -119,6 +160,7 @@ static int decode_exec(Decode *s) {
   if(imm == 0x300){ //mstatus
     R(rd) = cpu.mstatus;
     cpu.mstatus |=  src1;
+    difftest_skip_ref();
   };
   if(imm == 0x341){ //mepc
     R(rd) = cpu.mepc;
@@ -128,6 +170,97 @@ static int decode_exec(Decode *s) {
         // printf("??????????????????????????*****\n");
     R(rd) = cpu.mcause;
     cpu.mcause |=  src1;
+  };
+  if(imm == 0xf12){ //mhartid
+    R(rd) = cpu.mhartid;
+  };
+  if(imm == 0x340){ //mscratch
+    R(rd) = cpu.mscratch;
+    cpu.mscratch |=  src1;
+  }
+);
+
+
+  INSTPAT("??????? ????? ????? 110 ????? 11100 11", csrrsi  , I,  
+  if(imm == 0x305){  //mtvec
+    R(rd) = cpu.mtvec;
+    cpu.mtvec |=  BITS(s->isa.inst, 19, 15);
+  };
+  if(imm == 0x300){ //mstatus
+    R(rd) = cpu.mstatus;
+    cpu.mstatus |=  BITS(s->isa.inst, 19, 15);
+  };
+  if(imm == 0x341){ //mepc
+    R(rd) = cpu.mepc;
+    cpu.mepc |=  BITS(s->isa.inst, 19, 15);
+  };
+  if(imm == 0x342){ //mcause
+    R(rd) = cpu.mcause;
+    cpu.mcause |=  BITS(s->isa.inst, 19, 15);
+  };
+  if(imm == 0xf12){ //mhartid
+    R(rd) = cpu.mhartid;
+  };
+  if(imm == 0x340){ //mscratch
+    R(rd) = cpu.mscratch;
+    cpu.mscratch |=  BITS(s->isa.inst, 19, 15);
+  };
+);
+
+  INSTPAT("??????? ????? ????? 011 ????? 11100 11", csrrc  , I, 
+  if(imm == 0x305){  //mtvec
+    int t = cpu.mtvec;
+    cpu.mtvec = t & ~src1;
+    R(rd) = t;
+  };
+  if(imm == 0x300){ //mstatus
+    int t = cpu.mstatus;
+    cpu.mstatus = t & ~src1;
+    R(rd) = t;
+  };
+  if(imm == 0x341){ //mepc
+    int t = cpu.mepc;
+    cpu.mepc = t & ~src1;
+    R(rd) = t;
+  };
+  if(imm == 0x342){ //mcause
+    int t = cpu.mcause;
+    cpu.mcause = t & ~src1;
+    R(rd) = t;
+  };
+  if(imm == 0xf12){ //mhartid
+    R(rd) = cpu.mhartid;
+  };
+  if(imm == 0x340){ //mscratch
+    int t = cpu.mscratch;
+    cpu.mscratch = t & ~src1;
+    R(rd) = t;
+  };
+);
+
+  INSTPAT("??????? ????? ????? 111 ????? 11100 11", csrrwi  , I,  
+  if(imm == 0x305){  //mtvec
+    R(rd) = cpu.mtvec;
+    cpu.mtvec &=  ~BITS(s->isa.inst, 19, 15);
+  };
+  if(imm == 0x300){ //mstatus
+    R(rd) = cpu.mstatus;
+    cpu.mstatus &=  ~BITS(s->isa.inst, 19, 15);
+  };
+  if(imm == 0x341){ //mepc
+    R(rd) = cpu.mepc;
+    cpu.mepc &=  ~BITS(s->isa.inst, 19, 15);
+  };
+  if(imm == 0x342){ //mcause
+    R(rd) = cpu.mcause;
+    cpu.mcause &=  ~BITS(s->isa.inst, 19, 15);
+  };
+  if(imm == 0xf12){ //mhartid
+    R(rd) = cpu.mhartid;
+  };
+  if(imm == 0x340){ //mscratch
+    R(rd) = cpu.mscratch;
+    cpu.mscratch &=  ~BITS(s->isa.inst, 19, 15);
   };
 );
 
@@ -152,6 +285,10 @@ static int decode_exec(Decode *s) {
     else if (rd == 0 && imm == 0) {call_trace(s->pc, s->dnpc);}
    })
    );
+
+  INSTPAT("0000??? ????? 00000 000 00000 00011 11", fence     , S, ;); 
+  INSTPAT("0000000 00000 00000 001 00000 00011 11", fencei    , S, ;); 
+   
   INSTPAT("0000000 ????? ????? 101 ????? 01100 11", srl    , R, R(rd) = src1 >> BITS(src2, 4, 0));
   INSTPAT("0000000 ????? ????? 000 ????? 01100 11", add    , R, R(rd) = src1 + src2); 
   INSTPAT("0000000 ????? ????? 001 ????? 01100 11", sll    , R, R(rd) = src1 <<  BITS(src2 , 4 , 0)); 
