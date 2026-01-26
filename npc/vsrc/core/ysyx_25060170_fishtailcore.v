@@ -780,8 +780,8 @@ wire                            wbu_dpic_valid;
 // wire                            wbu_dpic_pipeline_idstall;
 
 ysyx_25060170_wbu u_ysyx_25060170_wbu (
-     .clk                       ( clk                           )//<<i<<
-    ,.rst                       ( rst                           )//<<i<<
+    //  .clk                       ( clk                           )//<<i<<
+    // ,.rst                       ( rst                           )//<<i<<
 
     ,.ls_rd_data_i              ( mem_wb_lsu_res                )//<<i<<
     ,.wb_ctl_i                  ( mem_wb_wb_ctl                 )//<<i<<
@@ -868,10 +868,11 @@ ysyx_25060170_csr u_ysyx_25060170_csr (
      .clk               (clk)//<<i<<
     ,.rst               (rst)//<<i<<
     ,.csr_ctl           ()//<<i<<  {csr_wr_ena, csr_rd_ena, ecall_ena, mret_ena}
-    ,.csr_addr          ()//<<i<<
     ,.mcause_value      ()//<<i<<
     ,.write_csr_data    ()//<<i<<
+    ,.csr_write_addr    ()//<<i<<
     ,.read_csr_data     ()//>>o>>
+    ,.csr_read_addr     ()//<<i<<
     ,.mstatus_o         ()//>>o>>
     ,.mepc_o            ()//>>o>>
     ,.mtvec_o           ()//>>o>>
@@ -1023,10 +1024,10 @@ ysyx_25060170_DPIC u_ysyx_25060170_DPIC (
     ,.regs29                ( regs29                    )//<<i<<
     ,.regs30                ( regs30                    )//<<i<<
     ,.regs31                ( regs31                    )//<<i<<
-    ,.mstatus               ( wbu_dpic_mstatus          )//<<i<<
-    ,.mtvec                 ( wbu_dpic_mtvec            )//<<i<<
-    ,.mepc                  ( wbu_dpic_mepc             )//<<i<<
-    ,.mcause                ( wbu_dpic_mcause           )//<<i<<
+    ,.mstatus               ( `                    )//<<i<<
+    ,.mtvec                 ( mtvec                     )//<<i<<
+    ,.mepc                  ( mepc                      )//<<i<<
+    ,.mcause                ( mcause                    )//<<i<<
     ,.re                    ( ls_mem_re                 )//<<i<<
     ,.we                    ( ls_dpic_we                )//<<i<<
     ,.data_i                ( ls_dpic_data              )//<<i<<
