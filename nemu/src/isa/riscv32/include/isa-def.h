@@ -27,6 +27,7 @@ typedef struct {
   word_t mstatus;    // 存放处理器的状态             0x300
   word_t mepc;       // 存放触发异常的PC             0x341
   word_t mtvec;      // 指向trap处理函数的入口地址    0x305
+  word_t mhartid;    // 存放hart编号                0xf12
 } MUXDEF(CONFIG_RV64, riscv64_CPU_state, riscv32_CPU_state);
 
 // decode
