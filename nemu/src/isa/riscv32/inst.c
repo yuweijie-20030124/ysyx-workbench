@@ -278,6 +278,10 @@ static int decode_exec(Decode *s) {
     else if (rd == 0 && imm == 0) {call_trace(s->pc, s->dnpc);}
    })
    );
+
+  INSTPAT("0000??? ????? 00000 000 00000 00011 11", fence     , S, ;); 
+  INSTPAT("0000000 00000 00000 001 00000 00011 11", fencei    , S, ;); 
+   
   INSTPAT("0000000 ????? ????? 101 ????? 01100 11", srl    , R, R(rd) = src1 >> BITS(src2, 4, 0));
   INSTPAT("0000000 ????? ????? 000 ????? 01100 11", add    , R, R(rd) = src1 + src2); 
   INSTPAT("0000000 ????? ????? 001 ????? 01100 11", sll    , R, R(rd) = src1 <<  BITS(src2 , 4 , 0)); 
