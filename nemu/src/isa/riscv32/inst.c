@@ -22,6 +22,8 @@
 #define Mr vaddr_read
 #define Mw vaddr_write
 
+void difftest_skip_ref();
+
 enum {
   TYPE_I, TYPE_U, TYPE_S, TYPE_J, TYPE_B, TYPE_R, 
   TYPE_N, // none 
@@ -93,6 +95,9 @@ static int decode_exec(Decode *s) {
   //CSR寄存器
 
   INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , I, s->dnpc = isa_raise_intr(11,s->pc);etrace());
+
+
+
   INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw  , I,  
   if(imm == 0x305){  //mtvec
     R(rd) = cpu.mtvec;
@@ -101,6 +106,7 @@ static int decode_exec(Decode *s) {
   if(imm == 0x300){ //mstatus
     R(rd) = cpu.mstatus;
     cpu.mstatus =  src1;
+
   };
   if(imm == 0x341){ //mepc
     R(rd) = cpu.mepc;
@@ -154,6 +160,7 @@ static int decode_exec(Decode *s) {
   if(imm == 0x300){ //mstatus
     R(rd) = cpu.mstatus;
     cpu.mstatus |=  src1;
+    difftest_skip_ref();
   };
   if(imm == 0x341){ //mepc
     R(rd) = cpu.mepc;
