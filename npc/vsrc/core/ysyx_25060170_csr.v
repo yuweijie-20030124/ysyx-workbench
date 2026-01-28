@@ -8,13 +8,6 @@ module ysyx_25060170_csr(
   ,input  wire [`ysyx_25060170_REG]   mcause_value     //<<i<<
   ,input  wire [`ysyx_25060170_DATA]  write_csr_data   //<<i<<
   ,output wire [`ysyx_25060170_DATA]  read_csr_data    //>>o>>
-  //fordifftest to DPIC
-  ,output wire [`ysyx_25060170_REG]   mhartid_o        //>>o>>
-  ,output wire [`ysyx_25060170_REG]   mstatus_o        //>>o>>
-  ,output wire [`ysyx_25060170_REG]   mepc_o           //>>o>>
-  ,output wire [`ysyx_25060170_REG]   mtvec_o          //>>o>>
-  ,output wire [`ysyx_25060170_REG]   mcause_o         //>>o>>
-  ,output wire [`ysyx_25060170_REG]   mscratch_o        //>>o>>
 
 );
 
@@ -184,14 +177,6 @@ assign read_csr_data = mstatus_rd ? mstatus :
                        mhartid_rd ? mhartid :
                        `ysyx_25060170_ZERO32;
 
-
-//difftest to DPIC
-assign mstatus_o  = mstatus  ;
-assign mepc_o     = mepc     ;
-assign mtvec_o    = mtvec    ;
-assign mcause_o   = mcause   ;
-assign mhartid_o  = mhartid  ;
-assign mscratch_o = mscratch ;
 
 endmodule
 

@@ -2,7 +2,7 @@
 # DESCRIPTION: Verilator output: Make include file with class lists
 #
 # This file lists generated Verilated files, for including in higher level makefiles.
-# See Vysyx_25060170_fishtailcore.mk for the caller.
+# See Vysyx_25060170_topcore.mk for the caller.
 
 ### Switches...
 # C11 constructs required?  0/1 (always on now)
@@ -23,26 +23,27 @@ VM_TRACE_FST = 0
 ### Object file lists...
 # Generated module classes, fast-path, compile with highest optimization
 VM_CLASSES_FAST += \
-	Vysyx_25060170_fishtailcore \
-	Vysyx_25060170_fishtailcore___024root__DepSet_he3e4c491__0 \
-	Vysyx_25060170_fishtailcore___024root__DepSet_h4a29ddac__0 \
+	Vysyx_25060170_topcore \
+	Vysyx_25060170_topcore__Dpi_Export__0 \
+	Vysyx_25060170_topcore___024root__DepSet_ha7a25e1a__0 \
+	Vysyx_25060170_topcore___024root__DepSet_hb2829ac9__0 \
 
 # Generated module classes, non-fast-path, compile with low/medium optimization
 VM_CLASSES_SLOW += \
-	Vysyx_25060170_fishtailcore__ConstPool_0 \
-	Vysyx_25060170_fishtailcore___024root__Slow \
-	Vysyx_25060170_fishtailcore___024root__DepSet_he3e4c491__0__Slow \
-	Vysyx_25060170_fishtailcore___024root__DepSet_h4a29ddac__0__Slow \
+	Vysyx_25060170_topcore__ConstPool_0 \
+	Vysyx_25060170_topcore___024root__Slow \
+	Vysyx_25060170_topcore___024root__DepSet_ha7a25e1a__0__Slow \
+	Vysyx_25060170_topcore___024root__DepSet_hb2829ac9__0__Slow \
 
 # Generated support classes, fast-path, compile with highest optimization
 VM_SUPPORT_FAST += \
-	Vysyx_25060170_fishtailcore__Dpi \
-	Vysyx_25060170_fishtailcore__Trace__0 \
+	Vysyx_25060170_topcore__Dpi \
+	Vysyx_25060170_topcore__Trace__0 \
 
 # Generated support classes, non-fast-path, compile with low/medium optimization
 VM_SUPPORT_SLOW += \
-	Vysyx_25060170_fishtailcore__Syms \
-	Vysyx_25060170_fishtailcore__Trace__0__Slow \
+	Vysyx_25060170_topcore__Syms \
+	Vysyx_25060170_topcore__Trace__0__Slow \
 
 # Global classes, need linked once per executable, fast-path, compile with highest optimization
 VM_GLOBAL_FAST += \

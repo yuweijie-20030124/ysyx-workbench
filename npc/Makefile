@@ -16,7 +16,7 @@ SRC_FILES = $(wildcard csrc/*.c)
 			csrc/init.c csrc/cpu-
 ##TEST_FILES = csrc/main.c csrc/monitor.c csrc/log.c csrc/sdb.c csrc/timer.c csrc/memory.c
 
-VERILOG_FILES = $(wildcard vsrc/core/*.v vsrc/core/define.v)
+VERILOG_FILES = $(wildcard vsrc/core/*.v vsrc/core/define.v vsrc/sim/*.v)
 # vsrc/debug/*.v vsrc/utils/*.v
 
 VERILATOR = /home/yuweijie/required_software_ysyx/verilator/bin/verilator
@@ -43,20 +43,21 @@ NPC_FLAGS += --diff=/home/yuweijie/ysyx-workbench/nemu/build/riscv32-nemu-interp
 VERILATOR_FLAGS = -Wall --cc --trace \
 					-CFLAGS  " -I /home/yuweijie/ysyx-workbench/npc/include -O2" \
 					-CFLAGS  " -I /home/yuweijie/ysyx-workbench/nemu/tools/capstone/repo/include -O2" \
-					 --exe --build \
-					 -LDFLAGS " -lreadline -lSDL2" \
-					 -Ivsrc \
-					 -Ivsrc/core \
-					 --top-module ysyx_25060170_fishtailcore
+					-CFLAGS  " -I /home/yuweijie/ysyx-workbench/npc/core" \
+					--exe --build \
+					-LDFLAGS " -lreadline -lSDL2" \
+					-Ivsrc \
+					-Ivsrc/core \
+					--top-module ysyx_25060170_topcore
 
 GDBVERILATOR_FLAGS = -Wall --cc --trace \
 					-CFLAGS  " -g -I /home/yuweijie/ysyx-workbench/npc/include -O0" \
 					-CFLAGS  " -g -I /home/yuweijie/ysyx-workbench/nemu/tools/capstone/repo/include -O0" \
-					 --exe --build \
-					 -LDFLAGS " -lreadline -lSDL2" \
-					 -Ivsrc \
-					 -Ivsrc/core \
-					 --top-module ysyx_25060170_fishtailcore
+					--exe --build \
+					-LDFLAGS " -lreadline -lSDL2" \
+					-Ivsrc \
+					-Ivsrc/core \
+					--top-module ysyx_25060170_topcore
 
 GTK = gtkwave
 
@@ -70,7 +71,7 @@ sim:
 run: 
 	$(VERILATOR) $(VERILATOR_FLAGS) $(SRC_FILES) $(VERILOG_FILES) 
 	$(call git commit, "run RTL") # % DO NOT REMOVE THIS LINE!!!
-	./obj_dir/Vysyx_25060170_fishtailcore   $(NPC_FLAGS) $(NPC_IMG)
+	./obj_dir/Vysyx_25060170_topcore   $(NPC_FLAGS) $(NPC_IMG)
 
 gtk:	
 	$(GTK) waveform.vcd config.gtkw &
@@ -85,7 +86,7 @@ checkall:
 	$(VERILATOR) --lint-only -Wall \
 		-I$(NPC_HOME)/vsrc \
 		-I$(NPC_HOME)/vsrc/core \
-		--top-module ysyx_25060170_fishtailcore.v \
+		--top-module ysyx_25060170_topcore.v \
 		$(VERILOG_FILES) && echo "lint OK" || echo "lint FAILED"
 
 checkone:
@@ -98,9 +99,9 @@ checkone:
 gdb:
 	$(VERILATOR) $(GDBVERILATOR_FLAGS) $(SRC_FILES) $(VERILOG_FILES)
 	$(call git commit, "gdb RTL") # % DO NOT REMOVE THIS LINE!!!
-	gdb --args ./obj_dir/Vysyx_25060170_fishtailcore $(NPC_FLAGS) $(NPC_IMG)
+	gdb --args ./obj_dir/Vysyx_25060170_topcore $(NPC_FLAGS) $(NPC_IMG)
 
 valgrind:
 	rm -rf obj_dir waveform.vcd
 	$(VERILATOR) $(GDBVERILATOR_FLAGS) $(SRC_FILES) $(VERILOG_FILES) 
-	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --log-file=valgrind.log ./obj_dir/Vysyx_25060170_fishtailcore
+	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --log-file=valgrind.log ./obj_dir/Vysyx_25060170_topcore

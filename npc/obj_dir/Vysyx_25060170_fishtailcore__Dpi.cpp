@@ -14,19 +14,3 @@
 #include "Vysyx_25060170_fishtailcore__Dpi.h"
 #include "Vysyx_25060170_fishtailcore.h"
 
-#ifndef VL_DPIDECL_IDU_SEND_CALL_FLAG_
-#define VL_DPIDECL_IDU_SEND_CALL_FLAG_
-void IDU_SEND_CALL_FLAG(int* call_flag, int* pc, int* dnpc) {
-    // DPI export at vsrc/core/ysyx_25060170_DPIC.v:274:6
-    return Vysyx_25060170_fishtailcore::IDU_SEND_CALL_FLAG(call_flag, pc, dnpc);
-}
-#endif
-
-#ifndef VL_DPIDECL_IDU_SEND_RET_FLAG_
-#define VL_DPIDECL_IDU_SEND_RET_FLAG_
-void IDU_SEND_RET_FLAG(int* ret_flag, int* pc) {
-    // DPI export at vsrc/core/ysyx_25060170_DPIC.v:293:6
-    return Vysyx_25060170_fishtailcore::IDU_SEND_RET_FLAG(ret_flag, pc);
-}
-#endif
-

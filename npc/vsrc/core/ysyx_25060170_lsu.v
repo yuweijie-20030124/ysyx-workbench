@@ -5,7 +5,6 @@
 module ysyx_25060170_lsu(
      input  wire                              clk                   //<<i<<
     ,input  wire                              rst                   //<<i<<
-    ,input  wire [`ysyx_25060170_PC]          pc_i                  //<<i<<
     ,input  wire [`ysyx_25060170_PC]          next_pc_i             //<<i<<
     ,input  wire [`ysyx_25060170_INST]        inst_i                //<<i<<
     ,input  wire [`ysyx_25060170_DATA]        alu_res_i             //<<i<<
@@ -37,7 +36,6 @@ module ysyx_25060170_lsu(
     //output to ls_wb_reg  
     // ,output wire [`ysyx_25060170_DATA]        ls_data_o             //>>o>> 
     ,output wire [`ysyx_25060170_INST]        inst_o                //>>o>>
-    ,output wire [`ysyx_25060170_PC]          pc_o                  //>>o>>
     ,output wire [`ysyx_25060170_PC]          next_pc_o             //>>o>>
     // ,output wire [`ysyx_25060170_DATA]        ls_alu_res_o          //>>o>>
 );
@@ -192,7 +190,6 @@ assign ls_jump_o = 1'b0;
 
 //***************************output to ls_mem_reg***********************************************//
 assign inst_o               =   inst_i              ;
-assign pc_o                 =   pc_i                ;
 assign next_pc_o            =   next_pc_i           ;
 // assign ls_alu_res_o         =   alu_res_i           ;
 // assign pipeline_id_stall_o  =   pipeline_id_stall_i ;

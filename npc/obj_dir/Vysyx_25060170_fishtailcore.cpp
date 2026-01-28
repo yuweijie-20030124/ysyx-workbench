@@ -14,6 +14,65 @@ Vysyx_25060170_fishtailcore::Vysyx_25060170_fishtailcore(VerilatedContext* _vcon
     , vlSymsp{new Vysyx_25060170_fishtailcore__Syms(contextp(), _vcname__, this)}
     , clk{vlSymsp->TOP.clk}
     , rst{vlSymsp->TOP.rst}
+    , DPIC_idu_dpic_rd_addr{vlSymsp->TOP.DPIC_idu_dpic_rd_addr}
+    , DPIC_ls_mem_re{vlSymsp->TOP.DPIC_ls_mem_re}
+    , DPIC_ls_dpic_we{vlSymsp->TOP.DPIC_ls_dpic_we}
+    , DPIC_ls_dpic_wlen{vlSymsp->TOP.DPIC_ls_dpic_wlen}
+    , DPIC_ls_dpic_rlen{vlSymsp->TOP.DPIC_ls_dpic_rlen}
+    , DPIC_wbu_dpic_valid{vlSymsp->TOP.DPIC_wbu_dpic_valid}
+    , DPIC_magic_flag{vlSymsp->TOP.DPIC_magic_flag}
+    , DPIC_if_id_pc{vlSymsp->TOP.DPIC_if_id_pc}
+    , DPIC_dpic_ifu_inst{vlSymsp->TOP.DPIC_dpic_ifu_inst}
+    , DPIC_if_id_reg_pc{vlSymsp->TOP.DPIC_if_id_reg_pc}
+    , DPIC_idu_imm{vlSymsp->TOP.DPIC_idu_imm}
+    , DPIC_regs0{vlSymsp->TOP.DPIC_regs0}
+    , DPIC_regs1{vlSymsp->TOP.DPIC_regs1}
+    , DPIC_regs2{vlSymsp->TOP.DPIC_regs2}
+    , DPIC_regs3{vlSymsp->TOP.DPIC_regs3}
+    , DPIC_regs4{vlSymsp->TOP.DPIC_regs4}
+    , DPIC_regs5{vlSymsp->TOP.DPIC_regs5}
+    , DPIC_regs6{vlSymsp->TOP.DPIC_regs6}
+    , DPIC_regs7{vlSymsp->TOP.DPIC_regs7}
+    , DPIC_regs8{vlSymsp->TOP.DPIC_regs8}
+    , DPIC_regs9{vlSymsp->TOP.DPIC_regs9}
+    , DPIC_regs10{vlSymsp->TOP.DPIC_regs10}
+    , DPIC_regs11{vlSymsp->TOP.DPIC_regs11}
+    , DPIC_regs12{vlSymsp->TOP.DPIC_regs12}
+    , DPIC_regs13{vlSymsp->TOP.DPIC_regs13}
+    , DPIC_regs14{vlSymsp->TOP.DPIC_regs14}
+    , DPIC_regs15{vlSymsp->TOP.DPIC_regs15}
+    , DPIC_regs16{vlSymsp->TOP.DPIC_regs16}
+    , DPIC_regs17{vlSymsp->TOP.DPIC_regs17}
+    , DPIC_regs18{vlSymsp->TOP.DPIC_regs18}
+    , DPIC_regs19{vlSymsp->TOP.DPIC_regs19}
+    , DPIC_regs20{vlSymsp->TOP.DPIC_regs20}
+    , DPIC_regs21{vlSymsp->TOP.DPIC_regs21}
+    , DPIC_regs22{vlSymsp->TOP.DPIC_regs22}
+    , DPIC_regs23{vlSymsp->TOP.DPIC_regs23}
+    , DPIC_regs24{vlSymsp->TOP.DPIC_regs24}
+    , DPIC_regs25{vlSymsp->TOP.DPIC_regs25}
+    , DPIC_regs26{vlSymsp->TOP.DPIC_regs26}
+    , DPIC_regs27{vlSymsp->TOP.DPIC_regs27}
+    , DPIC_regs28{vlSymsp->TOP.DPIC_regs28}
+    , DPIC_regs29{vlSymsp->TOP.DPIC_regs29}
+    , DPIC_regs30{vlSymsp->TOP.DPIC_regs30}
+    , DPIC_regs31{vlSymsp->TOP.DPIC_regs31}
+    , DPIC_dpic_mhartid{vlSymsp->TOP.DPIC_dpic_mhartid}
+    , DPIC_dpic_mstatus{vlSymsp->TOP.DPIC_dpic_mstatus}
+    , DPIC_dpic_mepc{vlSymsp->TOP.DPIC_dpic_mepc}
+    , DPIC_dpic_mtvec{vlSymsp->TOP.DPIC_dpic_mtvec}
+    , DPIC_dpic_mcause{vlSymsp->TOP.DPIC_dpic_mcause}
+    , DPIC_dpic_mscratch{vlSymsp->TOP.DPIC_dpic_mscratch}
+    , DPIC_ls_dpic_data{vlSymsp->TOP.DPIC_ls_dpic_data}
+    , DPIC_dpi_ls_mem_skip_flag{vlSymsp->TOP.DPIC_dpi_ls_mem_skip_flag}
+    , DPIC_mem_wb_skip_flag{vlSymsp->TOP.DPIC_mem_wb_skip_flag}
+    , DPIC_wbu_dpic_inst{vlSymsp->TOP.DPIC_wbu_dpic_inst}
+    , DPIC_wbu_dpic_pc{vlSymsp->TOP.DPIC_wbu_dpic_pc}
+    , DPIC_wbu_dpic_next_pc{vlSymsp->TOP.DPIC_wbu_dpic_next_pc}
+    , DPIC_DPIC_MEM_data{vlSymsp->TOP.DPIC_DPIC_MEM_data}
+    , DPIC_ls_dpic_raddr{vlSymsp->TOP.DPIC_ls_dpic_raddr}
+    , DPIC_ls_dpic_waddr{vlSymsp->TOP.DPIC_ls_dpic_waddr}
+    , DPIC_ex_ls_reg_pc{vlSymsp->TOP.DPIC_ex_ls_reg_pc}
     , rootp{&(vlSymsp->TOP)}
 {
     // Register model with the context
