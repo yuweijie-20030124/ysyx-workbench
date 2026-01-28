@@ -28,6 +28,65 @@ class Vysyx_25060170_fishtailcore VL_NOT_FINAL : public VerilatedModel {
     // propagate new values into/out from the Verilated model.
     VL_IN8(&clk,0,0);
     VL_IN8(&rst,0,0);
+    VL_OUT8(&DPIC_idu_dpic_rd_addr,4,0);
+    VL_OUT8(&DPIC_ls_mem_re,0,0);
+    VL_OUT8(&DPIC_ls_dpic_we,0,0);
+    VL_OUT8(&DPIC_ls_dpic_wlen,7,0);
+    VL_OUT8(&DPIC_ls_dpic_rlen,7,0);
+    VL_OUT8(&DPIC_wbu_dpic_valid,0,0);
+    VL_OUT8(&DPIC_magic_flag,0,0);
+    VL_OUT(&DPIC_if_id_pc,31,0);
+    VL_IN(&DPIC_dpic_ifu_inst,31,0);
+    VL_OUT(&DPIC_if_id_reg_pc,31,0);
+    VL_OUT(&DPIC_idu_imm,31,0);
+    VL_OUT(&DPIC_regs0,31,0);
+    VL_OUT(&DPIC_regs1,31,0);
+    VL_OUT(&DPIC_regs2,31,0);
+    VL_OUT(&DPIC_regs3,31,0);
+    VL_OUT(&DPIC_regs4,31,0);
+    VL_OUT(&DPIC_regs5,31,0);
+    VL_OUT(&DPIC_regs6,31,0);
+    VL_OUT(&DPIC_regs7,31,0);
+    VL_OUT(&DPIC_regs8,31,0);
+    VL_OUT(&DPIC_regs9,31,0);
+    VL_OUT(&DPIC_regs10,31,0);
+    VL_OUT(&DPIC_regs11,31,0);
+    VL_OUT(&DPIC_regs12,31,0);
+    VL_OUT(&DPIC_regs13,31,0);
+    VL_OUT(&DPIC_regs14,31,0);
+    VL_OUT(&DPIC_regs15,31,0);
+    VL_OUT(&DPIC_regs16,31,0);
+    VL_OUT(&DPIC_regs17,31,0);
+    VL_OUT(&DPIC_regs18,31,0);
+    VL_OUT(&DPIC_regs19,31,0);
+    VL_OUT(&DPIC_regs20,31,0);
+    VL_OUT(&DPIC_regs21,31,0);
+    VL_OUT(&DPIC_regs22,31,0);
+    VL_OUT(&DPIC_regs23,31,0);
+    VL_OUT(&DPIC_regs24,31,0);
+    VL_OUT(&DPIC_regs25,31,0);
+    VL_OUT(&DPIC_regs26,31,0);
+    VL_OUT(&DPIC_regs27,31,0);
+    VL_OUT(&DPIC_regs28,31,0);
+    VL_OUT(&DPIC_regs29,31,0);
+    VL_OUT(&DPIC_regs30,31,0);
+    VL_OUT(&DPIC_regs31,31,0);
+    VL_OUT(&DPIC_dpic_mhartid,31,0);
+    VL_OUT(&DPIC_dpic_mstatus,31,0);
+    VL_OUT(&DPIC_dpic_mepc,31,0);
+    VL_OUT(&DPIC_dpic_mtvec,31,0);
+    VL_OUT(&DPIC_dpic_mcause,31,0);
+    VL_OUT(&DPIC_dpic_mscratch,31,0);
+    VL_OUT(&DPIC_ls_dpic_data,31,0);
+    VL_IN(&DPIC_dpi_ls_mem_skip_flag,31,0);
+    VL_OUT(&DPIC_mem_wb_skip_flag,31,0);
+    VL_OUT(&DPIC_wbu_dpic_inst,31,0);
+    VL_OUT(&DPIC_wbu_dpic_pc,31,0);
+    VL_OUT(&DPIC_wbu_dpic_next_pc,31,0);
+    VL_IN(&DPIC_DPIC_MEM_data,31,0);
+    VL_OUT(&DPIC_ls_dpic_raddr,31,0);
+    VL_OUT(&DPIC_ls_dpic_waddr,31,0);
+    VL_OUT(&DPIC_ex_ls_reg_pc,31,0);
 
     // CELLS
     // Public to allow access to /* verilator public */ items.
@@ -68,10 +127,6 @@ class Vysyx_25060170_fishtailcore VL_NOT_FINAL : public VerilatedModel {
     void trace(VerilatedVcdC* tfp, int levels, int options = 0);
     /// Retrieve name of this model instance (as passed to constructor).
     const char* name() const;
-
-    /// DPI Export functions
-    static void IDU_SEND_CALL_FLAG(int* call_flag, int* pc, int* dnpc);
-    static void IDU_SEND_RET_FLAG(int* ret_flag, int* pc);
 
     // Abstract methods from VerilatedModel
     const char* hierName() const override final;

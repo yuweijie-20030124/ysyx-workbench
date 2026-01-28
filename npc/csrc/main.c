@@ -2,7 +2,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <verilated.h>
-#include "Vysyx_25060170_fishtailcore.h"   //包含fishtailcore模块的顶层类
+#include "Vysyx_25060170_topcore.h"   //包含topcore模块的顶层类
 #include <verilated_vcd_c.h> //向VCD文件中写入文件
 #include <common.h>
 #include <memory.h>
@@ -18,7 +18,7 @@ bool log_enable();
 #ifdef CONFIG_DIFFTEST
 void difftest_skip_ref();
 #endif
-Vysyx_25060170_fishtailcore* fishtailcore;
+Vysyx_25060170_topcore* topcore;
 VerilatedContext* contextp;
 #ifdef CONFIG_GTK
 VerilatedVcdC* tfp = new VerilatedVcdC(); //导出vcd波形需要加此语句
@@ -195,10 +195,10 @@ int main(int argc, char** argv) {
   contextp = new VerilatedContext;
 	contextp->commandArgs(argc,argv);
   Verilated::traceEverOn(true);
-	fishtailcore = new Vysyx_25060170_fishtailcore{contextp};
+	topcore = new Vysyx_25060170_topcore{contextp};
 
   #ifdef CONFIG_GTK
-    fishtailcore->trace(tfp, 0);
+    topcore->trace(tfp, 0);
     tfp->open("waveform.vcd");
   #endif  
 
@@ -209,13 +209,13 @@ int main(int argc, char** argv) {
 	//sdb_mainloop();
 
   #ifdef CONFIG_GTK
-  // fishtailcore-> clk = 0;
-  // fishtailcore -> eval();
-  // fishtailcore-> clk = 1;
-  // fishtailcore -> eval();
+  // topcore-> clk = 0;
+  // topcore -> eval();
+  // topcore-> clk = 1;
+  // topcore -> eval();
   //多看一个周期波形以获取后续变化
-  fishtailcore -> clk = 0;
-  fishtailcore -> eval();
+  topcore -> clk = 0;
+  topcore -> eval();
   tfp -> dump(main_time++);
   tfp -> dump(main_time++);
   
@@ -231,14 +231,14 @@ void isa_exec_once(){
   // printf("inst_end=%d\n",inst_end);
   while(inst_end){
   // printf("wuhuqifei\n");
-  fishtailcore-> clk = 0;
-  fishtailcore -> eval();
+  topcore-> clk = 0;
+  topcore -> eval();
 #ifdef CONFIG_GTK
   tfp -> dump(main_time++);
 #endif  
 
-  fishtailcore -> clk = 1;
-  fishtailcore -> eval();
+  topcore -> clk = 1;
+  topcore -> eval();
 #ifdef CONFIG_GTK
   tfp -> dump(main_time++);
 #endif
@@ -250,7 +250,7 @@ void close_npc(){
 #ifdef CONFIG_GTK
 	tfp->close() ;
 #endif
-	delete fishtailcore ;
+	delete topcore ;
 	delete contextp ;
       
 #ifdef CONFIG_GTK
@@ -263,22 +263,22 @@ void close_npc(){
 }
 
 void cpu_reset(){
-  fishtailcore -> clk = 0;
-  fishtailcore -> rst = 1;  
-  fishtailcore -> eval();
+  topcore -> clk = 0;
+  topcore -> rst = 1;  
+  topcore -> eval();
 #ifdef CONFIG_GTK
   tfp -> dump(main_time++);
 #endif  
 
   printf("***reset***\n");
 
-  fishtailcore -> clk = 1;
-  fishtailcore -> rst = 1;
-  fishtailcore -> eval();
+  topcore -> clk = 1;
+  topcore -> rst = 1;
+  topcore -> eval();
 #ifdef CONFIG_GTK
   tfp -> dump(main_time++);
 #endif  
 
-  fishtailcore -> rst = 0;
+  topcore -> rst = 0;
 
 }

@@ -17,8 +17,6 @@
 #include "Vysyx_25060170_fishtailcore___024root.h"
 
 // DPI TYPES for DPI Export callbacks (Internal use)
-using Vysyx_25060170_fishtailcore__Vcb_IDU_SEND_CALL_FLAG_t = void (*) (Vysyx_25060170_fishtailcore__Syms* __restrict vlSymsp, IData/*31:0*/ &call_flag, IData/*31:0*/ &pc, IData/*31:0*/ &dnpc);
-using Vysyx_25060170_fishtailcore__Vcb_IDU_SEND_RET_FLAG_t = void (*) (Vysyx_25060170_fishtailcore__Syms* __restrict vlSymsp, IData/*31:0*/ &ret_flag, IData/*31:0*/ &pc);
 
 // SYMS CLASS (contains all model state)
 class Vysyx_25060170_fishtailcore__Syms final : public VerilatedSyms {
@@ -32,9 +30,6 @@ class Vysyx_25060170_fishtailcore__Syms final : public VerilatedSyms {
 
     // MODULE INSTANCE STATE
     Vysyx_25060170_fishtailcore___024root TOP;
-
-    // SCOPE NAMES
-    VerilatedScope __Vscope_ysyx_25060170_fishtailcore__u_ysyx_25060170_DPIC;
 
     // CONSTRUCTORS
     Vysyx_25060170_fishtailcore__Syms(VerilatedContext* contextp, const char* namep, Vysyx_25060170_fishtailcore* modelp);

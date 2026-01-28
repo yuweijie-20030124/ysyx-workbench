@@ -8,13 +8,7 @@ module ysyx_25060170_csr(
   ,input  wire [`ysyx_25060170_REG]   mcause_value     //<<i<<
   ,input  wire [`ysyx_25060170_DATA]  write_csr_data   //<<i<<
   ,output wire [`ysyx_25060170_DATA]  read_csr_data    //>>o>>
-  //fordifftest to DPIC
-  ,output wire [`ysyx_25060170_REG]   mhartid_o        //>>o>>
-  ,output wire [`ysyx_25060170_REG]   mstatus_o        //>>o>>
-  ,output wire [`ysyx_25060170_REG]   mepc_o           //>>o>>
-  ,output wire [`ysyx_25060170_REG]   mtvec_o          //>>o>>
-  ,output wire [`ysyx_25060170_REG]   mcause_o         //>>o>>
-  ,output wire [`ysyx_25060170_REG]   mscratch_o        //>>o>>
+  ,output wire [`ysyx_25060170_REG]   mtvec           //>>o>>
 
 );
 
@@ -83,13 +77,13 @@ end
 
 wire [1:0] mtvec_mode;
 assign mtvec_mode = 2'b00;
-wire [`ysyx_25060170_REG] mtvec = {mtvec_base, mtvec_mode};
+assign mtvec = {mtvec_base, mtvec_mode};
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // 0x341 mepc
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 wire mepc_rd = ((csr_addr  == 12'h341) && csr_ctl[2]) | csr_ctl[0];
-wire mepc_wr = ((csr_addr == 12'h341) && csr_ctl[3]) | csr_ctl[1];
+wire mepc_wr = ((csr_addr == 12'h341) && csr_ctl[3]) | csr_ctl[1]; //写和ecall的时候写mepc
 
 reg [`ysyx_25060170_REG] mepc;
 always@(posedge clk) begin
@@ -184,14 +178,6 @@ assign read_csr_data = mstatus_rd ? mstatus :
                        mhartid_rd ? mhartid :
                        `ysyx_25060170_ZERO32;
 
-
-//difftest to DPIC
-assign mstatus_o  = mstatus  ;
-assign mepc_o     = mepc     ;
-assign mtvec_o    = mtvec    ;
-assign mcause_o   = mcause   ;
-assign mhartid_o  = mhartid  ;
-assign mscratch_o = mscratch ;
 
 endmodule
 

@@ -59,7 +59,6 @@ module ysyx_25060170_idu(
 	,output reg  [`ysyx_25060170_DATA]  		op1 				//>>o>>
 	,output reg  [`ysyx_25060170_DATA]  		op2 			 	//>>o>>
 	,output reg  [`ysyx_25060170_IMM]     		imm 				//>>o>>
-	,output	wire [`ysyx_25060170_REGADDR] 		idu_dpic_rd_addr	//>>o>>
 	,output wire [`ysyx_25060170_INST]       	inst_o				//>>o>>
 	,output wire [4:0] 							csr_imm_o			//>>o>>
 	// ,output wire [`ysyx_25060170_REGADDR]		store_addr_o		//>>o>>
@@ -74,11 +73,8 @@ module ysyx_25060170_idu(
 	,output wire								id_stall_o		   //>>o>>
 	,output wire								id_ready_o			//>>o>>
 	,output wire								id_valid_o			//>>o>>
-	//magic flag for NEMU_STOP
-	,output wire 								magic_flag			//>>o>>
 );
 
-assign idu_dpic_rd_addr = rd;
 
 //**************************************decoder***********************************//
 wire   [4:0]   	rd     							;
@@ -88,7 +84,7 @@ wire  			branch							;
 assign  		rd       	=  inst_i [11:7]    ;
 assign  		rs1      	=  inst_i [19:15]   ;
 assign  		rs2      	=  inst_i [24:20]   ;
-assign  		magic_flag  = (inst_i == 32'b0100_0000_0000_0000_0000_0000_0011_0011);
+
 
 ysyx_25060170_idu_decoder decoder(
 	.rst(rst)	,
