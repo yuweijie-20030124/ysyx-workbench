@@ -211,6 +211,7 @@ ysyx_25060170_idu u_ysyx_25060170_idu (
     ,.inst_i             (if_id_reg_inst        )//<<i<<
     ,.pc_i               (if_id_reg_pc          )//<<i<<
     ,.next_pc_i          (if_id_reg_next_pc     )//<<i<<
+    ,.mtvec              (mtvec                 )//<<i<<
     ,.bp_jump_i          (if_id_reg_bp_jump     )//<<i<<
     ,.inst_bxx_i         (if_id_reg_inst_bxx    )//<<i<<
 

@@ -151,6 +151,7 @@ bool isa_difftest_checkregs(NPC_reg *ref_r, vaddr_t pc) {
   }
 
   for (int k = 0; k < csr_num; k++) {
+    // printf("nemu_mstatus = 0x%08x\n",ref_r->csr[1]);
     if(cpu.csr[k] != ref_r->csr[k]){
       printf("PC get wrong at 0x%08x\n",cpu.pc);
       printf("csrs_regs wrong!!!!!!!!!\n");

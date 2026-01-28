@@ -6,6 +6,7 @@ module ysyx_25060170_idu(
 	,input	wire [`ysyx_25060170_INST]			inst_i				//<<i<<
 	,input	wire [`ysyx_25060170_PC]			pc_i				//<<i<<
 	,input  wire [`ysyx_25060170_PC]			next_pc_i			//<<i<<
+	,input  wire [`ysyx_25060170_REG]			mtvec				//<<i<<
 	// ,input  wire [`ysyx_25060170_PC]			bpu_jalr_pc_i		//<<i<<
 	//from bpu
 	,input 	wire 								bp_jump_i			//<<i<<	我们当时是否预测跳转
@@ -187,6 +188,7 @@ assign next_pc_o = ((alusrc_o == `INST_JAL) ) 				?  (pc_i + imm)  		:
 				   (alusrc_o == `INST_JALR)                 ?  ((op1 + imm)&(~1))	:
 				   inst_bxx_i & now_bxx_jump_yes			?  (pc_i + imm)         :
 				   inst_bxx_i & ~now_bxx_jump_yes			?  (pc_i + 32'b100)		:
+				   inst_i == 32'b00000000000000000000000001110011 ?    (mtvec)	:
 				   next_pc_i;
 
 assign pc_o 	 	= pc_i		;

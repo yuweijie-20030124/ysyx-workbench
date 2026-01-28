@@ -148,6 +148,8 @@ void init_monitor(int argc, char *argv[]) {
   /* Initialize the simple debugger. */
   init_sdb();
 
+  cpu.mstatus = 0x1800;
+
   IFDEF(CONFIG_ITRACE, init_disasm());
 
   /*parse ftrace*/

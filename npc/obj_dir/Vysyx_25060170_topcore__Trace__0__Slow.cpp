@@ -485,6 +485,7 @@ VL_ATTR_COLD void Vysyx_25060170_topcore___024root__trace_init_sub__TOP__0(Vysyx
     tracep->declBus(c+199,"inst_i", false,-1, 31,0);
     tracep->declBus(c+155,"pc_i", false,-1, 31,0);
     tracep->declBus(c+198,"next_pc_i", false,-1, 31,0);
+    tracep->declBus(c+190,"mtvec", false,-1, 31,0);
     tracep->declBit(c+201,"bp_jump_i", false,-1);
     tracep->declBit(c+200,"inst_bxx_i", false,-1);
     tracep->declBus(c+215,"ex_addr_forward", false,-1, 4,0);
@@ -1024,7 +1025,11 @@ VL_ATTR_COLD void Vysyx_25060170_topcore___024root__trace_full_sub_0(Vysyx_25060
                                            & (IData)(vlSelf->ysyx_25060170_topcore__DOT__u_ysyx_25060170_fishtailcore__DOT__if_id_reg_inst_bxx))
                                            ? ((IData)(4U) 
                                               + vlSelf->ysyx_25060170_topcore__DOT__u_ysyx_25060170_fishtailcore__DOT__if_id_reg_pc)
-                                           : vlSelf->ysyx_25060170_topcore__DOT__u_ysyx_25060170_fishtailcore__DOT__if_id_reg_next_pc))))),32);
+                                           : ((0x73U 
+                                               == vlSelf->ysyx_25060170_topcore__DOT__u_ysyx_25060170_fishtailcore__DOT__if_id_reg_inst)
+                                               ? (vlSelf->ysyx_25060170_topcore__DOT__u_ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_csr__DOT__mtvec_base 
+                                                  << 2U)
+                                               : vlSelf->ysyx_25060170_topcore__DOT__u_ysyx_25060170_fishtailcore__DOT__if_id_reg_next_pc)))))),32);
     bufp->fullBit(oldp+36,((IData)((((IData)(vlSelf->ysyx_25060170_topcore__DOT__u_ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_idu__DOT__predict_error_ctl) 
                                      >> 1U) | (IData)(vlSelf->ysyx_25060170_topcore__DOT__u_ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_idu__DOT__jalr_bpu_jump_error)))));
     bufp->fullBit(oldp+37,((1U & ((IData)(vlSelf->ysyx_25060170_topcore__DOT__u_ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_idu__DOT__predict_error_ctl) 
