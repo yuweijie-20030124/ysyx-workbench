@@ -159,7 +159,7 @@ static int decode_exec(Decode *s) {
   if(imm == 0x300){ //mstatus
     R(rd) = cpu.mstatus;
     cpu.mstatus |=  src1;
-    difftest_skip_ref();
+    // difftest_skip_ref();
   };
   if(imm == 0x341){ //mepc
     R(rd) = cpu.mepc;
