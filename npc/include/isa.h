@@ -5,12 +5,12 @@
 
 //csr数组顺序
 /*
-mstatus  
-mtvec    
-mepc     
-mcause   
-mhartid  
-mscratch 
+mstatus  0
+mtvec    1
+mepc     2
+mcause   3
+mhartid  4
+mscratch 5
 */
 typedef struct {
   word_t gpr[32];

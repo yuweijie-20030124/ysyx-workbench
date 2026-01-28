@@ -13,11 +13,15 @@ const char *regs[] = {
   "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"
 };
 
+const char *csrs[] = {
+  "mcause","mstatus","mepc","mtvec","mhartid","mscratch"
+};
+
 void isa_reg_display() {
-    printf("PC     : 0x%08x %d\n", cpu.pc, cpu.pc);
+    printf("PC      : 0x%08x %d\n", cpu.pc, cpu.pc);
     for (int i = 0; i < 32; i++) {
-        printf("%-4s   : 0x%08x %-11d  ", reg_name(i), gpr(i), gpr(i));
-        if ((i + 1) % 4 == 0) printf("\n");
+    printf("%-4s    : 0x%08x %-11d  ", reg_name(i), gpr(i), gpr(i));
+    if ((i + 1) % 4 == 0) printf("\n");
     }
     printf("mcause  : 0x%08x %-11d  "  , cpu.csr[0], cpu.csr[0]);
     printf("mstatus : 0x%08x %-11d  "  , cpu.csr[1], cpu.csr[1]);
