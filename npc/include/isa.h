@@ -5,10 +5,10 @@
 
 //csr数组顺序
 /*
-mstatus  0
-mtvec    1
+mcause   0
+mstatus  1
 mepc     2
-mcause   3
+mtvec    3
 mhartid  4
 mscratch 5
 */

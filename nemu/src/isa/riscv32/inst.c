@@ -106,7 +106,6 @@ static int decode_exec(Decode *s) {
   if(imm == 0x300){ //mstatus
     R(rd) = cpu.mstatus;
     cpu.mstatus =  src1;
-    printf("mstatus change at pc = 0x%08x\n",cpu.pc);
   };
   if(imm == 0x341){ //mepc
     R(rd) = cpu.mepc;
