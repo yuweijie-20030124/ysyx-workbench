@@ -88,4 +88,4 @@ __EXPORT void difftest_init(int port) {
   init_isa();
 }
 
-__EXPORT CPU_state *nemu_cpu = &cpu;
+// __EXPORT CPU_state *nemu_cpu = &cpu;
