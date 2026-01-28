@@ -3,10 +3,19 @@
 
 #include <common.h>
 
+//csr数组顺序
+/*
+mstatus  0
+mtvec    1
+mepc     2
+mcause   3
+mhartid  4
+mscratch 5
+*/
 typedef struct {
   word_t gpr[32];
   vaddr_t pc;
-  vaddr_t csr[4] ;
+  vaddr_t csr[6] ;
 } NPC_reg;
 
 // decode

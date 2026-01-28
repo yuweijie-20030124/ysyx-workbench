@@ -76,9 +76,9 @@ VL_INLINE_OPT void Vysyx_25060170_fishtailcore___024root____Vdpiimwrap_ysyx_2506
     magic_instruction();
 }
 
-extern "C" void difftest_dut_csr(int csr_mstatus, int csr_mtvec, int csr_mepc, int csr_mcause);
+extern "C" void difftest_dut_csr(int csr_mstatus, int csr_mtvec, int csr_mepc, int csr_mcause, int csr_mhartid, int csr_mscratch);
 
-VL_INLINE_OPT void Vysyx_25060170_fishtailcore___024root____Vdpiimwrap_ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_DPIC__DOT__difftest_dut_csr_TOP(IData/*31:0*/ csr_mstatus, IData/*31:0*/ csr_mtvec, IData/*31:0*/ csr_mepc, IData/*31:0*/ csr_mcause) {
+VL_INLINE_OPT void Vysyx_25060170_fishtailcore___024root____Vdpiimwrap_ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_DPIC__DOT__difftest_dut_csr_TOP(IData/*31:0*/ csr_mstatus, IData/*31:0*/ csr_mtvec, IData/*31:0*/ csr_mepc, IData/*31:0*/ csr_mcause, IData/*31:0*/ csr_mhartid, IData/*31:0*/ csr_mscratch) {
     VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_fishtailcore___024root____Vdpiimwrap_ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_DPIC__DOT__difftest_dut_csr_TOP\n"); );
     // Body
     int csr_mstatus__Vcvt;
@@ -89,7 +89,11 @@ VL_INLINE_OPT void Vysyx_25060170_fishtailcore___024root____Vdpiimwrap_ysyx_2506
     for (size_t csr_mepc__Vidx = 0; csr_mepc__Vidx < 1; ++csr_mepc__Vidx) csr_mepc__Vcvt = csr_mepc;
     int csr_mcause__Vcvt;
     for (size_t csr_mcause__Vidx = 0; csr_mcause__Vidx < 1; ++csr_mcause__Vidx) csr_mcause__Vcvt = csr_mcause;
-    difftest_dut_csr(csr_mstatus__Vcvt, csr_mtvec__Vcvt, csr_mepc__Vcvt, csr_mcause__Vcvt);
+    int csr_mhartid__Vcvt;
+    for (size_t csr_mhartid__Vidx = 0; csr_mhartid__Vidx < 1; ++csr_mhartid__Vidx) csr_mhartid__Vcvt = csr_mhartid;
+    int csr_mscratch__Vcvt;
+    for (size_t csr_mscratch__Vidx = 0; csr_mscratch__Vidx < 1; ++csr_mscratch__Vidx) csr_mscratch__Vcvt = csr_mscratch;
+    difftest_dut_csr(csr_mstatus__Vcvt, csr_mtvec__Vcvt, csr_mepc__Vcvt, csr_mcause__Vcvt, csr_mhartid__Vcvt, csr_mscratch__Vcvt);
 }
 
 extern "C" void difftest_dut_regs(int regs0, int regs1, int regs2, int regs3, int regs4, int regs5, int regs6, int regs7, int regs8, int regs9, int regs10, int regs11, int regs12, int regs13, int regs14, int regs15, int regs16, int regs17, int regs18, int regs19, int regs20, int regs21, int regs22, int regs23, int regs24, int regs25, int regs26, int regs27, int regs28, int regs29, int regs30, int regs31);

@@ -36,13 +36,13 @@ module ysyx_25060170_idu(
 	//regfile signal
 	,input  wire [`ysyx_25060170_REG]     		rs1_data 			//<<i<<
 	,input  wire [`ysyx_25060170_REG]     		rs2_data 			//<<i<<
-	,input  wire [`ysyx_25060170_REG]			csr_read_data		//<<i<<
+	// ,input  wire [`ysyx_25060170_REG]			csr_read_data		//<<i<<
 	,output wire [`ysyx_25060170_REGADDR] 		rs1_addr 			//>>o>>
 	,output wire				 				rs1_ena  			//>>o>>	
 	,output wire [`ysyx_25060170_REGADDR] 		rs2_addr 			//>>o>>
 	,output wire						 		rs2_ena  			//>>o>>
-	,output wire [`ysyx_25060170_REGADDR] 		csr_addr 			//>>o>>
-	,output wire						 		csr_ena  			//>>o>>
+	// ,output wire [`ysyx_25060170_REGADDR] 		csr_addr 			//>>o>>
+	// ,output wire						 		csr_ena  			//>>o>>
 	,output wire				 				rd_ena  			//>>o>>
   	,output wire [`ysyx_25060170_REGADDR] 		rd_addr 			//>>o>>
 	//to exu out signal

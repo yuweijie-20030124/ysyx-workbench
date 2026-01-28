@@ -129,7 +129,7 @@ extern "C" void pc_inst_end(int thepc_data, int the_inst, int diff_skip_flag){
   cpu.pc = thepc_data;
   s.val = the_inst;
   #ifdef CONFIG_DIFFTEST
-  if(diff_skip_flag){
+  if(diff_skip_flag == 1){ //修改
     difftest_skip_ref();
   // printf("pc   = 0x%08x\n",thepc_data);
   // printf("inst = 0x%08x\n",the_inst);
@@ -142,11 +142,13 @@ extern "C" void pc_inst_end(int thepc_data, int the_inst, int diff_skip_flag){
   
 }
 
-extern "C" void difftest_dut_csr(int csr_mstatus, int csr_mtvec, int csr_mepc, int csr_mcause){
+extern "C" void difftest_dut_csr(int csr_mstatus, int csr_mtvec, int csr_mepc, int csr_mcause, int csr_mhartid, int csr_mscratch){
     cpu.csr[0] = csr_mstatus;
     cpu.csr[1] = csr_mtvec;
     cpu.csr[2] = csr_mepc;    
     cpu.csr[3] = csr_mcause;
+    cpu.csr[4] = csr_mhartid;
+    cpu.csr[5] = csr_mscratch;
    // isa_reg_display();
 }
 
