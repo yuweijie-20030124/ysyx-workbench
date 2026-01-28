@@ -44,7 +44,7 @@ wire [1:0] mpp_set =  csr_ctl[1] ? 2'b11 :
 
 always@(posedge clk) begin
   if(rst == `ysyx_25060170_RSTABLE) begin 
-    mstatus <= `ysyx_25060170_ZERO32;  // 复位时初始化
+    mstatus <= 32'h1800;  // 复位时初始化
   end
   else if(mstatus_ie_ena) begin 
     mstatus_mie <= mie_set;

@@ -43,7 +43,6 @@ NPC_FLAGS += --diff=/home/yuweijie/ysyx-workbench/nemu/build/riscv32-nemu-interp
 VERILATOR_FLAGS = -Wall --cc --trace \
 					-CFLAGS  " -I /home/yuweijie/ysyx-workbench/npc/include -O2" \
 					-CFLAGS  " -I /home/yuweijie/ysyx-workbench/nemu/tools/capstone/repo/include -O2" \
-					-CFLAGS  " -I /home/yuweijie/ysyx-workbench/npc/core" \
 					--exe --build \
 					-LDFLAGS " -lreadline -lSDL2" \
 					-Ivsrc \
