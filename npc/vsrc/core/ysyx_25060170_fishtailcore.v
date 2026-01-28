@@ -767,10 +767,6 @@ wire                            wb_rf_rd_ena;
 wire [`ysyx_25060170_REGADDR]   wb_rf_rd_addr;
 wire [`ysyx_25060170_REGADDR]   wb_rd_addr_forward;
 wire [`ysyx_25060170_DATA]      wb_rd_data_forward;
-wire [`ysyx_25060170_REG]       wbu_dpic_mstatus;
-wire [`ysyx_25060170_REG]       wbu_dpic_mepc;
-wire [`ysyx_25060170_REG]       wbu_dpic_mtvec;
-wire [`ysyx_25060170_REG]       wbu_dpic_mcause;
 wire [`ysyx_25060170_INST]      wbu_dpic_inst;
 wire [`ysyx_25060170_PC]        wbu_dpic_pc;
 wire [`ysyx_25060170_PC]        wbu_dpic_next_pc;
@@ -778,12 +774,18 @@ wire [`ysyx_25060170_PC]        wbu_dpic_next_pc;
 // wire                            wbu_dpic_id_stall;
 wire                            wbu_dpic_valid;
 // wire                            wbu_dpic_pipeline_idstall;
+/* verilator lint_off UNUSEDSIGNAL */
+wire [6:0]                      wb_csr_csr_ctl          ;
+/* verilator lint_on  UNUSEDSIGNAL */     
+wire [11:0]                     wb_csr_csr_addr         ;     
+wire [`ysyx_25060170_REG]       wb_csr_mcause_value     ;
+wire [`ysyx_25060170_DATA]      wb_csr_write_csr_data   ;
 
 ysyx_25060170_wbu u_ysyx_25060170_wbu (
     //  .clk                       ( clk                           )//<<i<<
     // ,.rst                       ( rst                           )//<<i<<
 
-    ,.ls_rd_data_i              ( mem_wb_lsu_res                )//<<i<<
+     .ls_rd_data_i              ( mem_wb_lsu_res                )//<<i<<
     ,.wb_ctl_i                  ( mem_wb_wb_ctl                 )//<<i<<
     ,.exu_res_i                 ( mem_wb_alures_data            )//<<i<<
     ,.pc_i                      ( mem_wb_pc                     )//<<i<<
@@ -793,6 +795,7 @@ ysyx_25060170_wbu u_ysyx_25060170_wbu (
     ,.rd_ena_i                  ( mem_wb_rd_ena                 )//<<i<<
     ,.csr_ctl_i                 ( mem_wb_csr_ctl                )//<<i<<
     ,.csr_addr_i                ( mem_wb_csr_addr               )//<<i<<
+    ,.read_csr_data_i           ( csr_wbu_read_csr_data         )//<<i<<     
     // ,.pipeline_id_stall_i       (         )//<<i<<
     ,.ls_valid_i                ( mem_valid_o                   )//<<i<<
     // ,.id_stall_i                ( id_stall                      )//<<i<<
@@ -804,17 +807,17 @@ ysyx_25060170_wbu u_ysyx_25060170_wbu (
     //out for forwarding        
     ,.wb_rd_addr_forward        ( wb_rd_addr_forward            )//>>o>>
     ,.wb_rd_data_forward        ( wb_rd_data_forward            )//>>o>>
-    //out for difftest      
-    ,.mstatus_o                 ( wbu_dpic_mstatus              )//>>o>>
-    ,.mepc_o                    ( wbu_dpic_mepc                 )//>>o>>
-    ,.mtvec_o                   ( wbu_dpic_mtvec                )//>>o>>
-    ,.mcause_o                  ( wbu_dpic_mcause               )//>>o>>
+    //out for DPIC 发射      
     ,.wbu_dpic_inst_o           ( wbu_dpic_inst                 )//>>o>>
     ,.wbu_dpic_pc_o             ( wbu_dpic_pc                   )//>>o>>
     ,.wbu_dpic_next_pc_o        ( wbu_dpic_next_pc              )//>>o>>
     // ,.wbu_dpic_ls_valid_o       ( wbu_dpic_ls_valid             )//>>o>>
     // ,.wbu_dpic_id_stall_o       ( wbu_dpic_id_stall             )//>>o>>
     ,.wbu_dpic_valid_o          ( wbu_dpic_valid                )//>>o>>
+    ,.csr_ctl_o                 ( wb_csr_csr_ctl                )//>>o>>
+    ,.csr_addr_o                ( wb_csr_csr_addr               )//>>o>>
+    ,.mcause_value_o            ( wb_csr_mcause_value           )//>>o>>
+    ,.write_csr_data_o          ( wb_csr_write_csr_data         )//>>o>>
     // ,.dpic_pipeline_id_stall_o  ( wbu_dpic_pipeline_idstall     )//>>o>>
 );
 
@@ -864,19 +867,28 @@ wire [`ysyx_25060170_REG]       regs30;
 wire [`ysyx_25060170_REG]       regs31;
 //to mem for从地址中取完值为了避免
 
+//output csr signals
+wire [`ysyx_25060170_REG]       dpic_mhartid ;
+wire [`ysyx_25060170_REG]       dpic_mstatus ;
+wire [`ysyx_25060170_REG]       dpic_mepc    ;
+wire [`ysyx_25060170_REG]       dpic_mtvec   ;
+wire [`ysyx_25060170_REG]       dpic_mcause  ;
+wire [`ysyx_25060170_REG]       dpic_mscratch;
+wire [`ysyx_25060170_DATA]      csr_wbu_read_csr_data;
 ysyx_25060170_csr u_ysyx_25060170_csr (
-     .clk               (clk)//<<i<<
-    ,.rst               (rst)//<<i<<
-    ,.csr_ctl           ()//<<i<<  {csr_wr_ena, csr_rd_ena, ecall_ena, mret_ena}
-    ,.mcause_value      ()//<<i<<
-    ,.write_csr_data    ()//<<i<<
-    ,.csr_write_addr    ()//<<i<<
-    ,.read_csr_data     ()//>>o>>
-    ,.csr_read_addr     ()//<<i<<
-    ,.mstatus_o         ()//>>o>>
-    ,.mepc_o            ()//>>o>>
-    ,.mtvec_o           ()//>>o>>
-    ,.mcause_o          ()//>>o>>
+     .clk               (clk                    )//i
+    ,.rst               (rst                    )//i
+    ,.csr_ctl           (wb_csr_csr_ctl[3:0]    )//<<i<<  {csr_wr_ena, csr_rd_ena, ecall_ena, mret_ena}
+    ,.csr_addr          (wb_csr_csr_addr        )//i
+    ,.mcause_value      (wb_csr_mcause_value    )//i
+    ,.write_csr_data    (wb_csr_write_csr_data  )//i
+    ,.read_csr_data     (csr_wbu_read_csr_data  )//o
+    ,.mhartid_o         (dpic_mhartid           )//o
+    ,.mstatus_o         (dpic_mstatus           )//o
+    ,.mepc_o            (dpic_mepc              )//o
+    ,.mtvec_o           (dpic_mtvec             )//o
+    ,.mcause_o          (dpic_mcause            )//o
+    ,.mscratch_o        (dpic_mscratch          )//o
 );
 
 ysyx_25060170_regfile u_ysyx_25060170_regfile (
@@ -1024,10 +1036,12 @@ ysyx_25060170_DPIC u_ysyx_25060170_DPIC (
     ,.regs29                ( regs29                    )//<<i<<
     ,.regs30                ( regs30                    )//<<i<<
     ,.regs31                ( regs31                    )//<<i<<
-    ,.mstatus               ( `                    )//<<i<<
-    ,.mtvec                 ( mtvec                     )//<<i<<
-    ,.mepc                  ( mepc                      )//<<i<<
-    ,.mcause                ( mcause                    )//<<i<<
+    ,.mstatus               ( dpic_mhartid              )//<<i<<
+    ,.mtvec                 ( dpic_mstatus              )//<<i<<
+    ,.mepc                  ( dpic_mepc                 )//<<i<<
+    ,.mcause                ( dpic_mtvec                )//<<i<<
+    ,.mhartid               ( dpic_mcause               )//<<i<<      
+    ,.mscratch              ( dpic_mscratch             )//<<i<<      
     ,.re                    ( ls_mem_re                 )//<<i<<
     ,.we                    ( ls_dpic_we                )//<<i<<
     ,.data_i                ( ls_dpic_data              )//<<i<<

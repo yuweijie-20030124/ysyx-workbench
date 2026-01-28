@@ -49,6 +49,8 @@
 	,input  wire	[`ysyx_25060170_REG] 		mtvec		//<<i<<
 	,input  wire	[`ysyx_25060170_REG] 		mepc		//<<i<<
 	,input  wire	[`ysyx_25060170_REG] 		mcause		//<<i<<
+	,input  wire	[`ysyx_25060170_REG] 		mhartid		//<<i<<
+	,input  wire	[`ysyx_25060170_REG] 		mscratch	//<<i<<
 
 	//from lsu
 	/* verilator lint_off UNUSEDSIGNAL */
@@ -102,7 +104,9 @@ import "DPI-C" function void difftest_dut_csr(
 	input int csr_mstatus,
 	input int csr_mtvec,
 	input int csr_mepc,
-	input int csr_mcause
+	input int csr_mcause,
+	input int csr_mhartid,	
+	input int csr_mscratch
 );
 
 import "DPI-C" function void difftest_dut_regs(
@@ -249,7 +253,9 @@ always@(*) begin
    	mstatus,
    	mtvec,
    	mepc,
-   	mcause
+   	mcause,
+	mhartid,	
+	mscratch
    );
 end
 

@@ -19,10 +19,12 @@ void isa_reg_display() {
         printf("%-4s   : 0x%08x %-11d  ", reg_name(i), gpr(i), gpr(i));
         if ((i + 1) % 4 == 0) printf("\n");
     }
-    printf("mcause : 0x%08x %-11d  "  , cpu.csr[0], cpu.csr[0]);
-    printf("mstatus: 0x%08x %-11d  "  , cpu.csr[1], cpu.csr[1]);
-    printf("mepc   : 0x%08x %-11d  "  , cpu.csr[2], cpu.csr[2]);
-    printf("mtvec  : 0x%08x %-11d  \n", cpu.csr[3], cpu.csr[3]);
+    printf("mcause  : 0x%08x %-11d  "  , cpu.csr[0], cpu.csr[0]);
+    printf("mstatus : 0x%08x %-11d  "  , cpu.csr[1], cpu.csr[1]);
+    printf("mepc    : 0x%08x %-11d  "  , cpu.csr[2], cpu.csr[2]);
+    printf("mtvec   : 0x%08x %-11d  \n", cpu.csr[3], cpu.csr[3]);
+    printf("mhartid : 0x%08x %-11d  "  , cpu.csr[4], cpu.csr[4]);
+    printf("mscratch: 0x%08x %-11d  "  , cpu.csr[5], cpu.csr[5]);
 }
 
 //讲寄存器名字符转换为对应的寄存器值

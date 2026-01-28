@@ -146,7 +146,7 @@ bool isa_difftest_checkregs(NPC_reg *ref_r, vaddr_t pc) {
     return false;
   }
 
-  // for (int k = 0; k < csr_num; k++) {
+  // for (int k = 0; k < csr_num; k++) {idu
   //   if(cpu.csr[k] != ref_r->csr[k]){
   //     printf("PC get wrong at 0x%08x\n",cpu.pc);
   //     printf("csr reg wrong!!!!!!!!!\n");
