@@ -203,7 +203,6 @@ int main(int argc, char** argv) {
   #endif  
 
 	init_monitor(argc,argv);
-  cpu_reset();
 
   sdb_mainloop();
 	//sdb_mainloop();
