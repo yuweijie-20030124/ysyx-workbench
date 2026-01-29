@@ -49,7 +49,7 @@
 #define CONFIG_ITRACE_IRINGBUF "true"
 // #define CONFIG_WATCHPOINT 1
 // #define CONFIG_FTRACE 1
-// #define CONFIG_MTRACE 1
+#define CONFIG_MTRACE 1
 // #define CONFIG_DTRACE
 #endif
 
