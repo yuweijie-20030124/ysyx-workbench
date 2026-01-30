@@ -20,6 +20,7 @@ module ysyx_25060170_ex_ls_reg(
     ,input   wire [`ysyx_25060170_REGADDR]  rd_addr_i               //<<i<<
     ,input	 wire					        ex_csr_ena_i	        //<<i<<
     ,input   wire [11:0]                    csr_addr_i              //<<i<<
+    ,input   wire [`ysyx_25060170_DATA]     csr_data_i              //<<i<<
     // ,input   wire [`ysyx_25060170_REGADDR]  store_addr_i              //<<i<<
     //靠这个rs2addr作为sw要往地址存的那个值，往这个寄存器地址中取值就是sw要存的值
     //控制信号  
@@ -42,6 +43,7 @@ module ysyx_25060170_ex_ls_reg(
     ,output  reg                            rd_ena_o                //>>o>>
     ,output  reg  [`ysyx_25060170_REGADDR]  rd_addr_o               //>>o>>
     ,output  reg  [11:0]                    csr_addr_o              //>>o>>
+    ,output  reg  [`ysyx_25060170_DATA]     csr_data_o              //>>o>>
     //csr forward to idu    
     ,output  reg                            ls_csr_ena_o            //>>o>>    
     //ex forward to idu
@@ -79,6 +81,7 @@ module ysyx_25060170_ex_ls_reg(
             rd_addr_o           <=  5'b0                    ;
             ls_csr_ena_o        <=  1'b0                    ;    
             csr_addr_o          <=  12'b0                   ;
+            csr_data_o          <=  `ysyx_25060170_ZERO32   ;
             ex_valid_o          <=  1'b1                    ;
             // pipeline_id_stall_o <=  1'b0                    ;
         end
@@ -97,9 +100,10 @@ module ysyx_25060170_ex_ls_reg(
             csr_ctl_o           <=  csr_ctl_o               ;
             rd_ena_o            <=  rd_ena_o                ;
             rd_addr_o           <=  rd_addr_o               ;
-            ls_csr_ena_o        <=  ls_csr_ena_o            ;    
+            ls_csr_ena_o        <=  ls_csr_ena_o            ;
+            csr_data_o          <=  csr_data_o              ;
             csr_addr_o          <=  csr_addr_o              ;
-            ex_valid_o          <=  ex_valid_o                    ;
+            ex_valid_o          <=  ex_valid_o              ;
             // pipeline_id_stall_o <=  pipeline_id_stall_o     ;
         end
         else begin  
@@ -114,6 +118,7 @@ module ysyx_25060170_ex_ls_reg(
             csr_ctl_o           <=  csr_ctl_i               ;
             rd_ena_o            <=  rd_ena_i                ;
             rd_addr_o           <=  rd_addr_i               ;
+            csr_data_o          <=  csr_data_i              ;
             ls_csr_ena_o        <=  ex_csr_ena_i            ;    
             csr_addr_o          <=  csr_addr_i              ;
             ex_valid_o          <=  1'b0                    ;

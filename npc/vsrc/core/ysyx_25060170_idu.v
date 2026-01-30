@@ -7,6 +7,8 @@ module ysyx_25060170_idu(
 	,input	wire [`ysyx_25060170_PC]			pc_i				//<<i<<
 	,input  wire [`ysyx_25060170_PC]			next_pc_i			//<<i<<
 	,input  wire [`ysyx_25060170_REG]			mtvec				//<<i<<
+	,input  wire [`ysyx_25060170_REG]  			mepc				//<<i<<
+	,input  wire [`ysyx_25060170_REG]			csr_data_i			//<<i<<
 	// ,input  wire [`ysyx_25060170_PC]			bpu_jalr_pc_i		//<<i<<
 	//from bpu
 	,input 	wire 								bp_jump_i			//<<i<<	我们当时是否预测跳转
@@ -44,6 +46,8 @@ module ysyx_25060170_idu(
 	,output wire						 		rs2_ena  			//>>o>>
 	// ,output wire [`ysyx_25060170_REGADDR] 		csr_addr 			//>>o>>
 	// ,output wire						 		csr_ena  			//>>o>>
+	//to csr signal
+	,output wire [11:0]				     		csr_addr 			//>>o>> 
 	,output wire				 				rd_ena  			//>>o>>
   	,output wire [`ysyx_25060170_REGADDR] 		rd_addr 			//>>o>>
 	//to exu out signal
@@ -56,6 +60,7 @@ module ysyx_25060170_idu(
 	,output wire [2:0]							op2_sel				//>>o>>
 	,output wire 								load_flag_o			//>>o>>
     ,output wire                             	csr_ena_o    		//>>o>> 是不是csr操作指令
+
 	//id out signal	
 	,output reg  [`ysyx_25060170_DATA]  		op1 				//>>o>>
 	,output reg  [`ysyx_25060170_DATA]  		op2 			 	//>>o>>
@@ -188,7 +193,8 @@ assign next_pc_o = ((alusrc_o == `INST_JAL) ) 				?  (pc_i + imm)  		:
 				   (alusrc_o == `INST_JALR)                 ?  ((op1 + imm)&(~1))	:
 				   inst_bxx_i & now_bxx_jump_yes			?  (pc_i + imm)         :
 				   inst_bxx_i & ~now_bxx_jump_yes			?  (pc_i + 32'b100)		:
-				   inst_i == 32'b00000000000000000000000001110011 ?    (mtvec)	:
+				   inst_i == 32'b00000000000000000000000001110011 ?       (mtvec)	:
+				   inst_i == 32'h30_20_00_73				?	mepc				:
 				   next_pc_i;
 
 assign pc_o 	 	= pc_i		;
@@ -197,15 +203,16 @@ assign csr_imm_o 	= rs1		;
 // assign store_addr_o = rs2		;
 
 //rs1
-assign op1 = `ysyx_25060170_ZERO32 							|
-			 {32{op1_forward_ena}} & op1_forward_data 		|
-			 {32{rs1_ena & (~op1_forward_ena)}}	& rs1_data;
+assign op1 = `ysyx_25060170_ZERO32 														|
+			 {32{op1_forward_ena}} 				& op1_forward_data 						|
+			 {32{rs1_ena & (~op1_forward_ena)}}	& rs1_data;				
 
-//rs2  
-//特殊情况，如果
-assign op2 = `ysyx_25060170_ZERO32 							|
-			 {32{op2_forward_ena}} & op2_forward_data 		|
-			 {32{rs2_ena & (~op2_forward_ena)}}	 & rs2_data;
+//rs2  				
+//特殊情况，如果				
+assign op2 = `ysyx_25060170_ZERO32 														|
+			 {32{op2_forward_ena}} 				    			& op2_forward_data 		|
+			 {32{rs2_ena & (~op2_forward_ena)}}	    			& rs2_data 				|
+			 {32{csr_ena_o & (~rs2_ena) & (~op2_forward_ena)}}  & csr_data_i;
 
  
 assign pc_o = rst == `ysyx_25060170_RSTABLE ? `ysyx_25060170_STARTPC : pc_i	;
@@ -288,6 +295,8 @@ assign rs2_addr = rs2_ena 		? rs2 	: 5'd0 								;
 assign rd_ena  = (rd == 5'd0) 	? 1'b0 	: (wbctl_o == 2'b00) ? 1'b0 : 1'b1  ;
 assign rd_addr = rd_ena 		? rd 	: 5'd0 								;
 
+//output to csr_Reg
+assign csr_addr = csr_ena_o ? inst_i[31:20] : 12'b0;
 
 endmodule
 

@@ -142,38 +142,38 @@ ysyx_25060170_DPIC u_ysyx_25060170_DPIC (
 
 //方便看寄存器名字
 /* verilator lint_off UNUSEDSIGNAL */
-reg [`ysyx_25060170_REG] reg_zero = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[0 ];
-reg [`ysyx_25060170_REG] reg_ra   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[1 ];
-reg [`ysyx_25060170_REG] reg_sp   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[2 ];
-reg [`ysyx_25060170_REG] reg_gp   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[3 ];
-reg [`ysyx_25060170_REG] reg_tp   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[4 ];
-reg [`ysyx_25060170_REG] reg_t0   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[5 ];
-reg [`ysyx_25060170_REG] reg_t1   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[6 ];
-reg [`ysyx_25060170_REG] reg_t2   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[7 ];
-reg [`ysyx_25060170_REG] reg_s0   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[8 ];
-reg [`ysyx_25060170_REG] reg_s1   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[9 ];
-reg [`ysyx_25060170_REG] reg_a0   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[10];
-reg [`ysyx_25060170_REG] reg_a1   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[11];
-reg [`ysyx_25060170_REG] reg_a2   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[12];
-reg [`ysyx_25060170_REG] reg_a3   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[13];
-reg [`ysyx_25060170_REG] reg_a4   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[14];
-reg [`ysyx_25060170_REG] reg_a5   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[15];
-reg [`ysyx_25060170_REG] reg_a6   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[16];
-reg [`ysyx_25060170_REG] reg_a7   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[17];
-reg [`ysyx_25060170_REG] reg_s2   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[18];
-reg [`ysyx_25060170_REG] reg_s3   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[19];
-reg [`ysyx_25060170_REG] reg_s4   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[20];
-reg [`ysyx_25060170_REG] reg_s5   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[21];
-reg [`ysyx_25060170_REG] reg_s6   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[22];
-reg [`ysyx_25060170_REG] reg_s7   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[23];
-reg [`ysyx_25060170_REG] reg_s8   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[24];
-reg [`ysyx_25060170_REG] reg_s9   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[25];
-reg [`ysyx_25060170_REG] reg_s10  = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[26];
-reg [`ysyx_25060170_REG] reg_s11  = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[27];
-reg [`ysyx_25060170_REG] reg_t3   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[28];
-reg [`ysyx_25060170_REG] reg_t4   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[29];
-reg [`ysyx_25060170_REG] reg_t5   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[30];
-reg [`ysyx_25060170_REG] reg_t6   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[31];
+reg [`ysyx_25060170_REG] reg0_zero  = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[0 ];
+reg [`ysyx_25060170_REG] reg1_ra    = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[1 ];
+reg [`ysyx_25060170_REG] reg2_sp    = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[2 ];
+reg [`ysyx_25060170_REG] reg3_gp    = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[3 ];
+reg [`ysyx_25060170_REG] reg4_tp    = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[4 ];
+reg [`ysyx_25060170_REG] reg5_t0    = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[5 ];
+reg [`ysyx_25060170_REG] reg6_t1    = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[6 ];
+reg [`ysyx_25060170_REG] reg7_t2    = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[7 ];
+reg [`ysyx_25060170_REG] reg8_s0    = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[8 ];
+reg [`ysyx_25060170_REG] reg9_s1    = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[9 ];
+reg [`ysyx_25060170_REG] reg10_a0   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[10];
+reg [`ysyx_25060170_REG] reg11_a1   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[11];
+reg [`ysyx_25060170_REG] reg12_a2   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[12];
+reg [`ysyx_25060170_REG] reg13_a3   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[13];
+reg [`ysyx_25060170_REG] reg14_a4   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[14];
+reg [`ysyx_25060170_REG] reg15_a5   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[15];
+reg [`ysyx_25060170_REG] reg16_a6   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[16];
+reg [`ysyx_25060170_REG] reg17_a7   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[17];
+reg [`ysyx_25060170_REG] reg18_s2   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[18];
+reg [`ysyx_25060170_REG] reg19_s3   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[19];
+reg [`ysyx_25060170_REG] reg20_s4   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[20];
+reg [`ysyx_25060170_REG] reg21_s5   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[21];
+reg [`ysyx_25060170_REG] reg22_s6   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[22];
+reg [`ysyx_25060170_REG] reg23_s7   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[23];
+reg [`ysyx_25060170_REG] reg24_s8   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[24];
+reg [`ysyx_25060170_REG] reg25_s9   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[25];
+reg [`ysyx_25060170_REG] reg26_s10  = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[26];
+reg [`ysyx_25060170_REG] reg27_s11  = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[27];
+reg [`ysyx_25060170_REG] reg28_t3   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[28];
+reg [`ysyx_25060170_REG] reg29_t4   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[29];
+reg [`ysyx_25060170_REG] reg30_t5   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[30];
+reg [`ysyx_25060170_REG] reg31_t6   = ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[31];
 /* verilator lint_on UNUSEDSIGNAL */
 endmodule
 
