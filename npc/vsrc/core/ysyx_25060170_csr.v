@@ -12,6 +12,7 @@ module ysyx_25060170_csr(
   ,output wire [`ysyx_25060170_DATA]  read_csr_data    //>>o>>
   ,output wire [`ysyx_25060170_DATA]  idu_read_csr_data//>>o>>
   ,output wire [`ysyx_25060170_REG]   mtvec            //>>o>>
+  ,output reg  [`ysyx_25060170_REG]   mepc             //>>o>>
 
 );
 
@@ -88,7 +89,7 @@ assign mtvec = {mtvec_base, mtvec_mode};
 wire mepc_rd = ((csr_addr  == 12'h341) && csr_ctl[2]) | csr_ctl[0];
 wire mepc_wr = ((csr_addr == 12'h341) && csr_ctl[3]) | csr_ctl[1]; //写和ecall的时候写mepc
 
-reg [`ysyx_25060170_REG] mepc;
+// reg [`ysyx_25060170_REG] mepc;
 always@(posedge clk) begin
   if(rst == `ysyx_25060170_RSTABLE) begin 
     mepc <= `ysyx_25060170_ZERO32; 

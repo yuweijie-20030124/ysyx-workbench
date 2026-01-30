@@ -16,6 +16,7 @@ module ysyx_25060170_bpu(
     ,input  wire [`ysyx_25060170_PC]        pc_i                //<<i<< 当前ifu的pc值
     //from csr mtvec
     ,input  wire [`ysyx_25060170_REG]       mtvec              //<<i<<
+    ,input  wire [`ysyx_25060170_REG]       mepc               //<<i<<
     //forwarding
     ,input  wire [`ysyx_25060170_REG]       ls_wb_forward_data  //<<i<<
     ,input  wire [`ysyx_25060170_REGADDR]   ls_wb_forward_addr  //<<i<<
@@ -144,6 +145,7 @@ wire inst_jal;
 wire inst_jalr;
 wire inst_bxx;
 wire inst_ecall;
+wire inst_mret;
 wire [31:0] jump_pc;
 wire [31:0] jump_jalr_pc;
 
@@ -152,7 +154,8 @@ assign opcode = inst_i[6:0];
 assign inst_jal = (rst) ? 1'b0 : (opcode[6:2] == `ysyx_25060170_JAL) & (opcode[1:0] == 2'b11)    ;
 assign inst_jalr= (rst) ? 1'b0 : ((opcode[6:2] == `ysyx_25060170_JALR) && (opcode[1:0] == 2'b11));
 assign inst_bxx = (rst) ? 1'b0 : (opcode[6:2] == `ysyx_25060170_BRANCH) ;
-assign inst_ecall = (rst) ? 1'b0 : (inst_i == 32'b0000_0000_0000_0000_0000_0000_0111__0011) ;
+assign inst_ecall = (rst) ? 1'b0 : (inst_i == 32'b0000_0000_0000_0000_0000_0000_0111_0011) ;
+assign inst_mret  = (rst) ? 1'b0 : (inst_i == 32'h30_20_00_73) ;
 assign jalr_imm = inst_i[31:20];
 
 assign jal_imm = { inst_i[31],       // imm[20]
@@ -215,11 +218,12 @@ assign bp_pc_o = 32'b0 |
                 {32{rst}}           & `ysyx_25060170_STARTPC |
                 {32{inst_jal }}     & jump_pc                |
                 {32{inst_jalr}}     & jump_jalr_pc           |
-                {32{inst_ecall}}    & mtvec                 |
+                {32{inst_ecall}}    & mtvec                  |
+                {32{inst_mret}}     & mepc                   |
                 {32{bxx_taken}}     & jump_pc                |
                 {32{bxx_not_taken}} & pc_i + 4               ;
 
-assign jal_jalr_ecall_o = inst_jal | inst_jalr | inst_ecall;
+assign jal_jalr_ecall_o = inst_jal | inst_jalr | inst_ecall | inst_mret;
 assign inst_bxx_o = inst_bxx;
 
 assign bp_predict_o = 1'b0 |

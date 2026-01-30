@@ -16,8 +16,8 @@
     ,input  wire  [`ysyx_25060170_DATA]      csr_data_i                 //<<i<<
     //input from csr
     /* verilator lint_off UNUSEDSIGNAL */
-    ,input  wire  [`ysyx_25060170_DATA]      read_csr_data_i
-    /* verilator lint_off UNUSEDSIGNAL */           
+    ,input  wire  [`ysyx_25060170_DATA]      read_csr_data_i           
+    /* verilator lint_on  UNUSEDSIGNAL */
     // ,input  wire                             pipeline_id_stall_i        //<<i<<  
     // ,input	wire	[`ysyx_25060170_PC]		  ls_pc_i	            //<<i<<
     ,input	wire					                   ls_valid_i                 //<<i<<
@@ -61,7 +61,11 @@ assign mcause_value_o = csr_ctl_i[1] ? 32'd11 : `ysyx_25060170_ZERO32; //ecall f
 //                         {32{csr_ctl_i[4]}} & clear_data      | //csr clear
 //                         {32{csr_ctl_i[1]}} & pc_i            ; 
 
-assign write_csr_data_o = exu_res_i;
+assign write_csr_data_o = `ysyx_25060170_ZERO32               |
+                         {32{csr_ctl_i[6]}} & exu_res_i       | //csr write
+                         {32{csr_ctl_i[1]}} & pc_i            ; 
+
+
 
 
 //***********************************for DPIC**************************************//

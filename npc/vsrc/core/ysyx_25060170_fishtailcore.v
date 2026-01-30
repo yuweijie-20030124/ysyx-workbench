@@ -47,8 +47,9 @@ ysyx_25060170_bpu u_ysyx_25060170_bpu (
     ,.idu_bxx_inst       ( if_id_reg_inst_bxx   )//<<i<<
     // ,.bxx_imm            ( id_ex_reg_imm        )//<<i<<  
     ,.inst_i             ( if_id_inst           )//<<i<<      
-    ,.pc_i               ( DPIC_if_id_pc             )//<<i<<
+    ,.pc_i               ( DPIC_if_id_pc        )//<<i<<
     ,.mtvec              ( mtvec                )//<<i<<
+    ,.mepc               ( mepc                 )//<<i<<   
     ,.ls_wb_forward_data ( ls_rd_data_forward   )//<<i<<
     ,.ls_wb_forward_addr ( ls_rd_addr_forward   )//<<i<<
     ,.ex_ls_forward_data ( ex_rd_data_forward   )//<<i<<
@@ -215,6 +216,7 @@ ysyx_25060170_idu u_ysyx_25060170_idu (
     ,.pc_i               (if_id_reg_pc          )//<<i<<
     ,.next_pc_i          (if_id_reg_next_pc     )//<<i<<
     ,.mtvec              (mtvec                 )//<<i<<
+    ,.mepc               (mepc                  )//<<i<<
     ,.csr_data_i         (csr_idu_data          )//<<i<<
     ,.bp_jump_i          (if_id_reg_bp_jump     )//<<i<<
     ,.inst_bxx_i         (if_id_reg_inst_bxx    )//<<i<<
@@ -904,6 +906,7 @@ ysyx_25060170_wbu u_ysyx_25060170_wbu (
 
 wire [`ysyx_25060170_DATA]      csr_wbu_read_csr_data;
 wire [`ysyx_25060170_REG]       mtvec;
+wire [`ysyx_25060170_REG]       mepc;
 wire [`ysyx_25060170_DATA]      csr_idu_data;
 
 ysyx_25060170_csr u_ysyx_25060170_csr (
@@ -918,6 +921,7 @@ ysyx_25060170_csr u_ysyx_25060170_csr (
     ,.read_csr_data     (csr_wbu_read_csr_data  )//o
     ,.idu_read_csr_data (csr_idu_data           )//o
     ,.mtvec             (mtvec                  )//o
+    ,.mepc              (mepc                   )//o
 );
 
 ysyx_25060170_regfile u_ysyx_25060170_regfile (
