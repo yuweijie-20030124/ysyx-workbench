@@ -15,7 +15,7 @@ void init_device();
 void init_sdb();
 void init_disasm();
 void init_isa();
-
+void cpu_reset();
 
 
 static void welcome() {
@@ -130,6 +130,10 @@ void init_monitor(int argc, char *argv[]) {
 
   /* Load the image to memory. This will overwrite the built-in image. */
   long img_size = load_img();
+
+
+  cpu_reset();
+
  #ifdef CONFIG_DIFFTEST
   /* Initialize differential testing. */
   init_difftest(diff_so_file, img_size, 0);

@@ -4,23 +4,26 @@
  	//   input  wire                              clk                        //<<i<<  
    //  ,input	wire            		            rst                        //<<i<<
      input	wire  [`ysyx_25060170_DATA]      ls_rd_data_i               //<<i<<
-    ,input  wire  [1:0]      		            wb_ctl_i                   //<<i<<
+    ,input  wire  [1:0]      		             wb_ctl_i                   //<<i<<
     ,input  wire  [`ysyx_25060170_DATA]      exu_res_i                  //<<i<<
     ,input  wire  [`ysyx_25060170_PC]        pc_i                       //<<i<<
     ,input  wire  [`ysyx_25060170_PC]        next_pc_i                  //<<i<<
     ,input  wire  [`ysyx_25060170_INST]      inst_i                     //<<i<<
     ,input  wire  [`ysyx_25060170_REGADDR]   rd_addr_i                  //<<i<<
     ,input  wire                             rd_ena_i                   //<<i<<
-    ,input	wire	[6:0]				            csr_ctl_i	               //<<i<<
-    ,input	wire	[11:0]				         csr_addr_i                 //<<i<<
+    ,input	wire	[6:0]				               csr_ctl_i	                //<<i<<
+    ,input	wire	[11:0]				             csr_addr_i                 //<<i<<
+    ,input  wire  [`ysyx_25060170_DATA]      csr_data_i                 //<<i<<
     //input from csr
-    ,input  wire  [`ysyx_25060170_DATA]      read_csr_data_i           
+    /* verilator lint_off UNUSEDSIGNAL */
+    ,input  wire  [`ysyx_25060170_DATA]      read_csr_data_i
+    /* verilator lint_off UNUSEDSIGNAL */           
     // ,input  wire                             pipeline_id_stall_i        //<<i<<  
     // ,input	wire	[`ysyx_25060170_PC]		  ls_pc_i	            //<<i<<
-    ,input	wire					               ls_valid_i                 //<<i<<
+    ,input	wire					                   ls_valid_i                 //<<i<<
     // ,input 	wire					         id_stall_i                 //<<i<<
     //output to regfile      
- 	,output wire  [`ysyx_25060170_DATA]       wb_data_o                  //>>o>>  
+ 	,output wire  [`ysyx_25060170_DATA]        wb_data_o                  //>>o>>  
     ,output wire                             wb_ready_o                 //>>o>>
     ,output	wire                             wb_rd_ena_o                //>>o>>
     ,output	wire	[`ysyx_25060170_REGADDR]   wb_rd_addr_o               //>>o>> 
@@ -47,16 +50,18 @@ assign wb_ready_o = 1'b1;
 
 //***********************************csr**************************************//
 
-wire [`ysyx_25060170_DATA] set_data    = read_csr_data_i | exu_res_i;
-wire [`ysyx_25060170_DATA] clear_data  = read_csr_data_i & (~exu_res_i) ;
+// wire [`ysyx_25060170_DATA] set_data    = read_csr_data_i | exu_res_i;
+// wire [`ysyx_25060170_DATA] clear_data  = read_csr_data_i & (~exu_res_i) ;
 
 assign mcause_value_o = csr_ctl_i[1] ? 32'd11 : `ysyx_25060170_ZERO32; //ecall from m-mode
 
-assign write_csr_data_o = `ysyx_25060170_ZERO32  |
-                        {32{csr_ctl_i[6]}} & exu_res_i       | //csr write
-                        {32{csr_ctl_i[5]}} & set_data        | //csr set
-                        {32{csr_ctl_i[4]}} & clear_data      | //csr clear
-                        {32{csr_ctl_i[1]}} & pc_i            ; 
+// assign write_csr_data_o = `ysyx_25060170_ZERO32  |
+//                         {32{csr_ctl_i[6]}} & exu_res_i       | //csr write
+//                         {32{csr_ctl_i[5]}} & set_data        | //csr set
+//                         {32{csr_ctl_i[4]}} & clear_data      | //csr clear
+//                         {32{csr_ctl_i[1]}} & pc_i            ; 
+
+assign write_csr_data_o = exu_res_i;
 
 
 //***********************************for DPIC**************************************//
@@ -74,7 +79,7 @@ assign wbu_dpic_valid_o         = ls_valid_i         ;
 assign wb_data_o = `ysyx_25060170_ZERO32 | 
                      {32{wb_ctl_i[0]}}            & ls_rd_data_i     | //load
                      {32{wb_ctl_i[1]}}            & exu_res_i        | //alu
-                     {32{csr_ctl_i[3:0] != 4'b0}} & read_csr_data_i    ; //csr
+                     {32{csr_ctl_i[3:0] != 4'b0}} & csr_data_i    ; //csr
 
 assign wb_rd_ena_o    = rd_ena_i;
 assign wb_rd_addr_o   = rd_addr_i;

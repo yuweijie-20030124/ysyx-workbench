@@ -37,7 +37,6 @@ VM_MODPREFIX = Vysyx_25060170_topcore
 VM_USER_CFLAGS = \
 	 -I /home/yuweijie/ysyx-workbench/npc/include -O2 \
 	 -I /home/yuweijie/ysyx-workbench/nemu/tools/capstone/repo/include -O2 \
-	 -I /home/yuweijie/ysyx-workbench/npc/core \
 
 # User LDLIBS (from -LDFLAGS on Verilator command line)
 VM_USER_LDLIBS = \

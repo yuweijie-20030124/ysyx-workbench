@@ -3,11 +3,15 @@
 module ysyx_25060170_csr(
    input  wire                        clk              //<<i<<
   ,input  wire                        rst              //<<i<<
+  ,input  wire                        idu_read_csr_en  //<<i<<
+  ,input  wire [11:0]                 idu_read_csr_addr//<<i<<
   ,input  wire [3:0]                  csr_ctl          //<<i<<  {csr_wr_ena, csr_rd_ena, ecall_ena, mret_ena}
   ,input  wire [11:0]                 csr_addr         //<<i<<
   ,input  wire [`ysyx_25060170_REG]   mcause_value     //<<i<<
   ,input  wire [`ysyx_25060170_DATA]  write_csr_data   //<<i<<
   ,output wire [`ysyx_25060170_DATA]  read_csr_data    //>>o>>
+  ,output wire [`ysyx_25060170_DATA]  idu_read_csr_data//>>o>>
+  ,output wire [`ysyx_25060170_REG]   mtvec            //>>o>>
 
 );
 
@@ -43,7 +47,7 @@ wire [1:0] mpp_set =  csr_ctl[1] ? 2'b11 :
 
 always@(posedge clk) begin
   if(rst == `ysyx_25060170_RSTABLE) begin 
-    mstatus <= `ysyx_25060170_ZERO32;  // 复位时初始化
+    mstatus <= 32'h1800;  // 复位时初始化
   end
   else if(mstatus_ie_ena) begin 
     mstatus_mie <= mie_set;
@@ -76,13 +80,13 @@ end
 
 wire [1:0] mtvec_mode;
 assign mtvec_mode = 2'b00;
-wire [`ysyx_25060170_REG] mtvec = {mtvec_base, mtvec_mode};
+assign mtvec = {mtvec_base, mtvec_mode};
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // 0x341 mepc
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 wire mepc_rd = ((csr_addr  == 12'h341) && csr_ctl[2]) | csr_ctl[0];
-wire mepc_wr = ((csr_addr == 12'h341) && csr_ctl[3]) | csr_ctl[1];
+wire mepc_wr = ((csr_addr == 12'h341) && csr_ctl[3]) | csr_ctl[1]; //写和ecall的时候写mepc
 
 reg [`ysyx_25060170_REG] mepc;
 always@(posedge clk) begin
@@ -177,6 +181,14 @@ assign read_csr_data = mstatus_rd ? mstatus :
                        mhartid_rd ? mhartid :
                        `ysyx_25060170_ZERO32;
 
+assign idu_read_csr_data = (idu_read_csr_en & (idu_read_csr_addr == 12'h300)) ? mstatus  :
+                           (idu_read_csr_en & (idu_read_csr_addr == 12'h305)) ? mtvec    :
+                           (idu_read_csr_en & (idu_read_csr_addr == 12'h341)) ? mepc     :
+                           (idu_read_csr_en & (idu_read_csr_addr == 12'h342)) ? mcause   :
+                           (idu_read_csr_en & (idu_read_csr_addr == 12'hf12)) ? mhartid  :
+                           (idu_read_csr_en & (idu_read_csr_addr == 12'h340)) ? mscratch :
+                           `ysyx_25060170_ZERO32;
+                           
 
 endmodule
 

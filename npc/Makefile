@@ -8,7 +8,7 @@ endif
 
 # Makefile for NPC simulation
 # 检查语法可以用
-TEST_MODULE = ysyx_25060170_bpu
+TEST_MODULE = ysyx_25060170_wbu
 TEST_FILE   = vsrc/core/$(TEST_MODULE).v
 
 SRC_FILES = $(wildcard csrc/*.c)
@@ -43,7 +43,6 @@ NPC_FLAGS += --diff=/home/yuweijie/ysyx-workbench/nemu/build/riscv32-nemu-interp
 VERILATOR_FLAGS = -Wall --cc --trace \
 					-CFLAGS  " -I /home/yuweijie/ysyx-workbench/npc/include -O2" \
 					-CFLAGS  " -I /home/yuweijie/ysyx-workbench/nemu/tools/capstone/repo/include -O2" \
-					-CFLAGS  " -I /home/yuweijie/ysyx-workbench/npc/core" \
 					--exe --build \
 					-LDFLAGS " -lreadline -lSDL2" \
 					-Ivsrc \

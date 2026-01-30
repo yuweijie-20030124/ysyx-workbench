@@ -143,10 +143,10 @@ extern "C" void pc_inst_end(int thepc_data, int the_inst, int diff_skip_flag){
 }
 
 extern "C" void difftest_dut_csr(int csr_mstatus, int csr_mtvec, int csr_mepc, int csr_mcause, int csr_mhartid, int csr_mscratch){
-    cpu.csr[0] = csr_mstatus;
-    cpu.csr[1] = csr_mtvec;
+    cpu.csr[0] = csr_mcause;
+    cpu.csr[1] = csr_mstatus;
     cpu.csr[2] = csr_mepc;    
-    cpu.csr[3] = csr_mcause;
+    cpu.csr[3] = csr_mtvec;
     cpu.csr[4] = csr_mhartid;
     cpu.csr[5] = csr_mscratch;
    // isa_reg_display();
@@ -203,7 +203,6 @@ int main(int argc, char** argv) {
   #endif  
 
 	init_monitor(argc,argv);
-  cpu_reset();
 
   sdb_mainloop();
 	//sdb_mainloop();

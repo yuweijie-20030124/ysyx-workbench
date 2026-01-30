@@ -29,16 +29,16 @@ assign bp_rs1_data_o = ((rst != `ysyx_25060170_RSTABLE) && ( bp_rs1_ena_i== `ysy
  
  always@(posedge clk) begin
 	 if(rst == `ysyx_25060170_RSTABLE) begin
-		regs[0] <= `ysyx_25060170_ZERO32; 
- 		regs[1] <= `ysyx_25060170_ZERO32; 
- 		regs[2] <= `ysyx_25060170_ZERO32; 
- 		regs[3] <= `ysyx_25060170_ZERO32; 
- 		regs[4] <= `ysyx_25060170_ZERO32; 
- 		regs[5] <= `ysyx_25060170_ZERO32; 
- 		regs[6] <= `ysyx_25060170_ZERO32; 
- 		regs[7] <= `ysyx_25060170_ZERO32; 
- 		regs[8] <= `ysyx_25060170_ZERO32; 
- 		regs[9] <= `ysyx_25060170_ZERO32; 
+		regs[0]  <= `ysyx_25060170_ZERO32; 
+ 		regs[1]  <= `ysyx_25060170_ZERO32; 
+ 		regs[2]  <= `ysyx_25060170_ZERO32; 
+ 		regs[3]  <= `ysyx_25060170_ZERO32; 
+ 		regs[4]  <= `ysyx_25060170_ZERO32; 
+ 		regs[5]  <= `ysyx_25060170_ZERO32; 
+ 		regs[6]  <= `ysyx_25060170_ZERO32; 
+ 		regs[7]  <= `ysyx_25060170_ZERO32; 
+ 		regs[8]  <= `ysyx_25060170_ZERO32; 
+ 		regs[9]  <= `ysyx_25060170_ZERO32; 
  		regs[10] <= `ysyx_25060170_ZERO32; 
  		regs[11] <= `ysyx_25060170_ZERO32; 
  		regs[12] <= `ysyx_25060170_ZERO32; 
@@ -71,6 +71,7 @@ assign bp_rs1_data_o = ((rst != `ysyx_25060170_RSTABLE) && ( bp_rs1_ena_i== `ysy
 
  assign rdata1 = ((rst != `ysyx_25060170_RSTABLE) && (ren1 == `ysyx_25060170_RENABLE)) ? regs[raddr1] : `ysyx_25060170_ZERO32;
  assign rdata2 = ((rst != `ysyx_25060170_RSTABLE) && (ren2 == `ysyx_25060170_RENABLE)) ? regs[raddr2] : `ysyx_25060170_ZERO32;
+
 
  endmodule
 

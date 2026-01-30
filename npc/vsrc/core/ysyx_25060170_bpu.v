@@ -14,6 +14,8 @@ module ysyx_25060170_bpu(
     //form ifu      
     ,input  wire [`ysyx_25060170_INST]      inst_i              //<<i<< 当前ifu的指令
     ,input  wire [`ysyx_25060170_PC]        pc_i                //<<i<< 当前ifu的pc值
+    //from csr mtvec
+    ,input  wire [`ysyx_25060170_REG]       mtvec              //<<i<<
     //forwarding
     ,input  wire [`ysyx_25060170_REG]       ls_wb_forward_data  //<<i<<
     ,input  wire [`ysyx_25060170_REGADDR]   ls_wb_forward_addr  //<<i<<
@@ -26,8 +28,8 @@ module ysyx_25060170_bpu(
     //to ifu
     ,output wire [`ysyx_25060170_PC]        bp_pc_o             //>>o>> 要跳转的值
     ,output wire                            inst_bxx_o          //>>o>>
-    // ,output reg                             jal_jalr_o          //>>o>>
-    ,output wire                            jal_jalr_o            //>>o>> 是否要进行跳转，包含jalr，jal
+    // ,output reg                             jal_jalr_ecall_o          //>>o>>
+    ,output wire                            jal_jalr_ecall_o            //>>o>> 是否要进行跳转，包含jalr，jal,ecall
     //regfile  
     ,input  wire [`ysyx_25060170_REG]       bp_rs1_data_i       //<<i<< 得rs1值          
     ,output wire [`ysyx_25060170_REGADDR]   bp_rs1_addr_o       //>>o>> 取rs1地址
@@ -38,7 +40,7 @@ module ysyx_25060170_bpu(
 );
     // reg                                     jal_jalr_temp;
     // reg                                     pre_branch;//1的话说明刚刚预测跳转，为0的话说明预测不跳转
-    // wire                                    jal_jalr_o;
+    // wire                                    jal_jalr_ecall_o;
     //************************************中间wire和reg变量********************************************//
     // reg    [`ysyx_25060170_PC]              PC_before_bxx;
     // reg    [`ysyx_25060170_DATA]            pre_bxx_imm;
@@ -141,6 +143,7 @@ wire [`ysyx_25060170_DATA] op2;
 wire inst_jal;
 wire inst_jalr;
 wire inst_bxx;
+wire inst_ecall;
 wire [31:0] jump_pc;
 wire [31:0] jump_jalr_pc;
 
@@ -149,7 +152,7 @@ assign opcode = inst_i[6:0];
 assign inst_jal = (rst) ? 1'b0 : (opcode[6:2] == `ysyx_25060170_JAL) & (opcode[1:0] == 2'b11)    ;
 assign inst_jalr= (rst) ? 1'b0 : ((opcode[6:2] == `ysyx_25060170_JALR) && (opcode[1:0] == 2'b11));
 assign inst_bxx = (rst) ? 1'b0 : (opcode[6:2] == `ysyx_25060170_BRANCH) ;
-
+assign inst_ecall = (rst) ? 1'b0 : (inst_i == 32'b0000_0000_0000_0000_0000_0000_0111__0011) ;
 assign jalr_imm = inst_i[31:20];
 
 assign jal_imm = { inst_i[31],       // imm[20]
@@ -200,7 +203,7 @@ assign op2 =    inst_jal                        ?    jal_offset          :
 
 // end
 // assign jal_jalr_temp = inst_jal | inst_jalr ;
-// assign jal_jalr_o   = inst_bxx | inst_jal | inst_jalr;
+// assign jal_jalr_ecall_o   = inst_bxx | inst_jal | inst_jalr;
 
 assign jump_pc = op1 + op2;
 assign jump_jalr_pc = (jump_pc) & (~1) ;
@@ -212,10 +215,11 @@ assign bp_pc_o = 32'b0 |
                 {32{rst}}           & `ysyx_25060170_STARTPC |
                 {32{inst_jal }}     & jump_pc                |
                 {32{inst_jalr}}     & jump_jalr_pc           |
+                {32{inst_ecall}}    & mtvec                 |
                 {32{bxx_taken}}     & jump_pc                |
                 {32{bxx_not_taken}} & pc_i + 4               ;
 
-assign jal_jalr_o = inst_jal | inst_jalr;
+assign jal_jalr_ecall_o = inst_jal | inst_jalr | inst_ecall;
 assign inst_bxx_o = inst_bxx;
 
 assign bp_predict_o = 1'b0 |
@@ -228,51 +232,51 @@ assign bp_predict_o = 1'b0 |
 // always@(posedge clk) begin
 //     if(rst) begin
 //         bp_pc_o       <= `ysyx_25060170_STARTPC ;
-//         jal_jalr_o      <= 1'b0 ;
+//         jal_jalr_ecall_o      <= 1'b0 ;
 //         bp_predict_o  <= 1'b0 ;
 //     end
 //     else begin
 //         if( inst_jal) begin
 //             bp_pc_o      <= jump_pc         ;
-//             jal_jalr_o     <= 1'b1            ;
+//             jal_jalr_ecall_o     <= 1'b1            ;
 //             bp_predict_o <= 1'b0            ;   
-//             // jal_jalr_o   <= jal_jalr_temp   ;
+//             // jal_jalr_ecall_o   <= jal_jalr_temp   ;
 //             // $display("bpu predict jump from to pc = 0x%08x", jump_pc);
 //         end
 //         else if (inst_jalr) begin
 //             bp_pc_o      <= jump_jalr_pc    ;
-//             jal_jalr_o     <= 1'b1            ;
+//             jal_jalr_ecall_o     <= 1'b1            ;
 //             bp_predict_o <= 1'b0            ;
 //         end
 //         else if( (inst_bxx & (weakly_taken_state | strongly_taken_state)) ) begin //预测执行
 //             bp_pc_o      <= jump_pc ;
-//             jal_jalr_o     <= 1'b1            ;
+//             jal_jalr_ecall_o     <= 1'b1            ;
 //             bp_predict_o <= 1'b1 ;      //表明我是预测taken还是not taken
-//             // jal_jalr_o   <= 1'b0 ;
+//             // jal_jalr_ecall_o   <= 1'b0 ;
 //             // $display("bpu predict jump from to pc = 0x%08x", jump_pc);
 //         end
 //         // else if( inst_jalr & ~wbu_forward_en) begin
 //         //     bp_pc_o      <= jump_jalr_pc ;
 //         //     bp_predict_o <= 1'b0 ;
-//         //     // jal_jalr_o   <= jal_jalr_temp;
+//         //     // jal_jalr_ecall_o   <= jal_jalr_temp;
 //         // end
 //         // else if( inst_jalr & wbu_forward_en)begin
 //         //     bp_pc_o      <= jump_pc ;
 //         //     bp_predict_o <= 1'b0 ;
-//         //     // jal_jalr_o   <= jal_jalr_temp;
+//         //     // jal_jalr_ecall_o   <= jal_jalr_temp;
 //         // end
 //         else if( (inst_bxx & (weakly_not_taken_state | strongly_not_taken_state)) ) begin //预测不执行
 //             bp_pc_o      <= pc_i + 4 ;
-//             jal_jalr_o     <= 1'b1            ;
+//             jal_jalr_ecall_o     <= 1'b1            ;
 //             bp_predict_o <= 1'b0 ;      //表明我是预测taken还是not taken
-//             // jal_jalr_o   <= 1'b0 ;
+//             // jal_jalr_ecall_o   <= 1'b0 ;
 //             // $display("bpu predict jump from to pc = 0x%08x", jump_pc);
 //         end
 //         else begin
 //             bp_pc_o      <= `ysyx_25060170_ZERO32 ;
-//             jal_jalr_o     <= 1'b0 ;
+//             jal_jalr_ecall_o     <= 1'b0 ;
 //             bp_predict_o <= 1'b0 ;
-//             // jal_jalr_o   <= 1'b0 ;
+//             // jal_jalr_ecall_o   <= 1'b0 ;
 //         end
 //     end
 // end

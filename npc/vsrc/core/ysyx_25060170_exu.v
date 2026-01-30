@@ -30,6 +30,7 @@ module ysyx_25060170_exu(
     ,output wire [`ysyx_25060170_DATA]      exu_res_o	        //>>o>>
     ,output wire [11:0]                     csr_addr_o	      //>>o>>
     ,output wire [6:0]                      csr_ctl_o	        //>>o>>
+    ,output wire [`ysyx_25060170_DATA]      csr_data_o        //>>o>>
     // ,output wire [`ysyx_25060170_REGADDR]   rs2_addr_o        //>>o>>
     // ,output wire                            pipeline_id_stall_o  //>>o>>
 );
@@ -51,6 +52,7 @@ assign op1 = `ysyx_25060170_ZERO32 |
 
 assign op2 = `ysyx_25060170_ZERO32 |
              {32{op2_sel_i == 3'b001}} & op2_i |
+             {32{op2_sel_i == 3'b011}} & op2_i |
              {32{op2_sel_i == 3'b010}} & 32'b100|
              {32{op2_sel_i == 3'b100}} & imm_i ;   
 
@@ -88,34 +90,39 @@ always@(*) begin
   end
   else begin
     case(alu_sel_i)
-      `INST_ADDI, `INST_ADD,
-      `INST_LUI, `INST_AUIPC: begin alu_res = op1_add_op2; end
+      `INST_ADDI  , `INST_ADD,
+      `INST_LUI   , `INST_AUIPC: begin alu_res = op1_add_op2;           end
 
-      `INST_LB, `INST_LH,
-      `INST_LW, `INST_LBU,
-      `INST_LHU, `INST_SB,
-      `INST_SH, `INST_SW: begin alu_res = op1 + imm_i; end
+      `INST_LB    , `INST_LH,     
+      `INST_LW    , `INST_LBU,      
+      `INST_LHU   , `INST_SB,     
+      `INST_SH    , `INST_SW   : begin alu_res = op1 + imm_i;           end
 
-      `INST_SUB: begin alu_res = op1_sub_op2; end
+      `INST_SUB                : begin alu_res = op1_sub_op2;           end
+ 
+ 
+      `INST_SLTI  , `INST_SLT  : begin alu_res = {31'd0, op1_lt_op2};   end
+      `INST_SLTIU , `INST_SLTU : begin alu_res = {31'd0, (op1 < op2)};  end
+      `INST_SRAI  , `INST_SRA  : begin alu_res = op1_sra_op2;           end
+      `INST_XORI  , `INST_XOR  : begin alu_res = op1 ^ op2;             end
+      `INST_ORI   , `INST_OR   : begin alu_res = op1 | op2;             end
+      `INST_ANDI  , `INST_AND  : begin alu_res = op1 & op2;             end
+      `INST_SLLI  , `INST_SLL  : begin alu_res = op1 << op2[4:0];       end  // 32-bit shift uses [4:0]
+      `INST_SRLI  , `INST_SRL  : begin alu_res = op1 >> op2[4:0];       end  // 32-bit shift uses [4:0]
+      `INST_JAL   , `INST_JALR : begin alu_res = pc_i + 32'd4;          end
+      `INST_EBREAK             : begin alu_res = op1;                   end
+          
+      `INST_MUL                : begin alu_res = op1_mul_op2;           end
+      `INST_MULH               : begin alu_res = op1_mulh_op2;          end
+ 
+      `INST_DIV   , `INST_DIVU : begin alu_res = div;                   end
 
-
-      `INST_SLTI, `INST_SLT: begin alu_res = {31'd0, op1_lt_op2}; end
-      `INST_SLTIU, `INST_SLTU: begin alu_res = {31'd0, (op1 < op2)}; end
-      `INST_SRAI, `INST_SRA: begin alu_res = op1_sra_op2; end
-      `INST_XORI, `INST_XOR: begin alu_res = op1 ^ op2; end
-      `INST_ORI, `INST_OR: begin alu_res = op1 | op2; end
-      `INST_ANDI, `INST_AND: begin alu_res = op1 & op2; end
-      `INST_SLLI, `INST_SLL: begin alu_res = op1 << op2[4:0]; end  // 32-bit shift uses [4:0]
-      `INST_SRLI, `INST_SRL: begin alu_res = op1 >> op2[4:0]; end  // 32-bit shift uses [4:0]
-      `INST_JAL, `INST_JALR: begin alu_res = pc_i + 32'd4; end
-      `INST_EBREAK: begin alu_res = op1; end
-
-      `INST_MUL: begin alu_res = op1_mul_op2; end
-      `INST_MULH: begin alu_res = op1_mulh_op2; end
-
-      `INST_DIV, `INST_DIVU: begin alu_res = div; end
-
-      `INST_REM, `INST_REMU: begin alu_res = rem; end
+      `INST_REM   , `INST_REMU : begin alu_res = rem;                   end
+ 
+    //csr operation 
+      `INST_CSRRSI,`INST_CSRRS : begin alu_res = op1 | op2;             end
+      `INST_CSRRWI,`INST_CSRRW : begin alu_res = op1;                   end
+      `INST_CSRRCI,`INST_CSRRC : begin alu_res = (~op1) & op2;          end
 
       default: begin
         alu_res = `ysyx_25060170_ZERO32;
@@ -206,7 +213,9 @@ assign inst_o =  inst_i;
 assign pc_o = pc_i;
 
 //for difftest next pc
-assign next_pc_o = next_pc_i;
+assign next_pc_o  = next_pc_i;
+
+assign csr_data_o = op2_i;
 
 endmodule
 

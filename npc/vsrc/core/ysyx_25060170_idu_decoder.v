@@ -187,8 +187,11 @@ assign wb_ctl = 2'b00 |
 
 //output to exu singal
 wire imm_ena ;
+wire imm_en	 ;
 assign imm_ena = inst_type[0] | inst_type[1]  | inst_type[4] | inst_type[5] | inst_type[7] |  inst_lui | inst_auipc  ;
-assign op1_sel = 2'b00 |
+
+assign imm_en = imm_ena & ~csr_inst;
+assign op1_sel = 2'b00 | 
 				{2{inst_jal}} 		& 2'b10 | 	//jal
 				{2{inst_jalr}} 		& 2'b10 | 	//jalr
 				{2{(inst_auipc)}} 	& 2'b10 | 	//auipc
@@ -197,8 +200,9 @@ assign op1_sel = 2'b00 |
 assign op2_sel = 3'b000 |
 				{3{inst_jal}} 		& 3'b010 | 	//jal
 				{3{inst_jalr}} 		& 3'b010 | 	//jalr
-				{3{imm_ena}}	 	& 3'b100 | 	//imm
-				{3{rs2_ena}} 		& 3'b001 ; 	//rs2
+				{3{imm_en}}	 		& 3'b100 | 	//imm
+				{3{rs2_ena}} 		& 3'b001 | 	//rs2
+				{3{csr_inst}}		& 3'b011 ;  //csr寄存器中的值
 /*
 assign op1 = `ysyx_25060170_ZERO32 |
              {32{op1_sel_i == 2'b01}} & op1_i |
