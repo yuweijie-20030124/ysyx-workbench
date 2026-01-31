@@ -83,7 +83,7 @@ wire                             id_stall       ;
 // reg             pc_i                     ;
 
 // ysyx_25060170_ifu Outputs
-wire                                if1_valid;
+wire                                if_valid;
 // wire      [`ysyx_25060170_PC]       DPIC_if_id_pc;
 wire      [`ysyx_25060170_PC]       if_id_next_pc;
 // wire      [`ysyx_25060170_INST]     if_id_inst;
@@ -93,7 +93,7 @@ wire                                if_id_inst_bxx;
 // wire      [`ysyx_25060170_PC]       if_next_pc; 
 //if_next_pc also use dpic to get instruction
 
-ysyx_25060170_ifu1  u_ysyx_25060170_ifu1 (
+ysyx_25060170_ifu  u_ysyx_25060170_ifu (
      .clk              (clk              )//<<i<<
     ,.rst              (rst              )//<<i<<
     // ,.id_pc_jump_i     (id_if_pc_jump    )//<<i<<  
@@ -108,45 +108,15 @@ ysyx_25060170_ifu1  u_ysyx_25060170_ifu1 (
     // ,.jal_jalr_i       (bp_if_jal_jalr   )//<<i<<
     ,.inst_bxx_i       (bpu_ifu_inst_bxx )//<<i<< bxx
     // ,.inst_valid_i     (inst_valid_i     )//<<i<<
-    ,.if2_ready_i       (if2_ready         )//<<i<<
+    ,.id_ready_i       (id_ready         )//<<i<<
     ,.id_stall_i       (id_stall         )//<<i<<   bp_if_pc
-    ,.if1_valid_o       (if1_valid         )//>>o>>  
+    ,.inst_i           (DPIC_dpic_ifu_inst    )//<<i<<
+    ,.if_valid_o       (if_valid         )//>>o>>  
+    ,.inst_o           (if_id_inst       )//>>o>>
     ,.pc_o             (DPIC_if_id_pc         )//>>o>>  
     ,.next_pc_o        (if_id_next_pc    )//>>o>>  
     ,.inst_bxx_o       (if_id_inst_bxx   )//>>o>>
 );
-
-//ysyx_25060170_if1_if2_reg Inputs
-ysyx_25060170_if1_if2_reg u_ysyx_25060170_if1_if2_reg (
-     .clk               ( clk               )//<<i<<
-    ,.rst               ( rst               )//<<i<<
-    ,.pc_i              ()//<<i<<
-    ,.next_pc_i         ()//<<i<<
-    ,.inst_i            ()//<<i<<
-    ,.bxx_inst_i        ()//<<i<<
-    ,.bp_jump_i         ()//<<i<<
-
-    ,.if1_valid_i       ()//<<i<<
-    ,.id_flush_i        ()//<<i<<
-    ,.ls_flush_i        ()//<<i<<
-    ,.id_stall_i        ()//<<i<<
-    ,.if2_ready_i       ()//<<i<<
-    
-    ,.pc_o              ()//>>o>>
-    ,.next_pc_o         ()//>>o>>
-    ,.inst_o            ()//>>o>>
-    ,.inst_bxx_o        ()//>>o>>
-    ,.bp_jump_o         ()//>>o>>
-    ,.if2_valid_o       ()//>>o>>
-
-
-);
-
-
-
-
-
-
 
 // ysyx_25060170_if_id_reg Inputs
 // reg  [`ysyx_25060170_PC]        pc_i;

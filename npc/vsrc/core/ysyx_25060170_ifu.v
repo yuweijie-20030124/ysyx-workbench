@@ -3,7 +3,7 @@
 //五级流水线取指模块
 //正常还是用ifu的pc
 //当jal jalr bxx采用bpu的pc
-module ysyx_25060170_ifu1(
+module ysyx_25060170_ifu(
     //pc jump signals
      input wire                         rst             //<<i<<      
     ,input wire                         clk             //<<i<<
@@ -26,24 +26,24 @@ module ysyx_25060170_ifu1(
 
     //stage control signal  
     // ,input  wire                        inst_valid_i //<<i<<
-    ,input  wire                        if2_ready_i      //<<i<<
+    ,input  wire                        id_ready_i      //<<i<<
     ,input  wire                        id_stall_i      //<<i<<
-    ,output wire                        if1_valid_o      //>>o>>
+    ,output wire                        if_valid_o      //>>o>>
 
     //out for if_id_reg
-    // ,input  wire [`ysyx_25060170_INST]  inst_i          //<<i<<
+    ,input  wire [`ysyx_25060170_INST]  inst_i          //<<i<<
     // ,input  wire [`ysyx_25060170_PC]    pc_i            //<<i<<
-    ,output reg  [`ysyx_25060170_PC]    pc_o            //>>o>> send to memory and get inst in next clock
-    // ,output wire [`ysyx_25060170_INST]  inst_o          //>>o>>
+    ,output reg  [`ysyx_25060170_PC]    pc_o            //>>o>>
+    ,output wire [`ysyx_25060170_INST]  inst_o          //>>o>>
     ,output reg  [`ysyx_25060170_PC]    next_pc_o       //>>o>>
     ,output wire                        inst_bxx_o      //>>o>>
     
 );
 wire   stall      = id_stall_i  ;
 reg [`ysyx_25060170_PC]         pc; 
-// assign if1_valid_o = (if2_ready_i | stall) ? 0 : ~inst_valid_i        ;
-assign if1_valid_o = ~if2_ready_i ? 1'b1 : 1'b0             ;
-// assign inst_o     = inst_i                                          ;
+// assign if_valid_o = (id_ready_i | stall) ? 0 : ~inst_valid_i        ;
+assign if_valid_o = (~id_ready_i | stall) ? 1'b1 : 1'b0             ;
+assign inst_o     = inst_i                                          ;
 // assign pc_o       = pc_i                                            ;
 
 // wire [`ysyx_25060170_PC] pc_plus4;
@@ -75,7 +75,7 @@ always@(posedge clk) begin
         //     pc <= id_pc_i;
         //     // $display("id pc_o = 0x%h", pc_o); 
         // end
-        else if(~stall & if1_valid_o) begin 
+        else if(~stall & if_valid_o) begin 
             // $display("pc_o = 0x%h", pc_o); 
             pc <= `ysyx_25060170_ZERO32;
         end
