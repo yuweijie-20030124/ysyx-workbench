@@ -5,17 +5,17 @@
 //当jal jalr bxx采用bpu的pc
 module ysyx_25060170_ifu(
     //pc jump signals
-     input wire                         rst             //<<i<<      
-    ,input wire                         clk             //<<i<<
+     input wire                         rst               //<<i<<      
+    ,input wire                         clk               //<<i<<
     // ,input  wire                        id_pc_jump_i    //<<i<<
     // ,input  wire [`ysyx_25060170_PC]    id_pc_i         //<<i<<
-    ,input  wire                        ls_pc_jump_i    //<<i<<
-    ,input  wire [`ysyx_25060170_PC]    ls_pc_i         //<<i<<
-    ,input  wire                        bp_pc_jump_i    //<<i<<
-    ,input  wire                        bp_predict_i    //<<i<< bpu预测指令会跳转
-    ,input  wire [`ysyx_25060170_PC]    bp_pc_i         //<<i<< jal jalr
-    ,input  wire                        id_bxx_error_i  //<<i<<
-    ,input  wire [`ysyx_25060170_PC]    id_bxx_error_pc_i//<<i<<
+    ,input  wire                        ls_pc_jump_i      //<<i<<
+    ,input  wire [`ysyx_25060170_PC]    ls_pc_i           //<<i<<
+    ,input  wire                        bp_pc_jump_i      //<<i<<
+    ,input  wire                        bp_predict_i      //<<i<< bpu预测指令会跳转
+    ,input  wire [`ysyx_25060170_PC]    bp_pc_i           //<<i<< jal jalr
+    ,input  wire                        id_bxx_error_i    //<<i<<
+    ,input  wire [`ysyx_25060170_PC]    id_bxx_error_pc_i //<<i<<
     // ,input  wire                        wb_pc_jump_i    //<<i<<
     // ,input  wire [`ysyx_25060170_PC]    wb_pc_i         //<<i<<
 

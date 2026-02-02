@@ -16,7 +16,7 @@ SRC_FILES = $(wildcard csrc/*.c)
 			csrc/init.c csrc/cpu-
 ##TEST_FILES = csrc/main.c csrc/monitor.c csrc/log.c csrc/sdb.c csrc/timer.c csrc/memory.c
 
-VERILOG_FILES = $(wildcard vsrc/core/*.v vsrc/core/define.v vsrc/sim/*.v)
+VERILOG_FILES = $(wildcard vsrc/core/*.v vsrc/core/define.v vsrc/sim/*.v vsrc/core/*.sv)
 # vsrc/debug/*.v vsrc/utils/*.v
 
 VERILATOR = /home/yuweijie/required_software_ysyx/verilator/bin/verilator
