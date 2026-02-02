@@ -61,6 +61,9 @@ module ysyx_25060170_idu(
 	,output wire 								load_flag_o			//>>o>>
     ,output wire                             	csr_ena_o    		//>>o>> 是不是csr操作指令
 
+	//output to BPU
+	,output wire								idu_BPU_update		//>>o>>
+
 	//id out signal	
 	,output reg  [`ysyx_25060170_DATA]  		op1 				//>>o>>
 	,output reg  [`ysyx_25060170_DATA]  		op2 			 	//>>o>>
@@ -297,6 +300,17 @@ assign rd_addr = rd_ena 		? rd 	: 5'd0 								;
 
 //output to csr_Reg
 assign csr_addr = csr_ena_o ? inst_i[31:20] : 12'b0;
+
+//output to BPU
+assign idu_BPU_update = alusrc_o == `INST_BEQ  |
+						alusrc_o == `INST_BNE  |
+						alusrc_o == `INST_BLTU |
+						alusrc_o == `INST_BGEU |
+						alusrc_o == `INST_BLT  |
+						alusrc_o == `INST_BGE  |
+						alusrc_o == `INST_JAL  |
+						alusrc_o == `INST_JALR ;
+							
 
 endmodule
 
