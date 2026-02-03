@@ -13,7 +13,7 @@ module ysyx_25060170_idu(
 	//from bpu
 	,input 	wire 								bp_jump_i			//<<i<<	我们当时是否预测跳转
 	/* verilator lint_off UNUSEDSIGNAL */
-	,input  wire                                inst_bxx_i			//<<i<<	是否有bxx指令
+	// ,input  wire                                inst_bxx_i			//<<i<<	是否有bxx指令
 	/* verilator lint_on  UNUSEDSIGNAL */
 	//data forward
 	,input	wire [`ysyx_25060170_REGADDR]		ex_addr_forward		//<<i<<	
@@ -63,7 +63,12 @@ module ysyx_25060170_idu(
 
 	//output to BPU
 	,output wire								idu_BPU_update		//>>o>>
-
+	,output wire [`ysyx_25060170_PC]			idu_btb_updatePC	//>>o>>
+	,output wire [`ysyx_25060170_PC]			idu_btb_updateTarget//>>o>>
+	,output wire 								idu_btb_mispredicted//>>o>>
+	//output to ifu 修正pc
+	// ,output wire 								idu_ifu1_jump_pc	//>>o>>
+	// ,output wire 								idu_ifu1_jump		//>>o>>
 	//id out signal	
 	,output reg  [`ysyx_25060170_DATA]  		op1 				//>>o>>
 	,output reg  [`ysyx_25060170_DATA]  		op2 			 	//>>o>>
@@ -71,10 +76,7 @@ module ysyx_25060170_idu(
 	,output wire [`ysyx_25060170_INST]       	inst_o				//>>o>>
 	,output wire [4:0] 							csr_imm_o			//>>o>>
 	// ,output wire [`ysyx_25060170_REGADDR]		store_addr_o		//>>o>>
-	//to ifu
-	,output wire     							predict_error_o			//>>o>>
-	,output wire [`ysyx_25060170_PC]			predict_revise_pc		//>>o>>
-	,output wire     							bp_predict_success		//>>o>>
+
 	//竞争冒险
 	,input 	wire 								if_valid_i			//<<i<<
 	,input 	wire 								ex_ready_i			//<<i<<
@@ -194,8 +196,8 @@ wire jalr_bpu_jump_error = (alusrc_o == `INST_JALR) & (next_pc_i != ((op1 + imm)
 // assign next_pc_o = ((alusrc_o == `INST_JALR) | (alusrc_o == `INST_JAL) | predict_error_o) ? (pc_i + imm) : next_pc_i;
 assign next_pc_o = ((alusrc_o == `INST_JAL) ) 				?  (pc_i + imm)  		:
 				   (alusrc_o == `INST_JALR)                 ?  ((op1 + imm)&(~1))	:
-				   inst_bxx_i & now_bxx_jump_yes			?  (pc_i + imm)         :
-				   inst_bxx_i & ~now_bxx_jump_yes			?  (pc_i + 32'b100)		:
+				   inst_bxx & now_bxx_jump_yes			?  (pc_i + imm)         :
+				   inst_bxx & ~now_bxx_jump_yes			?  (pc_i + 32'b100)		:
 				   inst_i == 32'b00000000000000000000000001110011 ?       (mtvec)	:
 				   inst_i == 32'h30_20_00_73				?	mepc				:
 				   next_pc_i;
@@ -226,7 +228,7 @@ wire op_ltu_op2 = op1 <  op2;
 
 wire op1_lt_op2 = diff_sign ? op1[31] : op_ltu_op2;
 
-wire now_bxx_jump_yes;
+wire now_bxx_jump_yes; //确实应该跳转 确实1 不该0
 
 assign now_bxx_jump_yes =  1'b0 |
 				  (rst      |  (~branch)   & (1'b0)) |
@@ -272,20 +274,20 @@ assign id_stall_o    = id_stall_ena 		  	;
 // assign predict_revise_pc = predict_error_ctl[0] ? pc_i + 4 : pc_i 
 // wire jalr_bpu_jump_error = (alusrc_o == `INST_JALR) & (next_pc_i != ((op1 + imm)&(~1)));
 
-wire [1:0] predict_error_ctl;
-assign predict_error_o = predict_error_ctl[1] | jalr_bpu_jump_error;
-assign predict_revise_pc = `ysyx_25060170_ZERO32 						   |	
-						   {32{predict_error_ctl==2'b11}} & pc_i + 32'b100 |
-						   {32{predict_error_ctl==2'b10}} & pc_i + imm 	   |
-						   {32{jalr_bpu_jump_error}}      & ((op1 + imm)&(~1));
+// wire [1:0] predict_error_ctl;
+// assign predict_error_o = predict_error_ctl[1] | jalr_bpu_jump_error;
+// assign predict_revise_pc = `ysyx_25060170_ZERO32 						   |	
+// 						   {32{predict_error_ctl==2'b11}} & pc_i + 32'b100 |
+// 						   {32{predict_error_ctl==2'b10}} & pc_i + imm 	   |
+// 						   {32{jalr_bpu_jump_error}}      & ((op1 + imm)&(~1));
 
 		 
 
 //*************************************out to bpu*************************************//
-assign bp_predict_success   = predict_error_ctl[1];	//bpu预测成功与否 来改变二位饱和状态机
-assign predict_error_ctl  = 2'b00		|	//预测
-							{2{( now_bxx_jump_yes & ~bp_jump_i)}} & 2'b10 |	//bxx该跳转但是当时预测没跳
-							{2{(~now_bxx_jump_yes &  bp_jump_i)}} & 2'b11 ; //bxx不该跳转但是当时预测跳了
+// assign bp_predict_success   = predict_error_ctl[1];	//bpu预测成功与否 来改变二位饱和状态机
+// assign predict_error_ctl  = 2'b00		|	//预测
+// 							{2{( now_bxx_jump_yes & ~bp_jump_i)}} & 2'b10 |	//bxx该跳转但是当时预测没跳
+// 							{2{(~now_bxx_jump_yes &  bp_jump_i)}} & 2'b11 ; //bxx不该跳转但是当时预测跳了
 
 // assign predict_error_o = (id_branch ^ bp_jump_i);
 
@@ -298,19 +300,33 @@ assign rs2_addr = rs2_ena 		? rs2 	: 5'd0 								;
 assign rd_ena  = (rd == 5'd0) 	? 1'b0 	: (wbctl_o == 2'b00) ? 1'b0 : 1'b1  ;
 assign rd_addr = rd_ena 		? rd 	: 5'd0 								;
 
-//output to csr_Reg
+//*************************************CSR*************************************//
 assign csr_addr = csr_ena_o ? inst_i[31:20] : 12'b0;
 
-//output to BPU
-assign idu_BPU_update = alusrc_o == `INST_BEQ  |
-						alusrc_o == `INST_BNE  |
-						alusrc_o == `INST_BLTU |
-						alusrc_o == `INST_BGEU |
-						alusrc_o == `INST_BLT  |
-						alusrc_o == `INST_BGE  |
-						alusrc_o == `INST_JAL  |
-						alusrc_o == `INST_JALR ;
-							
+//**************************************BPU******************************************//
+wire inst_bxx = alusrc_o == `INST_BEQ  	|
+				alusrc_o == `INST_BNE  	|
+				alusrc_o == `INST_BLTU 	|
+				alusrc_o == `INST_BGEU 	|
+				alusrc_o == `INST_BLT  	|
+				alusrc_o == `INST_BGE  	;
+
+assign idu_BPU_update = alusrc_o == `INST_JAL | alusrc_o == `INST_JALR | inst_bxx;
+
+assign idu_btb_updateTarget = alusrc_o == `INST_JALR          ? pc_i + op1   :
+						  	  alusrc_o == `INST_JAL           ? pc_i + imm   :
+						  	  inst_bxx | now_bxx_jump_yes     ? pc_i + imm   :
+						  	  inst_bxx | ~now_bxx_jump_yes    ? pc_i + 32'd4 :						  		  							
+						  	  `ysyx_25060170_ZERO32;
+//bp_jump_i当时bpu预测是否跳 跳1 不跳0
+assign idu_btb_mispredicted = bp_jump_i ^ now_bxx_jump_yes;
+
+assign idu_btb_updatePC = pc_i;
+
+//**************************************IFU***********************************************//
+// assign idu_ifu1_jump_pc = 
+// //bpu预测跳但实际不跳		|       bpu预测不跳但实际跳
+// assign idu_ifu1_jump	= bp_jump_i ^ now_bxx_jump_yes;
 
 endmodule
 

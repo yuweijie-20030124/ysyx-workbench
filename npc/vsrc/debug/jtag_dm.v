@@ -97,7 +97,7 @@ module jtag_dm #(
     // DM模块寄存器地址
     localparam DCSR       = 16'h7b0;
     localparam DMSTATUS   = 6'h11;
-    localparam DMC--verboseONTROL  = 6'h10;
+    localparam DMCONTROL  = 6'h10;
     localparam HARTINFO   = 6'h12;
     localparam ABSTRACTCS = 6'h16;
     localparam DATA0      = 6'h04;

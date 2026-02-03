@@ -78,11 +78,11 @@ end
 wire magicstop = (ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_idu.inst_i == 32'b0100_0000_0000_0000_0000_0000_0011_0011);
 // 实例化（复制粘贴）       
 ysyx_25060170_DPIC u_ysyx_25060170_DPIC (       
-     .clk                             ( clk                       )//<<i<<
-    ,.rst                             ( rst                       )//<<i<<
+     .clk                             ( clk                            )//<<i<<
+    ,.rst                             ( rst                            )//<<i<<
     ,.DPIC_pc_i                       ( DPIC_if_id_pc                  )//<<i<<
     ,.DPIC_inst_o                     ( DPIC_dpic_ifu_inst             )//>>o>>
-    ,.DPIC_ftrace_pc                  ( ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.if_id_reg_pc           )//>>o>>
+    ,.DPIC_ftrace_pc                  ( ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.ifu2_if2idreg_currentpc           )//>>o>>
     ,.DPIC_rd_addr                    ( ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_idu.rd           )//<<i<<
     ,.DPIC_imm                        ( ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.idu_imm            )//<<i<<
     ,.DPIC_regs0                      ( ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[0]                     )//<<i<<

@@ -23,24 +23,29 @@ module ysyx_25060170_fishtailcore(
              		    		
 );
 
+assign DPIC_if_id_pc = ifu1_ifu2_current_pc;
+
 // ysyx_25060170_bpu Outputs
+wire btb_valid;
+wire [`ysyx_25060170_PC] btb_target;
+wire btb_predictedTaken;
 ysyx_25060170_btb u_ysyx_25060170_btb(
      .clk                   (clk)//<<i<<
     ,.rst                   (rst)//<<i<<
     ,.if1_btb_PC            (ifu1_ifu2_current_pc)//<<i<<
     ,.idu_btb_update        (idu_BPU_update)//<<i<<
-    ,.idu_btb_updatePC      ()//<<i<<
-    ,.idu_btb_updateTarget  ()//<<i<<
-    ,.idu_btb_mispredicted  ()//<<i<<
-    ,.btb_valid             ()//>>o>>
-    ,.btb_target            ()//>>o>>
-    ,.btb_predictedTaken    ()//>>o>>
+    ,.idu_btb_updatePC      (idu_btb_updatePC)//<<i<<
+    ,.idu_btb_updateTarget  (idu_btb_updateTarget)//<<i<<
+    ,.idu_btb_mispredicted  (idu_btb_mispredicted)//<<i<<
+    ,.btb_valid             (btb_valid)//>>o>>
+    ,.btb_target            (btb_target)//>>o>>
+    ,.btb_predictedTaken    (btb_predictedTaken)//>>o>>
 );
 
 
 // ysyx_25060170_ifu Inputs
 // wire                             id_if_pc_jump  ;   
-wire  [`ysyx_25060170_PC]        id_jump_pc     ; 
+// wire  [`ysyx_25060170_PC]        id_jump_pc     ; 
 wire                             ls_pc_jump     ;  
 wire  [`ysyx_25060170_PC]        ls_jump_pc     ;  
 // reg  [`ysyx_25060170_PC]        bp_jump_pc;
@@ -53,84 +58,110 @@ wire                             id_stall       ;
 
 // ysyx_25060170_ifu1 Outputs
 wire      [`ysyx_25060170_PC]       ifu1_ifu2_current_pc;
-wire                                if_valid;
+wire                                ifu1_ifu2_valid;
+// wire                                if_valid;
 // wire      [`ysyx_25060170_PC]       DPIC_if_id_pc;
-wire      [`ysyx_25060170_PC]       if_id_next_pc;
+// wire      [`ysyx_25060170_PC]       if_id_next_pc;
 // wire      [`ysyx_25060170_INST]     if_id_inst;
 // wire      [`ysyx_25060170_INST]     DPIC_dpic_ifu_inst        ;
-wire                                if_id_inst_bxx;
+// wire                                if_id_inst_bxx;
 // wire      [`ysyx_25060170_PC]       if_pc;
 // wire      [`ysyx_25060170_PC]       if_next_pc; 
 //if_next_pc also use dpic to get instruction
+wire        [`ysyx_25060170_PC]     ifu1_if1if2reg_next_pc;
+wire                                ifu1_if1if2reg_bpupredict;
 
 ysyx_25060170_ifu1 u_ysyx_25060170_ifu1(
      .rst                       (rst)//<<i<<
     ,.clk                       (clk)//<<i<<
-    ,.idu_ifu1_jump_pc          ()//<<i<<
-    ,.idu_ifu1_jump             ()//<<i<<
-    ,.bpu_ifu1_jump_pc          ()//<<i<<
-    ,.bpu_ifu1_jump             ()//<<i<<
-    ,.ifu2_ifu1_ready           ()//<<i<<
-    ,.ifu2_ifu1_stall           ()//<<i<<
-    ,.ifu1_ifu2_valid           ()//>>o>>
-    ,.ifu1_ifu2_current_pc      (ifu1_ifu2_current_pc)//>>o>>
-    ,.ifu1_ifu2_next_pc         ()//>>o>>
-    ,.ifu1_ifu2_bpupredict      ()//>>o>>
+    ,.idu_ifu1_jump_pc          (idu_btb_updateTarget)//<<i<<
+    ,.idu_ifu1_jump             (idu_btb_mispredicted)//<<i<<
+    ,.bpu_ifu1_jump_pc          (btb_target)//<<i<<
+    ,.btb_predictedTaken        (btb_predictedTaken)//<<i<<
+    ,.bpu_ifu1_jump             (btb_valid)//<<i<<
+    ,.lsu_ifu1_jump_pc          (ls_jump_pc)//<<i<<
+    ,.lsu_ifu1_jump             (ls_pc_jump)//<<i<<
+    ,.ifu2_ifu1_ready           (ifu2_ready)//<<i<<
+    ,.ifu2_ifu1_stall           (ifu2_stall)//<<i<<
+    ,.ifu1_if1if2reg_valid      (ifu1_ifu2_valid)//>>o>>
+    ,.ifu1_if1if2reg_current_pc (ifu1_ifu2_current_pc)//>>o>>
+    ,.ifu1_if1if2reg_next_pc    (ifu1_if1if2reg_next_pc)//>>o>>
+    ,.ifu1_if1if2reg_bpupredict (ifu1_if1if2reg_bpupredict)//>>o>>
 );
+//ysyx_25060170_if1if2reg Outputs
+wire [`ysyx_25060170_PC]        if1if2reg_ifu2_currentpc;
+wire [`ysyx_25060170_PC]        if1if2reg_ifu2_nextpc;
+wire                            if1if2reg_ifu2_bpupredict;
+wire                            if1if2reg_ifu2_valid;
 
 ysyx_25060170_if1if2reg u_ysyx_25060170_if1if2reg(
      .rst                       (rst)//<<i<<
     ,.clk                       (clk)//<<i<<
-    ,.ifu1_if1if2reg_currentpc  ()//<<i<<
-    ,.ifu1_if1if2reg_nextpc     ()//<<i<<
-    ,.ifu1_if1if2reg_bpupredict ()//<<i<<
-    ,.ifu1_if1if2reg_valid      ()//<<i<<
-    ,.ifu2_if1if2reg_ready      ()//<<i<<
-    ,.ifu2_if1if2reg_stall      ()//<<i<<
-    ,.idu_if1if2reg_stall       ()//<<i<<
-    ,.idu_if1if2reg_flush       ()//<<i<<
-    ,.lsu_if1if2reg_stall       ()//<<i<<
-    ,.lsu_if1if2reg_flush       ()//<<i<<
-    ,.if1if2reg_ifu2_currentpc  ()//>>o>>
-    ,.if1if2reg_ifu2_nextpc     ()//>>o>>
-    ,.if1if2reg_ifu2_bpupredict ()//>>o>>
-    ,.if1if2reg_ifu2_valid      ()//>>o>>
+    ,.ifu1_if1if2reg_currentpc  (ifu1_ifu2_current_pc)//<<i<<
+    ,.ifu1_if1if2reg_nextpc     (ifu1_if1if2reg_next_pc)//<<i<<
+    ,.ifu1_if1if2reg_bpupredict (ifu1_if1if2reg_bpupredict)//<<i<<
+    ,.ifu1_if1if2reg_valid      (ifu1_ifu2_valid)//<<i<<
+    ,.ifu2_if1if2reg_ready      (ifu2_ready)//<<i<<
+    ,.ifu2_if1if2reg_stall      (ifu2_stall)//<<i<<
+    ,.idu_if1if2reg_stall       (id_stall)//<<i<<
+    ,.idu_if1if2reg_flush       (id_flush)//<<i<<
+    ,.lsu_if1if2reg_stall       (1'b0)//<<i<<
+    ,.lsu_if1if2reg_flush       (ls_flush)//<<i<<
+    ,.if1if2reg_ifu2_currentpc  (if1if2reg_ifu2_currentpc)//>>o>>
+    ,.if1if2reg_ifu2_nextpc     (if1if2reg_ifu2_nextpc)//>>o>>
+    ,.if1if2reg_ifu2_bpupredict (if1if2reg_ifu2_bpupredict)//>>o>>
+    ,.if1if2reg_ifu2_valid      (if1if2reg_ifu2_valid)//>>o>>
 );
+
+//ysyx_25060170_ifu2 Outputs
+wire [`ysyx_25060170_PC]        ifu2_if2idreg_currentpc;
+wire [`ysyx_25060170_PC]        ifu2_if2idreg_nextpc;
+wire                            ifu2_if2idreg_bpupredict;
+wire                            ifu2_valid;
+wire                            ifu2_ready;
+wire                            ifu2_stall;
+wire [`ysyx_25060170_INST]      ifu2_if2idreg_inst;
+// wire                            if2_idu_valid;
 
 ysyx_25060170_ifu2 u_ysyx_25060170_ifu2(
-     .if1if2reg_ifu2_currentpc  ()//<<i<<
-    ,.if1if2reg_ifu2_nextpc     ()//<<i<<
-    ,.if1if2reg_ifu2_bpupredict ()//<<i<<
-    ,.if1if2reg_ifu2_valid      ()//<<i<<
-    ,.ram_ifu2_inst             ()//<<i<<
-    ,.idu_ifu2_ready            ()//<<i<<
-    ,.idu_ifu2_stall            ()//<<i<<
-    ,.if2_idu_valid             ()//<<i<<
-    ,.ifu2_if2idreg_currentpc   ()//>>o>>
-    ,.ifu2_if2idreg_nextpc      ()//>>o>>
-    ,.ifu2_if2idreg_bpupredict  ()//>>o>>
-    ,.ifu2_if2idreg_valid       ()//>>o>>
-    ,.ifu2_if2idreg_inst        ()//>>o>>
+     .if1if2reg_ifu2_currentpc  (if1if2reg_ifu2_currentpc)//<<i<<
+    ,.if1if2reg_ifu2_nextpc     (if1if2reg_ifu2_nextpc)//<<i<<
+    ,.if1if2reg_ifu2_bpupredict (if1if2reg_ifu2_bpupredict)//<<i<<
+    ,.ram_ifu2_inst             (DPIC_dpic_ifu_inst)//<<i<<
+    ,.idu_ready                 (id_ready)//<<i<<
+    ,.ifu1_valid                (if1if2reg_ifu2_valid)//<<i<<
+    ,.ifu2_valid                (ifu2_valid)//>>o>>
+    ,.ifu2_ready                (ifu2_ready)//>>o>>    
+    ,.ifu2_stall                (ifu2_stall)//>>o>>
+    ,.ifu2_if2idreg_currentpc   (ifu2_if2idreg_currentpc)//>>o>>
+    ,.ifu2_if2idreg_nextpc      (ifu2_if2idreg_nextpc)//>>o>>
+    ,.ifu2_if2idreg_bpupredict  (ifu2_if2idreg_bpupredict)//>>o>>
+    ,.ifu2_if2idreg_inst        (ifu2_if2idreg_inst)//>>o>>
 );
-
+//ysyx_25060170_if2idureg Outputs
+wire  [`ysyx_25060170_PC]           if2idureg_idu_currentpc ; 
+wire  [`ysyx_25060170_INST]         if2idureg_idu_inst      ;
+wire  [`ysyx_25060170_PC]           if2idureg_idu_nextpc    ;
+wire                                if2idureg_idu_bpupredict;
+wire                                if2idureg_idu_valid     ;
 ysyx_25060170_if2idureg u_ysyx_25060170_if2idureg(
      .rst                       (rst)//<<i<<
     ,.clk                       (clk)//<<i<<
-    ,.ifu2_if2idureg_currentpc  ()//<<i<<
-    ,.ifu2_if2idureg_inst       ()//<<i<<
-    ,.ifu2_if2idureg_nextpc     ()//<<i<<
-    ,.ifu2_if2idureg_bpupredict ()//<<i<<
-    ,.ifu2_if2idureg_valid      ()//<<i<<
-    ,.idu_if2idureg_ready       ()//<<i<<
-    ,.idu_if2idureg_stall       ()//<<i<<
-    ,.idu_if2idureg_flush       ()//<<i<<
-    ,.lsu_if2idureg_stall       ()//<<i<<
-    ,.lsu_if2idureg_flush       ()//<<i<<
-    ,.if2idureg_idu_currentpc   ()//>>o>>  
-    ,.if2idureg_idu_inst        ()//>>o>>  
-    ,.if2idureg_idu_nextpc      ()//>>o>>  
-    ,.if2idureg_idu_bpupredict  ()//>>o>>  
-    ,.if2idureg_idu_valid       ()//>>o>>   
+    ,.ifu2_if2idureg_currentpc  (ifu2_if2idreg_currentpc)//<<i<<
+    ,.ifu2_if2idureg_inst       (ifu2_if2idreg_inst)//<<i<<
+    ,.ifu2_if2idureg_nextpc     (ifu2_if2idreg_nextpc)//<<i<<
+    ,.ifu2_if2idureg_bpupredict (ifu2_if2idreg_bpupredict)//<<i<<
+    ,.ifu2_if2idureg_valid      (ifu2_valid)//<<i<<
+    ,.idu_if2idureg_ready       (id_ready)//<<i<<
+    ,.idu_if2idureg_stall       (id_stall)//<<i<<
+    ,.idu_if2idureg_flush       (id_flush)//<<i<<
+    ,.lsu_if2idureg_stall       (1'b0)//<<i<<
+    ,.lsu_if2idureg_flush       (ls_flush)//<<i<<
+    ,.if2idureg_idu_currentpc   (if2idureg_idu_currentpc )//>>o>>  
+    ,.if2idureg_idu_inst        (if2idureg_idu_inst      )//>>o>>  
+    ,.if2idureg_idu_nextpc      (if2idureg_idu_nextpc    )//>>o>>  
+    ,.if2idureg_idu_bpupredict  (if2idureg_idu_bpupredict)//>>o>>  
+    ,.if2idureg_idu_valid       (if2idureg_idu_valid     )//>>o>>   
 );
 
 // ysyx_25060170_idu Inputs 
@@ -170,26 +201,26 @@ wire [`ysyx_25060170_PC]        idu_pc;
 wire [`ysyx_25060170_PC]        idu_next_pc;
 wire [`ysyx_25060170_INST]      idu_inst;
 wire [`ysyx_25060170_REGADDR]   idu_csr_imm;
-wire                            id_predict_error;
 // wire [`ysyx_25060170_REGADDR]   store_addr;
 // wire                            id_if_pc_jump;
 // wire [`ysyx_25060170_PC]        id_jump_pc;
-// wire                            id_flush;
+wire                            id_flush;
 // wire                            id_ex_flush_o;
-wire                            ex_branch;
 // wire                            DPIC_magic_flag;
 wire                            idu_BPU_update;
-
+wire  [`ysyx_25060170_PC]  idu_btb_updatePC    ;
+wire  [`ysyx_25060170_PC]  idu_btb_updateTarget;
+wire                       idu_btb_mispredicted;
 ysyx_25060170_idu u_ysyx_25060170_idu (
      .rst                (rst                   )//<<i<<
-    ,.inst_i             (if_id_reg_inst        )//<<i<<
-    ,.pc_i               (if_id_reg_pc          )//<<i<<
-    ,.next_pc_i          (if_id_reg_next_pc     )//<<i<<
+    ,.inst_i             (if2idureg_idu_inst        )//<<i<<
+    ,.pc_i               (if2idureg_idu_currentpc          )//<<i<<
+    ,.next_pc_i          (if2idureg_idu_nextpc     )//<<i<<
     ,.mtvec              (mtvec                 )//<<i<<
     ,.mepc               (mepc                  )//<<i<<
     ,.csr_data_i         (csr_idu_data          )//<<i<<
-    ,.bp_jump_i          (if_id_reg_bp_jump     )//<<i<<
-    ,.inst_bxx_i         (if_id_reg_inst_bxx    )//<<i<<
+    ,.bp_jump_i          (if2idureg_idu_bpupredict     )//<<i<<
+    // ,.inst_bxx_i         (if_id_reg_inst_bxx    )//<<i<<
 
     ,.ex_addr_forward    (ex_rd_addr_forward    )//<<i<<
     ,.ex_data_forward    (ex_rd_data_forward    )//<<i<<
@@ -236,6 +267,9 @@ ysyx_25060170_idu u_ysyx_25060170_idu (
     ,.csr_ena_o          (idu_csr_ena           )//>>O>>
 
     ,.idu_BPU_update     (idu_BPU_update        )//>>O>>
+    ,.idu_btb_updatePC	  (idu_btb_updatePC     )//>>o>>
+    ,.idu_btb_updateTarget(idu_btb_updateTarget )//>>o>>
+    ,.idu_btb_mispredicted(idu_btb_mispredicted )//>>o>>
 
     ,.op1                (idu_op1               )//>>O>>
     ,.op2                (idu_op2               )//>>O>>
@@ -247,11 +281,8 @@ ysyx_25060170_idu u_ysyx_25060170_idu (
     ,.csr_imm_o          (idu_csr_imm           )//>>O>>
     // ,.store_addr_o       (store_addr            )//>>o>>
 
-    ,.predict_error_o    (id_predict_error     )//>>O>>    
-    ,.predict_revise_pc   (id_jump_pc           )//>>O>> 
-    ,.bp_predict_success  (ex_branch            )//>>O>>   
 
-    ,.if_valid_i         (if_id_valid           )//<<i<<   
+    ,.if_valid_i         (if2idureg_idu_valid           )//<<i<<   
     ,.ex_ready_i         (ex_ready              )//<<i<<   
     ,.id_flush_o         (id_flush              )//>>O>>
     ,.id_stall_o         (id_stall              )//>>O>>
@@ -385,15 +416,15 @@ ysyx_25060170_exu u_ysyx_25060170_exu (
     ,.pc_i                  ( id_ex_reg_pc              )//<<i<<
     ,.next_pc_i             ( id_ex_reg_next_pc         )//<<i<<
     ,.alu_sel_i             ( id_ex_reg_alusrc          )//<<i<<
-    // ,.pipeline_id_stall_i   ( id_ex_pipeline_idstall    )//<<i<<
-    ,.ls_ready_i            ( ls_ready                  )//<<i<<
-    ,.id_valid_i            ( id_ex_valid               )//<<i<<
-
     ,.inst_o                ( exu_inst                  )//>>o>>
     ,.pc_o                  ( exu_pc                    )//>>o>>
     ,.next_pc_o             ( exu_next_pc               )//>>o>>
+    //控制冒险
+    ,.ls_ready_i            ( ls_ready                  )//<<i<<
+    ,.id_valid_i            ( id_ex_valid               )//<<i<<
     ,.ex_valid_o            ( ex_valid                  )//>>o>>
     ,.ex_ready_o            ( ex_ready                  )//>>o>>
+
     ,.store_data_o          ( exu_store_data            )//>>o>>
     ,.exu_res_o             ( exu_res                   )//>>o>>
     ,.csr_addr_o            ( exu_csr_addr              )//>>o>>
@@ -496,7 +527,7 @@ ysyx_25060170_ex_ls_reg u_ysyx_25060170_ex_ls_reg (
 
 // ysyyx_25060170_lsu Outputs
 
-// wire                            ls_flush;
+wire                            ls_flush;
 // wire [`ysyx_25060170_PC]        ls_jump_pc_o;
 // wire  [`ysyx_25060170_DATA]     dpic_ls_data; // module 中为 input reg
 wire                            ls_valid        ;
@@ -908,10 +939,6 @@ ysyx_25060170_regfile u_ysyx_25060170_regfile (
     ,.raddr2        ( idu_rs2_addr     )//<<i<<
     ,.rdata1        ( rf_id_rs1_data   )//<<i<<
     ,.rdata2        ( rf_id_rs2_data   )//<<i<<
-
-    ,.bp_rs1_data_o ( bp_rs1_data      )//<<i<<
-    ,.bp_rs1_addr_i ( bp_rs1_addr      )//>>o>>
-    ,.bp_rs1_ena_i  ( bp_rs1_ena       )//>>o>>
 );
 
 // ysyx_25060170_DPIC Inputs (驱动信号用 reg)

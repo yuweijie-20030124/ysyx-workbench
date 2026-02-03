@@ -13,16 +13,7 @@ module ysyx_25060170_regfile (
 	,output	 wire   [`ysyx_25060170_REG]	  	 rdata1		//<<o<<
 	,output	 wire   [`ysyx_25060170_REG]	  	 rdata2		//<<o<<
 
-	//bpu jalr获取rs1操作
-	,input   wire   [`ysyx_25060170_REGADDR]     bp_rs1_addr_i//<<i<<
-	,input   wire   							 bp_rs1_ena_i//<<i<<
-	,output  wire   [`ysyx_25060170_REG]		 bp_rs1_data_o//>>o>>
 );
-
-//***********************************bpu jalr获取rs1*************************************//
-
-assign bp_rs1_data_o = ((rst != `ysyx_25060170_RSTABLE) && ( bp_rs1_ena_i== `ysyx_25060170_RENABLE)) ? regs[bp_rs1_addr_i] : `ysyx_25060170_ZERO32;
- 
 
 //***********************************寄存器堆操作****************************************//
     reg [`ysyx_25060170_REG] regs [0:31];
