@@ -1,7 +1,7 @@
 include $(AM_HOME)/scripts/isa/riscv.mk
 include $(AM_HOME)/scripts/platform/npc.mk
 
-# 修改这里：rv32e_zicsr -> rv32i_zicsr, ilp32e -> ilp32
+#rv32e_zicsr -> rv32i_zicsr, ilp32e -> ilp32
 COMMON_CFLAGS += -march=rv32i_zicsr -mabi=ilp32  # overwrite
 
 # LDFLAGS 通常不需要修改，但确保链接器支持 RV32I

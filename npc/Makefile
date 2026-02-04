@@ -8,15 +8,15 @@ endif
 
 # Makefile for NPC simulation
 # 检查语法可以用
-TEST_MODULE = ysyx_25060170_wbu
-TEST_FILE   = vsrc/core/$(TEST_MODULE).v
+TEST_MODULE = ysyx_25060170_btb
+TEST_FILE   = vsrc/core/$(TEST_MODULE).sv
 
 SRC_FILES = $(wildcard csrc/*.c)
 ##SRC_FILES = csrc/main.c csrc/monitor.c csrc/log.c csrc/sdb.c csrc/timer.c csrc/memory.c \
 			csrc/init.c csrc/cpu-
 ##TEST_FILES = csrc/main.c csrc/monitor.c csrc/log.c csrc/sdb.c csrc/timer.c csrc/memory.c
 
-VERILOG_FILES = $(wildcard vsrc/core/*.v vsrc/core/define.v vsrc/sim/*.v)
+VERILOG_FILES = $(wildcard vsrc/core/*.v vsrc/core/define.v vsrc/sim/*.v vsrc/core/*.sv)
 # vsrc/debug/*.v vsrc/utils/*.v
 
 VERILATOR = /home/yuweijie/required_software_ysyx/verilator/bin/verilator

@@ -57,10 +57,10 @@
 	,input wire 								DPIC_re			//<<i<<
 	,input wire 								DPIC_we			//<<i<<
 	/* verilator lint_on UNUSEDSIGNAL */
-	,input wire [`ysyx_25060170_DATA] 			DPIC_data_i		//<<i<<
-	,input wire [7:0] 							DPIC_wlen		//<<i<<
-	,input wire [7:0] 							DPIC_rlen		//<<i<<
-	,output reg [`ysyx_25060170_DATA]			DPIC_dpic_difftest_skip_flag//>>o>>
+	,input wire 	[`ysyx_25060170_DATA] 		DPIC_data_i		//<<i<<
+	,input wire 	[7:0] 						DPIC_wlen		//<<i<<
+	,input wire 	[7:0] 						DPIC_rlen		//<<i<<
+	,output reg 	[`ysyx_25060170_DATA]		DPIC_dpic_difftest_skip_flag//>>o>>
 	
 	//from wbu 表示已经完成一条指令
 	,input wire     [`ysyx_25060170_DATA]		DPIC_wbu_DPIC_difftest_skip_flag //<<i<<
@@ -170,13 +170,19 @@ always @(*) begin
 	pmem_read(DPIC_raddr, mem_data, DPIC_rlen, dpic_loadread,DPIC_dpic_difftest_skip_flag);	
 	end
 	else begin
-	mem_data 				= 0;
+	mem_data 					 = 0;
 	DPIC_dpic_difftest_skip_flag = 0;
 	end
 end
 
+reg [`ysyx_25060170_INST] DPIC_inst;
+
 always @(*) begin
-	pmem_read(DPIC_pc_i,DPIC_inst_o,DPIC_rlen,dpic_fetch,DPIC_dpic_difftest_skip_flag);
+	pmem_read(DPIC_pc_i,DPIC_inst,DPIC_rlen,dpic_fetch,DPIC_dpic_difftest_skip_flag);
+end
+
+always @(posedge clk) begin
+	DPIC_inst_o <= DPIC_inst;
 end
 
 always @(posedge clk) begin

@@ -172,14 +172,14 @@ void Vysyx_25060170_topcore___024root____Vdpiexp_ysyx_25060170_topcore__DOT__u_y
     VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_25060170_topcore___024root____Vdpiexp_ysyx_25060170_topcore__DOT__u_ysyx_25060170_DPIC__DOT__IDU_SEND_CALL_FLAG_TOP\n"); );
     // Init
     // Body
-    call_flag = (((IData)(((0x80U == (0xf80U & vlSymsp->TOP.ysyx_25060170_topcore__DOT__u_ysyx_25060170_fishtailcore__DOT__if_id_reg_inst)) 
+    call_flag = (((IData)(((0x80U == (0xf80U & vlSymsp->TOP.ysyx_25060170_topcore__DOT__u_ysyx_25060170_fishtailcore__DOT__if2idureg_idu_inst)) 
                            & ((0x6fU == (0x7fU & vlSymsp->TOP.ysyx_25060170_topcore__DOT__DPIC_dpic_ifu_inst)) 
                               | (0x67U == (0x7fU & vlSymsp->TOP.ysyx_25060170_topcore__DOT__DPIC_dpic_ifu_inst))))) 
-                  | ((IData)(((0U == (0xf80U & vlSymsp->TOP.ysyx_25060170_topcore__DOT__u_ysyx_25060170_fishtailcore__DOT__if_id_reg_inst)) 
+                  | ((IData)(((0U == (0xf80U & vlSymsp->TOP.ysyx_25060170_topcore__DOT__u_ysyx_25060170_fishtailcore__DOT__if2idureg_idu_inst)) 
                               & (0U == vlSymsp->TOP.ysyx_25060170_topcore__DOT__u_ysyx_25060170_fishtailcore__DOT__idu_imm))) 
                      & (0x67U == (0x7fU & vlSymsp->TOP.ysyx_25060170_topcore__DOT__DPIC_dpic_ifu_inst))))
                   ? 1U : 0U);
-    dnpc = (vlSymsp->TOP.ysyx_25060170_topcore__DOT__u_ysyx_25060170_fishtailcore__DOT__if_id_reg_pc 
+    dnpc = (vlSymsp->TOP.ysyx_25060170_topcore__DOT__u_ysyx_25060170_fishtailcore__DOT__if1if2reg_ifu2_currentpc 
             + vlSymsp->TOP.ysyx_25060170_topcore__DOT__u_ysyx_25060170_fishtailcore__DOT__idu_imm);
 }
 
@@ -190,8 +190,8 @@ void Vysyx_25060170_topcore___024root____Vdpiexp_ysyx_25060170_topcore__DOT__u_y
     ret_flag = ((0x8067U == vlSymsp->TOP.ysyx_25060170_topcore__DOT__DPIC_dpic_ifu_inst)
                  ? 1U : 0U);
     pc = ((0x67U == (0x7fU & vlSymsp->TOP.ysyx_25060170_topcore__DOT__DPIC_dpic_ifu_inst))
-           ? (0xfffffffeU & vlSymsp->TOP.ysyx_25060170_topcore__DOT__u_ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_ifu__DOT__pc)
-           : vlSymsp->TOP.ysyx_25060170_topcore__DOT__u_ysyx_25060170_fishtailcore__DOT__u_ysyx_25060170_ifu__DOT__pc);
+           ? (0xfffffffeU & vlSymsp->TOP.ysyx_25060170_topcore__DOT__u_ysyx_25060170_fishtailcore__DOT__ifu1_ifu2_current_pc)
+           : vlSymsp->TOP.ysyx_25060170_topcore__DOT__u_ysyx_25060170_fishtailcore__DOT__ifu1_ifu2_current_pc);
 }
 
 #ifdef VL_DEBUG
