@@ -59,7 +59,7 @@
 
 
 
-#define CONFIG_DEVICE 1
+// #define CONFIG_DEVICE 1
 
 #ifdef CONFIG_DEVICE
 #define CONFIG_HAS_SERIAL 1

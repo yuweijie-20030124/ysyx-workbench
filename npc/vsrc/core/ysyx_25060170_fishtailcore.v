@@ -70,15 +70,16 @@ wire                                ifu1_ifu2_valid;
 //if_next_pc also use dpic to get instruction
 wire        [`ysyx_25060170_PC]     ifu1_if1if2reg_next_pc;
 wire                                ifu1_if1if2reg_bpupredict;
+wire                                ifu1_if1if2reg_bpuvalid;
 
 ysyx_25060170_ifu1 u_ysyx_25060170_ifu1(
      .rst                       (rst)//<<i<<
     ,.clk                       (clk)//<<i<<
-    ,.idu_ifu1_jump_pc          (idu_btb_updateTarget)//<<i<<
-    ,.idu_ifu1_jump             (idu_btb_mispredicted)//<<i<<
+    ,.idu_ifu1_jump_pc          (idu_ifu1_jump_pc)//<<i<<
+    ,.idu_ifu1_jump             (idu_ifu1_jump)//<<i<<
     ,.bpu_ifu1_jump_pc          (btb_target)//<<i<<
     ,.btb_predictedTaken        (btb_predictedTaken)//<<i<<
-    ,.bpu_ifu1_jump             (btb_valid)//<<i<<
+    ,.bpu_ifu1_bpuvalid         (btb_valid)//<<i<<
     ,.lsu_ifu1_jump_pc          (ls_jump_pc)//<<i<<
     ,.lsu_ifu1_jump             (ls_pc_jump)//<<i<<
     ,.ifu2_ifu1_ready           (ifu2_ready)//<<i<<
@@ -87,19 +88,22 @@ ysyx_25060170_ifu1 u_ysyx_25060170_ifu1(
     ,.ifu1_if1if2reg_current_pc (ifu1_ifu2_current_pc)//>>o>>
     ,.ifu1_if1if2reg_next_pc    (ifu1_if1if2reg_next_pc)//>>o>>
     ,.ifu1_if1if2reg_bpupredict (ifu1_if1if2reg_bpupredict)//>>o>>
+    ,.ifu1_if1if2reg_bpuvalid   (ifu1_if1if2reg_bpuvalid)//>>o>>
 );
 //ysyx_25060170_if1if2reg Outputs
 wire [`ysyx_25060170_PC]        if1if2reg_ifu2_currentpc;
 wire [`ysyx_25060170_PC]        if1if2reg_ifu2_nextpc;
 wire                            if1if2reg_ifu2_bpupredict;
 wire                            if1if2reg_ifu2_valid;
-
+wire                            if1if2reg_ifu2_bpuvalid;
 ysyx_25060170_if1if2reg u_ysyx_25060170_if1if2reg(
      .rst                       (rst)//<<i<<
     ,.clk                       (clk)//<<i<<
     ,.ifu1_if1if2reg_currentpc  (ifu1_ifu2_current_pc)//<<i<<
     ,.ifu1_if1if2reg_nextpc     (ifu1_if1if2reg_next_pc)//<<i<<
     ,.ifu1_if1if2reg_bpupredict (ifu1_if1if2reg_bpupredict)//<<i<<
+    ,.ifu1_if1if2reg_bpuvalid   (ifu1_if1if2reg_bpuvalid)//<<i<<
+
     ,.ifu1_if1if2reg_valid      (ifu1_ifu2_valid)//<<i<<
     ,.ifu2_if1if2reg_ready      (ifu2_ready)//<<i<<
     ,.ifu2_if1if2reg_stall      (ifu2_stall)//<<i<<
@@ -110,6 +114,7 @@ ysyx_25060170_if1if2reg u_ysyx_25060170_if1if2reg(
     ,.if1if2reg_ifu2_currentpc  (if1if2reg_ifu2_currentpc)//>>o>>
     ,.if1if2reg_ifu2_nextpc     (if1if2reg_ifu2_nextpc)//>>o>>
     ,.if1if2reg_ifu2_bpupredict (if1if2reg_ifu2_bpupredict)//>>o>>
+    ,.if1if2reg_ifu2_bpuvalid   (if1if2reg_ifu2_bpuvalid)//>>o>>
     ,.if1if2reg_ifu2_valid      (if1if2reg_ifu2_valid)//>>o>>
 );
 
@@ -122,11 +127,13 @@ wire                            ifu2_ready;
 wire                            ifu2_stall;
 wire [`ysyx_25060170_INST]      ifu2_if2idreg_inst;
 // wire                            if2_idu_valid;
+wire                            ifu2_if2idreg_bpuvalid;
 
 ysyx_25060170_ifu2 u_ysyx_25060170_ifu2(
      .if1if2reg_ifu2_currentpc  (if1if2reg_ifu2_currentpc)//<<i<<
     ,.if1if2reg_ifu2_nextpc     (if1if2reg_ifu2_nextpc)//<<i<<
     ,.if1if2reg_ifu2_bpupredict (if1if2reg_ifu2_bpupredict)//<<i<<
+    ,.if1if2reg_ifu2_bpuvalid   (if1if2reg_ifu2_bpuvalid)//<<i<<
     ,.ram_ifu2_inst             (DPIC_dpic_ifu_inst)//<<i<<
     ,.idu_ready                 (id_ready)//<<i<<
     ,.ifu1_valid                (if1if2reg_ifu2_valid)//<<i<<
@@ -136,6 +143,7 @@ ysyx_25060170_ifu2 u_ysyx_25060170_ifu2(
     ,.ifu2_if2idreg_currentpc   (ifu2_if2idreg_currentpc)//>>o>>
     ,.ifu2_if2idreg_nextpc      (ifu2_if2idreg_nextpc)//>>o>>
     ,.ifu2_if2idreg_bpupredict  (ifu2_if2idreg_bpupredict)//>>o>>
+    ,.ifu2_if2idreg_bpuvalid    (ifu2_if2idreg_bpuvalid)//>>o>>
     ,.ifu2_if2idreg_inst        (ifu2_if2idreg_inst)//>>o>>
 );
 //ysyx_25060170_if2idureg Outputs
@@ -143,7 +151,10 @@ wire  [`ysyx_25060170_PC]           if2idureg_idu_currentpc ;
 wire  [`ysyx_25060170_INST]         if2idureg_idu_inst      ;
 wire  [`ysyx_25060170_PC]           if2idureg_idu_nextpc    ;
 wire                                if2idureg_idu_bpupredict;
+wire                                if2idureg_idu_bpuvalid  ;
 wire                                if2idureg_idu_valid     ;
+
+
 ysyx_25060170_if2idureg u_ysyx_25060170_if2idureg(
      .rst                       (rst)//<<i<<
     ,.clk                       (clk)//<<i<<
@@ -151,6 +162,7 @@ ysyx_25060170_if2idureg u_ysyx_25060170_if2idureg(
     ,.ifu2_if2idureg_inst       (ifu2_if2idreg_inst)//<<i<<
     ,.ifu2_if2idureg_nextpc     (ifu2_if2idreg_nextpc)//<<i<<
     ,.ifu2_if2idureg_bpupredict (ifu2_if2idreg_bpupredict)//<<i<<
+    ,.ifu2_if2idureg_bpuvalid   (ifu2_if2idreg_bpuvalid)//<<i<<
     ,.ifu2_if2idureg_valid      (ifu2_valid)//<<i<<
     ,.idu_if2idureg_ready       (id_ready)//<<i<<
     ,.idu_if2idureg_stall       (id_stall)//<<i<<
@@ -160,7 +172,8 @@ ysyx_25060170_if2idureg u_ysyx_25060170_if2idureg(
     ,.if2idureg_idu_currentpc   (if2idureg_idu_currentpc )//>>o>>  
     ,.if2idureg_idu_inst        (if2idureg_idu_inst      )//>>o>>  
     ,.if2idureg_idu_nextpc      (if2idureg_idu_nextpc    )//>>o>>  
-    ,.if2idureg_idu_bpupredict  (if2idureg_idu_bpupredict)//>>o>>  
+    ,.if2idureg_idu_bpupredict  (if2idureg_idu_bpupredict)//>>o>> 
+    ,.if2idureg_idu_bpuvalid    (if2idureg_idu_bpuvalid)//>>o>> 
     ,.if2idureg_idu_valid       (if2idureg_idu_valid     )//>>o>>   
 );
 
@@ -211,14 +224,21 @@ wire                            idu_BPU_update;
 wire  [`ysyx_25060170_PC]  idu_btb_updatePC    ;
 wire  [`ysyx_25060170_PC]  idu_btb_updateTarget;
 wire                       idu_btb_mispredicted;
+wire  [`ysyx_25060170_PC]  idu_ifu1_jump_pc;
+wire                        idu_ifu1_jump;
+
 ysyx_25060170_idu u_ysyx_25060170_idu (
      .rst                (rst                   )//<<i<<
+    ,.if2_idu_futurePC   (ifu2_if2idreg_currentpc)//<<i<<
     ,.inst_i             (if2idureg_idu_inst        )//<<i<<
     ,.pc_i               (if2idureg_idu_currentpc          )//<<i<<
     ,.next_pc_i          (if2idureg_idu_nextpc     )//<<i<<
     ,.mtvec              (mtvec                 )//<<i<<
     ,.mepc               (mepc                  )//<<i<<
     ,.csr_data_i         (csr_idu_data          )//<<i<<
+
+    //from bpu
+    ,.ifu2_if2idureg_bpuvalid(if2idureg_idu_bpuvalid)//<<i<<
     ,.bp_jump_i          (if2idureg_idu_bpupredict     )//<<i<<
     // ,.inst_bxx_i         (if_id_reg_inst_bxx    )//<<i<<
 
@@ -270,6 +290,9 @@ ysyx_25060170_idu u_ysyx_25060170_idu (
     ,.idu_btb_updatePC	  (idu_btb_updatePC     )//>>o>>
     ,.idu_btb_updateTarget(idu_btb_updateTarget )//>>o>>
     ,.idu_btb_mispredicted(idu_btb_mispredicted )//>>o>>
+
+    ,.idu_ifu1_jump_pc    (idu_ifu1_jump_pc     )//>>o>>
+    ,.idu_ifu1_jump       (idu_ifu1_jump        )//>>o>>
 
     ,.op1                (idu_op1               )//>>O>>
     ,.op2                (idu_op2               )//>>O>>
