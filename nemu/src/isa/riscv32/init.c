@@ -25,6 +25,7 @@ static const uint32_t img [] = {
   // 0x00300413,  // li s0 0x03        c
   // 0x00d00793,  // li a5 0x0d   
   // 0xdef448e3,  // blt s0,a5,-0x210 test quick-sort
+  0xff010113,  // addi  sp, sp, -0x10
   0x00100073,  // ebreak (used as nemu_trap)
   0xdeadbeef,  // some data
 };
