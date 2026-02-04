@@ -1,10 +1,8 @@
 // Verilated -*- C++ -*-
 // DESCRIPTION: Verilator output: Model implementation (design independent parts)
 
-#include "Vysyx_25060170_topcore.h"
-#include "Vysyx_25060170_topcore__Syms.h"
+#include "Vysyx_25060170_topcore__pch.h"
 #include "verilated_vcd_c.h"
-#include "verilated_dpi.h"
 
 //============================================================
 // Constructors
@@ -18,6 +16,8 @@ Vysyx_25060170_topcore::Vysyx_25060170_topcore(VerilatedContext* _vcontextp__, c
 {
     // Register model with the context
     contextp()->addModel(this);
+    contextp()->traceBaseModelCbAdd(
+        [this](VerilatedTraceBaseC* tfp, int levels, int options) { traceBaseModel(tfp, levels, options); });
 }
 
 Vysyx_25060170_topcore::Vysyx_25060170_topcore(const char* _vcname__)
@@ -58,13 +58,9 @@ void Vysyx_25060170_topcore::eval_step() {
         Vysyx_25060170_topcore___024root___eval_initial(&(vlSymsp->TOP));
         Vysyx_25060170_topcore___024root___eval_settle(&(vlSymsp->TOP));
     }
-    // MTask 0 start
-    VL_DEBUG_IF(VL_DBG_MSGF("MTask0 starting\n"););
-    Verilated::mtaskId(0);
     VL_DEBUG_IF(VL_DBG_MSGF("+ Eval\n"););
     Vysyx_25060170_topcore___024root___eval(&(vlSymsp->TOP));
     // Evaluate cleanup
-    Verilated::endOfThreadMTask(vlSymsp->__Vm_evalMsgQp);
     Verilated::endOfEval(vlSymsp->__Vm_evalMsgQp);
 }
 
@@ -73,7 +69,7 @@ void Vysyx_25060170_topcore::eval_step() {
 bool Vysyx_25060170_topcore::eventsPending() { return false; }
 
 uint64_t Vysyx_25060170_topcore::nextTimeSlot() {
-    VL_FATAL_MT(__FILE__, __LINE__, "", "%Error: No delays in the design");
+    VL_FATAL_MT(__FILE__, __LINE__, "", "No delays in the design");
     return 0;
 }
 
@@ -99,12 +95,18 @@ VL_ATTR_COLD void Vysyx_25060170_topcore::final() {
 const char* Vysyx_25060170_topcore::hierName() const { return vlSymsp->name(); }
 const char* Vysyx_25060170_topcore::modelName() const { return "Vysyx_25060170_topcore"; }
 unsigned Vysyx_25060170_topcore::threads() const { return 1; }
+void Vysyx_25060170_topcore::prepareClone() const { contextp()->prepareClone(); }
+void Vysyx_25060170_topcore::atClone() const {
+    contextp()->threadPoolpOnClone();
+}
 std::unique_ptr<VerilatedTraceConfig> Vysyx_25060170_topcore::traceConfig() const {
     return std::unique_ptr<VerilatedTraceConfig>{new VerilatedTraceConfig{false, false, false}};
 };
 
 //============================================================
 // Trace configuration
+
+void Vysyx_25060170_topcore___024root__trace_decl_types(VerilatedVcd* tracep);
 
 void Vysyx_25060170_topcore___024root__trace_init_top(Vysyx_25060170_topcore___024root* vlSelf, VerilatedVcd* tracep);
 
@@ -117,21 +119,22 @@ VL_ATTR_COLD static void trace_init(void* voidSelf, VerilatedVcd* tracep, uint32
             "Turning on wave traces requires Verilated::traceEverOn(true) call before time 0.");
     }
     vlSymsp->__Vm_baseCode = code;
-    tracep->scopeEscape(' ');
-    tracep->pushNamePrefix(std::string{vlSymsp->name()} + ' ');
+    tracep->pushPrefix(std::string{vlSymsp->name()}, VerilatedTracePrefixType::SCOPE_MODULE);
+    Vysyx_25060170_topcore___024root__trace_decl_types(tracep);
     Vysyx_25060170_topcore___024root__trace_init_top(vlSelf, tracep);
-    tracep->popNamePrefix();
-    tracep->scopeEscape('.');
+    tracep->popPrefix();
 }
 
 VL_ATTR_COLD void Vysyx_25060170_topcore___024root__trace_register(Vysyx_25060170_topcore___024root* vlSelf, VerilatedVcd* tracep);
 
-VL_ATTR_COLD void Vysyx_25060170_topcore::trace(VerilatedVcdC* tfp, int levels, int options) {
-    if (tfp->isOpen()) {
-        vl_fatal(__FILE__, __LINE__, __FILE__,"'Vysyx_25060170_topcore::trace()' shall not be called after 'VerilatedVcdC::open()'.");
+VL_ATTR_COLD void Vysyx_25060170_topcore::traceBaseModel(VerilatedTraceBaseC* tfp, int levels, int options) {
+    (void)levels; (void)options;
+    VerilatedVcdC* const stfp = dynamic_cast<VerilatedVcdC*>(tfp);
+    if (VL_UNLIKELY(!stfp)) {
+        vl_fatal(__FILE__, __LINE__, __FILE__,"'Vysyx_25060170_topcore::trace()' called on non-VerilatedVcdC object;"
+            " use --trace-fst with VerilatedFst object, and --trace-vcd with VerilatedVcd object");
     }
-    if (false && levels && options) {}  // Prevent unused
-    tfp->spTrace()->addModel(this);
-    tfp->spTrace()->addInitCb(&trace_init, &(vlSymsp->TOP));
-    Vysyx_25060170_topcore___024root__trace_register(&(vlSymsp->TOP), tfp->spTrace());
+    stfp->spTrace()->addModel(this);
+    stfp->spTrace()->addInitCb(&trace_init, &(vlSymsp->TOP));
+    Vysyx_25060170_topcore___024root__trace_register(&(vlSymsp->TOP), stfp->spTrace());
 }

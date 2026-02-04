@@ -13,47 +13,49 @@ VM_TIMING = 0
 VM_COVERAGE = 0
 # Parallel builds?  0/1 (from --output-split)
 VM_PARALLEL_BUILDS = 0
-# Tracing output mode?  0/1 (from --trace/--trace-fst)
+# Tracing output mode?  0/1 (from --trace-fst/--trace-saif/--trace-vcd)
 VM_TRACE = 1
-# Tracing output mode in VCD format?  0/1 (from --trace)
-VM_TRACE_VCD = 1
 # Tracing output mode in FST format?  0/1 (from --trace-fst)
 VM_TRACE_FST = 0
+# Tracing output mode in SAIF format?  0/1 (from --trace-saif)
+VM_TRACE_SAIF = 0
+# Tracing output mode in VCD format?  0/1 (from --trace-vcd)
+VM_TRACE_VCD = 1
 
 ### Object file lists...
 # Generated module classes, fast-path, compile with highest optimization
 VM_CLASSES_FAST += \
-	Vysyx_25060170_topcore \
-	Vysyx_25060170_topcore__Dpi_Export__0 \
-	Vysyx_25060170_topcore___024root__DepSet_ha7a25e1a__0 \
-	Vysyx_25060170_topcore___024root__DepSet_hb2829ac9__0 \
+  Vysyx_25060170_topcore \
+  Vysyx_25060170_topcore__Dpi_Export__0 \
+  Vysyx_25060170_topcore___024root__DepSet_ha7a25e1a__0 \
+  Vysyx_25060170_topcore___024root__DepSet_hb2829ac9__0 \
 
 # Generated module classes, non-fast-path, compile with low/medium optimization
 VM_CLASSES_SLOW += \
-	Vysyx_25060170_topcore__ConstPool_0 \
-	Vysyx_25060170_topcore___024root__Slow \
-	Vysyx_25060170_topcore___024root__DepSet_ha7a25e1a__0__Slow \
-	Vysyx_25060170_topcore___024root__DepSet_hb2829ac9__0__Slow \
+  Vysyx_25060170_topcore__ConstPool_0 \
+  Vysyx_25060170_topcore___024root__Slow \
+  Vysyx_25060170_topcore___024root__DepSet_ha7a25e1a__0__Slow \
+  Vysyx_25060170_topcore___024root__DepSet_hb2829ac9__0__Slow \
 
 # Generated support classes, fast-path, compile with highest optimization
 VM_SUPPORT_FAST += \
-	Vysyx_25060170_topcore__Dpi \
-	Vysyx_25060170_topcore__Trace__0 \
+  Vysyx_25060170_topcore__Dpi \
+  Vysyx_25060170_topcore__Trace__0 \
 
 # Generated support classes, non-fast-path, compile with low/medium optimization
 VM_SUPPORT_SLOW += \
-	Vysyx_25060170_topcore__Syms \
-	Vysyx_25060170_topcore__Trace__0__Slow \
+  Vysyx_25060170_topcore__Syms \
+  Vysyx_25060170_topcore__Trace__0__Slow \
+  Vysyx_25060170_topcore__TraceDecls__0__Slow \
 
 # Global classes, need linked once per executable, fast-path, compile with highest optimization
 VM_GLOBAL_FAST += \
-	verilated \
-	verilated_dpi \
-	verilated_vcd_c \
-	verilated_threads \
+  verilated \
+  verilated_dpi \
+  verilated_vcd_c \
+  verilated_threads \
 
 # Global classes, need linked once per executable, non-fast-path, compile with low/medium optimization
 VM_GLOBAL_SLOW += \
-
 
 # Verilated -*- Makefile -*-

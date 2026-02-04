@@ -7,7 +7,7 @@
 	,input  wire 						 		rst			//<<i<<
 	/* verilator lint_on UNUSEDSIGNAL */
  	,input  wire	[`ysyx_25060170_PC]			DPIC_pc_i		//<<i<<
-	,output reg	    [`ysyx_25060170_INST]	 	DPIC_inst_o		//>>o>>
+	,output reg     [`ysyx_25060170_INST]	 	DPIC_inst_o		//>>o>>
 	//for ftrace
 	,input wire     [`ysyx_25060170_PC]			DPIC_ftrace_pc	//<<i<<
 	,input wire 	[`ysyx_25060170_REGADDR] 	DPIC_rd_addr		//<<i<<
@@ -140,6 +140,17 @@ import "DPI-C" function void difftest_dut_regs(
  );
 
 /***********************************use dpic*************************************/
+
+reg	    [`ysyx_25060170_INST]	 	DPIC_inst_reg;
+
+always @(posedge clk) begin
+	// delay_count <=
+	DPIC_inst_o <= DPIC_inst_reg;
+end
+always@(*)begin
+	pmem_read(DPIC_pc_i,DPIC_inst_reg,DPIC_rlen,dpic_fetch,DPIC_dpic_difftest_skip_flag);
+	// delay_value
+end
 wire [31:0] dpic_loadread = 32'd2;
 //DPIC最好用组合逻辑
 //用时序逻辑的话可能会导致赋值顺序的问题
@@ -175,15 +186,21 @@ always @(*) begin
 	end
 end
 
-reg [`ysyx_25060170_INST] DPIC_inst;
+// reg [`ysyx_25060170_INST] DPIC_inst;
 
-always @(*) begin
-	pmem_read(DPIC_pc_i,DPIC_inst,DPIC_rlen,dpic_fetch,DPIC_dpic_difftest_skip_flag);
-end
+//********************************************lfsr随机数生成器**********************************//
+reg [15:0] delay_value;	//具体随机的访存延时 可能 5 10 20
+reg [15:0] delay_count; 
+ysyx_25060170_lfsr u_ysyx_25060170_lfsr(
+	 .clk			(clk)
+	,.rst			(rst)
+	,.en			(1'b1)
+	,.delay_value	(delay_value)
+);
 
-always @(posedge clk) begin
-	DPIC_inst_o <= DPIC_inst;
-end
+// always @(posedge clk) begin
+// 	DPIC_inst_o <= DPIC_inst;
+// end
 
 always @(posedge clk) begin
 	if(DPIC_we) begin
