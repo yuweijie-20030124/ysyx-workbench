@@ -17,6 +17,8 @@ NPCFLAGS += -f $(IMAGE).elf
 NPCFLAGS += --diff=/home/yuweijie/ysyx-workbench/nemu/build/riscv32-nemu-interpreter-so
 NPCFLAGS += -b
 
+# COMMON_CFLAGS += -march=rv32i_zicsr -mabi=ilp32
+
 MAINARGS_MAX_LEN = 64
 MAINARGS_PLACEHOLDER = the_insert-arg_rule_in_Makefile_will_insert_mainargs_here
 CFLAGS += -DMAINARGS_MAX_LEN=$(MAINARGS_MAX_LEN) -DMAINARGS_PLACEHOLDER=$(MAINARGS_PLACEHOLDER)
