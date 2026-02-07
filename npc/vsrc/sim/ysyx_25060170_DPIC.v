@@ -52,6 +52,14 @@
 	,input  wire	[`ysyx_25060170_REG] 		DPIC_mhartid		//<<i<<
 	,input  wire	[`ysyx_25060170_REG] 		DPIC_mscratch	//<<i<<
 
+
+	//from wbu 表示已经完成一条指令
+	,input wire     [`ysyx_25060170_DATA]		DPIC_wbu_DPIC_difftest_skip_flag //<<i<<
+	,input wire		[`ysyx_25060170_INST]	    DPIC_wbu_dpic_inst		//<<i<<
+	,input wire     [`ysyx_25060170_PC]	        DPIC_wbu_dpic_pc			//<<i<<
+	,input wire     [`ysyx_25060170_PC]        	DPIC_wbu_dpic_next_pc	//<<i<<
+	,input wire     							DPIC_wbu_dpic_valid		//<<i<<
+
 	//from lsu
 	/* verilator lint_off UNUSEDSIGNAL */
 	,input wire 								DPIC_re			//<<i<<
@@ -62,24 +70,12 @@
 	,input wire 	[7:0] 						DPIC_rlen		//<<i<<
 	,output reg 	[`ysyx_25060170_DATA]		DPIC_dpic_difftest_skip_flag//>>o>>
 	
-	//from wbu 表示已经完成一条指令
-	,input wire     [`ysyx_25060170_DATA]		DPIC_wbu_DPIC_difftest_skip_flag //<<i<<
-	,input wire		[`ysyx_25060170_INST]	    DPIC_wbu_dpic_inst		//<<i<<
-	,input wire     [`ysyx_25060170_PC]	        DPIC_wbu_dpic_pc			//<<i<<
-	,input wire     [`ysyx_25060170_PC]        	DPIC_wbu_dpic_next_pc	//<<i<<
-	,input wire     							DPIC_wbu_dpic_valid		//<<i<<
-	/* verilator lint_off UNUSEDSIGNAL */
-	// ,input wire                                	wbu_dpic_id_stall	//<<i<<
-	// ,input wire 								pipeline_id_stall	//<<i<<
-	// ,input wire                                	wbu_dpic_ls_valid	//<<i<<
-	
-	/* verilator lint_on UNUSEDSIGNAL */
 	//to lsu
-	,output reg  [`ysyx_25060170_DATA]     		DPIC_data_o		//>>o>>
-	,input  wire [`ysyx_25060170_DATAADDR] 		DPIC_raddr		//<<i<<
-	,input  wire [`ysyx_25060170_DATAADDR] 		DPIC_waddr		//<<i<<
+	,output reg   [`ysyx_25060170_DATA]     		DPIC_data_o		//>>o>>
+	,input  wire  [`ysyx_25060170_DATAADDR] 		DPIC_raddr		//<<i<<
+	,input  wire  [`ysyx_25060170_DATAADDR] 		DPIC_waddr		//<<i<<
 
-	//for magic number
+ 	//for magic number
 	,input  wire                           		DPIC_magic_flag	//<<i<<
 );
 
@@ -413,6 +409,13 @@ endtask
 		// $display("delay = %d",delay);
 end
 
+
+// memory AXI4-Lite 1.send instructions to ifu 2.data transactions with idu
+// 还要带仲裁器 从IFU和LSU中选择一个master与存储器通信，按理来说优先级LSU > IFU
+//**************************************带仲裁器的AXI4-Lite存储器******************************************//
+ysyx_25060170_memory u_ysyx_25060170_memory(
+
+);
 
  endmodule
 
