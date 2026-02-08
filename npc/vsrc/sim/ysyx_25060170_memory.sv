@@ -19,13 +19,11 @@ module ysyx_25060170_memory(
     ,input  logic        wvalid     // 写数据有效信号
     ,output logic        wready     // 从机准备好接收数据
     ,input  logic [31:0] wdata      // 写数据
-    ,input  logic [3:0]  wstrb      // 写数据字节使能信号
-    
+    ,input  logic [3:0]  wstrb      // 写数据字节使能信号 
     // 写响应通道 Write response channel
-    ,output logic        bvalid     // 相应有效
+    ,output logic        bvalid     // 响应有效
     ,input  logic        bready     // 主机准备好接受响应
     ,output logic [1:0]  bresp      // 写响应（00成功，其他不成功）
-    
     // 读地址通道 Read address channel
     ,input  logic        arvalid    // 读地址有效
     ,output logic        arready    // 从机准备好接收地址
@@ -33,7 +31,6 @@ module ysyx_25060170_memory(
     /* verilator lint_off UNUSEDSIGNAL */
     ,input  logic [2:0]  arprot     // 保护类型
     /* verilator lint_on  UNUSEDSIGNAL */
-
     // 读数据通道 Read data channel
     ,output logic        rvalid     // 读数据有效
     ,input  logic        rready     // 主机准备好接收数据
@@ -74,85 +71,184 @@ assign wlen = {8{wstrb==4'b0001}} & 8'b00000011 |
 logic [31:0] mode = (awprot[2] == 1'b0) ?  32'd2 : //LSU读
                     (awprot[2] == 1'b1) ?  32'd1 :
                     32'd99;
-                    
-//********************************************写地址通道***************************************************//
 
-always_ff @(posedge aclk or negedge aresetn) begin
-    if(!aresetn) begin
+//*************************************从机准备好接收地址 awready***************************************************//
+//这样面向对象赋值逻辑比较好写。
+always_ff @(posedge aclk) begin
+    if(aresetn) begin
+        awready <= 1'b0;     
+    end
+    else if(awvalid) begin
         awready <= 1'b0;
     end
-    else if(awvalid)begin
+    else begin
         awready <= 1'b1;
     end
 end
 
-//********************************************写数据通道***************************************************//
+//*************************************从机准备好接收数据 wready***************************************************//
 
-always_ff @(posedge aclk or negedge aresetn) begin
-    if(!aresetn) begin
+always_ff @(posedge aclk) begin
+    if(aresetn) begin
+        wready <= 1'b0;     
+    end
+    else if(wvalid & bready) begin
         wready <= 1'b0;
     end
-    else if(wvalid)begin
+    else begin
         wready <= 1'b1;
     end
 end
 
-//********************************************写响应通道***************************************************//
+//*************************************响应有效 bvalid***************************************************//
 
-always_ff @(posedge aclk or negedge aresetn) begin
-    if(!aresetn) begin
-        bvalid <= 1'b0;
-        bresp  <= 2'b11;
-    end
-    else if(bready & awready & awvalid & wvalid & wready) begin
-        bvalid <= 1'b1;
-        bresp  <= 2'b00;
-    end
-    
-end
-
-//********************************************读地址通道***************************************************//
-
-always_ff @(posedge aclk or negedge aresetn) begin
-    if(!aresetn) begin
-        arready <= 1'b0;
-    end
-    else if(arvalid)begin
-        arready <= 1'b1;
-    end
-    else begin
-        arready <= 1'b0;
-    end
-end
-
-
-//********************************************读数据通道***************************************************//
-
-always_ff @(posedge aclk or negedge aresetn) begin
-    if(!aresetn) begin
-        rvalid <= 1'b0;
-    end
-    else if(rready)begin
-        rvalid <= 1'b1;
-    end
-    else begin
-        rvalid <= 1'b0;
-    end
-end
-
-//********************************************读写功能***************************************************//
-//同时满足ifu取指令 和 lsu的读写内存
-//写
 always_ff @(posedge aclk) begin
-    if(awready & awvalid) begin
+    if(aresetn) begin
+        bvalid <= 1'b0;     
+    end
+    else if(~wvalid) begin
+        bvalid <= 1'b1;
+    end
+    else begin
+        bvalid <= 1'b0;
+    end
+end
+
+//*************************************写响应 00成功其他不成功***************************************************//
+
+always_ff @(posedge aclk) begin
+    if(aresetn) begin
+        bresp <= 2'b11;     
+    end
+    else if(~wready) begin
+        bresp <= 2'b00;  
+    end
+    else begin
+        bresp <= 2'b11;  
+    end
+end
+
+//*************************************从机准备好接收地址***************************************************//
+
+always_ff @(posedge aclk) begin
+    if(aresetn) begin
+        arready <= 1'b0;     
+    end
+    else if(arvalid) begin
+        arready <= 1'b1; 
+    end
+    else begin
+        arready <= 1'b0;
+    end
+end
+
+//*************************************读数据有效***************************************************//
+
+always_ff @(posedge aclk) begin
+    if(aresetn) begin
+        rvalid <= 1'b0;     
+    end
+    else if(arready) begin
+        rvalid <= 1'b1; 
+    end
+    else begin
+        rvalid <= 1'b0;
+    end
+end
+
+//********************************************写事务***************************************************//
+
+always_ff @(posedge aclk) begin
+    if(wvalid & wready) begin
         pmem_write(awaddr,wdata,wlen,dpic_difftest_skip_flag);
     end
 end
 
+//********************************************读事务***************************************************//
 always_ff @(posedge aclk) begin
-    if( arvalid & arready & rvalid & rready) begin
+    if(rvalid & rready) begin
         pmem_read(araddr,rdata,rlen,mode,dpic_difftest_skip_flag);
     end
 end
+
+// //********************************************写地址通道***************************************************//
+
+// always_ff @(posedge aclk or negedge aresetn) begin
+//     if(!aresetn) begin
+//         awready <= 1'b0;
+//     end
+//     else if(awvalid)begin
+//         awready <= 1'b1;
+//     end
+// end
+
+// //********************************************写数据通道***************************************************//
+
+// always_ff @(posedge aclk or negedge aresetn) begin
+//     if(!aresetn) begin
+//         wready <= 1'b0;
+//     end
+//     else if(wvalid)begin
+//         wready <= 1'b1;
+//     end
+// end
+
+// //********************************************写响应通道***************************************************//
+
+// always_ff @(posedge aclk or negedge aresetn) begin
+//     if(!aresetn) begin
+//         bvalid <= 1'b0;
+//         bresp  <= 2'b11;
+//     end
+//     else if(bready & awready & awvalid & wvalid & wready) begin
+//         bvalid <= 1'b1;
+//         bresp  <= 2'b00;
+//     end
+    
+// end
+
+// //********************************************读地址通道***************************************************//
+
+// always_ff @(posedge aclk or negedge aresetn) begin
+//     if(!aresetn) begin
+//         arready <= 1'b0;
+//     end
+//     else if(arvalid)begin
+//         arready <= 1'b1;
+//     end
+//     else begin
+//         arready <= 1'b0;
+//     end
+// end
+
+
+// //********************************************读数据通道***************************************************//
+
+// always_ff @(posedge aclk or negedge aresetn) begin
+//     if(!aresetn) begin
+//         rvalid <= 1'b0;
+//     end
+//     else if(rready)begin
+//         rvalid <= 1'b1;
+//     end
+//     else begin
+//         rvalid <= 1'b0;
+//     end
+// end
+
+// //********************************************读写功能***************************************************//
+// //同时满足ifu取指令 和 lsu的读写内存
+// //写
+// always_ff @(posedge aclk) begin
+//     if(awready & awvalid) begin
+//         pmem_write(awaddr,wdata,wlen,dpic_difftest_skip_flag);
+//     end
+// end
+
+// always_ff @(posedge aclk) begin
+//     if( arvalid & arready & rvalid & rready) begin
+//         pmem_read(araddr,rdata,rlen,mode,dpic_difftest_skip_flag);
+//     end
+// end
 
 endmodule

@@ -52,7 +52,17 @@ BRESP RRESP
 2'b11 → DECERR  (解码错误)
 
 在最小示例中，我们只用 OKAY (2'b00)
-
 */
+
+//***************************************************复位*****************************************************//
+//a slave interface must drive RVALID and BVALID LOW 内存是从机 要复位RVALID and BVALID
+always @(posedge aclk or negedge aresetn) begin
+    if(!aresetn) begin
+        arvalid  <=  1'b0;
+        awvalid  <=  1'b0;
+        wvalid   <=  1'b0;
+    end
+end
+
 
 endmodule
