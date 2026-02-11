@@ -1,7 +1,7 @@
 // Verilated -*- C++ -*-
 // DESCRIPTION: Verilator output: Symbol table implementation internals
 
-#include "Vysyx_25060170_topcore__Syms.h"
+#include "Vysyx_25060170_topcore__pch.h"
 #include "Vysyx_25060170_topcore.h"
 #include "Vysyx_25060170_topcore___024root.h"
 
@@ -20,6 +20,8 @@ Vysyx_25060170_topcore__Syms::Vysyx_25060170_topcore__Syms(VerilatedContext* con
     // Setup module instances
     , TOP{this, namep}
 {
+        // Check resources
+        Verilated::stackCheck(2143);
     // Configure time unit / time precision
     _vm_contextp__->timeunit(-12);
     _vm_contextp__->timeprecision(-12);
@@ -27,7 +29,7 @@ Vysyx_25060170_topcore__Syms::Vysyx_25060170_topcore__Syms(VerilatedContext* con
     // Setup each module's pointer back to symbol table (for public functions)
     TOP.__Vconfigure(true);
     // Setup scopes
-    __Vscope_ysyx_25060170_topcore__u_ysyx_25060170_DPIC.configure(this, name(), "ysyx_25060170_topcore.u_ysyx_25060170_DPIC", "u_ysyx_25060170_DPIC", -12, VerilatedScope::SCOPE_OTHER);
+    __Vscope_ysyx_25060170_topcore__u_ysyx_25060170_DPIC.configure(this, name(), "ysyx_25060170_topcore.u_ysyx_25060170_DPIC", "u_ysyx_25060170_DPIC", "<null>", -12, VerilatedScope::SCOPE_OTHER);
     // Setup export functions
     for (int __Vfinal = 0; __Vfinal < 2; ++__Vfinal) {
         __Vscope_ysyx_25060170_topcore__u_ysyx_25060170_DPIC.exportInsert(__Vfinal, "IDU_SEND_CALL_FLAG", (void*)(&Vysyx_25060170_topcore___024root____Vdpiexp_ysyx_25060170_topcore__DOT__u_ysyx_25060170_DPIC__DOT__IDU_SEND_CALL_FLAG_TOP));

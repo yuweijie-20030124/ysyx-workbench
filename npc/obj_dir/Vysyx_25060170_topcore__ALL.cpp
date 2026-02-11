@@ -12,3 +12,4 @@
 #include "Vysyx_25060170_topcore___024root__DepSet_hb2829ac9__0__Slow.cpp"
 #include "Vysyx_25060170_topcore__Syms.cpp"
 #include "Vysyx_25060170_topcore__Trace__0__Slow.cpp"
+#include "Vysyx_25060170_topcore__TraceDecls__0__Slow.cpp"

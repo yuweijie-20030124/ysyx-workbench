@@ -21,9 +21,9 @@ void Vysyx_25060170_topcore::IDU_SEND_CALL_FLAG(int* call_flag, int* pc, int* dn
     const VerilatedScope* __Vscopep = Verilated::dpiScope();
     Vysyx_25060170_topcore__Vcb_IDU_SEND_CALL_FLAG_t __Vcb = (Vysyx_25060170_topcore__Vcb_IDU_SEND_CALL_FLAG_t)(VerilatedScope::exportFind(__Vscopep, __Vfuncnum));
     (*__Vcb)((Vysyx_25060170_topcore__Syms*)(__Vscopep->symsp()), call_flag__Vcvt, pc__Vcvt, dnpc__Vcvt);
-    for (size_t call_flag__Vidx = 0; call_flag__Vidx < 1; ++call_flag__Vidx) *call_flag = call_flag__Vcvt;
-    for (size_t pc__Vidx = 0; pc__Vidx < 1; ++pc__Vidx) *pc = pc__Vcvt;
-    for (size_t dnpc__Vidx = 0; dnpc__Vidx < 1; ++dnpc__Vidx) *dnpc = dnpc__Vcvt;
+    *call_flag = call_flag__Vcvt;
+    *pc = pc__Vcvt;
+    *dnpc = dnpc__Vcvt;
 }
 
 void Vysyx_25060170_topcore::IDU_SEND_RET_FLAG(int* ret_flag, int* pc) {
@@ -39,6 +39,6 @@ void Vysyx_25060170_topcore::IDU_SEND_RET_FLAG(int* ret_flag, int* pc) {
     const VerilatedScope* __Vscopep = Verilated::dpiScope();
     Vysyx_25060170_topcore__Vcb_IDU_SEND_RET_FLAG_t __Vcb = (Vysyx_25060170_topcore__Vcb_IDU_SEND_RET_FLAG_t)(VerilatedScope::exportFind(__Vscopep, __Vfuncnum));
     (*__Vcb)((Vysyx_25060170_topcore__Syms*)(__Vscopep->symsp()), ret_flag__Vcvt, pc__Vcvt);
-    for (size_t ret_flag__Vidx = 0; ret_flag__Vidx < 1; ++ret_flag__Vidx) *ret_flag = ret_flag__Vcvt;
-    for (size_t pc__Vidx = 0; pc__Vidx < 1; ++pc__Vidx) *pc = pc__Vcvt;
+    *ret_flag = ret_flag__Vcvt;
+    *pc = pc__Vcvt;
 }

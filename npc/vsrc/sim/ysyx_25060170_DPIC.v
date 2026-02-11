@@ -7,7 +7,8 @@
 	,input  wire 						 		rst			//<<i<<
 	/* verilator lint_on UNUSEDSIGNAL */
  	,input  wire	[`ysyx_25060170_PC]			DPIC_pc_i		//<<i<<
-	,output reg	    [`ysyx_25060170_INST]	 	DPIC_inst_o		//>>o>>
+ 	,input  wire	[`ysyx_25060170_INST]		DPIC_inst_i		//<<i<<
+	// ,output reg     [`ysyx_25060170_INST]	 	DPIC_inst_i		//>>o>>
 	//for ftrace
 	,input wire     [`ysyx_25060170_PC]			DPIC_ftrace_pc	//<<i<<
 	,input wire 	[`ysyx_25060170_REGADDR] 	DPIC_rd_addr		//<<i<<
@@ -52,44 +53,36 @@
 	,input  wire	[`ysyx_25060170_REG] 		DPIC_mhartid		//<<i<<
 	,input  wire	[`ysyx_25060170_REG] 		DPIC_mscratch	//<<i<<
 
-	//from lsu
-	/* verilator lint_off UNUSEDSIGNAL */
-	,input wire 								DPIC_re			//<<i<<
-	,input wire 								DPIC_we			//<<i<<
-	/* verilator lint_on UNUSEDSIGNAL */
-	,input wire 	[`ysyx_25060170_DATA] 		DPIC_data_i		//<<i<<
-	,input wire 	[7:0] 						DPIC_wlen		//<<i<<
-	,input wire 	[7:0] 						DPIC_rlen		//<<i<<
-	,output reg 	[`ysyx_25060170_DATA]		DPIC_dpic_difftest_skip_flag//>>o>>
-	
+
 	//from wbu 表示已经完成一条指令
 	,input wire     [`ysyx_25060170_DATA]		DPIC_wbu_DPIC_difftest_skip_flag //<<i<<
 	,input wire		[`ysyx_25060170_INST]	    DPIC_wbu_dpic_inst		//<<i<<
 	,input wire     [`ysyx_25060170_PC]	        DPIC_wbu_dpic_pc			//<<i<<
 	,input wire     [`ysyx_25060170_PC]        	DPIC_wbu_dpic_next_pc	//<<i<<
 	,input wire     							DPIC_wbu_dpic_valid		//<<i<<
-	/* verilator lint_off UNUSEDSIGNAL */
-	// ,input wire                                	wbu_dpic_id_stall	//<<i<<
-	// ,input wire 								pipeline_id_stall	//<<i<<
-	// ,input wire                                	wbu_dpic_ls_valid	//<<i<<
-	
-	/* verilator lint_on UNUSEDSIGNAL */
-	//to lsu
-	,output reg  [`ysyx_25060170_DATA]     		DPIC_data_o		//>>o>>
-	,input  wire [`ysyx_25060170_DATAADDR] 		DPIC_raddr		//<<i<<
-	,input  wire [`ysyx_25060170_DATAADDR] 		DPIC_waddr		//<<i<<
 
-	//for magic number
+	// //from lsu
+	// /* verilator lint_off UNUSEDSIGNAL */
+	// ,input wire 								DPIC_re			//<<i<<
+	// ,input wire 								DPIC_we			//<<i<<
+	// /* verilator lint_on UNUSEDSIGNAL */
+	// ,input wire 	[`ysyx_25060170_DATA] 		DPIC_data_i		//<<i<<
+	// ,input wire 	[7:0] 						DPIC_wlen		//<<i<<
+	// ,input wire 	[7:0] 						DPIC_rlen		//<<i<<
+	// ,output reg 	[`ysyx_25060170_DATA]		DPIC_dpic_difftest_skip_flag//>>o>>
+	
+	// //to lsu
+	// ,output reg   [`ysyx_25060170_DATA]     		DPIC_data_o		//>>o>>
+	// ,input  wire  [`ysyx_25060170_DATAADDR] 		DPIC_raddr		//<<i<<
+	// ,input  wire  [`ysyx_25060170_DATAADDR] 		DPIC_waddr		//<<i<<
+
+ 	//for magic number
 	,input  wire                           		DPIC_magic_flag	//<<i<<
 );
 
  //--------------------DPI-C----------------------//
 
 import "DPI-C" function void pc_inst_end(input int thepc_data, input int the_inst, input int diff_skip_flag);
-
-import "DPI-C" function void pmem_read(input int raddr, output int rdata, input byte rlen, input int mode, output int dpic_difftest_skip_flag);
-
-import "DPI-C" function void pmem_write(input int waddr, input int wdata, input byte wlen, output int dpic_difftest_skip_flag);
 
 import "DPI-C" function void set_npc_exit(int pc, int halt_ret);
 
@@ -140,7 +133,18 @@ import "DPI-C" function void difftest_dut_regs(
  );
 
 /***********************************use dpic*************************************/
-wire [31:0] dpic_loadread = 32'd2;
+
+// reg	    [`ysyx_25060170_INST]	 	DPIC_inst_reg;
+
+// always @(posedge clk) begin
+// 	// delay_count <=
+// 	DPIC_inst_i <= DPIC_inst_reg;
+// end
+// always@(*)begin
+// 	pmem_read(DPIC_pc_i,DPIC_inst_reg,DPIC_rlen,dpic_fetch,DPIC_dpic_difftest_skip_flag);
+// 	// delay_value
+// end
+// wire [31:0] dpic_loadread = 32'd2;
 //DPIC最好用组合逻辑
 //用时序逻辑的话可能会导致赋值顺序的问题
 // always @(posedge clk) begin
@@ -157,62 +161,60 @@ wire [31:0] dpic_loadread = 32'd2;
 // 	pmem_read(raddr, data_o, rlen, dpic_loadread);
 // end
 
-reg [`ysyx_25060170_DATA]	mem_data;//for delay
+// reg [`ysyx_25060170_DATA]	mem_data;//for delay
 // reg [`ysyx_25060170_DATA]	dpic_difftest_skip_flag;
 //读改成组合逻辑，写时序
 //取指，从pc_i中获取inst_o
-wire [31:0] dpic_fetch = 32'd1;
+// wire [31:0] dpic_fetch = 32'd1;
 
 //dpic同一时钟周期多读几次没啥关系
-always @(*) begin
-	//mem访存读
-	if(DPIC_re) begin
-	pmem_read(DPIC_raddr, mem_data, DPIC_rlen, dpic_loadread,DPIC_dpic_difftest_skip_flag);	
-	end
-	else begin
-	mem_data 					 = 0;
-	DPIC_dpic_difftest_skip_flag = 0;
-	end
-end
+// always @(*) begin
+// 	//mem访存读
+// 	if(DPIC_re) begin
+// 	pmem_read(DPIC_raddr, mem_data, DPIC_rlen, dpic_loadread,DPIC_dpic_difftest_skip_flag);	
+// 	end
+// 	else begin
+// 	mem_data 					 = 0;
+// 	DPIC_dpic_difftest_skip_flag = 0;
+// 	end
+// end
 
-reg [`ysyx_25060170_INST] DPIC_inst;
+// reg [`ysyx_25060170_INST] DPIC_inst;
 
-always @(*) begin
-	pmem_read(DPIC_pc_i,DPIC_inst,DPIC_rlen,dpic_fetch,DPIC_dpic_difftest_skip_flag);
-end
 
-always @(posedge clk) begin
-	DPIC_inst_o <= DPIC_inst;
-end
 
-always @(posedge clk) begin
-	if(DPIC_we) begin
-	pmem_write(DPIC_waddr, DPIC_data_i, DPIC_wlen,DPIC_dpic_difftest_skip_flag);
-	end
-end
+// always @(posedge clk) begin
+// 	DPIC_inst_i <= DPIC_inst;
+// end
 
-always@(posedge clk) begin
-	DPIC_data_o <= mem_data ;
-end
+// always @(posedge clk) begin
+// 	if(DPIC_we) begin
+// 	pmem_write(DPIC_waddr, DPIC_data_i, DPIC_wlen,DPIC_dpic_difftest_skip_flag);
+// 	end
+// end
+
+// always@(posedge clk) begin
+// 	DPIC_data_o <= mem_data ;
+// end
 
 //  always @(posedge clk) begin
 //    if(rst ==`ysyx_25060170_RSTABLE) begin
-//      pc_inst_end(`ysyx_25060170_STARTPC, DPIC_inst_o);
+//      pc_inst_end(`ysyx_25060170_STARTPC, DPIC_inst_i);
 // 	$strobe("rst dpic DPIC_pc_i = 0x%08x",DPIC_pc_i);
-// 		 pmem_read(DPIC_pc_i,DPIC_inst_o,rlen);
-//   	$strobe("rst dpic DPIC_inst_o = 0x%08x",DPIC_inst_o);
+// 		 pmem_read(DPIC_pc_i,DPIC_inst_i,rlen);
+//   	$strobe("rst dpic DPIC_inst_i = 0x%08x",DPIC_inst_i);
 //    end
 //    else begin
-// 	 pmem_read(DPIC_pc_i,DPIC_inst_o,rlen);
-//      pc_inst_end(DPIC_pc_i, DPIC_inst_o);
+// 	 pmem_read(DPIC_pc_i,DPIC_inst_i,rlen);
+//      pc_inst_end(DPIC_pc_i, DPIC_inst_i);
 // 	// $display("else DPIC_pc_i = 0x%08x",DPIC_pc_i);
-//   	// $display("else DPIC_inst_o = 0x%08x",DPIC_inst_o);
+//   	// $display("else DPIC_inst_i = 0x%08x",DPIC_inst_i);
 //    end
 //  end
 
 /********************************difftest****************************************/
  always@(*)begin
-	// pmem_read(DPIC_pc_i,DPIC_inst_o,rlen);
+	// pmem_read(DPIC_pc_i,DPIC_inst_i,rlen);
  	difftest_dut_regs(
  		DPIC_regs0 ,
  		DPIC_regs1 ,
@@ -267,8 +269,8 @@ end
 wire jal;
 wire jalr;
 
-assign jal  	= DPIC_inst_o[6:0]  == 7'b1101111 ? 1 : 0;
-assign jalr 	= DPIC_inst_o[6:0]  == 7'b1100111 ? 1 : 0;
+assign jal  	= DPIC_inst_i[6:0]  == 7'b1101111 ? 1 : 0;
+assign jalr 	= DPIC_inst_i[6:0]  == 7'b1100111 ? 1 : 0;
 
 export "DPI-C" task IDU_SEND_CALL_FLAG;
 
@@ -296,7 +298,7 @@ task IDU_SEND_RET_FLAG(
     output int pc,
 );
 
-    ret_flag = DPIC_inst_o == 32'h00008067 ? 1 : 0;
+    ret_flag = DPIC_inst_i == 32'h00008067 ? 1 : 0;
     //pc  = DPIC_pc_i;
     pc = jalr ? {DPIC_pc_i[31:1],1'b0} : DPIC_pc_i ;
 endtask
@@ -322,8 +324,8 @@ endtask
 
 // always@(*) begin
 // 	  	// $display("DPIC_pc_i = 0x%08x",DPIC_pc_i);
-//   		// $display("DPIC_inst_o = 0x%08x",DPIC_inst_o);
-// 	if(DPIC_inst_o == `EBREAK_TRAP)begin
+//   		// $display("DPIC_inst_i = 0x%08x",DPIC_inst_i);
+// 	if(DPIC_inst_i == `EBREAK_TRAP)begin
 //   		set_npc_exit(DPIC_pc_i,0);
 //   	end
 // 	else if(magic_flag) begin
@@ -375,7 +377,7 @@ endtask
 		// if(~wbu_dpic_id_stall & ~wbu_dpic_ls_valid) begin
 		// if(~wbu_dpic_ls_valid && ~delay_pipeline_id_stall) begin
 		if(~DPIC_wbu_dpic_valid) begin	
-			// $display("inst = 0x%08x",DPIC_inst_o);
+			// $display("inst = 0x%08x",DPIC_inst_i);
 			// $display("DPIC_pc_i = 0x%08x",DPIC_pc_i);
 			// $display("pc_finish = 0x%08x",wbu_dpic_pc);
 			// $display("inst_finish = 0x%08x",wbu_dpic_inst);
