@@ -171,84 +171,13 @@ always_ff @(posedge aclk) begin
     end
 end
 
-// //********************************************写地址通道***************************************************//
-
-// always_ff @(posedge aclk or negedge aresetn) begin
-//     if(!aresetn) begin
-//         awready <= 1'b0;
-//     end
-//     else if(awvalid)begin
-//         awready <= 1'b1;
-//     end
-// end
-
-// //********************************************写数据通道***************************************************//
-
-// always_ff @(posedge aclk or negedge aresetn) begin
-//     if(!aresetn) begin
-//         wready <= 1'b0;
-//     end
-//     else if(wvalid)begin
-//         wready <= 1'b1;
-//     end
-// end
-
-// //********************************************写响应通道***************************************************//
-
-// always_ff @(posedge aclk or negedge aresetn) begin
-//     if(!aresetn) begin
-//         bvalid <= 1'b0;
-//         bresp  <= 2'b11;
-//     end
-//     else if(bready & awready & awvalid & wvalid & wready) begin
-//         bvalid <= 1'b1;
-//         bresp  <= 2'b00;
-//     end
-    
-// end
-
-// //********************************************读地址通道***************************************************//
-
-// always_ff @(posedge aclk or negedge aresetn) begin
-//     if(!aresetn) begin
-//         arready <= 1'b0;
-//     end
-//     else if(arvalid)begin
-//         arready <= 1'b1;
-//     end
-//     else begin
-//         arready <= 1'b0;
-//     end
-// end
-
-
-// //********************************************读数据通道***************************************************//
-
-// always_ff @(posedge aclk or negedge aresetn) begin
-//     if(!aresetn) begin
-//         rvalid <= 1'b0;
-//     end
-//     else if(rready)begin
-//         rvalid <= 1'b1;
-//     end
-//     else begin
-//         rvalid <= 1'b0;
-//     end
-// end
-
-// //********************************************读写功能***************************************************//
-// //同时满足ifu取指令 和 lsu的读写内存
-// //写
-// always_ff @(posedge aclk) begin
-//     if(awready & awvalid) begin
-//         pmem_write(awaddr,wdata,wlen,dpic_difftest_skip_flag);
-//     end
-// end
-
-// always_ff @(posedge aclk) begin
-//     if( arvalid & arready & rvalid & rready) begin
-//         pmem_read(araddr,rdata,rlen,mode,dpic_difftest_skip_flag);
-//     end
-// end
-
+//********************************************lfsr随机数生成器**********************************//
+reg [15:0] delay_value;	//具体随机的访存延时 可能 5 10 20
+reg [15:0] delay_count; 
+ysyx_25060170_lfsr u_ysyx_25060170_lfsr(
+	 .clk			(clk)
+	,.rst			(rst)
+	,.en			(1'b1)
+	,.delay_value	(delay_value)
+);
 endmodule
