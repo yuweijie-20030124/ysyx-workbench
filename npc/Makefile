@@ -1,4 +1,4 @@
-include /home/yuweijie/required_software_ysyx/verilator/include/verilated.mk
+include /home/software/Verilator/verilator/include/verilated.mk
 include ../Makefile
 
 ifeq ($(wildcard $(NPC_HOME)/csrc/main.c),) 
@@ -19,7 +19,7 @@ SRC_FILES = $(wildcard csrc/*.c)
 VERILOG_FILES = $(wildcard vsrc/core/*.v vsrc/core/define.v vsrc/sim/*.v vsrc/core/*.sv vsrc/core/AXI4-Lite/*.sv)
 # vsrc/debug/*.v vsrc/utils/*.v
 
-VERILATOR = /home/yuweijie/required_software_ysyx/verilator/bin/verilator
+VERILATOR = /home/software/Verilator/verilator/bin/verilator
 
 
 NPC_IMG?= 
@@ -89,7 +89,7 @@ checkall:
 		$(VERILOG_FILES) && echo "lint OK" || echo "lint FAILED"
 
 checkone:
-	verilator --lint-only -Wall \
+	$(VERILATOR) --lint-only -Wall \
 	-I$(NPC_HOME)/vsrc \
 	-I$(NPC_HOME)/vsrc/core \
 	--top-module $(TEST_MODULE) \
