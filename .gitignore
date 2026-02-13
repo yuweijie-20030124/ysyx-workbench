@@ -11,6 +11,6 @@
 !README.md
 !.gitignore
 !init.shgi
-/nvboard
 /am-kernels
 /fceux-am
+/nvboard
