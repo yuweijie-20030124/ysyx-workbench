@@ -9,3 +9,4 @@ bash init.sh subproject-name
 test
 
 [lecture note]: https://ysyx.oscc.cc/docs/
+# soc
