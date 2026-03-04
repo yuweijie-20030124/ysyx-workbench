@@ -16,7 +16,14 @@ SRC_FILES = $(wildcard csrc/*.c)
 			csrc/init.c csrc/cpu-
 ##TEST_FILES = csrc/main.c csrc/monitor.c csrc/log.c csrc/sdb.c csrc/timer.c csrc/memory.c
 
-VERILOG_FILES = $(wildcard vsrc/core/*.v vsrc/core/define.v vsrc/sim/*.v vsrc/core/*.sv vsrc/core/AXI4-Lite/*.sv)
+VERILOG_FILES = $(wildcard vsrc/core/*.v vsrc/core/define.v vsrc/sim/*.v vsrc/core/*.sv \
+				vsrc/core/AXI4-Lite/*.sv /home/yuweijie/ysyx-workbench/ysyxSoC/build/*.v) \
+				$(shell find /home/yuweijie/ysyx-workbench/ysyxSoC/perip -type f \( -name "*.v" -o -name "*.sv" \)) \
+
+# VERILOG_FILES = $(wildcard vsrc/core/*.v vsrc/core/define.v vsrc/sim/*.v vsrc/core/*.sv \
+# 				vsrc/core/AXI4-Lite/*.sv) \
+# 				$(shell find /home/yuweijie/ysyx-workbench/ysyxSoC/perip -type f \( -name "*.v" -o -name "*.sv" \))
+
 # vsrc/debug/*.v vsrc/utils/*.v
 
 VERILATOR = /home/yuweijie/required_software_ysyx/verilator/bin/verilator
@@ -44,19 +51,27 @@ VERILATOR_FLAGS = -Wall --cc --trace \
 					-CFLAGS  " -I /home/yuweijie/ysyx-workbench/npc/include -O2" \
 					-CFLAGS  " -I /home/yuweijie/ysyx-workbench/nemu/tools/capstone/repo/include -O2" \
 					--exe --build \
+					--timescale "1ns/1ns" \
+					--no-timing \
 					-LDFLAGS " -lreadline -lSDL2" \
 					-Ivsrc \
 					-Ivsrc/core \
-					--top-module ysyx_25060170_topcore
+					-Ivsrc/home/yuweijie/ysyx-workbench/ysyxSoC/perip/uart16550/rtl \
+ 					-Ivsrc/home/yuweijie/ysyx-workbench/ysyxSoC/perip/spi/rtl \
+					--top-module ysyxSoCFull.v
 
 GDBVERILATOR_FLAGS = -Wall --cc --trace \
 					-CFLAGS  " -g -I /home/yuweijie/ysyx-workbench/npc/include -O0" \
 					-CFLAGS  " -g -I /home/yuweijie/ysyx-workbench/nemu/tools/capstone/repo/include -O0" \
 					--exe --build \
+					--timescale "1ns/1ns" \
+					--no-timing \
 					-LDFLAGS " -lreadline -lSDL2" \
 					-Ivsrc \
 					-Ivsrc/core \
-					--top-module ysyx_25060170_topcore
+					-Ivsrc/home/yuweijie/ysyx-workbench/ysyxSoC/perip/uart16550/rtl \
+ 					-Ivsrc/home/yuweijie/ysyx-workbench/ysyxSoC/perip/spi/rtl \
+					--top-module ysyxSoCFull.v
 
 GTK = gtkwave
 

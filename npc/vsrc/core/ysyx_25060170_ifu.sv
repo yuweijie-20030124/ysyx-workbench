@@ -21,7 +21,7 @@ module ysyx_25060170_ifu(
     //stage control signal
     ,input  logic                           idu_ifu_ready
     ,input  logic                           idu_ifu_stall
-    ,output logic                           ifu_if1if2reg_valid
+    ,output logic                           
 
     //output to inst ram
     ,output logic [`ysyx_25060170_PC]       ifu_if1if2reg_current_pc //既给ram又给idu
@@ -29,8 +29,8 @@ module ysyx_25060170_ifu(
     //output to ifu_ifidreg
     ,output logic [`ysyx_25060170_PC]       ifu_if1if2reg_next_pc
     ,output logic [`ysyx_25060170_INST]     ifu_ididreg_inst
-    ,output logic                           ifu_if1if2reg_bpupredict
-    ,output logic                           ifu_if1if2reg_bpuvalid
+    ,output logic                           ifu_ifidreg_bpupredict
+    ,output logic                           ifu_ifidreg_bpu_valid
     // ,output logic                           ifu
 
 
@@ -63,12 +63,14 @@ module ysyx_25060170_ifu(
     ,output logic        ifu_arb_rready     // 主机准备好接收数据
     ,input  logic [31:0] arb_ifu_rdata      // 读数据
     ,input  logic [1:0]  arb_ifu_rresp      // 读响应（00成功，其他不成功）
+
+
 );
 
 
 //流水线控制
 wire stall = idu_ifu_stall ;
-assign ifu_if1if2reg_valid = 1'b0; //todo
+assign ifu_ifidreg_valid = 1'b0; //todo
 
 
 always_ff @(posedge clk) begin
@@ -96,62 +98,12 @@ always_ff @(posedge clk) begin
 end
 //****************************************总线控制*****************************************************//
 
-//*****************************************写事务*****************************************************//
-//Write transaction 取指模块不会写事务的
-assign ifu_arb_awvalid = 1'b0   ; //写地址无效
-assign ifu_arb_wvalid  = 1'b0   ; //写数据无效
-assign ifu_arb_awaddr  = 32'b0  ; //写地址为0
-assign ifu_arb_wdata   = 32'b0  ; //写数据为0
-assign ifu_arb_awprot  = 3'b110 ; //写保护类型3‘b110，我也不知道什么含义，反正不会写过去
-assign ifu_arb_wstrb   = 4'b0000; //字节使能0000，全不让写
-assign ifu_arb_bready  = 1'b0   ; //主机从来都不响应
-
-logic [`ysyx_25060170_PC] unused0;
-logic                     unused1;
-logic                     unused2;
-logic [1:0]               unused3;
-logic                     unused4;
-
-assign unused1  =    arb_ifu_awready ;
-assign unused2  =    arb_ifu_wready  ;
-assign unused3  =    arb_ifu_bresp   ;
-assign unused4  =    arb_ifu_bvalid  ;
-
-//*****************************************读事务*****************************************************//
-//assign ifu_if1if2reg_valid = (idu_ifu_ready & ~stall) ? 1'b1 : 1'b0;
-// assign ifu_arb_rready  = ifu_if1if2reg_valid;      //读数据有效
-// assign ifu_arb_araddr  = ifu_if1if2reg_current_pc; //读地址 把当前pc传过去给mem
-
-// always @(posedge clk or negedge rst) begin
-always_ff @(posedge clk) begin
-    if(rst)begin
-        ifu_arb_arvalid <= 1'b0   ;//读地址无效
-        ifu_arb_araddr  <= 32'b0  ;//读地址为0
-        ifu_arb_arprot  <= 3'b100 ;//[0]0非特权 [1]0安全 [2]1指令访问
-        ifu_arb_rready  <= 1'b0   ;//主机没有准备好
-    end
-    else if(idu_ifu_ready & ~stall) begin
-        ifu_arb_arvalid <= 1'b1;
-        ifu_arb_araddr  <= ifu_if1if2reg_current_pc;
-    end
-    else if(ifu_arb_arvalid & arb_ifu_arready) begin //读地址有效 & 从机准备好接受地址
-        ifu_arb_rready <= 1'b1;
-    end
-    else if(ifu_arb_rready & arb_ifu_rvalid) begin //主机准备好接收数据 & 读数据有效
-       ifu_ididreg_inst <= arb_ifu_rdata;
-       ifu_arb_rready   <= 1'b0;   //主机不接收地址了
-       ifu_arb_bready   <= 1'b1;
-    end
-    else if(arb_ifu_rresp == 2'b00 & arb_ifu_bvalid)begin //相应有效 & 数据ok
-        ifu_arb_bready  <= 1'b0;
-    end
-end
 
 
 //output to next stage
 assign ifu_if1if2reg_next_pc    = ifu_if1if2reg_current_pc + `ysyx_25060170_PLUS4;
-assign ifu_if1if2reg_bpupredict = btb_predictedTaken;
-assign ifu_if1if2reg_bpuvalid   = bpu_ifu_bpuvalid;
+assign ifu_ifidreg_ = btb_predictedTaken;
+assign ifu_ifidreg_bpu_valid   = bpu_ifu_bpuvalid;
 // assign ifu_ididreg_inst = arb_ifu_rdata; 
 endmodule
 

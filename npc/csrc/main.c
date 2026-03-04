@@ -34,6 +34,12 @@ int difftest_skip_ref_flag;
 //mode = 2 = 从内存中读数据
 //mode = 3 = 从mmio中读数据
 /**************************** read and write ****************************/
+
+
+//在仿真的cpp文件中加入如下内容, 用于解决链接时找不到flash_read和mrom_read的问题
+extern "C" void flash_read(int32_t addr, int32_t *data) { assert(0); }
+extern "C" void mrom_read(int32_t addr, int32_t *data) { assert(0); }
+
 extern "C" void pmem_read(paddr_t raddr, paddr_t* rdata, char rlen , int mode, int* dpic_difftest_skip_flag){
 
   if (raddr < CONFIG_MEM_BASE) return;
@@ -190,6 +196,10 @@ extern "C" void difftest_dut_regs(int Z0, int ra, int sp, int gp, int tp, int t0
 }
 
 /***********************************************END DPI-C*******************************************/
+
+//在仿真环境的main函数中仿真开始前的位置加入语句Verilated::commandArgs(argc, argv);, 用于解决运行时plusargs功能报错的问题
+Verilated::commandArgs(argc, argv);
+
 int main(int argc, char** argv) {
 
   contextp = new VerilatedContext;
@@ -281,3 +291,5 @@ void cpu_reset(){
   topcore -> rst = 0;
 
 }
+
+
