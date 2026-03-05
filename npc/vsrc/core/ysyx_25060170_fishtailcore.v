@@ -20,7 +20,70 @@ module ysyx_25060170_fishtailcore(
 ,input  wire [`ysyx_25060170_DATA]      DPIC_DPIC_MEM_data             
 ,output wire [`ysyx_25060170_DATAADDR]  DPIC_ls_dpic_raddr             
 ,output wire [`ysyx_25060170_DATAADDR]  DPIC_ls_dpic_waddr                          
-             		    		
+
+//接入总线
+//AXI4 Master总线
+,input  wire                            io_master_awready 
+,output wire                            io_master_awvalid 
+,output wire [31:0]                     io_master_awaddr  
+,output wire [3:0]                      io_master_awid    
+,output wire [7:0]                      io_master_awlen   
+,output wire [2:0]                      io_master_awsize  
+,output wire [1:0]                      io_master_awburst 
+,input  wire                            io_master_wready  
+,output wire                            io_master_wvalid  
+,output wire [31:0]                     io_master_wdata   
+,output wire [3:0]                      io_master_wstrb   
+,output wire                            io_master_wlast   
+,output wire                            io_master_bready  
+,output wire                            io_master_bvalid  
+,output wire [1:0]                      io_master_bresp   
+,output wire [3:0]                      io_master_bid     
+,input  wire                            io_master_arready 
+,output wire                            io_master_arvalid 
+,output wire [31:0]                     io_master_araddr  
+,output wire [3:0]                      io_master_arid    
+,output wire [7:0]                      io_master_arlen   
+,output wire [2:0]                      io_master_arsize  
+,output wire [1:0]                      io_master_arburst 
+,output wire                            io_master_rready  
+,output wire                            io_master_rvalid  
+,output wire [1:0]                      io_master_rresp   
+,output wire [31:0]                     io_master_rdata   
+,output wire                            io_master_rlast   
+,output wire                            io_master_rid     
+
+//AXI4 Slave总线
+,output wire                            io_slave_awready  //unused
+,input  wire                            io_slave_awvalid  
+,input  wire [31:0]                     io_slave_awaddr   
+,input  wire [3:0]                      io_slave_awid     
+,input  wire [7:0]                      io_slave_awlen    
+,input  wire [2:0]                      io_slave_awsize   
+,input  wire [1:0]                      io_slave_awburst  
+,output wire                            io_slave_wready   //unused
+,input  wire                            io_slave_wvalid   
+,input  wire [31:0]                     io_slave_wdata    
+,input  wire [3:0]                      io_slave_wstrb    
+,input  wire                            io_slave_wlast    
+,input  wire                            io_slave_bready   
+,output wire                            io_slave_bvalid   //unused
+,output wire [1:0]                      io_slave_bresp    //unused
+,output wire [3:0]                      io_slave_bid      //unused
+,output wire                            io_slave_arready  //unused
+,output wire                            io_slave_arvalid  
+,output wire [31:0]                     io_slave_araddr   
+,output wire [3:0]                      io_slave_arid     
+,output wire [7:0]                      io_slave_arlen    
+,output wire [2:0]                      io_slave_arsize   
+,output wire [1:0]                      io_slave_arburst  
+,output wire                            io_slave_rready      
+,output wire                            io_slave_rvalid   //unused
+,output wire [1:0]                      io_slave_rresp    //unused
+,output wire [31:0]                     io_slave_rdata    //unused
+,output wire                            io_slave_rlast    //unused
+,output wire [3:0]                      io_slave_rid      //unused
+
 );
 
 assign DPIC_if_id_pc = ifu1_ifu2_current_pc;
@@ -1088,5 +1151,3 @@ ysyx_25060170_regfile u_ysyx_25060170_regfile (
 
 endmodule
 
-
- 
