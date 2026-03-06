@@ -1,170 +1,324 @@
 `include "define.v"
 
-// CLINT (Core Local INTerrupt controller)
-// AXI4-Lite 接口
-// 包含一个 64 位只读寄存器 mtime, 每周期加 1
-// 地址映射 (与仿真环境一致):
-//   RTC_ADDR     = 0xa0000048 : mtime 低 32 位 (只读)
-//   RTC_ADDR + 4 = 0xa000004C : mtime 高 32 位 (只读)
-// 写操作被忽略 (直接返回 OKAY 响应)
+module ysyx_25060170_axi4lite_arbiter(
+     input  wire         clk
+    ,input  wire         rst
 
-module ysyx_25060170_clint(
-     input  wire        clk
-    ,input  wire        rst
+    //==================== IFU side ====================
+    // AR
+    ,input  wire         ifu_arb_arvalid
+    ,output wire         arb_ifu_arready
+    ,input  wire [31:0]  ifu_arb_araddr
 
-    //================== AXI4-Lite Slave 接口 ==================
-    /* verilator lint_off UNUSEDSIGNAL */
-    // AW 通道 (写地址)
-    ,input  wire        awvalid
-    ,output wire        awready
-    ,input  wire [31:0] awaddr
-    ,input  wire [2:0]  awprot
+    // R
+    ,output wire [2:0]   arb_ifu_rresp
+    ,output wire         arb_ifu_rvalid
+    ,input  wire         ifu_arb_rready
+    ,output wire [31:0]  arb_ifu_rdata
 
-    // W 通道 (写数据)
-    ,input  wire        wvalid
-    ,output wire        wready
-    ,input  wire [31:0] wdata
-    ,input  wire [3:0]  wstrb
-    /* verilator lint_on UNUSEDSIGNAL */
+    //==================== LSU side ====================
+    // AW
+    ,input  wire         lsu_arb_awvalid
+    ,output wire         arb_lsu_awready
+    ,input  wire [31:0]  lsu_arb_awaddr
 
-    // B 通道 (写响应)
-    ,output reg         bvalid
-    ,input  wire        bready
-    ,output wire [1:0]  bresp
+    // W
+    ,input  wire         lsu_arb_wvalid
+    ,output wire         arb_lsu_wready
+    ,input  wire [31:0]  lsu_arb_wdata
+    ,input  wire [3:0]   lsu_arb_wstrb
 
-    // AR 通道 (读地址)
-    ,input  wire        arvalid
-    ,output wire        arready
-    ,input  wire [31:0] araddr
-    /* verilator lint_off UNUSEDSIGNAL */
-    ,input  wire [2:0]  arprot
-    /* verilator lint_on UNUSEDSIGNAL */
+    // B
+    ,output wire         arb_lsu_bvalid
+    ,input  wire         lsu_arb_bready
+    ,output wire [1:0]   arb_lsu_bresp
 
-    // R 通道 (读数据)
-    ,output reg         rvalid
-    ,input  wire        rready
-    ,output reg  [31:0] rdata
-    ,output wire [1:0]  rresp
+    // AR
+    ,input  wire         lsu_arb_arvalid
+    ,output wire         arb_lsu_arready
+    ,input  wire [31:0]  lsu_arb_araddr
+
+    // R
+    ,output wire         arb_lsu_rvalid
+    ,input  wire         lsu_arb_rready
+    ,output wire [1:0]   arb_lsu_rresp
+    ,output wire [31:0]  arb_lsu_rdata
+
+    //==================== AXI4-Lite slave side ====================
+    // AW
+    ,output wire         arb_axi_awvalid
+    ,input  wire         axi_arb_awready
+    ,output wire [31:0]  arb_axi_awaddr
+
+    // W
+    ,output wire         arb_axi_wvalid
+    ,input  wire         axi_arb_wready
+    ,output wire [31:0]  arb_axi_wdata
+    ,output wire [3:0]   arb_axi_wstrb
+
+    // B
+    ,input  wire         axi_arb_bvalid
+    ,output wire         arb_axi_bready
+    ,input  wire [1:0]   axi_arb_bresp
+
+    // AR
+    ,output wire         arb_axi_arvalid
+    ,input  wire         axi_arb_arready
+    ,output wire [31:0]  arb_axi_araddr
+
+    // R
+    ,input  wire         axi_arb_rvalid
+    ,output wire         arb_axi_rready
+    ,input  wire [1:0]   axi_arb_rresp
+    ,input  wire [31:0]  axi_arb_rdata
 );
 
 //==========================================================================
-// 地址定义
+// 状态机
+// 单 outstanding：
+//   LSU write > LSU read > IFU read
 //==========================================================================
-localparam MTIME_LO_ADDR = 32'ha0000048;  // mtime 低 32 位
-localparam MTIME_HI_ADDR = 32'ha000004C;  // mtime 高 32 位
+localparam [2:0] S_ARB_IDLE        = 3'd0;
+localparam [2:0] S_ARB_LSU_RD_ADDR = 3'd1;
+localparam [2:0] S_ARB_LSU_RD_DATA = 3'd2;
+localparam [2:0] S_ARB_IFU_RD_ADDR = 3'd3;
+localparam [2:0] S_ARB_IFU_RD_DATA = 3'd4;
+localparam [2:0] S_ARB_LSU_WR_REQ  = 3'd5;
+localparam [2:0] S_ARB_LSU_WR_RESP = 3'd6;
+
+reg [2:0] arb_state;
+
+// AXI4-Lite 的 AW / W 独立握手
+reg aw_done;
+reg w_done;
+
+// 握手检测
+wire aw_hs;
+wire w_hs;
+wire b_hs;
+wire lsu_ar_hs;
+wire ifu_ar_hs;
+wire lsu_r_hs;
+wire ifu_r_hs;
+
+assign aw_hs     = arb_axi_awvalid & axi_arb_awready;
+assign w_hs      = arb_axi_wvalid  & axi_arb_wready;
+assign b_hs      = axi_arb_bvalid  & arb_axi_bready;
+assign lsu_ar_hs = arb_axi_arvalid & axi_arb_arready & (arb_state == S_ARB_LSU_RD_ADDR);
+assign ifu_ar_hs = arb_axi_arvalid & axi_arb_arready & (arb_state == S_ARB_IFU_RD_ADDR);
+assign lsu_r_hs  = axi_arb_rvalid  & lsu_arb_rready  & (arb_state == S_ARB_LSU_RD_DATA);
+assign ifu_r_hs  = axi_arb_rvalid  & ifu_arb_rready  & (arb_state == S_ARB_IFU_RD_DATA);
 
 //==========================================================================
-// mtime 寄存器: 64 位, 每周期加 1
+// 状态转移
 //==========================================================================
-reg [63:0] mtime;
-
 always @(posedge clk) begin
-    if (rst) begin
-        mtime <= 64'b0;
+    if (rst == `ysyx_25060170_RSTABLE) begin
+        arb_state <= S_ARB_IDLE;
+        aw_done   <= 1'b0;
+        w_done    <= 1'b0;
     end
     else begin
-        mtime <= mtime + 64'b1;
-    end
-end
+        case (arb_state)
+            S_ARB_IDLE: begin
+                aw_done <= 1'b0;
+                w_done  <= 1'b0;
 
-//==========================================================================
-// 读通道状态机
-// IDLE -> 接收地址 -> 返回数据 -> IDLE
-//==========================================================================
-localparam [1:0] R_IDLE    = 2'd0;
-localparam [1:0] R_RESP    = 2'd1;
-
-reg [1:0]  r_state;
-
-// AR 握手: 在 IDLE 状态接受读地址
-assign arready = (r_state == R_IDLE);
-
-always @(posedge clk) begin
-    if (rst) begin
-        r_state    <= R_IDLE;
-        rvalid     <= 1'b0;
-        rdata      <= 32'b0;
-    end
-    else begin
-        case (r_state)
-            R_IDLE: begin
-                if (arvalid & arready) begin
-                    // 根据地址选择返回 mtime 低 32 位或高 32 位
-                    case (araddr)
-                        MTIME_LO_ADDR: rdata <= mtime[31:0];
-                        MTIME_HI_ADDR: rdata <= mtime[63:32];
-                        default:       rdata <= 32'b0;
-                    endcase
-                    rvalid  <= 1'b1;
-                    r_state <= R_RESP;
+                // LSU 优先
+                if (lsu_arb_awvalid | lsu_arb_wvalid) begin
+                    arb_state <= S_ARB_LSU_WR_REQ;
+                end
+                else if (lsu_arb_arvalid) begin
+                    arb_state <= S_ARB_LSU_RD_ADDR;
+                end
+                else if (ifu_arb_arvalid) begin
+                    arb_state <= S_ARB_IFU_RD_ADDR;
                 end
             end
-            R_RESP: begin
-                if (rvalid & rready) begin
-                    rvalid  <= 1'b0;
-                    r_state <= R_IDLE;
+
+            //==================== LSU READ ====================
+            S_ARB_LSU_RD_ADDR: begin
+                if (lsu_ar_hs) begin
+                    arb_state <= S_ARB_LSU_RD_DATA;
                 end
             end
-            default: r_state <= R_IDLE;
+
+            S_ARB_LSU_RD_DATA: begin
+                if (lsu_r_hs) begin
+                    arb_state <= S_ARB_IDLE;
+                end
+            end
+
+            //==================== IFU READ ====================
+            S_ARB_IFU_RD_ADDR: begin
+                if (ifu_ar_hs) begin
+                    arb_state <= S_ARB_IFU_RD_DATA;
+                end
+            end
+
+            S_ARB_IFU_RD_DATA: begin
+                if (ifu_r_hs) begin
+                    arb_state <= S_ARB_IDLE;
+                end
+            end
+
+            //==================== LSU WRITE ====================
+            S_ARB_LSU_WR_REQ: begin
+                if (aw_hs)
+                    aw_done <= 1'b1;
+                if (w_hs)
+                    w_done  <= 1'b1;
+
+                if ( (aw_done | aw_hs) & (w_done | w_hs) ) begin
+                    arb_state <= S_ARB_LSU_WR_RESP;
+                end
+            end
+
+            S_ARB_LSU_WR_RESP: begin
+                if (b_hs) begin
+                    arb_state <= S_ARB_IDLE;
+                end
+            end
+
+            default: begin
+                arb_state <= S_ARB_IDLE;
+                aw_done   <= 1'b0;
+                w_done    <= 1'b0;
+            end
         endcase
     end
 end
 
-// 读响应始终 OKAY
-assign rresp = 2'b00;
-
 //==========================================================================
-// 写通道: CLINT 的 mtime 是只读的, 写操作直接返回 OKAY
-// 简单实现: 同时接受 AW 和 W, 然后返回 B 响应
+// 输出仲裁
 //==========================================================================
-localparam [1:0] W_IDLE    = 2'd0;
-localparam [1:0] W_WAIT_W  = 2'd1;  // 已收到 AW, 等待 W
-localparam [1:0] W_RESP    = 2'd2;
+reg        arb_ifu_arready_r;
+reg [2:0]  arb_ifu_rresp_r;
+reg        arb_ifu_rvalid_r;
+reg [31:0] arb_ifu_rdata_r;
 
-reg [1:0] w_state;
+reg        arb_lsu_awready_r;
+reg        arb_lsu_wready_r;
+reg        arb_lsu_bvalid_r;
+reg [1:0]  arb_lsu_bresp_r;
+reg        arb_lsu_arready_r;
+reg        arb_lsu_rvalid_r;
+reg [1:0]  arb_lsu_rresp_r;
+reg [31:0] arb_lsu_rdata_r;
 
-// AW 握手: 在 IDLE 状态接受写地址
-assign awready = (w_state == W_IDLE);
-// W  握手: 在 IDLE 或 WAIT_W 状态接受写数据
-assign wready  = (w_state == W_IDLE) | (w_state == W_WAIT_W);
+reg        arb_axi_awvalid_r;
+reg [31:0] arb_axi_awaddr_r;
+reg        arb_axi_wvalid_r;
+reg [31:0] arb_axi_wdata_r;
+reg [3:0]  arb_axi_wstrb_r;
+reg        arb_axi_bready_r;
+reg        arb_axi_arvalid_r;
+reg [31:0] arb_axi_araddr_r;
+reg        arb_axi_rready_r;
 
-always @(posedge clk) begin
-    if (rst) begin
-        w_state <= W_IDLE;
-        bvalid  <= 1'b0;
-    end
-    else begin
-        case (w_state)
-            W_IDLE: begin
-                bvalid <= 1'b0;
-                if (awvalid & awready & wvalid & wready) begin
-                    // AW 和 W 同时到达, 直接给 B 响应
-                    bvalid  <= 1'b1;
-                    w_state <= W_RESP;
-                end
-                else if (awvalid & awready) begin
-                    // 只收到 AW, 等待 W
-                    w_state <= W_WAIT_W;
-                end
-            end
-            W_WAIT_W: begin
-                if (wvalid & wready) begin
-                    bvalid  <= 1'b1;
-                    w_state <= W_RESP;
-                end
-            end
-            W_RESP: begin
-                if (bvalid & bready) begin
-                    bvalid  <= 1'b0;
-                    w_state <= W_IDLE;
-                end
-            end
-            default: w_state <= W_IDLE;
-        endcase
-    end
+always @(*) begin
+    // 默认值
+    arb_ifu_arready_r = 1'b0;
+    arb_ifu_rresp_r   = 3'b000;
+    arb_ifu_rvalid_r  = 1'b0;
+    arb_ifu_rdata_r   = 32'b0;
+
+    arb_lsu_awready_r = 1'b0;
+    arb_lsu_wready_r  = 1'b0;
+    arb_lsu_bvalid_r  = 1'b0;
+    arb_lsu_bresp_r   = 2'b00;
+    arb_lsu_arready_r = 1'b0;
+    arb_lsu_rvalid_r  = 1'b0;
+    arb_lsu_rresp_r   = 2'b00;
+    arb_lsu_rdata_r   = 32'b0;
+
+    arb_axi_awvalid_r = 1'b0;
+    arb_axi_awaddr_r  = 32'b0;
+    arb_axi_wvalid_r  = 1'b0;
+    arb_axi_wdata_r   = 32'b0;
+    arb_axi_wstrb_r   = 4'b0000;
+    arb_axi_bready_r  = 1'b0;
+    arb_axi_arvalid_r = 1'b0;
+    arb_axi_araddr_r  = 32'b0;
+    arb_axi_rready_r  = 1'b0;
+
+    case (arb_state)
+        //==================== LSU READ ====================
+        S_ARB_LSU_RD_ADDR: begin
+            arb_axi_arvalid_r = lsu_arb_arvalid;
+            arb_axi_araddr_r  = lsu_arb_araddr;
+            arb_lsu_arready_r = axi_arb_arready;
+        end
+
+        S_ARB_LSU_RD_DATA: begin
+            arb_lsu_rvalid_r  = axi_arb_rvalid;
+            arb_lsu_rresp_r   = axi_arb_rresp;
+            arb_lsu_rdata_r   = axi_arb_rdata;
+            arb_axi_rready_r  = lsu_arb_rready;
+        end
+
+        //==================== IFU READ ====================
+        S_ARB_IFU_RD_ADDR: begin
+            arb_axi_arvalid_r = ifu_arb_arvalid;
+            arb_axi_araddr_r  = ifu_arb_araddr;
+            arb_ifu_arready_r = axi_arb_arready;
+        end
+
+        S_ARB_IFU_RD_DATA: begin
+            arb_ifu_rvalid_r  = axi_arb_rvalid;
+            arb_ifu_rresp_r   = {1'b0, axi_arb_rresp}; // 兼容你 IFU 里 [2:0] 的定义
+            arb_ifu_rdata_r   = axi_arb_rdata;
+            arb_axi_rready_r  = ifu_arb_rready;
+        end
+
+        //==================== LSU WRITE ====================
+        S_ARB_LSU_WR_REQ: begin
+            arb_axi_awvalid_r = lsu_arb_awvalid & (~aw_done);
+            arb_axi_awaddr_r  = lsu_arb_awaddr;
+            arb_lsu_awready_r = axi_arb_awready & (~aw_done);
+
+            arb_axi_wvalid_r  = lsu_arb_wvalid & (~w_done);
+            arb_axi_wdata_r   = lsu_arb_wdata;
+            arb_axi_wstrb_r   = lsu_arb_wstrb;
+            arb_lsu_wready_r  = axi_arb_wready & (~w_done);
+        end
+
+        S_ARB_LSU_WR_RESP: begin
+            arb_lsu_bvalid_r  = axi_arb_bvalid;
+            arb_lsu_bresp_r   = axi_arb_bresp;
+            arb_axi_bready_r  = lsu_arb_bready;
+        end
+
+        default: begin
+        end
+    endcase
 end
 
-// 写响应始终 OKAY (mtime 只读, 写操作被忽略但不报错)
-assign bresp = 2'b00;
+//==========================================================================
+// 连线输出
+//==========================================================================
+assign arb_ifu_arready = arb_ifu_arready_r;
+assign arb_ifu_rresp   = arb_ifu_rresp_r;
+assign arb_ifu_rvalid  = arb_ifu_rvalid_r;
+assign arb_ifu_rdata   = arb_ifu_rdata_r;
+
+assign arb_lsu_awready = arb_lsu_awready_r;
+assign arb_lsu_wready  = arb_lsu_wready_r;
+assign arb_lsu_bvalid  = arb_lsu_bvalid_r;
+assign arb_lsu_bresp   = arb_lsu_bresp_r;
+assign arb_lsu_arready = arb_lsu_arready_r;
+assign arb_lsu_rvalid  = arb_lsu_rvalid_r;
+assign arb_lsu_rresp   = arb_lsu_rresp_r;
+assign arb_lsu_rdata   = arb_lsu_rdata_r;
+
+assign arb_axi_awvalid = arb_axi_awvalid_r;
+assign arb_axi_awaddr  = arb_axi_awaddr_r;
+assign arb_axi_wvalid  = arb_axi_wvalid_r;
+assign arb_axi_wdata   = arb_axi_wdata_r;
+assign arb_axi_wstrb   = arb_axi_wstrb_r;
+assign arb_axi_bready  = arb_axi_bready_r;
+assign arb_axi_arvalid = arb_axi_arvalid_r;
+assign arb_axi_araddr  = arb_axi_araddr_r;
+assign arb_axi_rready  = arb_axi_rready_r;
 
 endmodule

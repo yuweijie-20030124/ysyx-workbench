@@ -6,191 +6,301 @@
 
 //IFU只读，AW/W/B通道全部置0
 
+
+// IFU: AXI4-Lite read-only master
+// 只使用 AR / R 通道
+// AW / W / B 通道请在上层统一 tie-off 为 0
+
 module ysyx_25060170_ifu(
      input  logic                           rst
     ,input  logic                           clk
     ,input  logic [`ysyx_25060170_PC]       idu_ifu_jump_pc
     ,input  logic                           idu_ifu_jump
     ,input  logic [`ysyx_25060170_PC]       bpu_ifu_jump_pc
-    ,input  logic                           btb_predictedTaken      //bpu预测发生跳转
-    ,input  logic                           bpu_ifu_bpuvalid       //bpu传进去的pctag找到了跳转的地址 有效为1
+    ,input  logic                           btb_predictedTaken
+    ,input  logic                           bpu_ifu_bpuvalid
     ,input  logic [`ysyx_25060170_PC]       lsu_ifu_jump_pc
     ,input  logic                           lsu_ifu_jump
 
-    //stage control signal
+    // stage control signal
     ,input  logic                           idu_ifu_ready
     ,input  logic                           idu_ifu_stall
     ,output logic                           ifu_ifidreg_valid
 
-    //output to inst ram
-    ,output logic [`ysyx_25060170_PC]       ifu_if1if2reg_current_pc //既给ram又给idu
-
-    //output to ifu_ifidreg
+    // output pc
+    ,output logic [`ysyx_25060170_PC]       ifu_if1if2reg_current_pc
     ,output logic [`ysyx_25060170_PC]       ifu_if1if2reg_next_pc
+
+    // output to ifid
     ,output logic [`ysyx_25060170_INST]     ifu_ididreg_inst
     ,output logic                           ifu_ifidreg_bpupredict
     ,output logic                           ifu_ifidreg_bpu_valid
 
-    //================== AXI4 接口 to arbiter ==================
-    // AW 通道 (IFU 不写, 全部置0)
-    ,output logic                           ifu_arb_awvalid
-    ,input  logic                           arb_ifu_awready
-    ,output logic [31:0]                    ifu_arb_awaddr
-    ,output logic [3:0]                     ifu_arb_awid
-    ,output logic [7:0]                     ifu_arb_awlen
-    ,output logic [2:0]                     ifu_arb_awsize
-    ,output logic [1:0]                     ifu_arb_awburst
-
-    // W 通道 (IFU 不写, 全部置0)
-    ,output logic                           ifu_arb_wvalid
-    ,input  logic                           arb_ifu_wready
-    ,output logic [31:0]                    ifu_arb_wdata
-    ,output logic [3:0]                     ifu_arb_wstrb
-    ,output logic                           ifu_arb_wlast
-
-    // B 通道 (IFU 不写, 全部置0)
-    ,input  logic                           arb_ifu_bvalid
-    ,output logic                           ifu_arb_bready
-    ,input  logic [1:0]                     arb_ifu_bresp
-    ,input  logic [3:0]                     arb_ifu_bid
-
-    // AR 通道 (IFU 读取指令)
+    // AXI4-Lite AR channel
     ,output logic                           ifu_arb_arvalid
     ,input  logic                           arb_ifu_arready
     ,output logic [31:0]                    ifu_arb_araddr
-    ,output logic [3:0]                     ifu_arb_arid
-    ,output logic [7:0]                     ifu_arb_arlen
-    ,output logic [2:0]                     ifu_arb_arsize
-    ,output logic [1:0]                     ifu_arb_arburst
 
-    // R 通道 (IFU 接收指令数据)
+    // AXI4-Lite R channel
+    /* verilator lint_off UNUSEDSIGNAL */
+    ,input  logic [2:0]                     arb_ifu_rresp   // 兼容你现有端口，实际只用低 2bit
+    /* verilator lint_on  UNUSEDSIGNAL */
     ,input  logic                           arb_ifu_rvalid
     ,output logic                           ifu_arb_rready
-    ,input  logic [1:0]                     arb_ifu_rresp
     ,input  logic [31:0]                    arb_ifu_rdata
-    ,input  logic                           arb_ifu_rlast
-    ,input  logic [3:0]                     arb_ifu_rid
 );
 
+//==========================================================================
+// 基本控制
+//==========================================================================
+logic stall;
+assign stall = idu_ifu_stall;
 
 //==========================================================================
-// 流水线控制
+// 跳转重定向优先级
+// idu > lsu > bpu
 //==========================================================================
-wire stall = idu_ifu_stall;
+logic                          redirect_valid;
+logic [`ysyx_25060170_PC]      redirect_pc;
+
+always_comb begin
+    redirect_valid = 1'b0;
+    redirect_pc    = `ysyx_25060170_STARTPC;
+
+    if (idu_ifu_jump) begin
+        redirect_valid = 1'b1;
+        redirect_pc    = idu_ifu_jump_pc;
+    end
+    else if (lsu_ifu_jump) begin
+        redirect_valid = 1'b1;
+        redirect_pc    = lsu_ifu_jump_pc;
+    end
+    else if (bpu_ifu_bpuvalid && btb_predictedTaken) begin
+        redirect_valid = 1'b1;
+        redirect_pc    = bpu_ifu_jump_pc;
+    end
+end
 
 //==========================================================================
-// AW/W/B 通道: IFU 只读, 全部置0
+// AXI4-Lite IFU 状态机
+// IDLE   : 没有 outstanding request
+// ARREQ  : 发 AR
+// WAIT_R : 等 R
 //==========================================================================
-assign ifu_arb_awvalid = 1'b0;
-assign ifu_arb_awaddr  = 32'b0;
-assign ifu_arb_awid    = 4'b0;
-assign ifu_arb_awlen   = 8'b0;
-assign ifu_arb_awsize  = 3'b0;
-assign ifu_arb_awburst = 2'b0;
+typedef enum logic [1:0] {
+    S_IF_IDLE   = 2'd0,
+    S_IF_ARREQ  = 2'd1,
+    S_IF_WAIT_R = 2'd2
+} if_state_t;
 
-assign ifu_arb_wvalid  = 1'b0;
-assign ifu_arb_wdata   = 32'b0;
-assign ifu_arb_wstrb   = 4'b0;
-assign ifu_arb_wlast   = 1'b0;
+if_state_t if_state_r, if_state_n;
 
-assign ifu_arb_bready  = 1'b0;
+// 当前 PC（对外可见）
+// - 当 inst_valid=1 时，它对应当前要送给下游的指令 PC
+// - 当 inst_valid=0 时，它对应下一次要 fetch 的 PC
+logic [`ysyx_25060170_PC]   pc_r,      pc_n;
+
+// outstanding request 对应的 PC
+logic [`ysyx_25060170_PC]   req_pc_r,  req_pc_n;
+
+// 指令 buffer
+logic [`ysyx_25060170_INST] inst_buf_r, inst_buf_n;
+logic                       inst_valid_r, inst_valid_n;
+
+// outstanding request 的预测信息
+logic                       req_bpupredict_r, req_bpupredict_n;
+logic                       req_bpu_valid_r,  req_bpu_valid_n;
+
+// 当前 buffer 中指令对应的预测信息
+logic                       inst_bpupredict_r, inst_bpupredict_n;
+logic                       inst_bpu_valid_r,  inst_bpu_valid_n;
+
+// 由于 redirect 造成 outstanding response 需要丢弃
+logic                       discard_resp_r, discard_resp_n;
+
+// 握手
+logic ar_handshake;
+logic r_handshake;
+logic consume_inst;
+
+assign ar_handshake = ifu_arb_arvalid & arb_ifu_arready;
+assign r_handshake  = arb_ifu_rvalid  & ifu_arb_rready;
+
+// 下游真正接收当前指令
+assign consume_inst = inst_valid_r & idu_ifu_ready & (~stall);
 
 //==========================================================================
-// AR/R 通道: IFU 取指状态机
-// IDLE   -> 发出 arvalid, 等待 arready 握手
-// WAIT_R -> 等待 rvalid & rlast, 握手后回 IDLE
+// 输出
 //==========================================================================
-localparam [1:0] S_IF_IDLE   = 2'd0;
-localparam [1:0] S_IF_ARREQ  = 2'd1;  // 发送读地址请求
-localparam [1:0] S_IF_WAIT_R = 2'd2;  // 等待读数据返回
+assign ifu_arb_arvalid         = (if_state_r == S_IF_ARREQ);
+assign ifu_arb_araddr          = pc_r;                     // AXI4-Lite 只需要地址
+assign ifu_arb_rready          = (if_state_r == S_IF_WAIT_R);
 
-reg [1:0] if_state;
-reg [31:0] inst_buf;     // 缓存从总线读回的指令
-reg        inst_valid;   // inst_buf 中有有效指令
+assign ifu_ifidreg_valid       = inst_valid_r & (~stall);
+assign ifu_if1if2reg_current_pc= pc_r;
+assign ifu_if1if2reg_next_pc   = pc_r + `ysyx_25060170_PLUS4;
+assign ifu_ididreg_inst        = inst_buf_r;
+assign ifu_ifidreg_bpupredict  = inst_bpupredict_r;
+assign ifu_ifidreg_bpu_valid   = inst_bpu_valid_r;
 
-// AR 握手成功
-wire ar_handshake = ifu_arb_arvalid & arb_ifu_arready;
-// R  握手成功 (读数据接收完成)
-wire r_handshake  = arb_ifu_rvalid  & ifu_arb_rready;
+//==========================================================================
+// next-state logic
+//==========================================================================
+always_comb begin
+    // default: hold
+    if_state_n         = if_state_r;
+    pc_n               = pc_r;
+    req_pc_n           = req_pc_r;
 
+    inst_buf_n         = inst_buf_r;
+    inst_valid_n       = inst_valid_r;
+
+    req_bpupredict_n   = req_bpupredict_r;
+    req_bpu_valid_n    = req_bpu_valid_r;
+
+    inst_bpupredict_n  = inst_bpupredict_r;
+    inst_bpu_valid_n   = inst_bpu_valid_r;
+
+    discard_resp_n     = discard_resp_r;
+
+    case (if_state_r)
+
+        //==================================================================
+        // IDLE
+        //==================================================================
+        S_IF_IDLE: begin
+            if (redirect_valid) begin
+                // flush 当前 buffer
+                pc_n              = redirect_pc;
+                inst_valid_n      = 1'b0;
+                inst_bpupredict_n = 1'b0;
+                inst_bpu_valid_n  = 1'b0;
+            end
+            else if (inst_valid_r) begin
+                // 等待下游消费 buffer 中的指令
+                if (consume_inst) begin
+                    inst_valid_n      = 1'b0;
+                    inst_bpupredict_n = 1'b0;
+                    inst_bpu_valid_n  = 1'b0;
+
+                    pc_n              = pc_r + 32'd4;
+                    if_state_n        = S_IF_ARREQ;
+                end
+            end
+            else begin
+                // buffer 空，开始取指
+                if (!stall) begin
+                    if_state_n = S_IF_ARREQ;
+                end
+            end
+        end
+
+        //==================================================================
+        // ARREQ
+        //==================================================================
+        S_IF_ARREQ: begin
+            if (redirect_valid) begin
+                if (ar_handshake) begin
+                    // 这一拍旧地址已经发出去了，后面 R 必须丢弃
+                    req_pc_n         = pc_r;
+                    req_bpupredict_n = btb_predictedTaken;
+                    req_bpu_valid_n  = bpu_ifu_bpuvalid;
+
+                    discard_resp_n   = 1'b1;
+                    pc_n             = redirect_pc;
+                    if_state_n       = S_IF_WAIT_R;
+                end
+                else begin
+                    // 还没握手成功，直接把待取地址改成 redirect_pc
+                    pc_n             = redirect_pc;
+                end
+            end
+            else if (ar_handshake) begin
+                req_pc_n         = pc_r;
+                req_bpupredict_n = btb_predictedTaken;
+                req_bpu_valid_n  = bpu_ifu_bpuvalid;
+                if_state_n       = S_IF_WAIT_R;
+            end
+        end
+
+        //==================================================================
+        // WAIT_R
+        //==================================================================
+        S_IF_WAIT_R: begin
+            if (redirect_valid) begin
+                // 旧请求已经在路上，回来后要丢弃
+                discard_resp_n     = 1'b1;
+                pc_n               = redirect_pc;
+
+                // flush 当前已缓存指令（理论上 WAIT_R 时通常没有）
+                inst_valid_n       = 1'b0;
+                inst_bpupredict_n  = 1'b0;
+                inst_bpu_valid_n   = 1'b0;
+            end
+
+            if (r_handshake) begin
+                if ((!discard_resp_r) && (!redirect_valid) && (arb_ifu_rresp[1:0] == 2'b00)) begin
+                    // 正常收下本次 fetch 的指令
+                    inst_buf_n         = arb_ifu_rdata;
+                    inst_valid_n       = 1'b1;
+                    inst_bpupredict_n  = req_bpupredict_r;
+                    inst_bpu_valid_n   = req_bpu_valid_r;
+                    pc_n               = req_pc_r;
+                end
+                else begin
+                    // 被 flush 或总线返回错误，丢掉这拍
+                    inst_valid_n       = 1'b0;
+                    inst_bpupredict_n  = 1'b0;
+                    inst_bpu_valid_n   = 1'b0;
+                end
+
+                discard_resp_n       = 1'b0;
+                if_state_n           = S_IF_IDLE;
+            end
+        end
+
+        default: begin
+            if_state_n = S_IF_IDLE;
+        end
+    endcase
+end
+
+//==========================================================================
+// 时序寄存器
+//==========================================================================
 always_ff @(posedge clk) begin
     if (rst) begin
-        if_state   <= S_IF_IDLE;
-        inst_buf   <= 32'b0;
-        inst_valid <= 1'b0;
+        if_state_r        <= S_IF_IDLE;
+        pc_r              <= `ysyx_25060170_STARTPC;
+        req_pc_r          <= `ysyx_25060170_STARTPC;
+
+        inst_buf_r        <= 32'b0;
+        inst_valid_r      <= 1'b0;
+
+        req_bpupredict_r  <= 1'b0;
+        req_bpu_valid_r   <= 1'b0;
+
+        inst_bpupredict_r <= 1'b0;
+        inst_bpu_valid_r  <= 1'b0;
+
+        discard_resp_r    <= 1'b0;
     end
     else begin
-        case (if_state)
-            S_IF_IDLE: begin
-                if (!stall) begin
-                    if_state   <= S_IF_ARREQ;
-                    inst_valid <= 1'b0;
-                end
-            end
-            S_IF_ARREQ: begin
-                if (ar_handshake) begin
-                    if_state <= S_IF_WAIT_R;
-                end
-            end
-            S_IF_WAIT_R: begin
-                if (r_handshake) begin
-                    inst_buf   <= arb_ifu_rdata;
-                    inst_valid <= 1'b1;
-                    if_state   <= S_IF_IDLE;
-                end
-            end
-            default: if_state <= S_IF_IDLE;
-        endcase
+        if_state_r        <= if_state_n;
+        pc_r              <= pc_n;
+        req_pc_r          <= req_pc_n;
+
+        inst_buf_r        <= inst_buf_n;
+        inst_valid_r      <= inst_valid_n;
+
+        req_bpupredict_r  <= req_bpupredict_n;
+        req_bpu_valid_r   <= req_bpu_valid_n;
+
+        inst_bpupredict_r <= inst_bpupredict_n;
+        inst_bpu_valid_r  <= inst_bpu_valid_n;
+
+        discard_resp_r    <= discard_resp_n;
     end
 end
-
-// AR 通道输出
-assign ifu_arb_arvalid = (if_state == S_IF_ARREQ);
-assign ifu_arb_araddr  = ifu_if1if2reg_current_pc;
-assign ifu_arb_arid    = 4'b0;
-assign ifu_arb_arlen   = 8'b0;    // 单次传输 (len=0 表示 1 beat)
-assign ifu_arb_arsize  = 3'b010;  // 4 字节
-assign ifu_arb_arburst = 2'b01;   // INCR
-
-// R 通道: 在 WAIT_R 状态接受数据
-assign ifu_arb_rready  = (if_state == S_IF_WAIT_R);
-
-// valid 信号
-assign ifu_ifidreg_valid = inst_valid & ~stall;
-
-//==========================================================================
-// PC 更新逻辑
-//==========================================================================
-always_ff @(posedge clk) begin
-    if(rst) begin
-        ifu_if1if2reg_current_pc <= `ysyx_25060170_STARTPC;
-    end
-    else begin
-        if(stall) begin
-            ifu_if1if2reg_current_pc <= ifu_if1if2reg_current_pc;
-        end
-        else if(idu_ifu_jump) begin
-            ifu_if1if2reg_current_pc <= idu_ifu_jump_pc;
-        end
-        else if(lsu_ifu_jump) begin
-            ifu_if1if2reg_current_pc <= lsu_ifu_jump_pc;
-        end
-        else if(bpu_ifu_bpuvalid & btb_predictedTaken) begin
-            ifu_if1if2reg_current_pc <= bpu_ifu_jump_pc;
-        end
-        else if(inst_valid) begin
-            ifu_if1if2reg_current_pc <= ifu_if1if2reg_current_pc + 32'd4;
-        end
-    end
-end
-
-//==========================================================================
-// output to next stage
-//==========================================================================
-assign ifu_if1if2reg_next_pc   = ifu_if1if2reg_current_pc + `ysyx_25060170_PLUS4;
-assign ifu_ifidreg_bpupredict  = btb_predictedTaken;
-assign ifu_ifidreg_bpu_valid   = bpu_ifu_bpuvalid;
-assign ifu_ididreg_inst        = inst_buf;
 
 endmodule
-
