@@ -2,31 +2,62 @@
 #include <nemu.h>
 #include <stdio.h>
 
-static uint64_t boot_time = 0;
-
-static uint64_t read_time() {
-  uint64_t us_low = inl(RTC_ADDR);
-  uint64_t us_high = inl(RTC_ADDR + 4);
-  uint64_t time = ((uint64_t)us_high << 32) | us_low;
-  return time;
-}
-
-
 void __am_timer_init() {
-  boot_time = read_time();
 }
 
-void __am_timer_uptime(AM_TIMER_UPTIME_T* uptime) {
-
-  uptime->us = read_time() - boot_time;
-  // printf("time:%d\n", read_time() / 1000000);
+void __am_timer_uptime(AM_TIMER_UPTIME_T *uptime) {
+  uint32_t h = inl(RTC_ADDR + 4);
+  uint32_t l = inl(RTC_ADDR);
+  uptime->us = (uint32_t)l + ((uint64_t)h << 32);
 }
 
-void __am_timer_rtc(AM_TIMER_RTC_T* rtc) {
-  rtc->second = 0;
-  rtc->minute = 0;
-  rtc->hour = 0;
-  rtc->day = 0;
-  rtc->month = 0;
-  rtc->year = 1900;
+
+int months_common[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+int months_leap[] = {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+
+void __am_timer_rtc(AM_TIMER_RTC_T *rtc) {
+    outl(RTC_ADDR, 0x0);
+    uint64_t us = 0;
+    us = inl(RTC_ADDR);
+    us += ((uint64_t)inl(RTC_ADDR + 4) << 32);
+    // printf("long %d,long long: %d\n", sizeof(long), sizeof(long long));
+    // printf("%llu\n", (us/1000000));
+    us /= 1000000;
+    rtc->second = us % 60;
+    us /= 60;
+    rtc->minute = us % 60;
+    us /= 60;
+    rtc->hour = us % 24;
+    us /= 24;
+    rtc->year = 1970;
+    int year_day = 365;
+    while(us>=year_day){
+        rtc->year++;
+        us -= year_day;
+        if((((rtc->year%4)==0)&&((rtc->year%100)!=0))||(rtc->year%400==0)){
+            year_day = 366;
+        }
+        else{
+            year_day = 365;
+        }
+    }
+    rtc->month = 1;
+    if (year_day == 365){
+        int month = 0;
+        while (us>=months_common[month]){
+            us -= months_common[month];
+            rtc->month++;
+            month++;
+        }
+    }
+    else{
+        int month = 0;
+        while (us >= months_leap[month])
+        {
+            us -= months_leap[month];
+            rtc->month++;
+            month++;
+        }
+    }
+    rtc->day = 1 + us;
 }
