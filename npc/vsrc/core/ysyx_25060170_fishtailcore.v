@@ -23,6 +23,7 @@ module ysyx_25060170_fishtailcore(
 
 //接入总线
 //AXI4 Master总线
+//AW
 ,input  wire                            io_master_awready 
 ,output wire                            io_master_awvalid 
 ,output wire [31:0]                     io_master_awaddr  
@@ -30,18 +31,18 @@ module ysyx_25060170_fishtailcore(
 ,output wire [7:0]                      io_master_awlen   
 ,output wire [2:0]                      io_master_awsize  
 ,output wire [1:0]                      io_master_awburst 
-
+//W
 ,input  wire                            io_master_wready  
 ,output wire                            io_master_wvalid  
 ,output wire [31:0]                     io_master_wdata   
 ,output wire [3:0]                      io_master_wstrb   
 ,output wire                            io_master_wlast   
-
+//B
 ,output wire                            io_master_bready  
 ,output wire                            io_master_bvalid  
 ,output wire [1:0]                      io_master_bresp   
 ,output wire [3:0]                      io_master_bid     
-
+//AR
 ,input  wire                            io_master_arready 
 ,output wire                            io_master_arvalid 
 ,output wire [31:0]                     io_master_araddr  
@@ -49,7 +50,7 @@ module ysyx_25060170_fishtailcore(
 ,output wire [7:0]                      io_master_arlen   
 ,output wire [2:0]                      io_master_arsize  
 ,output wire [1:0]                      io_master_arburst 
-
+//R
 ,output wire                            io_master_rready  
 ,output wire                            io_master_rvalid  
 ,output wire [1:0]                      io_master_rresp   
@@ -58,6 +59,7 @@ module ysyx_25060170_fishtailcore(
 ,output wire                            io_master_rid     
 
 //AXI4 Slave总线
+//AW
 ,output wire                            io_slave_awready  //unused
 ,input  wire                            io_slave_awvalid  
 ,input  wire [31:0]                     io_slave_awaddr   
@@ -65,18 +67,18 @@ module ysyx_25060170_fishtailcore(
 ,input  wire [7:0]                      io_slave_awlen    
 ,input  wire [2:0]                      io_slave_awsize   
 ,input  wire [1:0]                      io_slave_awburst  
-
+//W
 ,output wire                            io_slave_wready   //unused
 ,input  wire                            io_slave_wvalid   
 ,input  wire [31:0]                     io_slave_wdata    
 ,input  wire [3:0]                      io_slave_wstrb    
 ,input  wire                            io_slave_wlast    
-
+//B
 ,input  wire                            io_slave_bready   
 ,output wire                            io_slave_bvalid   //unused
 ,output wire [1:0]                      io_slave_bresp    //unused
 ,output wire [3:0]                      io_slave_bid      //unused
-
+//AR
 ,output wire                            io_slave_arready  //unused
 ,output wire                            io_slave_arvalid  
 ,output wire [31:0]                     io_slave_araddr   
@@ -84,18 +86,16 @@ module ysyx_25060170_fishtailcore(
 ,output wire [7:0]                      io_slave_arlen    
 ,output wire [2:0]                      io_slave_arsize   
 ,output wire [1:0]                      io_slave_arburst  
-
+//R
 ,output wire                            io_slave_rready      
 ,output wire                            io_slave_rvalid   //unused
 ,output wire [1:0]                      io_slave_rresp    //unused
 ,output wire [31:0]                     io_slave_rdata    //unused
 ,output wire                            io_slave_rlast    //unused
 ,output wire [3:0]                      io_slave_rid      //unused
-
 );
 
-//axi4lite扩展为axi4
-
+//axi4lite扩展为axi4    
 //master
 //AW
 assign io_master_awid    = 4'b0;    
@@ -107,6 +107,8 @@ assign io_master_awburst = 2'b0;
 assign io_master_wlast   = 1'b0;
 
 //B
+assign io_master_bvalid  = 1'b0;
+assign io_master_bresp   = 2'b0;
 assign io_master_bid     = 4'b0;
 
 //AR
@@ -120,12 +122,13 @@ assign io_master_rlast   = 1'b0;
 assign io_master_rid     = 1'b0;
 
 //slaver
+
 //AW
 
 //W
 
 //B
-assign io_slave_bid      = 1'b0;
+assign io_slave_bid      = 4'b0;
 
 //AR
 assign io_slave_arid     = 4'b0;     
@@ -135,71 +138,94 @@ assign io_slave_arburst  = 2'b0;
 
 //R
 assign io_slave_rlast    = 1'b0; 
-assign io_slave_rid      = 1'b0;
+assign io_slave_rid      = 4'b0;
 
 //**************************************arbiter**************************************//
 //arbiter out signals
+//MASTER
+wire        arb_ifu_arready ;
+wire [2:0]  arb_ifu_rresp   ;
+wire        arb_ifu_rvalid  ;
+wire [31:0] arb_ifu_rdata   ;
+wire        arb_lsu_awready ;
+wire        arb_lsu_wready  ;
+wire        arb_lsu_bvalid  ;
+wire [1:0]  arb_lsu_bresp   ;
+wire        arb_lsu_arready ;
+wire        arb_lsu_rvalid  ;
+wire [1:0]  arb_lsu_rresp   ;
+wire [31:0] arb_lsu_rdata   ;
+//SLAVE
+wire        arb_axi_awvalid ;
+wire [31:0] arb_axi_awaddr  ;
+wire        arb_axi_wvalid  ;
+wire [31:0] arb_axi_wdata   ;
+wire [3:0]  arb_axi_wstrb   ;
+wire        arb_axi_bready  ;
+wire        arb_axi_arvalid ;
+wire [31:0] arb_axi_araddr  ;
+wire        arb_axi_rready  ;
 
 ysyx_25060170_arbiter arbiter(
      .clk               (clk)
     ,.rst               (rst)
-    //Master
     //ifu side
     //AR
-    ,.ifu_arb_arvalid   ()//<<i<<
-    ,.arb_ifu_arready   ()//>>o>>
-    ,.ifu_arb_araddr    ()//<<i<<
+    ,.ifu_arb_arvalid   (ifu_arb_arvalid)//<<i<<
+    ,.arb_ifu_arready   (arb_ifu_arready)//>>o>>
+    ,.ifu_arb_araddr    (ifu_arb_araddr)//<<i<<
     //R
-    ,.arb_ifu_rresp     ()//>>o>>
-    ,.arb_ifu_rvalid    ()//>>o>>
-    ,.ifu_arb_rready    ()//<<i<<
-    ,.arb_ifu_rdata     ()//>>o>>
+    ,.arb_ifu_rresp     (arb_ifu_rresp)//>>o>>
+    ,.arb_ifu_rvalid    (arb_ifu_rvalid)//>>o>>
+    ,.ifu_arb_rready    (ifu_arb_rready)//<<i<<
+    ,.arb_ifu_rdata     (arb_ifu_rdata)//>>o>>
     //lsu side
     //AW
-    ,.lsu_arb_awvalid   ()//<<i<<
-    ,.arb_lsu_awready   ()//>>o>>
-    ,.lsu_arb_awaddr    ()//<<i<<
+    ,.lsu_arb_awvalid   (lsu_arb_awvalid)//<<i<<
+    ,.arb_lsu_awready   (arb_lsu_awready)//>>o>>
+    ,.lsu_arb_awaddr    (lsu_arb_awaddr)//<<i<<
     //W
-    ,.lsu_arb_wvalid    ()//<<i<<
-    ,.arb_lsu_wready    ()//>>o>>
-    ,.lsu_arb_wdata     ()//<<i<<
-    ,.lsu_arb_wstrb     ()//<<i<<
+    ,.lsu_arb_wvalid    (lsu_arb_wvalid)//<<i<<
+    ,.arb_lsu_wready    (arb_lsu_wready)//>>o>>
+    ,.lsu_arb_wdata     (lsu_arb_wdata)//<<i<<
+    ,.lsu_arb_wstrb     (lsu_arb_wstrb)//<<i<<
     //B
-    ,.arb_lsu_bvalid    ()//>>o>>
-    ,.lsu_arb_bready    ()//<<i<<
-    ,.arb_lsu_bresp     ()//>>o>>
+    ,.arb_lsu_bvalid    (arb_lsu_bvalid)//>>o>>
+    ,.lsu_arb_bready    (lsu_arb_bready)//<<i<<
+    ,.arb_lsu_bresp     (arb_lsu_bresp)//>>o>>
     //AR
-    ,.lsu_arb_arvalid   ()//<<i<<
-    ,.arb_lsu_arready   ()//>>o>>
-    ,.lsu_arb_araddr    ()//<<i<<
+    ,.lsu_arb_arvalid   (lsu_arb_arvalid)//<<i<<
+    ,.arb_lsu_arready   (arb_lsu_arready)//>>o>>
+    ,.lsu_arb_araddr    (lsu_arb_araddr)//<<i<<
     //R
-    ,.arb_lsu_rvalid    ()//>>o>>
-    ,.lsu_arb_rready    ()//<<i<<
-    ,.arb_lsu_rresp     ()//>>o>>
-    ,.arb_lsu_rdata     ()//>>o>>
+    ,.arb_lsu_rvalid    (arb_lsu_rvalid)//>>o>>
+    ,.lsu_arb_rready    (lsu_arb_rready)//<<i<<
+    ,.arb_lsu_rresp     (arb_lsu_rresp)//>>o>>
+    ,.arb_lsu_rdata     (arb_lsu_rdata)//>>o>>
+
+    //arbiter to master
     //AW
-    //SLAVE sram
-    ,.arb_axi_awvalid   (io_slave_awvalid)//>>o>>
-    ,.axi_arb_awready   (io_slave_awready)//<<i<<
-    ,.arb_axi_awaddr    (io_slave_awaddr)//>>o>>
+    ,.arb_axi_awvalid   (io_master_awvalid)//>>o>>
+    ,.axi_arb_awready   (io_master_awready)//<<i<<
+    ,.arb_axi_awaddr    (io_master_awaddr)//>>o>>
     //W
-    ,.arb_axi_wvalid    (io_slave_wvalid)//>>o>>
-    ,.axi_arb_wready    (io_slave_wready)//<<i<<
-    ,.arb_axi_wdata     (io_slave_wdata)//>>o>>
-    ,.arb_axi_wstrb     (io_slave_wstrb)//>>o>>
+    ,.arb_axi_wvalid    (io_master_wvalid)//>>o>>
+    ,.axi_arb_wready    (io_master_wready)//<<i<<
+    ,.arb_axi_wdata     (io_master_wdata)//>>o>>
+    ,.arb_axi_wstrb     (io_master_wstrb)//>>o>>
     //B
-    ,.axi_arb_bvalid    (io_slave_bvalid)//<<i<<
-    ,.arb_axi_bready    (io_slave_bready)//>>o>>
-    ,.axi_arb_bresp     (io_slave_bresp)//<<i<<
+    ,.axi_arb_bvalid    (io_master_bvalid)//<<i<<
+    ,.arb_axi_bready    (io_master_bready)//>>o>>
+    ,.axi_arb_bresp     (io_master_bresp)//<<i<<
     //AR
-    ,.arb_axi_arvalid   (io_slave_arvalid)//>>o>>
-    ,.axi_arb_arready   (io_slave_arready)//<<i<<
-    ,.arb_axi_araddr    (io_slave_araddr)//>>o>>
+    ,.arb_axi_arvalid   (io_master_arvalid)//>>o>>
+    ,.axi_arb_arready   (io_master_arready)//<<i<<
+    ,.arb_axi_araddr    (io_master_araddr)//>>o>>
     //R
-    ,.axi_arb_rvalid    (io_slave_rvalid)//<<i<<
-    ,.arb_axi_rready    (io_slave_rready)//>>o>>
-    ,.axi_arb_rresp     (io_slave_rresp)//<<i<<
-    ,.axi_arb_rdata     (io_slave_rdata)//<<i<<
+    ,.axi_arb_rvalid    (io_master_rvalid)//<<i<<
+    ,.arb_axi_rready    (io_master_rready)//>>o>>
+    ,.axi_arb_rresp     (io_master_rresp)//<<i<<
+    ,.axi_arb_rdata     (io_master_rdata)//<<i<<
 );
 
 
@@ -237,47 +263,57 @@ wire                             id_stall       ;
 // reg             inst_i                   ;
 // reg             pc_i                     ;
 
-// ysyx_25060170_ifu1 Outputs
-wire      [`ysyx_25060170_PC]       ifu1_ifu2_current_pc;
-wire                                ifu1_ifu2_valid;
-// wire                                if_valid;
-// wire      [`ysyx_25060170_PC]       DPIC_if_id_pc;
-// wire      [`ysyx_25060170_PC]       if_id_next_pc;
-// wire      [`ysyx_25060170_INST]     if_id_inst;
-// wire      [`ysyx_25060170_INST]     DPIC_dpic_ifu_inst        ;
-// wire                                if_id_inst_bxx;
-// wire      [`ysyx_25060170_PC]       if_pc;
-// wire      [`ysyx_25060170_PC]       if_next_pc; 
-//if_next_pc also use dpic to get instruction
-wire        [`ysyx_25060170_PC]     ifu1_if1if2reg_next_pc;
-wire                                ifu1_if1if2reg_bpupredict;
-wire                                ifu1_if1if2reg_bpuvalid;
+// wire      [`ysyx_25060170_PC]       ifu1_ifu2_current_pc;
+// wire                                ifu1_ifu2_valid;
+// // wire                                if_valid;
+// // wire      [`ysyx_25060170_PC]       DPIC_if_id_pc;
+// // wire      [`ysyx_25060170_PC]       if_id_next_pc;
+// // wire      [`ysyx_25060170_INST]     if_id_inst;
+// // wire      [`ysyx_25060170_INST]     DPIC_dpic_ifu_inst        ;
+// // wire                                if_id_inst_bxx;
+// // wire      [`ysyx_25060170_PC]       if_pc;
+// // wire      [`ysyx_25060170_PC]       if_next_pc; 
+// //if_next_pc also use dpic to get instruction
+// wire        [`ysyx_25060170_PC]     ifu1_if1if2reg_next_pc;
+// wire                                ifu1_if1if2reg_bpupredict;
+// wire                                ifu1_if1if2reg_bpuvalid;
 
+// ysyx_25060170_ifu1 Outputs
+wire                        ifu_ifidreg_valid       ;
+wire [`ysyx_25060170_PC]    ifu_if1if2reg_current_pc;
+wire [`ysyx_25060170_PC]    ifu_if1if2reg_next_pc   ;
+wire [`ysyx_25060170_INST]  ifu_ididreg_inst        ;
+wire                        ifu_ifidreg_bpupredict  ;
+wire                        ifu_ifidreg_bpu_valid   ;
+wire                        ifu_arb_arvalid         ;
+wire [31:0]                 ifu_arb_araddr          ;
+wire                        ifu_arb_rready          ;
+                                
 ysyx_25060170_ifu u_ysyx_25060170_ifu(
-     .rst                       (rst)
-    ,.clk                       (clk)
-    ,.idu_ifu_jump_pc           ()
-    ,.idu_ifu_jump              ()
-    ,.bpu_ifu_jump_pc           ()                                  
-    ,.btb_predictedTaken        ()                            
-    ,.bpu_ifu_bpuvalid          ()                        
-    ,.lsu_ifu_jump_pc           ()                        
-    ,.lsu_ifu_jump              ()                    
-    ,.idu_ifu_ready             ()
-    ,.idu_ifu_stall             ()                    
-    ,.ifu_ifidreg_valid         ()                        
-    ,.ifu_if1if2reg_current_pc  ()                                
-    ,.ifu_if1if2reg_next_pc     ()                                
-    ,.ifu_ididreg_inst          ()                            
-    ,.ifu_ifidreg_bpupredict    ()                                    
-    ,.ifu_ifidreg_bpu_valid     ()                                
-    ,.ifu_arb_arvalid           ()                            
-    ,.arb_ifu_arready           ()                            
-    ,.ifu_arb_araddr            ()                            
-    ,.arb_ifu_rresp             ()                            
-    ,.arb_ifu_rvalid            ()                            
-    ,.ifu_arb_rready            ()                            
-    ,.arb_ifu_rdata             ()                        
+     .rst                       (rst)//<<i<<
+    ,.clk                       (clk)//<<i<<
+    ,.idu_ifu_jump_pc           ()//<<i<<
+    ,.idu_ifu_jump              ()//<<i<<
+    ,.bpu_ifu_jump_pc           ()//<<i<<                                  
+    ,.btb_predictedTaken        ()//<<i<<                            
+    ,.bpu_ifu_bpuvalid          ()//<<i<<                        
+    ,.lsu_ifu_jump_pc           ()//<<i<<                        
+    ,.lsu_ifu_jump              ()//<<i<<                    
+    ,.idu_ifu_ready             ()//<<i<<
+    ,.idu_ifu_stall             ()//<<i<<                    
+    ,.ifu_ifidreg_valid         (ifu_ifidreg_valid       )//>>o>>                        
+    ,.ifu_if1if2reg_current_pc  (ifu_if1if2reg_current_pc)//>>o>>                                
+    ,.ifu_if1if2reg_next_pc     (ifu_if1if2reg_next_pc   )//>>o>>                                
+    ,.ifu_ididreg_inst          (ifu_ididreg_inst        )//>>o>>                            
+    ,.ifu_ifidreg_bpupredict    (ifu_ifidreg_bpupredict  )//>>o>>                                    
+    ,.ifu_ifidreg_bpu_valid     (ifu_ifidreg_bpu_valid   )//>>o>>                                
+    ,.ifu_arb_arvalid           (ifu_arb_arvalid)//>>o>>                            
+    ,.arb_ifu_arready           (arb_ifu_arready)//<<i<<                            
+    ,.ifu_arb_araddr            (ifu_arb_araddr)//>>o>>                            
+    ,.arb_ifu_rresp             (arb_ifu_rresp)//<<i<<                            
+    ,.arb_ifu_rvalid            (arb_ifu_rvalid)//<<i<<                            
+    ,.ifu_arb_rready            (ifu_arb_rready)//>>o>>                            
+    ,.arb_ifu_rdata             (arb_ifu_rdata)//<<i<<                        
 );
 
 // ysyx_25060170_ifu1 u_ysyx_25060170_ifu1(
@@ -780,6 +816,17 @@ wire [`ysyx_25060170_INST]      ls_inst;
 // wire                            DPIC_ls_mem_re;
 // wire                            ls_pipeline_idstall;
 
+//lsu axi4-lite to arbiter outputs
+wire [31:0] ls_load_data_o      ;
+wire lsu_arb_awvalid            ;
+wire [31:0] lsu_arb_awaddr      ;
+wire lsu_arb_wvalid             ;
+wire [31:0] lsu_arb_wdata       ;
+wire [3:0]  lsu_arb_wstrb       ;
+wire lsu_arb_bready             ;
+wire lsu_arb_arvalid            ;
+wire [31:0] lsu_arb_araddr      ;
+wire lsu_arb_rready             ;
 // 实例化ex_ls_reg_wb_ctl
 ysyx_25060170_lsu u_ysyx_25060170_lsu (
      .clk                   ( clk                      )//<<i<<
@@ -805,25 +852,29 @@ ysyx_25060170_lsu u_ysyx_25060170_lsu (
     ,.inst_o                ( ls_inst                  )//>>o>>
     ,.next_pc_o             ( ls_next_pc               )//>>o>>
     //unknown
-    ,.ls_load_data_o        ()//>>o>>
+    ,.ls_load_data_o        (ls_load_data_o)//>>o>>
     // lsu axi4-lite to arbiter
-    ,.lsu_arb_awvalid       ()//>>o>>
-    ,.arb_lsu_awready       ()//<<i<<
-    ,.lsu_arb_awaddr        ()//>>o>>
-    ,.lsu_arb_wvalid        ()//<<i<<
-    ,.arb_lsu_wready        ()//<<i<<
-    ,.lsu_arb_wdata         ()//<<i<<
-    ,.lsu_arb_wstrb         ()//<<i<<
-    ,.arb_lsu_bvalid        ()//<<i<<
-    ,.lsu_arb_bready        ()//<<i<<
-    ,.arb_lsu_bresp         ()//<<i<<
-    ,.lsu_arb_arvalid       ()//<<i<<
-    ,.arb_lsu_arready       ()//<<i<<
-    ,.lsu_arb_araddr        ()//<<i<<
-    ,.arb_lsu_rvalid        ()//<<i<<
-    ,.lsu_arb_rready        ()//<<i<<
-    ,.arb_lsu_rresp         ()//<<i<<
-    ,.arb_lsu_rdata         ()//<<i<<
+    ,.lsu_arb_awvalid       (lsu_arb_awvalid)//>>o>>
+    ,.arb_lsu_awready       (arb_lsu_awready)//<<i<<
+    ,.lsu_arb_awaddr        (lsu_arb_awaddr)//>>o>>
+
+    ,.lsu_arb_wvalid        (lsu_arb_wvalid)//>>o>>
+    ,.arb_lsu_wready        (arb_lsu_wready)//<<i<<
+    ,.lsu_arb_wdata         (lsu_arb_wdata)//>>o>>
+    ,.lsu_arb_wstrb         (lsu_arb_wstrb)//>>o>>
+
+    ,.arb_lsu_bvalid        (arb_lsu_bvalid)//<<i<<
+    ,.lsu_arb_bready        (lsu_arb_bready)//>>o>>
+    ,.arb_lsu_bresp         (arb_lsu_bresp)//<<i<<
+
+    ,.lsu_arb_arvalid       (lsu_arb_arvalid)//>>o>>
+    ,.arb_lsu_arready       (arb_lsu_arready)//<<i<<
+    ,.lsu_arb_araddr        (lsu_arb_araddr)//>>o>>
+
+    ,.arb_lsu_rvalid        (arb_lsu_rvalid)//<<i<<
+    ,.lsu_arb_rready        (lsu_arb_rready)//>>o>>
+    ,.arb_lsu_rresp         (arb_lsu_rresp)//<<i<<
+    ,.arb_lsu_rdata         (arb_lsu_rdata)//<<i<<
 );
 
 // ysyx_25060170_ls_wb_reg Inputs
