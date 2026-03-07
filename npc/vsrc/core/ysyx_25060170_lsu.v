@@ -20,6 +20,7 @@ module ysyx_25060170_lsu(
     ,output wire                              ls_ready_o
     ,output wire                              ls_valid_o
     ,output wire                              ls_flush_o
+
     ,output wire                              ls_jump_o
     ,output wire [`ysyx_25060170_PC]          ls_jump_pc_o
 
@@ -27,7 +28,7 @@ module ysyx_25060170_lsu(
     ,output wire [`ysyx_25060170_INST]        inst_o
     ,output wire [`ysyx_25060170_PC]          next_pc_o
 
-    //================== AXI4-Lite 接口 to arbiter ==================
+    // lsu axi4-lite to arbiter
     // AW channel
     ,output wire                              lsu_arb_awvalid
     ,input  wire                              arb_lsu_awready
@@ -42,8 +43,9 @@ module ysyx_25060170_lsu(
     // B channel
     ,input  wire                              arb_lsu_bvalid
     ,output wire                              lsu_arb_bready
+    /* verilator lint_off UNUSEDSIGNAL */
     ,input  wire [1:0]                        arb_lsu_bresp
-
+    /* verilator lint_on  UNUSEDSIGNAL */
     // AR channel
     ,output wire                              lsu_arb_arvalid
     ,input  wire                              arb_lsu_arready

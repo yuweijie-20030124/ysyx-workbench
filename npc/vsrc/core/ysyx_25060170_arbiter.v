@@ -294,9 +294,7 @@ always @(*) begin
     endcase
 end
 
-//==========================================================================
-// 连线输出
-//==========================================================================
+//output signals
 assign arb_ifu_arready = arb_ifu_arready_r;
 assign arb_ifu_rresp   = arb_ifu_rresp_r;
 assign arb_ifu_rvalid  = arb_ifu_rvalid_r;

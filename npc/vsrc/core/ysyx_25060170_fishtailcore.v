@@ -136,7 +136,72 @@ assign io_slave_arburst  = 2'b0;
 //R
 assign io_slave_rlast    = 1'b0; 
 assign io_slave_rid      = 1'b0;
+
 //**************************************arbiter**************************************//
+//arbiter out signals
+
+ysyx_25060170_arbiter arbiter(
+     .clk               (clk)
+    ,.rst               (rst)
+    //Master
+    //ifu side
+    //AR
+    ,.ifu_arb_arvalid   ()//<<i<<
+    ,.arb_ifu_arready   ()//>>o>>
+    ,.ifu_arb_araddr    ()//<<i<<
+    //R
+    ,.arb_ifu_rresp     ()//>>o>>
+    ,.arb_ifu_rvalid    ()//>>o>>
+    ,.ifu_arb_rready    ()//<<i<<
+    ,.arb_ifu_rdata     ()//>>o>>
+    //lsu side
+    //AW
+    ,.lsu_arb_awvalid   ()//<<i<<
+    ,.arb_lsu_awready   ()//>>o>>
+    ,.lsu_arb_awaddr    ()//<<i<<
+    //W
+    ,.lsu_arb_wvalid    ()//<<i<<
+    ,.arb_lsu_wready    ()//>>o>>
+    ,.lsu_arb_wdata     ()//<<i<<
+    ,.lsu_arb_wstrb     ()//<<i<<
+    //B
+    ,.arb_lsu_bvalid    ()//>>o>>
+    ,.lsu_arb_bready    ()//<<i<<
+    ,.arb_lsu_bresp     ()//>>o>>
+    //AR
+    ,.lsu_arb_arvalid   ()//<<i<<
+    ,.arb_lsu_arready   ()//>>o>>
+    ,.lsu_arb_araddr    ()//<<i<<
+    //R
+    ,.arb_lsu_rvalid    ()//>>o>>
+    ,.lsu_arb_rready    ()//<<i<<
+    ,.arb_lsu_rresp     ()//>>o>>
+    ,.arb_lsu_rdata     ()//>>o>>
+    //AW
+    //SLAVE sram
+    ,.arb_axi_awvalid   (io_slave_awvalid)//>>o>>
+    ,.axi_arb_awready   (io_slave_awready)//<<i<<
+    ,.arb_axi_awaddr    (io_slave_awaddr)//>>o>>
+    //W
+    ,.arb_axi_wvalid    (io_slave_wvalid)//>>o>>
+    ,.axi_arb_wready    (io_slave_wready)//<<i<<
+    ,.arb_axi_wdata     (io_slave_wdata)//>>o>>
+    ,.arb_axi_wstrb     (io_slave_wstrb)//>>o>>
+    //B
+    ,.axi_arb_bvalid    (io_slave_bvalid)//<<i<<
+    ,.arb_axi_bready    (io_slave_bready)//>>o>>
+    ,.axi_arb_bresp     (io_slave_bresp)//<<i<<
+    //AR
+    ,.arb_axi_arvalid   (io_slave_arvalid)//>>o>>
+    ,.axi_arb_arready   (io_slave_arready)//<<i<<
+    ,.arb_axi_araddr    (io_slave_araddr)//>>o>>
+    //R
+    ,.axi_arb_rvalid    (io_slave_rvalid)//<<i<<
+    ,.arb_axi_rready    (io_slave_rready)//>>o>>
+    ,.axi_arb_rresp     (io_slave_rresp)//<<i<<
+    ,.axi_arb_rdata     (io_slave_rdata)//<<i<<
+);
+
 
 
 assign DPIC_if_id_pc = ifu1_ifu2_current_pc;
@@ -187,6 +252,33 @@ wire                                ifu1_ifu2_valid;
 wire        [`ysyx_25060170_PC]     ifu1_if1if2reg_next_pc;
 wire                                ifu1_if1if2reg_bpupredict;
 wire                                ifu1_if1if2reg_bpuvalid;
+
+ysyx_25060170_ifu u_ysyx_25060170_ifu(
+     .rst                       (rst)
+    ,.clk                       (clk)
+    ,.idu_ifu_jump_pc           ()
+    ,.idu_ifu_jump              ()
+    ,.bpu_ifu_jump_pc           ()                                  
+    ,.btb_predictedTaken        ()                            
+    ,.bpu_ifu_bpuvalid          ()                        
+    ,.lsu_ifu_jump_pc           ()                        
+    ,.lsu_ifu_jump              ()                    
+    ,.idu_ifu_ready             ()
+    ,.idu_ifu_stall             ()                    
+    ,.ifu_ifidreg_valid         ()                        
+    ,.ifu_if1if2reg_current_pc  ()                                
+    ,.ifu_if1if2reg_next_pc     ()                                
+    ,.ifu_ididreg_inst          ()                            
+    ,.ifu_ifidreg_bpupredict    ()                                    
+    ,.ifu_ifidreg_bpu_valid     ()                                
+    ,.ifu_arb_arvalid           ()                            
+    ,.arb_ifu_arready           ()                            
+    ,.ifu_arb_araddr            ()                            
+    ,.arb_ifu_rresp             ()                            
+    ,.arb_ifu_rvalid            ()                            
+    ,.ifu_arb_rready            ()                            
+    ,.arb_ifu_rdata             ()                        
+);
 
 // ysyx_25060170_ifu1 u_ysyx_25060170_ifu1(
 //      .rst                       (rst)//<<i<<
@@ -270,7 +362,32 @@ wire                                ifu1_if1if2reg_bpuvalid;
 // wire                                if2idureg_idu_bpuvalid  ;
 // wire                                if2idureg_idu_valid     ;
 
+//ifuidureg output signals
+wire [`ysyx_25060170_PC] ifuidureg_idu_currentpc ;
+wire [`ysyx_25060170_PC] ifuidureg_idu_nextpc    ;
+wire ifuidureg_idu_bpupredict                    ;  
+wire ifuidureg_idu_bpuvalid                      ;  
+wire ifuidureg_idu_valid                         ;  
 
+ysyx_25060170_ifuidureg u_ysyx_25060170_ifuidureg(
+     .rst                           (rst)//<<i<<                                      
+    ,.clk                           (clk)//<<i<<                                     
+    ,.ifu_ifuidureg_currentpc       ()//<<i<<                                                          
+    ,.ifu_ifuidureg_nextpc          ()//<<i<<                                                      
+    ,.ifu_ifuidureg_bpupredict      ()//<<i<<                                                          
+    ,.ifu_ifuidureg_bpuvalid        ()//<<i<<                                                          
+    ,.ifu_ifuidureg_valid           ()//<<i<<                                                      
+    ,.idu_ifuidureg_ready           ()//<<i<<                                                      
+    ,.idu_ifuidureg_stall           ()//<<i<<                                                      
+    ,.idu_ifuidureg_flush           ()//<<i<<                                                      
+    ,.lsu_ifuidureg_stall           ()//<<i<<                                                      
+    ,.lsu_ifuidureg_flush           ()//<<i<<                                                      
+    ,.ifuidureg_idu_currentpc       (ifuidureg_idu_currentpc)//>>o>>                                                          
+    ,.ifuidureg_idu_nextpc          (ifuidureg_idu_nextpc)//>>o>>                                                      
+    ,.ifuidureg_idu_bpupredict      (ifuidureg_idu_bpupredict)//>>o>>                                                          
+    ,.ifuidureg_idu_bpuvalid        (ifuidureg_idu_bpuvalid)//>>o>>                                                          
+    ,.ifuidureg_idu_valid           (ifuidureg_idu_valid)//>>o>>                                                      
+);
 
 // ysyx_25060170_idu Inputs 
 // reg                             rst;
@@ -324,7 +441,7 @@ wire                        idu_ifu1_jump;
 
 ysyx_25060170_idu u_ysyx_25060170_idu (
      .rst                (rst                   )//<<i<<
-    ,.if2_idu_futurePC   (ifu2_if2idreg_currentpc)//<<i<<
+    ,.ifu_idu_futurePC   (ifu2_if2idreg_currentpc)//<<i<<
     ,.inst_i             (if2idureg_idu_inst        )//<<i<<
     ,.pc_i               (if2idureg_idu_currentpc          )//<<i<<
     ,.next_pc_i          (if2idureg_idu_nextpc     )//<<i<<
@@ -333,7 +450,7 @@ ysyx_25060170_idu u_ysyx_25060170_idu (
     ,.csr_data_i         (csr_idu_data          )//<<i<<
 
     //from bpu
-    ,.ifu2_if2idureg_bpuvalid(if2idureg_idu_bpuvalid)//<<i<<
+    ,.ifu_ifuidureg_bpuvalid(if2idureg_idu_bpuvalid)//<<i<<
     ,.bp_jump_i          (if2idureg_idu_bpupredict     )//<<i<<
     // ,.inst_bxx_i         (if_id_reg_inst_bxx    )//<<i<<
 
@@ -680,26 +797,33 @@ ysyx_25060170_lsu u_ysyx_25060170_lsu (
     ,.ls_ready_o            ( ls_ready                 )//>>o>> 
     ,.ls_valid_o            ( ls_valid                 )//>>o>> 
     ,.ls_flush_o            ( ls_flush                 )//>>o>>
-        //output 
+    //output 
     ,.ls_jump_o             ( ls_pc_jump               )//>>o>>  
     ,.ls_jump_pc_o          ( ls_jump_pc               )//>>o>>
-    ,.re                    ( DPIC_ls_mem_re                )//>>o>> 
-    // ,.pipeline_id_stall_o   ( ls_pipeline_idstall      )//>>o>>
-    //dpic
-
-    ,.we                    ( DPIC_ls_dpic_we               )//>>o>> 
-    // ,.data_i                (                )//<<i<<
-    ,.data_o                ( DPIC_ls_dpic_data             )//>>o>> 
-    ,.raddr                 ( DPIC_ls_dpic_raddr            )//>>o>> 
-    ,.waddr                 ( DPIC_ls_dpic_waddr            )//>>o>> 
-    ,.wlen                  ( DPIC_ls_dpic_wlen             )//>>o>> 
-    ,.rlen                  ( DPIC_ls_dpic_rlen             )//>>o>> 
-    //forwarding
-    // ,.ls_data_forward_o     ( ls_data_forward          )//>>o>>
-    // ,.ls_data_o             ( ls_wb_wbdata             )//>>o>>
-    //outuput to ls_wb_reg
+    
+    //next_stage
     ,.inst_o                ( ls_inst                  )//>>o>>
     ,.next_pc_o             ( ls_next_pc               )//>>o>>
+    //unknown
+    ,.ls_load_data_o        ()//>>o>>
+    // lsu axi4-lite to arbiter
+    ,.lsu_arb_awvalid       ()//>>o>>
+    ,.arb_lsu_awready       ()//<<i<<
+    ,.lsu_arb_awaddr        ()//>>o>>
+    ,.lsu_arb_wvalid        ()//<<i<<
+    ,.arb_lsu_wready        ()//<<i<<
+    ,.lsu_arb_wdata         ()//<<i<<
+    ,.lsu_arb_wstrb         ()//<<i<<
+    ,.arb_lsu_bvalid        ()//<<i<<
+    ,.lsu_arb_bready        ()//<<i<<
+    ,.arb_lsu_bresp         ()//<<i<<
+    ,.lsu_arb_arvalid       ()//<<i<<
+    ,.arb_lsu_arready       ()//<<i<<
+    ,.lsu_arb_araddr        ()//<<i<<
+    ,.arb_lsu_rvalid        ()//<<i<<
+    ,.lsu_arb_rready        ()//<<i<<
+    ,.arb_lsu_rresp         ()//<<i<<
+    ,.arb_lsu_rdata         ()//<<i<<
 );
 
 // ysyx_25060170_ls_wb_reg Inputs

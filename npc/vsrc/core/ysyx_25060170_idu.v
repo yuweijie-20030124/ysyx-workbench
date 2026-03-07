@@ -3,7 +3,7 @@ module ysyx_25060170_idu(
 	//system input
 	 input	wire		       					rst					//<<i<<		
 	//from ifu 直接给 idu 你下一条会跳到哪里去？
-	,input  wire [`ysyx_25060170_PC]			if2_idu_futurePC	//<<i<<			
+	,input  wire [`ysyx_25060170_PC]			ifu_idu_futurePC	//<<i<<			
 	//from if_id signal	
 	,input	wire [`ysyx_25060170_INST]			inst_i				//<<i<<
 	,input	wire [`ysyx_25060170_PC]			pc_i				//<<i<<
@@ -15,7 +15,7 @@ module ysyx_25060170_idu(
 	//from bpu
 	,input 	wire 								bp_jump_i			//<<i<<	我们当时是否预测跳转
 	/* verilator lint_off UNUSEDSIGNAL */
-	,input  wire                                ifu_if2idureg_bpuvalid//<<i<< 当时bpu是否查询的到条目
+	,input  wire                                ifu_ifuidureg_bpuvalid//<<i<< 当时bpu是否查询的到条目
 	// ,input  wire                                inst_bxx_i			//<<i<<	是否有bxx指令
 	/* verilator lint_on  UNUSEDSIGNAL */
 	//data forward
@@ -331,7 +331,7 @@ assign idu_btb_updatePC = pc_i;
 //**************************************IFU***********************************************//
 
 wire PC_error;
-assign PC_error = if2_idu_futurePC != next_pc_o & ~if_valid_i;
+assign PC_error = ifu_idu_futurePC != next_pc_o & ~if_valid_i;
 
 assign idu_ifu1_jump_pc = PC_error										 ? next_pc_o	:
 						  alusrc_o == `INST_JALR          		         ? 	 	  op1   :
