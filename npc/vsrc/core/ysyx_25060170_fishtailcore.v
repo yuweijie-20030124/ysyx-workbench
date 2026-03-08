@@ -1,8 +1,9 @@
 `include "define.v"
 
 module ysyx_25060170_fishtailcore(
- input wire                             clk			
-,input wire                             rst
+ input wire                             clock			
+,input wire                             reset
+,input wire                             io_interrupt
 ,output wire [`ysyx_25060170_PC]        DPIC_if_id_pc           //给ram pc来拿inst
 ,input  reg  [`ysyx_25060170_INST]      DPIC_dpic_ifu_inst      //从ram 得到inst              
 ,output wire  	                        DPIC_ls_mem_re                 
@@ -39,9 +40,9 @@ module ysyx_25060170_fishtailcore(
 ,output wire                            io_master_wlast   
 //B
 ,output wire                            io_master_bready  
-,output wire                            io_master_bvalid  
-,output wire [1:0]                      io_master_bresp   
-,output wire [3:0]                      io_master_bid     
+,input  wire                            io_master_bvalid  
+,input  wire [1:0]                      io_master_bresp   
+,input  wire [3:0]                      io_master_bid     
 //AR
 ,input  wire                            io_master_arready 
 ,output wire                            io_master_arvalid 
@@ -52,11 +53,11 @@ module ysyx_25060170_fishtailcore(
 ,output wire [1:0]                      io_master_arburst 
 //R
 ,output wire                            io_master_rready  
-,output wire                            io_master_rvalid  
-,output wire [1:0]                      io_master_rresp   
-,output wire [31:0]                     io_master_rdata   
-,output wire                            io_master_rlast   
-,output wire                            io_master_rid     
+,input  wire                            io_master_rvalid  
+,input  wire [1:0]                      io_master_rresp   
+,input  wire [31:0]                     io_master_rdata   
+,input  wire                            io_master_rlast   
+,input  wire                            io_master_rid     
 
 //AXI4 Slave总线
 //AW
@@ -80,14 +81,14 @@ module ysyx_25060170_fishtailcore(
 ,output wire [3:0]                      io_slave_bid      //unused
 //AR
 ,output wire                            io_slave_arready  //unused
-,output wire                            io_slave_arvalid  
-,output wire [31:0]                     io_slave_araddr   
-,output wire [3:0]                      io_slave_arid     
-,output wire [7:0]                      io_slave_arlen    
-,output wire [2:0]                      io_slave_arsize   
-,output wire [1:0]                      io_slave_arburst  
+,input  wire                            io_slave_arvalid  
+,input  wire [31:0]                     io_slave_araddr   
+,input  wire [3:0]                      io_slave_arid     
+,input  wire [7:0]                      io_slave_arlen    
+,input  wire [2:0]                      io_slave_arsize   
+,input  wire [1:0]                      io_slave_arburst  
 //R
-,output wire                            io_slave_rready      
+,input  wire                            io_slave_rready      
 ,output wire                            io_slave_rvalid   //unused
 ,output wire [1:0]                      io_slave_rresp    //unused
 ,output wire [31:0]                     io_slave_rdata    //unused
@@ -107,9 +108,9 @@ assign io_master_awburst = 2'b0;
 assign io_master_wlast   = 1'b0;
 
 //B
-assign io_master_bvalid  = 1'b0;
-assign io_master_bresp   = 2'b0;
-assign io_master_bid     = 4'b0;
+// assign io_master_bvalid  = 1'b0;
+// assign io_master_bresp   = 2'b0;
+// assign io_master_bid     = 4'b0;
 
 //AR
 assign io_master_arid    = 4'b0;
@@ -118,8 +119,8 @@ assign io_master_arsize  = 3'b0;
 assign io_master_arburst = 2'b0;
 
 //R
-assign io_master_rlast   = 1'b0;
-assign io_master_rid     = 1'b0;
+// assign io_master_rlast   = 1'b0;
+// assign io_master_rid     = 1'b0;
 
 //slaver
 
@@ -131,10 +132,10 @@ assign io_master_rid     = 1'b0;
 assign io_slave_bid      = 4'b0;
 
 //AR
-assign io_slave_arid     = 4'b0;     
-assign io_slave_arlen    = 8'b0;
-assign io_slave_arsize   = 3'b0;
-assign io_slave_arburst  = 2'b0;
+// assign io_slave_arid     = 4'b0;     
+// assign io_slave_arlen    = 8'b0;
+// assign io_slave_arsize   = 3'b0;
+// assign io_slave_arburst  = 2'b0;
 
 //R
 assign io_slave_rlast    = 1'b0; 
@@ -167,8 +168,8 @@ wire [31:0] arb_axi_araddr  ;
 wire        arb_axi_rready  ;
 
 ysyx_25060170_arbiter arbiter(
-     .clk               (clk)
-    ,.rst               (rst)
+     .clk               (clock)
+    ,.rst               (reset)
     //ifu side
     //AR
     ,.ifu_arb_arvalid   (ifu_arb_arvalid)//<<i<<
@@ -229,16 +230,15 @@ ysyx_25060170_arbiter arbiter(
 );
 
 
-
-assign DPIC_if_id_pc = ifu1_ifu2_current_pc;
+wire [`ysyx_25060170_PC]  ifu1_ifu2_current_pc;
 
 // ysyx_25060170_bpu Outputs
 wire btb_valid;
 wire [`ysyx_25060170_PC] btb_target;
 wire btb_predictedTaken;
 ysyx_25060170_btb u_ysyx_25060170_btb(
-     .clk                   (clk)//<<i<<
-    ,.rst                   (rst)//<<i<<
+     .clk                   (clock)//<<i<<
+    ,.rst                   (reset)//<<i<<
     ,.if1_btb_PC            (ifu1_ifu2_current_pc)//<<i<<
     ,.idu_btb_update        (idu_BPU_update)//<<i<<
     ,.idu_btb_updatePC      (idu_btb_updatePC)//<<i<<
@@ -290,8 +290,8 @@ wire [31:0]                 ifu_arb_araddr          ;
 wire                        ifu_arb_rready          ;
                                 
 ysyx_25060170_ifu u_ysyx_25060170_ifu(
-     .rst                       (rst)//<<i<<
-    ,.clk                       (clk)//<<i<<
+     .rst                       (reset)//<<i<<
+    ,.clk                       (clock)//<<i<<
     ,.idu_ifu_jump_pc           ()//<<i<<
     ,.idu_ifu_jump              ()//<<i<<
     ,.bpu_ifu_jump_pc           ()//<<i<<                                  
@@ -406,8 +406,8 @@ wire ifuidureg_idu_bpuvalid                      ;
 wire ifuidureg_idu_valid                         ;  
 
 ysyx_25060170_ifuidureg u_ysyx_25060170_ifuidureg(
-     .rst                           (rst)//<<i<<                                      
-    ,.clk                           (clk)//<<i<<                                     
+     .rst                           (reset)//<<i<<                                      
+    ,.clk                           (clock)//<<i<<                                     
     ,.ifu_ifuidureg_currentpc       ()//<<i<<                                                          
     ,.ifu_ifuidureg_nextpc          ()//<<i<<                                                      
     ,.ifu_ifuidureg_bpupredict      ()//<<i<<                                                          

@@ -1,4 +1,4 @@
-include /home/software/Verilator/verilator/include/verilated.mk
+include /home/yuweijie/required_software_ysyx/verilator/include/verilated.mk
 include ../Makefile
 
 ifeq ($(wildcard $(NPC_HOME)/csrc/main.c),) 
@@ -26,8 +26,7 @@ VERILOG_FILES = $(wildcard vsrc/core/*.v vsrc/core/define.v vsrc/sim/*.v vsrc/co
 
 # vsrc/debug/*.v vsrc/utils/*.v
 
-VERILATOR = /home/software/Verilator/verilator/bin/verilator
-
+VERILATOR = /home/yuweijie/required_software_ysyx/verilator/bin/verilator
 
 NPC_IMG?= 
 
@@ -47,31 +46,33 @@ NPC_FLAGS += --diff=/home/yuweijie/ysyx-workbench/nemu/build/riscv32-nemu-interp
 
 #-LDFLAGS " $(NEMU_HOME)/build -lriscv32-nemu-interpreter" 
 
-VERILATOR_FLAGS = -Wall --cc --trace \
-					-CFLAGS  " -I /home/yuweijie/ysyx-workbench/npc/include -O2" \
-					-CFLAGS  " -I /home/yuweijie/ysyx-workbench/nemu/tools/capstone/repo/include -O2" \
-					--exe --build \
-					--timescale "1ns/1ns" \
-					--no-timing \
-					-LDFLAGS " -lreadline -lSDL2" \
-					-Ivsrc \
-					-Ivsrc/core \
-					-Ivsrc/home/yuweijie/ysyx-workbench/ysyxSoC/perip/uart16550/rtl \
- 					-Ivsrc/home/yuweijie/ysyx-workbench/ysyxSoC/perip/spi/rtl \
-					--top-module ysyxSoCFull.v
+VERILATOR_FLAGS    = -Wno-fatal \
+					 -Wall --cc --trace \
+				 	 -CFLAGS  " -I /home/yuweijie/ysyx-workbench/npc/include -O2" \
+				 	 -CFLAGS  " -I /home/yuweijie/ysyx-workbench/nemu/tools/capstone/repo/include -O2" \
+				 	 --exe --build \
+				 	 --timescale "1ns/1ns" \
+				 	 --no-timing \
+				 	 -LDFLAGS " -lreadline -lSDL2" \
+				 	 -Ivsrc \
+				 	 -Ivsrc/core \
+				 	 -I/home/yuweijie/ysyx-workbench/ysyxSoC/perip/uart16550/rtl \
+ 				 	 -I/home/yuweijie/ysyx-workbench/ysyxSoC/perip/spi/rtl \
+				 	 --top-module ysyxSoCFull
 
-GDBVERILATOR_FLAGS = -Wall --cc --trace \
-					-CFLAGS  " -g -I /home/yuweijie/ysyx-workbench/npc/include -O0" \
-					-CFLAGS  " -g -I /home/yuweijie/ysyx-workbench/nemu/tools/capstone/repo/include -O0" \
-					--exe --build \
-					--timescale "1ns/1ns" \
-					--no-timing \
-					-LDFLAGS " -lreadline -lSDL2" \
-					-Ivsrc \
-					-Ivsrc/core \
-					-Ivsrc/home/yuweijie/ysyx-workbench/ysyxSoC/perip/uart16550/rtl \
- 					-Ivsrc/home/yuweijie/ysyx-workbench/ysyxSoC/perip/spi/rtl \
-					--top-module ysyxSoCFull.v
+GDBVERILATOR_FLAGS = -Wno-fatal \
+					 -Wall --cc --trace \
+					 -CFLAGS  " -g -I /home/yuweijie/ysyx-workbench/npc/include -O0" \
+					 -CFLAGS  " -g -I /home/yuweijie/ysyx-workbench/nemu/tools/capstone/repo/include -O0" \
+					 --exe --build \
+					 --timescale "1ns/1ns" \
+					 --no-timing \
+					 -LDFLAGS " -lreadline -lSDL2" \
+					 -Ivsrc \
+					 -Ivsrc/core \
+					 -I/home/yuweijie/ysyx-workbench/ysyxSoC/perip/uart16550/rtl \
+ 					 -I/home/yuweijie/ysyx-workbench/ysyxSoC/perip/spi/rtl \
+					 --top-module ysyxSoCFull
 
 GTK = gtkwave
 
@@ -85,7 +86,7 @@ sim:
 run: 
 	$(VERILATOR) $(VERILATOR_FLAGS) $(SRC_FILES) $(VERILOG_FILES) 
 	$(call git commit, "run RTL") # % DO NOT REMOVE THIS LINE!!!
-	./obj_dir/Vysyx_25060170_topcore   $(NPC_FLAGS) $(NPC_IMG)
+	./obj_dir/VysyxSoCFull   $(NPC_FLAGS) $(NPC_IMG)
 
 gtk:	
 	$(GTK) waveform.vcd config.gtkw &
@@ -100,7 +101,7 @@ checkall:
 	$(VERILATOR) --lint-only -Wall \
 		-I$(NPC_HOME)/vsrc \
 		-I$(NPC_HOME)/vsrc/core \
-		--top-module ysyx_25060170_topcore.v \
+		--top-module ysyxSoCFull.v \
 		$(VERILOG_FILES) && echo "lint OK" || echo "lint FAILED"
 
 checkone:
@@ -113,9 +114,9 @@ checkone:
 gdb:
 	$(VERILATOR) $(GDBVERILATOR_FLAGS) $(SRC_FILES) $(VERILOG_FILES)
 	$(call git commit, "gdb RTL") # % DO NOT REMOVE THIS LINE!!!
-	gdb --args ./obj_dir/Vysyx_25060170_topcore $(NPC_FLAGS) $(NPC_IMG)
+	gdb --args ./obj_dir/VysyxSoCFull $(NPC_FLAGS) $(NPC_IMG)
 
 valgrind:
 	rm -rf obj_dir waveform.vcd
 	$(VERILATOR) $(GDBVERILATOR_FLAGS) $(SRC_FILES) $(VERILOG_FILES) 
-	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --log-file=valgrind.log ./obj_dir/Vysyx_25060170_topcore
+	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --log-file=valgrind.log ./obj_dir/VysyxSoCFull

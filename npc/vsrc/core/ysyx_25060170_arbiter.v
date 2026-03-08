@@ -266,7 +266,7 @@ always @(*) begin
 
         S_ARB_IFU_RD_DATA: begin
             arb_ifu_rvalid_r  = axi_arb_rvalid;
-            arb_ifu_rresp_r   = {1'b0, axi_arb_rresp}; // 兼容你 IFU 里 [2:0] 的定义
+            arb_ifu_rresp_r   = {1'b0, axi_arb_rresp};
             arb_ifu_rdata_r   = axi_arb_rdata;
             arb_axi_rready_r  = ifu_arb_rready;
         end
