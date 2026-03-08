@@ -1,8 +1,82 @@
 `include "define.v"
 
 module ysyx_25060170_topcore(
- input wire     clk			
-,input wire     rst		    		
+ input wire     clock			
+,input wire     reset
+,input wire     io_interrupt
+
+//接入总线
+//AXI4 Master总线
+//AW
+,input  wire                            io_master_awready 
+,output wire                            io_master_awvalid 
+,output wire [31:0]                     io_master_awaddr  
+,output wire [3:0]                      io_master_awid    
+,output wire [7:0]                      io_master_awlen   
+,output wire [2:0]                      io_master_awsize  
+,output wire [1:0]                      io_master_awburst 
+//W
+,input  wire                            io_master_wready  
+,output wire                            io_master_wvalid  
+,output wire [31:0]                     io_master_wdata   
+,output wire [3:0]                      io_master_wstrb   
+,output wire                            io_master_wlast   
+//B
+,output wire                            io_master_bready  
+,input  wire                            io_master_bvalid  
+,input  wire [1:0]                      io_master_bresp   
+,input  wire [3:0]                      io_master_bid     
+//AR
+,input  wire                            io_master_arready 
+,output wire                            io_master_arvalid 
+,output wire [31:0]                     io_master_araddr  
+,output wire [3:0]                      io_master_arid    
+,output wire [7:0]                      io_master_arlen   
+,output wire [2:0]                      io_master_arsize  
+,output wire [1:0]                      io_master_arburst 
+//R
+,output wire                            io_master_rready  
+,input  wire                            io_master_rvalid  
+,input  wire [1:0]                      io_master_rresp   
+,input  wire [31:0]                     io_master_rdata   
+,input  wire                            io_master_rlast   
+,input  wire                            io_master_rid     
+
+//AXI4 Slave总线
+//AW
+,output wire                            io_slave_awready  //unused
+,input  wire                            io_slave_awvalid  
+,input  wire [31:0]                     io_slave_awaddr   
+,input  wire [3:0]                      io_slave_awid     
+,input  wire [7:0]                      io_slave_awlen    
+,input  wire [2:0]                      io_slave_awsize   
+,input  wire [1:0]                      io_slave_awburst  
+//W
+,output wire                            io_slave_wready   //unused
+,input  wire                            io_slave_wvalid   
+,input  wire [31:0]                     io_slave_wdata    
+,input  wire [3:0]                      io_slave_wstrb    
+,input  wire                            io_slave_wlast    
+//B
+,input  wire                            io_slave_bready   
+,output wire                            io_slave_bvalid   //unused
+,output wire [1:0]                      io_slave_bresp    //unused
+,output wire [3:0]                      io_slave_bid      //unused
+//AR
+,output wire                            io_slave_arready  //unused
+,input  wire                            io_slave_arvalid  
+,input  wire [31:0]                     io_slave_araddr   
+,input  wire [3:0]                      io_slave_arid     
+,input  wire [7:0]                      io_slave_arlen    
+,input  wire [2:0]                      io_slave_arsize   
+,input  wire [1:0]                      io_slave_arburst  
+//R
+,input  wire                            io_slave_rready      
+,output wire                            io_slave_rvalid   //unused
+,output wire [1:0]                      io_slave_rresp    //unused
+,output wire [31:0]                     io_slave_rdata    //unused
+,output wire                            io_slave_rlast    //unused
+,output wire [3:0]                      io_slave_rid      //unused
 );
 
 wire [`ysyx_25060170_PC]        DPIC_if_id_pc             ;  
@@ -21,12 +95,12 @@ wire [`ysyx_25060170_DATAADDR]  DPIC_ls_dpic_raddr        ;
 wire [`ysyx_25060170_DATAADDR]  DPIC_ls_dpic_waddr        ;
 
 ysyx_25060170_fishtailcore u_ysyx_25060170_fishtailcore (
-     .clk                      (clk                       )
-    ,.rst                      (rst                       )
+     .clk                      (clk                )
+    ,.rst                      (rst                )
     ,.DPIC_if_id_pc            (DPIC_if_id_pc             )
     ,.DPIC_dpic_ifu_inst       (DPIC_dpic_ifu_inst        )
-    ,.DPIC_ls_mem_re           (DPIC_ls_mem_re            )
-    ,.DPIC_ls_dpic_we          (DPIC_ls_dpic_we           )
+    ,.DPIC_ls_mem_re           (DPIC_ls_mem_re     )
+    ,.DPIC_ls_dpic_we          (DPIC_ls_dpic_we    )
     ,.DPIC_ls_dpic_data        (DPIC_ls_dpic_data         )
     ,.DPIC_ls_dpic_wlen        (DPIC_ls_dpic_wlen         )
     ,.DPIC_ls_dpic_rlen        (DPIC_ls_dpic_rlen         )
@@ -37,14 +111,74 @@ ysyx_25060170_fishtailcore u_ysyx_25060170_fishtailcore (
     ,.DPIC_DPIC_MEM_data       (DPIC_DPIC_MEM_data        )
     ,.DPIC_ls_dpic_raddr       (DPIC_ls_dpic_raddr        )//
     ,.DPIC_ls_dpic_waddr       (DPIC_ls_dpic_waddr        )//
+    //core bus
+    ,.io_master_awready        (io_master_awready         )      
+    ,.io_master_awvalid        (io_master_awvalid         )      
+    ,.io_master_awaddr         (io_master_awaddr          )       
+    ,.io_master_awid           (io_master_awid            )         
+    ,.io_master_awlen          (io_master_awlen           )        
+    ,.io_master_awsize         (io_master_awsize          )       
+    ,.io_master_awburst        (io_master_awburst         )      
+    ,.io_master_wready         (io_master_wready          )       
+    ,.io_master_wvalid         (io_master_wvalid          )       
+    ,.io_master_wdata          (io_master_wdata           )        
+    ,.io_master_wstrb          (io_master_wstrb           )        
+    ,.io_master_wlast          (io_master_wlast           )        
+    ,.io_master_bready         (io_master_bready          )       
+    ,.io_master_bvalid         (io_master_bvalid          )       
+    ,.io_master_bresp          (io_master_bresp           )        
+    ,.io_master_bid            (io_master_bid             )      
+    ,.io_master_arready        (io_master_arready         )      
+    ,.io_master_arvalid        (io_master_arvalid         )      
+    ,.io_master_araddr         (io_master_araddr          )       
+    ,.io_master_arid           (io_master_arid            )         
+    ,.io_master_arlen          (io_master_arlen           )        
+    ,.io_master_arsize         (io_master_arsize          )       
+    ,.io_master_arburst        (io_master_arburst         )      
+    ,.io_master_rready         (io_master_rready          )       
+    ,.io_master_rvalid         (io_master_rvalid          )       
+    ,.io_master_rresp          (io_master_rresp           )        
+    ,.io_master_rdata          (io_master_rdata           )        
+    ,.io_master_rlast          (io_master_rlast           )        
+    ,.io_master_rid            (io_master_rid             )      
+    ,.io_slave_awready         (io_slave_awready          )//unused)       //unused
+    ,.io_slave_awvalid         (io_slave_awvalid          )       
+    ,.io_slave_awaddr          (io_slave_awaddr           )        
+    ,.io_slave_awid            (io_slave_awid             )      
+    ,.io_slave_awlen           (io_slave_awlen            )         
+    ,.io_slave_awsize          (io_slave_awsize           )        
+    ,.io_slave_awburst         (io_slave_awburst          )       
+    ,.io_slave_wready          (io_slave_wready           )//unused)        //unused
+    ,.io_slave_wvalid          (io_slave_wvalid           )        
+    ,.io_slave_wdata           (io_slave_wdata            )         
+    ,.io_slave_wstrb           (io_slave_wstrb            )         
+    ,.io_slave_wlast           (io_slave_wlast            )         
+    ,.io_slave_bready          (io_slave_bready           )        
+    ,.io_slave_bvalid          (io_slave_bvalid           )//unused)        //unused
+    ,.io_slave_bresp           (io_slave_bresp            )//unused)         //unused
+    ,.io_slave_bid             (io_slave_bid              )//unused)       //unused
+    ,.io_slave_arready         (io_slave_arready          )//unused)       //unused
+    ,.io_slave_arvalid         (io_slave_arvalid          )       
+    ,.io_slave_araddr          (io_slave_araddr           )        
+    ,.io_slave_arid            (io_slave_arid             )      
+    ,.io_slave_arlen           (io_slave_arlen            )         
+    ,.io_slave_arsize          (io_slave_arsize           )        
+    ,.io_slave_arburst         (io_slave_arburst          )       
+    ,.io_slave_rready          (io_slave_rready           )           
+    ,.io_slave_rvalid          (io_slave_rvalid           )//unused)        //unused
+    ,.io_slave_rresp           (io_slave_rresp            )//unused)         //unused
+    ,.io_slave_rdata           (io_slave_rdata            )//unused)         //unused
+    ,.io_slave_rlast           (io_slave_rlast            )//unused)         //unused
+    ,.io_slave_rid             (io_slave_rid              )//unused)       //unused
+
 );
 
 //ls_mem
 wire [`ysyx_25060170_DATA] DPIC_dpi_ls_mem_skip_flag;
 
 reg [`ysyx_25060170_DATA] diff_test_skip_o;
-always@(posedge clk) begin
-    if(rst | ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_ls_mem_reg.flush) begin
+always@(posedge clk) begin//todo
+    if(rst | ysyx_25060170_topcore.ysyx_25060170_topcore.u_ysyx_25060170_ls_mem_reg.flush) begin
         diff_test_skip_o    <=   `ysyx_25060170_ZERO32  ;
     end
     else if (ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_ls_mem_reg.mem_ready_i & ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_ls_mem_reg.ls_valid_i) begin
