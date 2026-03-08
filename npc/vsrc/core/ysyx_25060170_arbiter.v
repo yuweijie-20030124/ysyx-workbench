@@ -6,71 +6,72 @@ module ysyx_25060170_arbiter(
 
     //==================== IFU side ====================
     // AR
-    ,input  wire         ifu_arb_arvalid
-    ,output wire         arb_ifu_arready
-    ,input  wire [31:0]  ifu_arb_araddr
+    ,input  wire         ifu_arb_arvalid//IFU发送地址有效
+    ,output wire         arb_ifu_arready//arbiter准备好接受读地址
+    ,input  wire [31:0]  ifu_arb_araddr //IFU要发送的指令地址
 
     // R
-    ,output wire [2:0]   arb_ifu_rresp
-    ,output wire         arb_ifu_rvalid
-    ,input  wire         ifu_arb_rready
-    ,output wire [31:0]  arb_ifu_rdata
+    //2'b00正常访问 2'b01独占访问 2'b10从设备错误 2'b11解码错误
+    ,output wire [2:0]   arb_ifu_rresp  //读响应状态(OKAY=2'b00, EXOKAY=2'b01, SLVERR=2'b10, DECERR=2'b11)
+    ,output wire         arb_ifu_rvalid //返回的读数据有效
+    ,input  wire         ifu_arb_rready //IFU准备好接受读数据
+    ,output wire [31:0]  arb_ifu_rdata  //读取到的指令数据
 
     //==================== LSU side ====================
     // AW
-    ,input  wire         lsu_arb_awvalid
-    ,output wire         arb_lsu_awready
-    ,input  wire [31:0]  lsu_arb_awaddr
+    ,input  wire         lsu_arb_awvalid //LSU发送写地址有效
+    ,output wire         arb_lsu_awready //arbiter准备好接收写地址
+    ,input  wire [31:0]  lsu_arb_awaddr  //要写入的内存地址
 
     // W
-    ,input  wire         lsu_arb_wvalid
-    ,output wire         arb_lsu_wready
-    ,input  wire [31:0]  lsu_arb_wdata
-    ,input  wire [3:0]   lsu_arb_wstrb
+    ,input  wire         lsu_arb_wvalid  //写数据有效
+    ,output wire         arb_lsu_wready  //arbiter准备好接收写数据
+    ,input  wire [31:0]  lsu_arb_wdata   //要写入的数据
+    ,input  wire [3:0]   lsu_arb_wstrb   //写字节选通
 
     // B
-    ,output wire         arb_lsu_bvalid
-    ,input  wire         lsu_arb_bready
-    ,output wire [1:0]   arb_lsu_bresp
+    ,output wire         arb_lsu_bvalid  //写响应有效
+    ,input  wire         lsu_arb_bready  //LSU准备好接收写响应
+    ,output wire [1:0]   arb_lsu_bresp   //写响应状态
 
     // AR
-    ,input  wire         lsu_arb_arvalid
-    ,output wire         arb_lsu_arready
-    ,input  wire [31:0]  lsu_arb_araddr
+    ,input  wire         lsu_arb_arvalid //LSU发送读地址有效
+    ,output wire         arb_lsu_arready //arbiter准备好接收读地址
+    ,input  wire [31:0]  lsu_arb_araddr  //要读取的数据地址
 
     // R
-    ,output wire         arb_lsu_rvalid
-    ,input  wire         lsu_arb_rready
-    ,output wire [1:0]   arb_lsu_rresp
-    ,output wire [31:0]  arb_lsu_rdata
+    ,output wire         arb_lsu_rvalid  //返回的读数据有效
+    ,input  wire         lsu_arb_rready  //LSU准备好接收读数据
+    ,output wire [1:0]   arb_lsu_rresp   //读响应状态
+    ,output wire [31:0]  arb_lsu_rdata   //读取到的数据
 
     //==================== AXI4-Lite slave side ====================
     // AW
-    ,output wire         arb_axi_awvalid
-    ,input  wire         axi_arb_awready
-    ,output wire [31:0]  arb_axi_awaddr
+    ,output wire         arb_axi_awvalid //arbiter发送写地址有效
+    ,input  wire         axi_arb_awready //arbiter准备好接收写地址
+    ,output wire [31:0]  arb_axi_awaddr  //写入的地址
 
     // W
-    ,output wire         arb_axi_wvalid
-    ,input  wire         axi_arb_wready
-    ,output wire [31:0]  arb_axi_wdata
-    ,output wire [3:0]   arb_axi_wstrb
+    ,output wire         arb_axi_wvalid  //写数据有效
+    ,input  wire         axi_arb_wready  //AXI从设备准备好接收写数据
+    ,output wire [31:0]  arb_axi_wdata   //写数据
+    ,output wire [3:0]   arb_axi_wstrb   //写字节选通
 
     // B
-    ,input  wire         axi_arb_bvalid
-    ,output wire         arb_axi_bready
-    ,input  wire [1:0]   axi_arb_bresp
+    ,input  wire         axi_arb_bvalid  //AXI从设备返回写响应有效
+    ,output wire         arb_axi_bready  //arbiter准备好接收写响应
+    ,input  wire [1:0]   axi_arb_bresp   //写响应状态
 
     // AR
-    ,output wire         arb_axi_arvalid
-    ,input  wire         axi_arb_arready
-    ,output wire [31:0]  arb_axi_araddr
+    ,output wire         arb_axi_arvalid //仲裁器发送读地址有效
+    ,input  wire         axi_arb_arready //AXI从设备准备好接收读地址
+    ,output wire [31:0]  arb_axi_araddr  //读地址
 
     // R
-    ,input  wire         axi_arb_rvalid
-    ,output wire         arb_axi_rready
-    ,input  wire [1:0]   axi_arb_rresp
-    ,input  wire [31:0]  axi_arb_rdata
+    ,input  wire         axi_arb_rvalid  //AXI从设备返回读数据有效
+    ,output wire         arb_axi_rready  //仲裁器准备好接收读数据
+    ,input  wire [1:0]   axi_arb_rresp   //读响应状态
+    ,input  wire [31:0]  axi_arb_rdata   //读数据
 );
 
 //==========================================================================
