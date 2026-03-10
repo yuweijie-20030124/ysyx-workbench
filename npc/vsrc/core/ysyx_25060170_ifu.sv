@@ -28,8 +28,8 @@ module ysyx_25060170_ifu(
     ,output logic                           ifu_ifidreg_valid
 
     // output pc
-    ,output logic [`ysyx_25060170_PC]       ifu_if1if2reg_current_pc
-    ,output logic [`ysyx_25060170_PC]       ifu_if1if2reg_next_pc
+    ,output logic [`ysyx_25060170_PC]       ifu_ifidreg_current_pc
+    ,output logic [`ysyx_25060170_PC]       ifu_ifidreg_next_pc
 
     // output to ifid
     ,output logic [`ysyx_25060170_INST]     ifu_ididreg_inst
@@ -43,7 +43,7 @@ module ysyx_25060170_ifu(
 
     // AXI4-Lite R channel
     /* verilator lint_off UNUSEDSIGNAL */
-    ,input  logic [2:0]                     arb_ifu_rresp   // 兼容你现有端口，实际只用低 2bit
+    ,input  logic [2:0]                     arb_ifu_rresp  
     /* verilator lint_on  UNUSEDSIGNAL */
     ,input  logic                           arb_ifu_rvalid
     ,output logic                           ifu_arb_rready
@@ -137,8 +137,8 @@ assign ifu_arb_araddr          = pc_r;                     // AXI4-Lite 只需�
 assign ifu_arb_rready          = (if_state_r == S_IF_WAIT_R);
 
 assign ifu_ifidreg_valid       = inst_valid_r & (~stall);
-assign ifu_if1if2reg_current_pc= pc_r;
-assign ifu_if1if2reg_next_pc   = pc_r + `ysyx_25060170_PLUS4;
+assign ifu_ifidreg_current_pc  = pc_r;
+assign ifu_ifidreg_next_pc     = pc_r + `ysyx_25060170_PLUS4;
 assign ifu_ididreg_inst        = inst_buf_r;
 assign ifu_ifidreg_bpupredict  = inst_bpupredict_r;
 assign ifu_ifidreg_bpu_valid   = inst_bpu_valid_r;
@@ -182,7 +182,6 @@ always_comb begin
                     inst_valid_n      = 1'b0;
                     inst_bpupredict_n = 1'b0;
                     inst_bpu_valid_n  = 1'b0;
-
                     pc_n              = pc_r + 32'd4;
                     if_state_n        = S_IF_ARREQ;
                 end
@@ -265,14 +264,15 @@ always_comb begin
     endcase
 end
 
-//==========================================================================
-// 时序寄存器
-//==========================================================================
 always_ff @(posedge clk) begin
     if (rst) begin
         if_state_r        <= S_IF_IDLE;
-        pc_r              <= `ysyx_25060170_STARTPC;
-        req_pc_r          <= `ysyx_25060170_STARTPC;
+        // pc_r              <= `ysyx_25060170_STARTPC;
+        // req_pc_r          <= `ysyx_25060170_STARTPC;
+
+        //mrom 测试
+        pc_r              <= 32'h2000_0000;
+        req_pc_r          <= 32'h2000_0000;
 
         inst_buf_r        <= 32'b0;
         inst_valid_r      <= 1'b0;

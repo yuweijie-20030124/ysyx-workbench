@@ -173,34 +173,34 @@ ysyx_25060170_fishtailcore u_ysyx_25060170_fishtailcore (
 
 );
 
-//ls_mem
-wire [`ysyx_25060170_DATA] DPIC_dpi_ls_mem_skip_flag;
+// //ls_mem
+// wire [`ysyx_25060170_DATA] DPIC_dpi_ls_mem_skip_flag;
 
 reg [`ysyx_25060170_DATA] diff_test_skip_o;
-always@(posedge clock) begin//todo
-    if(reset | ysyxSoCFull.asic.cpu.cpu.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_ls_mem_reg.flush) begin
-        diff_test_skip_o    <=   `ysyx_25060170_ZERO32  ;
-    end
-    else if (ysyxSoCFull.asic.cpu.cpu.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_ls_mem_reg.mem_ready_i & ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_ls_mem_reg.ls_valid_i) begin
-    end
-    else if(ysyxSoCFull.asic.cpu.cpu.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_ls_mem_reg.stall) begin
-        diff_test_skip_o    <=   diff_test_skip_o       ;  
-    end
-    else begin
-        diff_test_skip_o    <=   DPIC_dpi_ls_mem_skip_flag       ;
-    end
-end
+// always@(posedge clock) begin//todo
+//     if(reset | ysyxSoCFull.asic.cpu.cpu.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_ls_wb_reg.flush) begin
+//         diff_test_skip_o    <=   `ysyx_25060170_ZERO32  ;
+//     end
+//     else if (ysyxSoCFull.asic.cpu.cpu.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_ls__reg.mem_ready_i & ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_ls_mem_reg.ls_valid_i) begin
+//     end
+//     else if(ysyxSoCFull.asic.cpu.cpu.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_ls_mem_reg.stall) begin
+//         diff_test_skip_o    <=   diff_test_skip_o       ;  
+//     end
+//     else begin
+//         diff_test_skip_o    <=   DPIC_dpi_ls_mem_skip_flag       ;
+//     end
+// end
 
-//mem_wb
+//mls_wb
 
 reg  [`ysyx_25060170_DATA] dpic_diff_skip_flag_o;
     always@(posedge clock) begin
-        if(reset | ysyxSoCFull.asic.cpu.cpu.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_mem_wb_reg.flush) begin
+        if(reset | ysyxSoCFull.asic.cpu.cpu.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_ls_wb_reg.flush) begin
             dpic_diff_skip_flag_o <= `ysyx_25060170_ZERO32;
     end
-        else if (ysyxSoCFull.asic.cpu.cpu.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_mem_wb_reg.wb_ready_i & ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_mem_wb_reg.mem_valid_i) begin
+        else if (ysyxSoCFull.asic.cpu.cpu.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_ls_wb_reg.wb_ready_i & ysyx_25060170_topcore.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_ls_wb_reg.ls_valid_i) begin
         end
-        else if(ysyxSoCFull.asic.cpu.cpu.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_mem_wb_reg.stall) begin
+        else if(ysyxSoCFull.asic.cpu.cpu.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_ls_wb_reg.stall) begin
             dpic_diff_skip_flag_o <= dpic_diff_skip_flag_o;
     end    
         else begin
@@ -216,7 +216,7 @@ ysyx_25060170_DPIC u_ysyx_25060170_DPIC (
     ,.rst                             ( reset                          )//<<i<<
     ,.DPIC_pc_i                       ( DPIC_if_id_pc                  )//<<i<<
     ,.DPIC_inst_i                     ( DPIC_dpic_ifu_inst             )//>>o>>
-    ,.DPIC_ftrace_pc                  ( ysyxSoCFull.asic.cpu.cpu.u_ysyx_25060170_fishtailcore.ifu2_if2idreg_currentpc           )//>>o>>
+    ,.DPIC_ftrace_pc                  ( ysyxSoCFull.asic.cpu.cpu.u_ysyx_25060170_fishtailcore.ifu_ifidreg_current_pc          )//>>o>>
     ,.DPIC_rd_addr                    ( ysyxSoCFull.asic.cpu.cpu.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_idu.rd           )//<<i<<
     ,.DPIC_imm                        ( ysyxSoCFull.asic.cpu.cpu.u_ysyx_25060170_fishtailcore.idu_imm            )//<<i<<
     ,.DPIC_regs0                      ( ysyxSoCFull.asic.cpu.cpu.u_ysyx_25060170_fishtailcore.u_ysyx_25060170_regfile.regs[0]                     )//<<i<<

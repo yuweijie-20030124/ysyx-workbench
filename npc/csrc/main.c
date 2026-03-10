@@ -42,6 +42,7 @@ extern "C" void flash_read(int32_t addr, int32_t *data) { assert(0); }
 //使其总是返回一条ebreak指令
 extern "C" void mrom_read(int32_t addr, int32_t *data) { 
   // assert(0); 
+  // printf("mrom read!\n");
   *data =  0x00100073;
 }
 

@@ -13,3 +13,4 @@
 !README.md
 build/
 user/
+obj_dir/

@@ -23,7 +23,7 @@
     ,input	wire					                   ls_valid_i                 //<<i<<
     // ,input 	wire					         id_stall_i                 //<<i<<
     //output to regfile      
- 	,output wire  [`ysyx_25060170_DATA]        wb_data_o                  //>>o>>  
+ 	  ,output wire  [`ysyx_25060170_DATA]      wb_data_o                  //>>o>>  
     ,output wire                             wb_ready_o                 //>>o>>
     ,output	wire                             wb_rd_ena_o                //>>o>>
     ,output	wire	[`ysyx_25060170_REGADDR]   wb_rd_addr_o               //>>o>> 
@@ -96,9 +96,9 @@ assign wb_rd_addr_forward = rd_addr_i	;
     //TODO：根据wb_ctl判断要前递的是内存数据mem_data_i还是alu运算结果alu_res_i 
     //wb_ctl=01 表示用load的mem_data
     //wb_ctl=10 表示用alu_res_i
-    assign wb_rd_data_forward = `ysyx_25060170_ZERO32                 |
-                                    {32{wb_ctl_i == 2'b01}} & ls_rd_data_i |
-                                    {32{wb_ctl_i == 2'b10}} & exu_res_i  ;
+assign wb_rd_data_forward = `ysyx_25060170_ZERO32                 |
+                                {32{wb_ctl_i == 2'b01}} & ls_rd_data_i |
+                                {32{wb_ctl_i == 2'b10}} & exu_res_i  ;
 
 assign csr_ctl_o  = csr_ctl_i;
 assign csr_addr_o = csr_addr_i;

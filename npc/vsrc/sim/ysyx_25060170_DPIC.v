@@ -376,7 +376,7 @@ endtask
 	always @(posedge clk) begin
 		// if(~wbu_dpic_id_stall & ~wbu_dpic_ls_valid) begin
 		// if(~wbu_dpic_ls_valid && ~delay_pipeline_id_stall) begin
-		if(~DPIC_wbu_dpic_valid) begin	
+		if(DPIC_wbu_dpic_valid) begin	
 			// $display("inst = 0x%08x",DPIC_inst_i);
 			// $display("DPIC_pc_i = 0x%08x",DPIC_pc_i);
 			// $display("pc_finish = 0x%08x",wbu_dpic_pc);

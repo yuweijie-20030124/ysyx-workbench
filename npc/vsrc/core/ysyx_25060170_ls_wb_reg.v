@@ -1,7 +1,7 @@
 `include "define.v"
 
 //流水线干级间流水 & forwarding的活
-module ysyx_25060170_ls_mem_reg(
+module ysyx_25060170_ls_wb_reg(
      input   wire                           clk                 //<<i<<    
     ,input   wire                           rst                 //<<i<<    
     //signals form lsu  //<<i<<
@@ -10,7 +10,7 @@ module ysyx_25060170_ls_mem_reg(
     ,input   wire [`ysyx_25060170_PC]       next_pc_i           //<<i<<
     ,input   wire [3:0]                     ls_ctl_i            //<<i<<
     ,input   wire [1:0]                     wb_ctl_i            //<<i<<
-    // ,input   wire [`ysyx_25060170_DATA]     lsu_res_i           //<<i<<
+    ,input   wire [`ysyx_25060170_DATA]     lsu_data_i          //<<i<<
     ,input   wire [`ysyx_25060170_DATA]     alu_res_i           //<<i<<
     ,input   wire                           load_flag_i         //<<i<<
     // ,input   wire [`ysyx_25060170_DATA]     lsu_wb_data_i       //<<i<<
@@ -25,7 +25,7 @@ module ysyx_25060170_ls_mem_reg(
     // ,input   wire [`ysyx_25060170_DATA]     ls_data_forward_i   //<<i<<
     //pipeline control
     ,input   wire                           ls_valid_i          //<<i<<
-    ,input   wire                           mem_ready_i          //<<i<<
+    ,input   wire                           wb_ready_i          //<<i<<
     ,output  reg                            ls_valid_o          //>>o>>
     // ,input   wire                           ex_flush_i          //<<i<<
     // ,input   wire                           id_flush_i          //<<i<<
@@ -35,6 +35,7 @@ module ysyx_25060170_ls_mem_reg(
     ,output  reg  [`ysyx_25060170_PC]       next_pc_o           //>>o>>
     ,output  reg  [3:0]                     ls_ctl_o            //>>o>>
     ,output  reg  [1:0]                     wb_ctl_o            //>>o>>
+    ,output  reg  [`ysyx_25060170_DATA]     lsu_data_o          //>>o>>
     ,output  reg  [`ysyx_25060170_DATA]     alu_res_o           //>>o>>
     ,output  reg                            load_flag_o         //>>o>>
     // ,output  reg  [`ysyx_25060170_DATA]     lsu_res_o           //>>o>>
@@ -53,7 +54,7 @@ module ysyx_25060170_ls_mem_reg(
 
 // wire flush = ex_flush_i;
 wire flush = 1'b0;
-wire stall = ls_valid_i | ~mem_ready_i;
+wire stall = ~ls_valid_i | ~wb_ready_i;
 
 always@(posedge clk) begin
     if(rst | flush) begin
@@ -62,6 +63,7 @@ always@(posedge clk) begin
         next_pc_o           <=   `ysyx_25060170_ZERO32  ;
         ls_ctl_o            <=   4'b0                   ;
         wb_ctl_o            <=   2'b0                   ;
+        lsu_data_o          <=   `ysyx_25060170_ZERO32  ;
         alu_res_o           <=   `ysyx_25060170_ZERO32  ;
         load_flag_o         <=   1'b0                   ;
         // lsu_res_o           <=   `ysyx_25060170_ZERO32  ;
@@ -72,18 +74,19 @@ always@(posedge clk) begin
         csr_ctl_o           <=   7'b0                   ;
         csr_addr_o          <=   12'b0                  ;
         csr_data_o          <=   `ysyx_25060170_ZERO32  ;
-        ls_valid_o          <=   1'b1                   ;
+        ls_valid_o          <=   1'b0                   ;
         // pipeline_id_stall_o <=   1'b0                   ;
     end
-    else if (mem_ready_i & ls_valid_i) begin
-            ls_valid_o <= 1'b1;
-        end
+    // else if (wb_ready_i & ls_valid_i) begin
+    //         ls_valid_o <= 1'b1;
+    //     end
     else if(stall) begin
         inst_o              <=   inst_o                 ;
         pc_o                <=   pc_o                   ;
         next_pc_o           <=   next_pc_o              ;
         ls_ctl_o            <=   ls_ctl_o               ;
         wb_ctl_o            <=   wb_ctl_o               ;
+        lsu_data_o          <=   lsu_data_o             ;
         alu_res_o           <=   alu_res_o              ;
         load_flag_o         <=   load_flag_o            ;
         // lsu_res_o           <=   lsu_res_o              ;
@@ -103,6 +106,7 @@ always@(posedge clk) begin
         next_pc_o           <=   next_pc_i              ;
         ls_ctl_o            <=   ls_ctl_i               ;
         wb_ctl_o            <=   wb_ctl_i               ;
+        lsu_data_o          <=   lsu_data_i              ;
         alu_res_o           <=   alu_res_i              ;
         load_flag_o         <=  load_flag_i             ;
         // lsu_res_o           <=   lsu_res_i              ;
@@ -113,7 +117,7 @@ always@(posedge clk) begin
         csr_ctl_o           <=   csr_ctl_i              ;
         csr_addr_o          <=   csr_addr_i             ;
         csr_data_o          <=   csr_data_i             ;
-        ls_valid_o          <=   1'b0                   ;
+        ls_valid_o          <=   1'b1                   ;
         // pipeline_id_stall_o <=   pipeline_id_stall_i    ;
     end
 end

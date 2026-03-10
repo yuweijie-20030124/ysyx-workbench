@@ -263,7 +263,7 @@ assign id_stall_ena  = (rst == 1) ? 1'b0 : op1_relate | op2_relate | csr_op1_sta
 
 assign id_flush_o 	 = (bp_jump_i ^ now_bxx_jump_yes) | (~bp_jump_i & inst_jxx) | PC_error;
 assign id_ready_o 	 = ex_ready_i & ~id_stall_o ;
-assign id_valid_o 	 = if_valid_i | id_stall_o	; 
+assign id_valid_o 	 = if_valid_i & ~id_stall_o	; 
 assign id_stall_o    = id_stall_ena 		  	;
 
 //*************************************out to ifu*************************************//
@@ -331,7 +331,7 @@ assign idu_btb_updatePC = pc_i;
 //**************************************IFU***********************************************//
 
 wire PC_error;
-assign PC_error = ifu_idu_futurePC != next_pc_o & ~if_valid_i;
+assign PC_error = ifu_idu_futurePC != next_pc_o & if_valid_i;
 
 assign idu_ifu1_jump_pc = PC_error										 ? next_pc_o	:
 						  alusrc_o == `INST_JALR          		         ? 	 	  op1   :
