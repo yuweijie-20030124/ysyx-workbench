@@ -25,7 +25,7 @@ module ysyx_25060170_clint(
     ,output wire        wready
     ,input  wire [31:0] wdata
     ,input  wire [3:0]  wstrb
-    /* verilator lint_on UNUSEDSIGNAL */
+
 
     // B 通道 (写响应)
     ,output reg         bvalid
@@ -36,9 +36,6 @@ module ysyx_25060170_clint(
     ,input  wire        arvalid
     ,output wire        arready
     ,input  wire [31:0] araddr
-    /* verilator lint_off UNUSEDSIGNAL */
-    ,input  wire [2:0]  arprot
-    /* verilator lint_on UNUSEDSIGNAL */
 
     // R 通道 (读数据)
     ,output reg         rvalid
@@ -168,3 +165,4 @@ end
 assign bresp = 2'b00;
 
 endmodule
+

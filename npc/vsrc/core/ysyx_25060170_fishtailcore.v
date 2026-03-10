@@ -1,8 +1,9 @@
 `include "define.v"
 
 module ysyx_25060170_fishtailcore(
- input wire                             clk			
-,input wire                             rst
+ input wire                             clock			
+,input wire                             reset
+,input wire                             io_interrupt
 ,output wire [`ysyx_25060170_PC]        DPIC_if_id_pc           //给ram pc来拿inst
 ,input  reg  [`ysyx_25060170_INST]      DPIC_dpic_ifu_inst      //从ram 得到inst              
 ,output wire  	                        DPIC_ls_mem_re                 
@@ -23,6 +24,7 @@ module ysyx_25060170_fishtailcore(
 
 //接入总线
 //AXI4 Master总线
+//AW
 ,input  wire                            io_master_awready 
 ,output wire                            io_master_awvalid 
 ,output wire [31:0]                     io_master_awaddr  
@@ -30,18 +32,18 @@ module ysyx_25060170_fishtailcore(
 ,output wire [7:0]                      io_master_awlen   
 ,output wire [2:0]                      io_master_awsize  
 ,output wire [1:0]                      io_master_awburst 
-
+//W
 ,input  wire                            io_master_wready  
 ,output wire                            io_master_wvalid  
 ,output wire [31:0]                     io_master_wdata   
 ,output wire [3:0]                      io_master_wstrb   
 ,output wire                            io_master_wlast   
-
+//B
 ,output wire                            io_master_bready  
-,output wire                            io_master_bvalid  
-,output wire [1:0]                      io_master_bresp   
-,output wire [3:0]                      io_master_bid     
-
+,input  wire                            io_master_bvalid  
+,input  wire [1:0]                      io_master_bresp   
+,input  wire [3:0]                      io_master_bid     
+//AR
 ,input  wire                            io_master_arready 
 ,output wire                            io_master_arvalid 
 ,output wire [31:0]                     io_master_araddr  
@@ -49,15 +51,16 @@ module ysyx_25060170_fishtailcore(
 ,output wire [7:0]                      io_master_arlen   
 ,output wire [2:0]                      io_master_arsize  
 ,output wire [1:0]                      io_master_arburst 
-
+//R
 ,output wire                            io_master_rready  
-,output wire                            io_master_rvalid  
-,output wire [1:0]                      io_master_rresp   
-,output wire [31:0]                     io_master_rdata   
-,output wire                            io_master_rlast   
-,output wire                            io_master_rid     
+,input  wire                            io_master_rvalid  
+,input  wire [1:0]                      io_master_rresp   
+,input  wire [31:0]                     io_master_rdata   
+,input  wire                            io_master_rlast   
+,input  wire                            io_master_rid     
 
 //AXI4 Slave总线
+//AW
 ,output wire                            io_slave_awready  //unused
 ,input  wire                            io_slave_awvalid  
 ,input  wire [31:0]                     io_slave_awaddr   
@@ -65,40 +68,177 @@ module ysyx_25060170_fishtailcore(
 ,input  wire [7:0]                      io_slave_awlen    
 ,input  wire [2:0]                      io_slave_awsize   
 ,input  wire [1:0]                      io_slave_awburst  
+//W
 ,output wire                            io_slave_wready   //unused
 ,input  wire                            io_slave_wvalid   
 ,input  wire [31:0]                     io_slave_wdata    
 ,input  wire [3:0]                      io_slave_wstrb    
 ,input  wire                            io_slave_wlast    
+//B
 ,input  wire                            io_slave_bready   
 ,output wire                            io_slave_bvalid   //unused
 ,output wire [1:0]                      io_slave_bresp    //unused
 ,output wire [3:0]                      io_slave_bid      //unused
+//AR
 ,output wire                            io_slave_arready  //unused
-,output wire                            io_slave_arvalid  
-,output wire [31:0]                     io_slave_araddr   
-,output wire [3:0]                      io_slave_arid     
-,output wire [7:0]                      io_slave_arlen    
-,output wire [2:0]                      io_slave_arsize   
-,output wire [1:0]                      io_slave_arburst  
-,output wire                            io_slave_rready      
+,input  wire                            io_slave_arvalid  
+,input  wire [31:0]                     io_slave_araddr   
+,input  wire [3:0]                      io_slave_arid     
+,input  wire [7:0]                      io_slave_arlen    
+,input  wire [2:0]                      io_slave_arsize   
+,input  wire [1:0]                      io_slave_arburst  
+//R
+,input  wire                            io_slave_rready      
 ,output wire                            io_slave_rvalid   //unused
 ,output wire [1:0]                      io_slave_rresp    //unused
 ,output wire [31:0]                     io_slave_rdata    //unused
 ,output wire                            io_slave_rlast    //unused
 ,output wire [3:0]                      io_slave_rid      //unused
-
 );
 
-assign DPIC_if_id_pc = ifu1_ifu2_current_pc;
+//axi4lite扩展为axi4    
+//master
+//AW
+assign io_master_awid    = 4'b0;    
+assign io_master_awlen   = 8'b0;   
+assign io_master_awsize  = 3'b0;  
+assign io_master_awburst = 2'b0;    
+
+//W
+assign io_master_wlast   = 1'b0;
+
+//B
+// assign io_master_bvalid  = 1'b0;
+// assign io_master_bresp   = 2'b0;
+// assign io_master_bid     = 4'b0;
+
+//AR
+assign io_master_arid    = 4'b0;
+assign io_master_arlen   = 8'b0;
+assign io_master_arsize  = 3'b0;
+assign io_master_arburst = 2'b0;
+
+//R
+// assign io_master_rlast   = 1'b0;
+// assign io_master_rid     = 1'b0;
+
+//slaver
+
+//AW
+
+//W
+
+//B
+assign io_slave_bid      = 4'b0;
+
+//AR
+// assign io_slave_arid     = 4'b0;     
+// assign io_slave_arlen    = 8'b0;
+// assign io_slave_arsize   = 3'b0;
+// assign io_slave_arburst  = 2'b0;
+
+//R
+assign io_slave_rlast    = 1'b0; 
+assign io_slave_rid      = 4'b0;
+
+//**************************************arbiter**************************************//
+//arbiter out signals
+//MASTER
+wire        arb_ifu_arready ;
+wire [2:0]  arb_ifu_rresp   ;
+wire        arb_ifu_rvalid  ;
+wire [31:0] arb_ifu_rdata   ;
+wire        arb_lsu_awready ;
+wire        arb_lsu_wready  ;
+wire        arb_lsu_bvalid  ;
+wire [1:0]  arb_lsu_bresp   ;
+wire        arb_lsu_arready ;
+wire        arb_lsu_rvalid  ;
+wire [1:0]  arb_lsu_rresp   ;
+wire [31:0] arb_lsu_rdata   ;
+//SLAVE
+wire        arb_axi_awvalid ;
+wire [31:0] arb_axi_awaddr  ;
+wire        arb_axi_wvalid  ;
+wire [31:0] arb_axi_wdata   ;
+wire [3:0]  arb_axi_wstrb   ;
+wire        arb_axi_bready  ;
+wire        arb_axi_arvalid ;
+wire [31:0] arb_axi_araddr  ;
+wire        arb_axi_rready  ;
+
+ysyx_25060170_arbiter arbiter(
+     .clk               (clock)
+    ,.rst               (reset)
+    //ifu side
+    //AR
+    ,.ifu_arb_arvalid   (ifu_arb_arvalid)//<<i<<
+    ,.arb_ifu_arready   (arb_ifu_arready)//>>o>>
+    ,.ifu_arb_araddr    (ifu_arb_araddr)//<<i<<
+    //R
+    ,.arb_ifu_rresp     (arb_ifu_rresp)//>>o>>
+    ,.arb_ifu_rvalid    (arb_ifu_rvalid)//>>o>>
+    ,.ifu_arb_rready    (ifu_arb_rready)//<<i<<
+    ,.arb_ifu_rdata     (arb_ifu_rdata)//>>o>>
+    //lsu side
+    //AW
+    ,.lsu_arb_awvalid   (lsu_arb_awvalid)//<<i<<
+    ,.arb_lsu_awready   (arb_lsu_awready)//>>o>>
+    ,.lsu_arb_awaddr    (lsu_arb_awaddr)//<<i<<
+    //W
+    ,.lsu_arb_wvalid    (lsu_arb_wvalid)//<<i<<
+    ,.arb_lsu_wready    (arb_lsu_wready)//>>o>>
+    ,.lsu_arb_wdata     (lsu_arb_wdata)//<<i<<
+    ,.lsu_arb_wstrb     (lsu_arb_wstrb)//<<i<<
+    //B
+    ,.arb_lsu_bvalid    (arb_lsu_bvalid)//>>o>>
+    ,.lsu_arb_bready    (lsu_arb_bready)//<<i<<
+    ,.arb_lsu_bresp     (arb_lsu_bresp)//>>o>>
+    //AR
+    ,.lsu_arb_arvalid   (lsu_arb_arvalid)//<<i<<
+    ,.arb_lsu_arready   (arb_lsu_arready)//>>o>>
+    ,.lsu_arb_araddr    (lsu_arb_araddr)//<<i<<
+    //R
+    ,.arb_lsu_rvalid    (arb_lsu_rvalid)//>>o>>
+    ,.lsu_arb_rready    (lsu_arb_rready)//<<i<<
+    ,.arb_lsu_rresp     (arb_lsu_rresp)//>>o>>
+    ,.arb_lsu_rdata     (arb_lsu_rdata)//>>o>>
+
+    //arbiter to master
+    //AW
+    ,.arb_axi_awvalid   (io_master_awvalid)//>>o>>
+    ,.axi_arb_awready   (io_master_awready)//<<i<<
+    ,.arb_axi_awaddr    (io_master_awaddr)//>>o>>
+    //W
+    ,.arb_axi_wvalid    (io_master_wvalid)//>>o>>
+    ,.axi_arb_wready    (io_master_wready)//<<i<<
+    ,.arb_axi_wdata     (io_master_wdata)//>>o>>
+    ,.arb_axi_wstrb     (io_master_wstrb)//>>o>>
+    //B
+    ,.axi_arb_bvalid    (io_master_bvalid)//<<i<<
+    ,.arb_axi_bready    (io_master_bready)//>>o>>
+    ,.axi_arb_bresp     (io_master_bresp)//<<i<<
+    //AR
+    ,.arb_axi_arvalid   (io_master_arvalid)//>>o>>
+    ,.axi_arb_arready   (io_master_arready)//<<i<<
+    ,.arb_axi_araddr    (io_master_araddr)//>>o>>
+    //R
+    ,.axi_arb_rvalid    (io_master_rvalid)//<<i<<
+    ,.arb_axi_rready    (io_master_rready)//>>o>>
+    ,.axi_arb_rresp     (io_master_rresp)//<<i<<
+    ,.axi_arb_rdata     (io_master_rdata)//<<i<<
+);
+
+
+wire [`ysyx_25060170_PC]  ifu1_ifu2_current_pc;
 
 // ysyx_25060170_bpu Outputs
 wire btb_valid;
 wire [`ysyx_25060170_PC] btb_target;
 wire btb_predictedTaken;
 ysyx_25060170_btb u_ysyx_25060170_btb(
-     .clk                   (clk)//<<i<<
-    ,.rst                   (rst)//<<i<<
+     .clk                   (clock)//<<i<<
+    ,.rst                   (reset)//<<i<<
     ,.if1_btb_PC            (ifu1_ifu2_current_pc)//<<i<<
     ,.idu_btb_update        (idu_BPU_update)//<<i<<
     ,.idu_btb_updatePC      (idu_btb_updatePC)//<<i<<
@@ -123,21 +263,58 @@ wire                             id_stall       ;
 // reg             inst_i                   ;
 // reg             pc_i                     ;
 
+// wire      [`ysyx_25060170_PC]       ifu1_ifu2_current_pc;
+// wire                                ifu1_ifu2_valid;
+// // wire                                if_valid;
+// // wire      [`ysyx_25060170_PC]       DPIC_if_id_pc;
+// // wire      [`ysyx_25060170_PC]       if_id_next_pc;
+// // wire      [`ysyx_25060170_INST]     if_id_inst;
+// // wire      [`ysyx_25060170_INST]     DPIC_dpic_ifu_inst        ;
+// // wire                                if_id_inst_bxx;
+// // wire      [`ysyx_25060170_PC]       if_pc;
+// // wire      [`ysyx_25060170_PC]       if_next_pc; 
+// //if_next_pc also use dpic to get instruction
+// wire        [`ysyx_25060170_PC]     ifu1_if1if2reg_next_pc;
+// wire                                ifu1_if1if2reg_bpupredict;
+// wire                                ifu1_if1if2reg_bpuvalid;
+
 // ysyx_25060170_ifu1 Outputs
-wire      [`ysyx_25060170_PC]       ifu1_ifu2_current_pc;
-wire                                ifu1_ifu2_valid;
-// wire                                if_valid;
-// wire      [`ysyx_25060170_PC]       DPIC_if_id_pc;
-// wire      [`ysyx_25060170_PC]       if_id_next_pc;
-// wire      [`ysyx_25060170_INST]     if_id_inst;
-// wire      [`ysyx_25060170_INST]     DPIC_dpic_ifu_inst        ;
-// wire                                if_id_inst_bxx;
-// wire      [`ysyx_25060170_PC]       if_pc;
-// wire      [`ysyx_25060170_PC]       if_next_pc; 
-//if_next_pc also use dpic to get instruction
-wire        [`ysyx_25060170_PC]     ifu1_if1if2reg_next_pc;
-wire                                ifu1_if1if2reg_bpupredict;
-wire                                ifu1_if1if2reg_bpuvalid;
+wire                        ifu_ifidreg_valid       ;
+wire [`ysyx_25060170_PC]    ifu_ifidreg_current_pc;
+wire [`ysyx_25060170_PC]    ifu_ifidreg_next_pc   ;
+wire [`ysyx_25060170_INST]  ifu_ididreg_inst        ;
+wire                        ifu_ifidreg_bpupredict  ;
+wire                        ifu_ifidreg_bpu_valid   ;
+wire                        ifu_arb_arvalid         ;
+wire [31:0]                 ifu_arb_araddr          ;
+wire                        ifu_arb_rready          ;
+                                
+ysyx_25060170_ifu u_ysyx_25060170_ifu(
+     .rst                       (reset)//<<i<<
+    ,.clk                       (clock)//<<i<<
+    ,.idu_ifu_jump_pc           (idu_ifu1_jump_pc)//<<i<<
+    ,.idu_ifu_jump              (idu_ifu1_jump)//<<i<<
+    ,.bpu_ifu_jump_pc           ()//<<i<<                                  
+    ,.btb_predictedTaken        ()//<<i<<                            
+    ,.bpu_ifu_bpuvalid          ()//<<i<<                        
+    ,.lsu_ifu_jump_pc           ()//<<i<<                        
+    ,.lsu_ifu_jump              ()//<<i<<                    
+    ,.idu_ifu_ready             (id_ready)//<<i<<
+    ,.idu_ifu_stall             (id_stall)//<<i<<                    
+    ,.ifu_ifidreg_valid         (ifu_ifidreg_valid       )//>>o>>                        
+    ,.ifu_ifidreg_current_pc    (ifu_ifidreg_current_pc  )//>>o>>                                
+    ,.ifu_ifidreg_next_pc       (ifu_ifidreg_next_pc     )//>>o>>                                
+    ,.ifu_ididreg_inst          (ifu_ididreg_inst        )//>>o>>                            
+    ,.ifu_ifidreg_bpupredict    (ifu_ifidreg_bpupredict  )//>>o>>                                    
+    ,.ifu_ifidreg_bpu_valid     (ifu_ifidreg_bpu_valid   )//>>o>>                                
+    ,.ifu_arb_arvalid           (ifu_arb_arvalid)//>>o>>                            
+    ,.arb_ifu_arready           (arb_ifu_arready)//<<i<<                            
+    ,.ifu_arb_araddr            (ifu_arb_araddr)//>>o>>                            
+    ,.arb_ifu_rresp             (arb_ifu_rresp)//<<i<<                            
+    ,.arb_ifu_rvalid            (arb_ifu_rvalid)//<<i<<                            
+    ,.ifu_arb_rready            (ifu_arb_rready)//>>o>>                            
+    ,.arb_ifu_rdata             (arb_ifu_rdata)//<<i<<                        
+);
 
 // ysyx_25060170_ifu1 u_ysyx_25060170_ifu1(
 //      .rst                       (rst)//<<i<<
@@ -221,28 +398,34 @@ wire                                ifu1_if1if2reg_bpuvalid;
 // wire                                if2idureg_idu_bpuvalid  ;
 // wire                                if2idureg_idu_valid     ;
 
-
+//ifuidureg output signals
+wire [`ysyx_25060170_PC]   ifuidureg_idu_currentpc ;
+wire [`ysyx_25060170_PC]   ifuidureg_idu_nextpc    ;
+wire [`ysyx_25060170_INST] ifuidureg_idu_inst   ;
+wire ifuidureg_idu_bpupredict                    ;  
+wire ifuidureg_idu_bpuvalid                      ;  
+wire ifuidureg_idu_valid                         ;   
 
 ysyx_25060170_ifuidureg u_ysyx_25060170_ifuidureg(
-     .rst                       (rst)//<<i<<
-    ,.clk                       (clk)//<<i<<
-    ,.ifu2_if2idureg_currentpc  (ifu2_if2idreg_currentpc)//<<i<<
-    ,.ifu2_if2idureg_inst       (ifu2_if2idreg_inst)//<<i<<
-    ,.ifu2_if2idureg_nextpc     (ifu2_if2idreg_nextpc)//<<i<<
-    ,.ifu2_if2idureg_bpupredict (ifu2_if2idreg_bpupredict)//<<i<<
-    ,.ifu2_if2idureg_bpuvalid   (ifu2_if2idreg_bpuvalid)//<<i<<
-    ,.ifu2_if2idureg_valid      (ifu2_valid)//<<i<<
-    ,.idu_if2idureg_ready       (id_ready)//<<i<<
-    ,.idu_if2idureg_stall       (id_stall)//<<i<<
-    ,.idu_if2idureg_flush       (id_flush)//<<i<<
-    ,.lsu_if2idureg_stall       (1'b0)//<<i<<
-    ,.lsu_if2idureg_flush       (ls_flush)//<<i<<
-    ,.if2idureg_idu_currentpc   (if2idureg_idu_currentpc )//>>o>>  
-    ,.if2idureg_idu_inst        (if2idureg_idu_inst      )//>>o>>  
-    ,.if2idureg_idu_nextpc      (if2idureg_idu_nextpc    )//>>o>>  
-    ,.if2idureg_idu_bpupredict  (if2idureg_idu_bpupredict)//>>o>> 
-    ,.if2idureg_idu_bpuvalid    (if2idureg_idu_bpuvalid)//>>o>> 
-    ,.if2idureg_idu_valid       (if2idureg_idu_valid     )//>>o>>   
+     .rst                           (reset)//<<i<<                                      
+    ,.clk                           (clock)//<<i<<                                     
+    ,.ifu_ifuidureg_currentpc       (ifu_ifidreg_current_pc)//<<i<<                                                          
+    ,.ifu_ifuidureg_nextpc          (ifu_ifidreg_next_pc   )//<<i<< 
+    ,.ifu_ifuidureg_inst            (ifu_ididreg_inst      )//<<i<<                                                     
+    ,.ifu_ifuidureg_bpupredict      (ifu_ifidreg_bpupredict)//<<i<<                                                          
+    ,.ifu_ifuidureg_bpuvalid        (ifu_ifidreg_bpu_valid )//<<i<<                                                          
+    ,.ifu_ifuidureg_valid           (ifu_ifidreg_valid)//<<i<<                                                      
+    ,.idu_ifuidureg_ready           (id_ready)//<<i<<                                                      
+    ,.idu_ifuidureg_stall           (id_stall)//<<i<<                                                      
+    ,.idu_ifuidureg_flush           ()//<<i<<                                                      
+    ,.lsu_ifuidureg_stall           ()//<<i<<                                                      
+    ,.lsu_ifuidureg_flush           ()//<<i<<                                                      
+    ,.ifuidureg_idu_currentpc       (ifuidureg_idu_currentpc)//>>o>>                                                          
+    ,.ifuidureg_idu_nextpc          (ifuidureg_idu_nextpc)//>>o>>   
+    ,.ifuidureg_idu_inst            (ifuidureg_idu_inst)//>>o>>                                                   
+    ,.ifuidureg_idu_bpupredict      (ifuidureg_idu_bpupredict)//>>o>>                                                          
+    ,.ifuidureg_idu_bpuvalid        (ifuidureg_idu_bpuvalid)//>>o>>                                                          
+    ,.ifuidureg_idu_valid           (ifuidureg_idu_valid)//>>o>>                                                      
 );
 
 // ysyx_25060170_idu Inputs 
@@ -296,18 +479,18 @@ wire  [`ysyx_25060170_PC]  idu_ifu1_jump_pc;
 wire                        idu_ifu1_jump;
 
 ysyx_25060170_idu u_ysyx_25060170_idu (
-     .rst                (rst                   )//<<i<<
-    ,.if2_idu_futurePC   (ifu2_if2idreg_currentpc)//<<i<<
-    ,.inst_i             (if2idureg_idu_inst        )//<<i<<
-    ,.pc_i               (if2idureg_idu_currentpc          )//<<i<<
-    ,.next_pc_i          (if2idureg_idu_nextpc     )//<<i<<
+     .rst                (reset                   )//<<i<<
+    ,.ifu_idu_futurePC   ()//<<i<<
+    ,.inst_i             (ifuidureg_idu_inst)//<<i<<
+    ,.pc_i               (ifuidureg_idu_currentpc)//<<i<<
+    ,.next_pc_i          (ifuidureg_idu_nextpc)//<<i<<
     ,.mtvec              (mtvec                 )//<<i<<
     ,.mepc               (mepc                  )//<<i<<
     ,.csr_data_i         (csr_idu_data          )//<<i<<
 
     //from bpu
-    ,.ifu2_if2idureg_bpuvalid(if2idureg_idu_bpuvalid)//<<i<<
-    ,.bp_jump_i          (if2idureg_idu_bpupredict     )//<<i<<
+    ,.ifu_ifuidureg_bpuvalid(ifuidureg_idu_bpuvalid)//<<i<<
+    ,.bp_jump_i          (ifuidureg_idu_bpupredict     )//<<i<<
     // ,.inst_bxx_i         (if_id_reg_inst_bxx    )//<<i<<
 
     ,.ex_addr_forward    (ex_rd_addr_forward    )//<<i<<
@@ -354,7 +537,7 @@ ysyx_25060170_idu u_ysyx_25060170_idu (
     ,.load_flag_o        (idu_load_flag         )//>>O>>
     ,.csr_ena_o          (idu_csr_ena           )//>>O>>
 
-    ,.idu_BPU_update     (idu_BPU_update        )//>>O>>
+    ,.idu_BPU_update      (idu_BPU_update       )//>>O>>
     ,.idu_btb_updatePC	  (idu_btb_updatePC     )//>>o>>
     ,.idu_btb_updateTarget(idu_btb_updateTarget )//>>o>>
     ,.idu_btb_mispredicted(idu_btb_mispredicted )//>>o>>
@@ -373,7 +556,7 @@ ysyx_25060170_idu u_ysyx_25060170_idu (
     // ,.store_addr_o       (store_addr            )//>>o>>
 
 
-    ,.if_valid_i         (if2idureg_idu_valid           )//<<i<<   
+    ,.if_valid_i         (ifuidureg_idu_valid   )//<<i<<   
     ,.ex_ready_i         (ex_ready              )//<<i<<   
     ,.id_flush_o         (id_flush              )//>>O>>
     ,.id_stall_o         (id_stall              )//>>O>>
@@ -419,8 +602,8 @@ wire                            id_ex_reg_load_flag;
 // wire                            id_ex_pipeline_idstall;
 wire                            id_ex_valid;
 ysyx_25060170_id_ex_reg u_ysyx_25060170_id_ex_reg (
-     .clk                   (clk                   )//<<i<<
-    ,.rst                   (rst                   )//<<i<<
+     .clk                   (clock                   )//<<i<<
+    ,.rst                   (reset                 )//<<i<<
     ,.inst_i                (idu_inst              )//<<i<<
     ,.pc_i                  (idu_pc                )//<<i<<
     ,.next_pc_i             (idu_next_pc           )//<<i<<
@@ -494,7 +677,7 @@ wire [`ysyx_25060170_DATA]      exu_csr_data;
 // wire                            exu_pipeline_idstall;
 
 ysyx_25060170_exu u_ysyx_25060170_exu (
-     .rst                   ( rst                       )//<<i<<
+     .rst                   ( reset                       )//<<i<<
     ,.op1_i                 ( id_ex_reg_op1             )//<<i<<
     ,.op2_i                 ( id_ex_reg_op2             )//<<i<<
     ,.op1_sel_i             ( id_ex_reg_op1_sel         )//<<i<<
@@ -560,8 +743,8 @@ wire                             ex_ls_valid;
 wire                             ex_ls_reg_load_flag;
 
 ysyx_25060170_ex_ls_reg u_ysyx_25060170_ex_ls_reg (
-     .clk                    ( clk                    )//<<i<<
-    ,.rst                    ( rst                    )//<<i<<
+     .clk                    ( clock                  )//<<i<<
+    ,.rst                    ( reset                  )//<<i<<
     ,.inst_i                 ( exu_inst               )//<<i<<
     ,.pc_i                   ( exu_pc                 )//<<i<<
     ,.next_pc_i              ( exu_next_pc            )//<<i<<
@@ -632,20 +815,33 @@ wire                            ls_valid        ;
 // wire [`ysyx_25060170_DATA]      ls_data_forward ;
 // wire [`ysyx_25060170_DATA]      ls_wb_wbdata;
 wire [`ysyx_25060170_PC]        ls_next_pc;
+wire [`ysyx_25060170_PC]        ls_pc;
 wire [`ysyx_25060170_INST]      ls_inst;
 // wire                            DPIC_ls_mem_re;
 // wire                            ls_pipeline_idstall;
 
+//lsu axi4-lite to arbiter outputs
+wire [31:0] ls_load_data_o      ;
+wire lsu_arb_awvalid            ;
+wire [31:0] lsu_arb_awaddr      ;
+wire lsu_arb_wvalid             ;
+wire [31:0] lsu_arb_wdata       ;
+wire [3:0]  lsu_arb_wstrb       ;
+wire lsu_arb_bready             ;
+wire lsu_arb_arvalid            ;
+wire [31:0] lsu_arb_araddr      ;
+wire lsu_arb_rready             ;
 // 实例化ex_ls_reg_wb_ctl
 ysyx_25060170_lsu u_ysyx_25060170_lsu (
-     .clk                   ( clk                      )//<<i<<
-    ,.rst                   ( rst                      )//<<i<<
+     .clk                   ( clock                    )//<<i<<
+    ,.rst                   ( reset                    )//<<i<<
+    ,.pc_i                  ( ex_ls_reg_pc             )//<<i<<
     ,.next_pc_i             ( ex_ls_reg_next_pc        )//<<i<<
     ,.inst_i                ( ex_ls_reg_inst           )//<<i<<
     ,.alu_res_i             ( ex_ls_reg_exu_res        )//<<i<<
     ,.store_data_i          ( ex_ls_reg_store_data     )//<<i<<
     ,.ls_ctl_i              ( ex_ls_reg_ls_ctl         )//<<i<<
-    ,.mem_ready_i           ( mem_ready                )//<<i<<
+    ,.wb_ready_i            ( wb_ready                 )//<<i<<
 
     // ,.pipeline_id_stall_i   ( ex_ls_pipeline_idstall   )//<<i<<
     //Harzard
@@ -653,26 +849,38 @@ ysyx_25060170_lsu u_ysyx_25060170_lsu (
     ,.ls_ready_o            ( ls_ready                 )//>>o>> 
     ,.ls_valid_o            ( ls_valid                 )//>>o>> 
     ,.ls_flush_o            ( ls_flush                 )//>>o>>
-        //output 
+    //output 
     ,.ls_jump_o             ( ls_pc_jump               )//>>o>>  
     ,.ls_jump_pc_o          ( ls_jump_pc               )//>>o>>
-    ,.re                    ( DPIC_ls_mem_re                )//>>o>> 
-    // ,.pipeline_id_stall_o   ( ls_pipeline_idstall      )//>>o>>
-    //dpic
-
-    ,.we                    ( DPIC_ls_dpic_we               )//>>o>> 
-    // ,.data_i                (                )//<<i<<
-    ,.data_o                ( DPIC_ls_dpic_data             )//>>o>> 
-    ,.raddr                 ( DPIC_ls_dpic_raddr            )//>>o>> 
-    ,.waddr                 ( DPIC_ls_dpic_waddr            )//>>o>> 
-    ,.wlen                  ( DPIC_ls_dpic_wlen             )//>>o>> 
-    ,.rlen                  ( DPIC_ls_dpic_rlen             )//>>o>> 
-    //forwarding
-    // ,.ls_data_forward_o     ( ls_data_forward          )//>>o>>
-    // ,.ls_data_o             ( ls_wb_wbdata             )//>>o>>
-    //outuput to ls_wb_reg
+    
+    //next_stage
     ,.inst_o                ( ls_inst                  )//>>o>>
+    ,.pc_o                  ( ls_pc                    )//>>o>>
     ,.next_pc_o             ( ls_next_pc               )//>>o>>
+    //unknown
+    ,.ls_load_data_o        (ls_load_data_o)//>>o>>
+    // lsu axi4-lite to arbiter
+    ,.lsu_arb_awvalid       (lsu_arb_awvalid)//>>o>>
+    ,.arb_lsu_awready       (arb_lsu_awready)//<<i<<
+    ,.lsu_arb_awaddr        (lsu_arb_awaddr)//>>o>>
+
+    ,.lsu_arb_wvalid        (lsu_arb_wvalid)//>>o>>
+    ,.arb_lsu_wready        (arb_lsu_wready)//<<i<<
+    ,.lsu_arb_wdata         (lsu_arb_wdata)//>>o>>
+    ,.lsu_arb_wstrb         (lsu_arb_wstrb)//>>o>>
+
+    ,.arb_lsu_bvalid        (arb_lsu_bvalid)//<<i<<
+    ,.lsu_arb_bready        (lsu_arb_bready)//>>o>>
+    ,.arb_lsu_bresp         (arb_lsu_bresp)//<<i<<
+
+    ,.lsu_arb_arvalid       (lsu_arb_arvalid)//>>o>>
+    ,.arb_lsu_arready       (arb_lsu_arready)//<<i<<
+    ,.lsu_arb_araddr        (lsu_arb_araddr)//>>o>>
+
+    ,.arb_lsu_rvalid        (arb_lsu_rvalid)//<<i<<
+    ,.lsu_arb_rready        (lsu_arb_rready)//>>o>>
+    ,.arb_lsu_rresp         (arb_lsu_rresp)//<<i<<
+    ,.arb_lsu_rdata         (arb_lsu_rdata)//<<i<<
 );
 
 // ysyx_25060170_ls_wb_reg Inputs
@@ -692,43 +900,45 @@ ysyx_25060170_lsu u_ysyx_25060170_lsu (
 // reg                             ex_flush_i;
 
 // ysyx_25060170_ls_mem_reg Outputs
-wire [`ysyx_25060170_INST]      ls_mem_reg_inst;
-wire [`ysyx_25060170_PC]        ls_mem_reg_pc;
-wire [`ysyx_25060170_PC]        ls_mem_reg_next_pc;
-wire [3:0]                      ls_mem_reg_ls_ctl;
-wire [1:0]                      ls_mem_reg_wb_ctl;
+wire [`ysyx_25060170_INST]      ls_wb_reg_inst     ;
+wire [`ysyx_25060170_PC]        ls_wb_reg_pc       ;
+wire [`ysyx_25060170_PC]        ls_wb_reg_next_pc  ;
+wire [3:0]                      ls_wb_reg_ls_ctl   ;
+wire [1:0]                      ls_wb_reg_wb_ctl   ;
 // wire [`ysyx_25060170_DATA]      ls_mem_reg_lsu_res;
 // wire [`ysyx_25060170_DATA]      ls_mem_reg_lsu_wb_data;
-wire                            ls_mem_reg_rd_ena;
-wire [`ysyx_25060170_REGADDR]   ls_mem_reg_rd_addr;
-wire [6:0]                      ls_mem_reg_csr_ctl;
-wire [11:0]                     ls_mem_reg_csr_addr;
-wire [`ysyx_25060170_DATA]      ls_mem_reg_csr_data;
+wire                            ls_wb_reg_rd_ena   ;
+wire [`ysyx_25060170_REGADDR]   ls_wb_reg_rd_addr  ;
+wire [6:0]                      ls_wb_reg_csr_ctl  ;
+wire [11:0]                     ls_wb_reg_csr_addr ;
+wire [`ysyx_25060170_DATA]      ls_wb_reg_csr_data ;
 
 // wire [`ysyx_25060170_REGADDR]   ls_mem_addr_forward;
 // wire [`ysyx_25060170_DATA]      ls_mem_data_forward;
 // wire                            ls_mem_pipeline_idstall;
-wire                            ls_mem_valid        ;    
+wire                            ls_wb_valid         ;    
 wire [`ysyx_25060170_REGADDR]   ls_rd_addr_forward  ;
 wire [`ysyx_25060170_DATA]      ls_rd_data_forward  ;
-wire                            ls_mem_reg_re       ;
-wire [`ysyx_25060170_DATA]      ls_mem_reg_alu_res  ;
-wire                            ls_mem_reg_load_flag;
+wire                            ls_wb_reg_re        ;
+wire [`ysyx_25060170_DATA]      ls_wb_reg_lsu_data  ;
+wire [`ysyx_25060170_DATA]      ls_wb_reg_alu_res   ;
+wire                            ls_wb_reg_load_flag ;
 // wire [`ysyx_25060170_DATA]      ls_mem_reg_diff_skip;
 
-ysyx_25060170_ls_mem_reg u_ysyx_25060170_ls_mem_reg (
-     .clk                    ( clk                     )//<<i<<
-    ,.rst                    ( rst                     )//<<i<<
+ysyx_25060170_ls_wb_reg u_ysyx_25060170_ls_wb_reg (
+     .clk                    ( clock                   )//<<i<<
+    ,.rst                    ( reset                   )//<<i<<
     ,.inst_i                 ( ls_inst                 )//<<i<<
-    ,.pc_i                   ( ex_ls_reg_pc                   )//<<i<<
+    ,.pc_i                   ( ls_pc                   )//<<i<<
     ,.next_pc_i              ( ls_next_pc              )//<<i<<
     ,.ls_ctl_i               ( ex_ls_reg_ls_ctl        )//<<i<<
     ,.wb_ctl_i               ( ex_ls_reg_wb_ctl        )//<<i<<
+    ,.lsu_data_i             ( ls_load_data_o          )//<<i<<
     ,.alu_res_i              ( ex_ls_reg_exu_res       )//<<i<<
     ,.load_flag_i            ( ex_ls_reg_load_flag     )//<<i<<
     // ,.lsu_res_i              ( ex_ls_reg_exu_res       )//<<i<<
     // ,.lsu_wb_data_i          ( ls_wb_wbdata            )//<<i<<
-    ,.re_i                   ( DPIC_ls_mem_re               )//<<i<<
+    ,.re_i                   ( DPIC_ls_mem_re          )//<<i<<
     ,.rd_ena_i               ( ex_ls_reg_rd_ena        )//<<i<<
     ,.rd_addr_i              ( ex_ls_reg_rd_addr       )//<<i<<
     ,.csr_ctl_i              ( ex_ls_reg_csr_ctl       )//<<i<<
@@ -737,26 +947,27 @@ ysyx_25060170_ls_mem_reg u_ysyx_25060170_ls_mem_reg (
     // ,.pipeline_id_stall_i    ( ls_pipeline_idstall     )//<<i<<
     // ,.ls_data_forward_i      ( ls_data_forward         )//<<i<<
     ,.ls_valid_i             ( ls_valid                 )//<<i<<
-    ,.mem_ready_i            ( mem_ready                )//<<i<<
-    ,.ls_valid_o             ( ls_mem_valid             )//>>o>>
+    ,.wb_ready_i             ( wb_ready                )//<<i<<
+    ,.ls_valid_o             ( ls_wb_valid             )//>>o>>
     // ,.ex_flush_i             ( ex_flush                )//<<i<<
     // ,.id_flush_i             ( id_flush                )//<<i<<
 
-    ,.inst_o                 ( ls_mem_reg_inst          )//>>o>>
-    ,.pc_o                   ( ls_mem_reg_pc            )//>>o>>
-    ,.next_pc_o              ( ls_mem_reg_next_pc       )//>>o>>
-    ,.ls_ctl_o               ( ls_mem_reg_ls_ctl        )//>>o>>
-    ,.wb_ctl_o               ( ls_mem_reg_wb_ctl        )//>>o>>
-    ,.alu_res_o              ( ls_mem_reg_alu_res       )//>>o>>
-    ,.load_flag_o            ( ls_mem_reg_load_flag   )
+    ,.inst_o                 ( ls_wb_reg_inst          )//>>o>>
+    ,.pc_o                   ( ls_wb_reg_pc            )//>>o>>
+    ,.next_pc_o              ( ls_wb_reg_next_pc       )//>>o>>
+    ,.ls_ctl_o               ( ls_wb_reg_ls_ctl        )//>>o>>
+    ,.wb_ctl_o               ( ls_wb_reg_wb_ctl        )//>>o>>
+    ,.lsu_data_o             ( ls_wb_reg_lsu_data    )//>>o>>
+    ,.alu_res_o              ( ls_wb_reg_alu_res       )//>>o>>
+    ,.load_flag_o            ( ls_wb_reg_load_flag   )
     // ,.lsu_res_o              ( ls_mem_reg_lsu_res       )//>>o>>
     // ,.lsu_wb_data_o          ( ls_mem_reg_lsu_wb_data   )//>>o>>
-    ,.re_o                   ( ls_mem_reg_re)
-    ,.rd_ena_o               ( ls_mem_reg_rd_ena        )//>>o>>
-    ,.rd_addr_o              ( ls_mem_reg_rd_addr       )//>>o>>
-    ,.csr_ctl_o              ( ls_mem_reg_csr_ctl       )//>>o>>
-    ,.csr_addr_o             ( ls_mem_reg_csr_addr      )//>>o>>
-    ,.csr_data_o             ( ls_mem_reg_csr_data      )//>>O>>
+    ,.re_o                   ( ls_wb_reg_re)
+    ,.rd_ena_o               ( ls_wb_reg_rd_ena        )//>>o>>
+    ,.rd_addr_o              ( ls_wb_reg_rd_addr       )//>>o>>
+    ,.csr_ctl_o              ( ls_wb_reg_csr_ctl       )//>>o>>
+    ,.csr_addr_o             ( ls_wb_reg_csr_addr      )//>>o>>
+    ,.csr_data_o             ( ls_wb_reg_csr_data      )//>>O>>
     // ,.pipeline_id_stall_o    ( ls_mem_pipeline_idstall  )//>>o>>
     ,.ls_rd_addr_forward     ( ls_rd_addr_forward       )//>>o>>
     ,.ls_rd_data_forward     ( ls_rd_data_forward       )//>>o>>
@@ -778,109 +989,109 @@ ysyx_25060170_ls_mem_reg u_ysyx_25060170_ls_mem_reg (
 // reg                             id_stall_i;
 
 
-// ysyx_25060170_mem Outputs 
-wire [`ysyx_25060170_INST]      mem_inst             ;
-wire [`ysyx_25060170_PC]        mem_pc               ;
-wire [`ysyx_25060170_PC]        mem_next_pc          ;
-wire [`ysyx_25060170_REG]       mem_alu_res          ;
-wire                            mem_rd_ena           ;
-wire [`ysyx_25060170_REGADDR]   mem_rd_addr          ;
-wire [6:0]                      mem_csr_ctl          ;
-wire [11:0]                     mem_csr_addr         ;
-wire [1:0]                      mem_wbctl            ;
-wire                            mem_valid            ;
-wire                            mem_ready            ;
-wire [`ysyx_25060170_DATA]      mem_data             ;
+// // ysyx_25060170_mem Outputs 
+// wire [`ysyx_25060170_INST]      mem_inst             ;
+// wire [`ysyx_25060170_PC]        mem_pc               ;
+// wire [`ysyx_25060170_PC]        mem_next_pc          ;
+// wire [`ysyx_25060170_REG]       mem_alu_res          ;
+// wire                            mem_rd_ena           ;
+// wire [`ysyx_25060170_REGADDR]   mem_rd_addr          ;
+// wire [6:0]                      mem_csr_ctl          ;
+// wire [11:0]                     mem_csr_addr         ;
+// wire [1:0]                      mem_wbctl            ;
+// wire                            mem_valid            ;
+// wire                            mem_ready            ;
+// wire [`ysyx_25060170_DATA]      mem_data             ;
 
-ysyx_25060170_mem u_ysyx_25060170_mem (
-     .clk                    (clk                       )//<<i<<
-    ,.rst                    (rst                       )//<<i<<
-    ,.inst_i                 (ls_mem_reg_inst           )//<<i<<
-    ,.pc_i                   (ls_mem_reg_pc             )//<<i<<
-    ,.next_pc_i              (ls_mem_reg_next_pc        )//<<i<<
-    ,.wb_ctl_i               (ls_mem_reg_wb_ctl         )//<<i<< 
-    ,.alu_res_i              (ls_mem_reg_alu_res        )//<<i<<
-    ,.re                     (ls_mem_reg_re             )//<<i<<
-    ,.rd_ena_i               (ls_mem_reg_rd_ena         )//<<i<<
-    ,.rd_addr_i              (ls_mem_reg_rd_addr        )//<<i<<
-    ,.csr_ctl_i              (ls_mem_reg_csr_ctl        )//<<i<<
-    ,.csr_addr_i             (ls_mem_reg_csr_addr       )//<<i<<
-    ,.ls_ctl_i               (ls_mem_reg_ls_ctl         )//<<i<<
-    ,.mem_data_i             (DPIC_DPIC_MEM_data        )//<<i<<
-    // ,.lsu_wb_data_i          ()    
-    ,.ls_valid_i             (ls_mem_valid              )//<<i<<
-    ,.wb_ready_i             (wb_ready                  )//<<i<<
-    ,.mem_valid_o            (mem_valid                 )//>>o>>
-    ,.mem_ready_o            (mem_ready                 )//>>o>>
-    ,.inst_o                 (mem_inst                  )//>>o>>
-    ,.pc_o                   (mem_pc                    )//>>o>>
-    ,.next_pc_o              (mem_next_pc               )//>>o>>
-    ,.wb_ctl_o               (mem_wbctl                 )//>>o>>
-    ,.alu_res_o              (mem_alu_res               )//>>o>>
-    ,.rd_ena_o               (mem_rd_ena                )//>>o>>
-    ,.rd_addr_o              (mem_rd_addr               )//>>o>>
-    ,.csr_ctl_o              (mem_csr_ctl               )//>>o>>
-    ,.csr_addr_o             (mem_csr_addr              )//>>o>>
-    ,.mem_data_o             (mem_data                  )//>>o>>
-    // ,.mem_data_forward_o     ()
-    // ,.lsu_wb_data_o          ()
-);
+// ysyx_25060170_mem u_ysyx_25060170_mem (
+//      .clk                    (clock                     )//<<i<<
+//     ,.rst                    (reset                     )//<<i<<
+//     ,.inst_i                 (ls_mem_reg_inst           )//<<i<<
+//     ,.pc_i                   (ls_mem_reg_pc             )//<<i<<
+//     ,.next_pc_i              (ls_mem_reg_next_pc        )//<<i<<
+//     ,.wb_ctl_i               (ls_mem_reg_wb_ctl         )//<<i<< 
+//     ,.alu_res_i              (ls_mem_reg_alu_res        )//<<i<<
+//     ,.re                     (ls_mem_reg_re             )//<<i<<
+//     ,.rd_ena_i               (ls_mem_reg_rd_ena         )//<<i<<
+//     ,.rd_addr_i              (ls_mem_reg_rd_addr        )//<<i<<
+//     ,.csr_ctl_i              (ls_mem_reg_csr_ctl        )//<<i<<
+//     ,.csr_addr_i             (ls_mem_reg_csr_addr       )//<<i<<
+//     ,.ls_ctl_i               (ls_mem_reg_ls_ctl         )//<<i<<
+//     ,.mem_data_i             (DPIC_DPIC_MEM_data        )//<<i<<
+//     // ,.lsu_wb_data_i          ()    
+//     ,.ls_valid_i             (ls_mem_valid              )//<<i<<
+//     ,.wb_ready_i             (wb_ready                  )//<<i<<
+//     ,.mem_valid_o            (mem_valid                 )//>>o>>
+//     ,.mem_ready_o            (mem_ready                 )//>>o>>
+//     ,.inst_o                 (mem_inst                  )//>>o>>
+//     ,.pc_o                   (mem_pc                    )//>>o>>
+//     ,.next_pc_o              (mem_next_pc               )//>>o>>
+//     ,.wb_ctl_o               (mem_wbctl                 )//>>o>>
+//     ,.alu_res_o              (mem_alu_res               )//>>o>>
+//     ,.rd_ena_o               (mem_rd_ena                )//>>o>>
+//     ,.rd_addr_o              (mem_rd_addr               )//>>o>>
+//     ,.csr_ctl_o              (mem_csr_ctl               )//>>o>>
+//     ,.csr_addr_o             (mem_csr_addr              )//>>o>>
+//     ,.mem_data_o             (mem_data                  )//>>o>>
+//     // ,.mem_data_forward_o     ()
+//     // ,.lsu_wb_data_o          ()
+// );
 
-// ysyx_25060170_ls_mem_reg Outputs
-wire  [`ysyx_25060170_INST]     mem_wb_inst           ;
-wire  [`ysyx_25060170_PC]       mem_wb_pc             ;
-wire  [`ysyx_25060170_PC]       mem_wb_next_pc        ;
-wire  [`ysyx_25060170_DATA]     mem_wb_lsu_res        ;
-wire  [`ysyx_25060170_DATA]     mem_wb_alures_data    ;
-wire  [1:0]                     mem_wb_wb_ctl         ;
-wire                            mem_wb_rd_ena         ;
-wire  [`ysyx_25060170_REGADDR]  mem_wb_rd_addr        ;
-wire  [6:0]                     mem_wb_csr_ctl        ;
-wire  [11:0]                    mem_wb_csr_addr       ;
-wire  [`ysyx_25060170_DATA]     mem_wb_csr_data       ;
-// wire  [`ysyx_25060170_DATA]     mem_wb_wb_data        ;
-wire                            mem_valid_o           ;
-wire  [`ysyx_25060170_REGADDR]  mem_rd_addr_forward   ;
-wire  [`ysyx_25060170_DATA]     mem_rd_data_forward   ;
-wire                            mem_wb_reg_load_flag  ;
-// wire  [`ysyx_25060170_DATA]     DPIC_mem_wb_skip_flag      ;
+// // ysyx_25060170_ls_mem_reg Outputs
+// wire  [`ysyx_25060170_INST]     mem_wb_inst           ;
+// wire  [`ysyx_25060170_PC]       mem_wb_pc             ;
+// wire  [`ysyx_25060170_PC]       mem_wb_next_pc        ;
+// wire  [`ysyx_25060170_DATA]     mem_wb_lsu_res        ;
+// wire  [`ysyx_25060170_DATA]     mem_wb_alures_data    ;
+// wire  [1:0]                     mem_wb_wb_ctl         ;
+// wire                            mem_wb_rd_ena         ;
+// wire  [`ysyx_25060170_REGADDR]  mem_wb_rd_addr        ;
+// wire  [6:0]                     mem_wb_csr_ctl        ;
+// wire  [11:0]                    mem_wb_csr_addr       ;
+// wire  [`ysyx_25060170_DATA]     mem_wb_csr_data       ;
+// // wire  [`ysyx_25060170_DATA]     mem_wb_wb_data        ;
+// wire                            mem_valid_o           ;
+// wire  [`ysyx_25060170_REGADDR]  mem_rd_addr_forward   ;
+// wire  [`ysyx_25060170_DATA]     mem_rd_data_forward   ;
+// wire                            mem_wb_reg_load_flag  ;
+// // wire  [`ysyx_25060170_DATA]     DPIC_mem_wb_skip_flag      ;
 
-ysyx_25060170_mem_wb_reg u_ysyx_25060170_mem_wb_reg(
-     .clk                   (clk                        )//<<i<<
-    ,.rst                   (rst                        )//<<i<<
-    ,.inst_i                (mem_inst                   )//<<i<<
-    ,.pc_i                  (mem_pc                     )//<<i<<
-    ,.next_pc_i             (mem_next_pc                )//<<i<<
-    ,.wb_ctl_i              (mem_wbctl                  )//<<i<<
-    ,.mem_data_i            (mem_data                   )//<<i<<
-    ,.load_flag_i           (ls_mem_reg_load_flag       )//<<i<<
-    ,.alu_res_i             (mem_alu_res                )//<<i<<
-    ,.rd_ena_i              (mem_rd_ena                 )//<<i<<
-    ,.rd_addr_i             (mem_rd_addr                )//<<i<<
-    ,.csr_ctl_i             (mem_csr_ctl                )//<<i<<
-    ,.csr_addr_i            (mem_csr_addr               )//<<i<<
-    ,.csr_data_i            (ls_mem_reg_csr_data        )//<<i<<
-    // ,.wb_data_i             (mem_data                   )//<<i<<
-    ,.mem_valid_i           (mem_valid                  )//<<i<<
-    ,.wb_ready_i            (wb_ready                   )//<<i<<
+// ysyx_25060170_mem_wb_reg u_ysyx_25060170_mem_wb_reg(
+//      .clk                   (clock                      )//<<i<<
+//     ,.rst                   (reset                      )//<<i<<
+//     ,.inst_i                (mem_inst                   )//<<i<<
+//     ,.pc_i                  (mem_pc                     )//<<i<<
+//     ,.next_pc_i             (mem_next_pc                )//<<i<<
+//     ,.wb_ctl_i              (mem_wbctl                  )//<<i<<
+//     ,.mem_data_i            (mem_data                   )//<<i<<
+//     ,.load_flag_i           (ls_mem_reg_load_flag       )//<<i<<
+//     ,.alu_res_i             (mem_alu_res                )//<<i<<
+//     ,.rd_ena_i              (mem_rd_ena                 )//<<i<<
+//     ,.rd_addr_i             (mem_rd_addr                )//<<i<<
+//     ,.csr_ctl_i             (mem_csr_ctl                )//<<i<<
+//     ,.csr_addr_i            (mem_csr_addr               )//<<i<<
+//     ,.csr_data_i            (ls_mem_reg_csr_data        )//<<i<<
+//     // ,.wb_data_i             (mem_data                   )//<<i<<
+//     ,.mem_valid_i           (mem_valid                  )//<<i<<
+//     ,.wb_ready_i            (wb_ready                   )//<<i<<
 
-    ,.mem_valid_o           (mem_valid_o                )//>>o>>
-    ,.inst_o                (mem_wb_inst                )//>>o>>
-    ,.pc_o                  (mem_wb_pc                  )//>>o>>
-    ,.next_pc_o             (mem_wb_next_pc             )//>>o>>
-    ,.mem_data_o            (mem_wb_lsu_res             )//>>o>>
-    ,.load_flag_o           (mem_wb_reg_load_flag           )//>>o>>
-    ,.alu_res_o             (mem_wb_alures_data         )//>>o>>
-    ,.wb_ctl_o              (mem_wb_wb_ctl              )//>>o>>
-    ,.rd_ena_o              (mem_wb_rd_ena              )//>>o>>
-    ,.rd_addr_o             (mem_wb_rd_addr             )//>>o>>
-    ,.csr_ctl_o             (mem_wb_csr_ctl             )//>>o>>
-    ,.csr_addr_o            (mem_wb_csr_addr            )//>>o>>
-    ,.csr_data_o            (mem_wb_csr_data            )//>>o>>
-    // ,.wb_data_o             (mem_wb_wb_data             )//>>o>>
-    ,.mem_rd_addr_forward_o (mem_rd_addr_forward)//>>o>>
-    ,.mem_rd_data_forward_o (mem_rd_data_forward)//>>o>>
-);
+//     ,.mem_valid_o           (mem_valid_o                )//>>o>>
+//     ,.inst_o                (mem_wb_inst                )//>>o>>
+//     ,.pc_o                  (mem_wb_pc                  )//>>o>>
+//     ,.next_pc_o             (mem_wb_next_pc             )//>>o>>
+//     ,.mem_data_o            (mem_wb_lsu_res             )//>>o>>
+//     ,.load_flag_o           (mem_wb_reg_load_flag           )//>>o>>
+//     ,.alu_res_o             (mem_wb_alures_data         )//>>o>>
+//     ,.wb_ctl_o              (mem_wb_wb_ctl              )//>>o>>
+//     ,.rd_ena_o              (mem_wb_rd_ena              )//>>o>>
+//     ,.rd_addr_o             (mem_wb_rd_addr             )//>>o>>
+//     ,.csr_ctl_o             (mem_wb_csr_ctl             )//>>o>>
+//     ,.csr_addr_o            (mem_wb_csr_addr            )//>>o>>
+//     ,.csr_data_o            (mem_wb_csr_data            )//>>o>>
+//     // ,.wb_data_o             (mem_wb_wb_data             )//>>o>>
+//     ,.mem_rd_addr_forward_o (mem_rd_addr_forward)//>>o>>
+//     ,.mem_rd_data_forward_o (mem_rd_data_forward)//>>o>>
+// );
 
 // ysyx_25060170_wbu Outputs 
 wire [`ysyx_25060170_DATA]      wb_rf_data;
@@ -907,20 +1118,20 @@ ysyx_25060170_wbu u_ysyx_25060170_wbu (
     //  .clk                       ( clk                           )//<<i<<
     // ,.rst                       ( rst                           )//<<i<<
 
-     .ls_rd_data_i              ( mem_wb_lsu_res                )//<<i<<
-    ,.wb_ctl_i                  ( mem_wb_wb_ctl                 )//<<i<<
-    ,.exu_res_i                 ( mem_wb_alures_data            )//<<i<<
-    ,.pc_i                      ( mem_wb_pc                     )//<<i<<
-    ,.next_pc_i                 ( mem_wb_next_pc                )//<<i<<
-    ,.inst_i                    ( mem_wb_inst                   )//<<i<<
-    ,.rd_addr_i                 ( mem_wb_rd_addr                )//<<i<<
-    ,.rd_ena_i                  ( mem_wb_rd_ena                 )//<<i<<
-    ,.csr_ctl_i                 ( mem_wb_csr_ctl                )//<<i<<
-    ,.csr_addr_i                ( mem_wb_csr_addr               )//<<i<<
-    ,.csr_data_i                ( mem_wb_csr_data               )//<<i<<
+     .ls_rd_data_i              ( ls_wb_reg_lsu_data           )//<<i<<
+    ,.wb_ctl_i                  ( ls_wb_reg_wb_ctl                 )//<<i<<
+    ,.exu_res_i                 ( ls_wb_reg_alu_res            )//<<i<<
+    ,.pc_i                      ( ls_wb_reg_pc                     )//<<i<<
+    ,.next_pc_i                 ( ls_wb_reg_next_pc                )//<<i<<
+    ,.inst_i                    ( ls_wb_reg_inst                   )//<<i<<
+    ,.rd_addr_i                 ( ls_wb_reg_rd_addr                )//<<i<<
+    ,.rd_ena_i                  ( ls_wb_reg_rd_ena                 )//<<i<<
+    ,.csr_ctl_i                 ( ls_wb_reg_csr_ctl                )//<<i<<
+    ,.csr_addr_i                ( ls_wb_reg_csr_addr               )//<<i<<
+    ,.csr_data_i                ( ls_wb_reg_csr_data               )//<<i<<
     ,.read_csr_data_i           ( csr_wbu_read_csr_data         )//<<i<<     
     // ,.pipeline_id_stall_i       (         )//<<i<<
-    ,.ls_valid_i                ( mem_valid_o                   )//<<i<<
+    ,.ls_valid_i                ( ls_wb_valid                   )//<<i<<
     // ,.id_stall_i                ( id_stall                      )//<<i<<
     //out for regfile       
     ,.wb_data_o                 ( wb_rf_data                    )//>>o>>
@@ -1004,8 +1215,8 @@ wire [`ysyx_25060170_REG]       mepc;
 wire [`ysyx_25060170_DATA]      csr_idu_data;
 
 ysyx_25060170_csr u_ysyx_25060170_csr (
-     .clk               (clk                    )//i
-    ,.rst               (rst                    )//i
+     .clk               (clock                  )//i
+    ,.rst               (reset                  )//i
     ,.idu_read_csr_en   (idu_csr_ena            )//i
     ,.idu_read_csr_addr (idu_csr_addr           )//i
     ,.csr_ctl           (wb_csr_csr_ctl[3:0]    )//<<i<<  {csr_wr_ena, csr_rd_ena, ecall_ena, mret_ena}
@@ -1019,8 +1230,8 @@ ysyx_25060170_csr u_ysyx_25060170_csr (
 );
 
 ysyx_25060170_regfile u_ysyx_25060170_regfile (
-     .clk           ( clk              )//<<i<<
-    ,.rst           ( rst              )//<<i<<
+     .clk           ( clock            )//<<i<<
+    ,.rst           ( reset            )//<<i<<
     ,.waddr         ( wb_rf_rd_addr    )//<<i<<
     ,.wdata         ( wb_rf_data       )//<<i<<
     ,.wen           ( wb_rf_rd_ena     )//<<i<<

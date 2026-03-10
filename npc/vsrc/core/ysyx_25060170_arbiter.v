@@ -1,279 +1,323 @@
 `include "define.v"
 
-// 2-master AXI4 arbiter: LSU 优先于 IFU
-// IFU = master0 (只读, AW/W/B 通道不使用)
-// LSU = master1 (读写)
-// master = 面向 slave memory 的输出端
 module ysyx_25060170_arbiter(
-     input wire         clk
-    ,input wire         rst
+     input  wire         clk
+    ,input  wire         rst
 
-    //================== IFU 侧 (master0, 仲裁器作为 slave) ==================
-    // AW 通道 (IFU 不写, 全部忽略)
-    ,input  wire                            io_ifu_awvalid
-    ,output wire                            io_ifu_awready
-    ,input  wire [31:0]                     io_ifu_awaddr
-    ,input  wire [3:0]                      io_ifu_awid
-    ,input  wire [7:0]                      io_ifu_awlen
-    ,input  wire [2:0]                      io_ifu_awsize
-    ,input  wire [1:0]                      io_ifu_awburst
+    //==================== IFU side ====================
+    // AR
+    ,input  wire         ifu_arb_arvalid//IFU发送地址有效
+    ,output wire         arb_ifu_arready//arbiter准备好接受读地址
+    ,input  wire [31:0]  ifu_arb_araddr //IFU要发送的指令地址
 
-    // W 通道 (IFU 不写)
-    ,input  wire                            io_ifu_wvalid
-    ,output wire                            io_ifu_wready
-    ,input  wire [31:0]                     io_ifu_wdata
-    ,input  wire [3:0]                      io_ifu_wstrb
-    ,input  wire                            io_ifu_wlast
+    // R
+    //2'b00正常访问 2'b01独占访问 2'b10从设备错误 2'b11解码错误
+    ,output wire [2:0]   arb_ifu_rresp  //读响应状态(OKAY=2'b00, EXOKAY=2'b01, SLVERR=2'b10, DECERR=2'b11)
+    ,output wire         arb_ifu_rvalid //返回的读数据有效
+    ,input  wire         ifu_arb_rready //IFU准备好接受读数据
+    ,output wire [31:0]  arb_ifu_rdata  //读取到的指令数据
 
-    // B 通道 (IFU 不写)
-    ,output wire                            io_ifu_bvalid
-    ,input  wire                            io_ifu_bready
-    ,output wire [1:0]                      io_ifu_bresp
-    ,output wire [3:0]                      io_ifu_bid
+    //==================== LSU side ====================
+    // AW
+    ,input  wire         lsu_arb_awvalid //LSU发送写地址有效
+    ,output wire         arb_lsu_awready //arbiter准备好接收写地址
+    ,input  wire [31:0]  lsu_arb_awaddr  //要写入的内存地址
 
-    // AR 通道
-    ,input  wire                            io_ifu_arvalid
-    ,output wire                            io_ifu_arready
-    ,input  wire [31:0]                     io_ifu_araddr
-    ,input  wire [3:0]                      io_ifu_arid
-    ,input  wire [7:0]                      io_ifu_arlen
-    ,input  wire [2:0]                      io_ifu_arsize
-    ,input  wire [1:0]                      io_ifu_arburst
+    // W
+    ,input  wire         lsu_arb_wvalid  //写数据有效
+    ,output wire         arb_lsu_wready  //arbiter准备好接收写数据
+    ,input  wire [31:0]  lsu_arb_wdata   //要写入的数据
+    ,input  wire [3:0]   lsu_arb_wstrb   //写字节选通
 
-    // R 通道
-    ,output wire                            io_ifu_rvalid
-    ,input  wire                            io_ifu_rready
-    ,output wire [1:0]                      io_ifu_rresp
-    ,output wire [31:0]                     io_ifu_rdata
-    ,output wire                            io_ifu_rlast
-    ,output wire [3:0]                      io_ifu_rid
+    // B
+    ,output wire         arb_lsu_bvalid  //写响应有效
+    ,input  wire         lsu_arb_bready  //LSU准备好接收写响应
+    ,output wire [1:0]   arb_lsu_bresp   //写响应状态
 
-    //================== LSU 侧 (master1, 仲裁器作为 slave) ==================
-    // AW 通道
-    ,input  wire                            io_lsu_awvalid
-    ,output wire                            io_lsu_awready
-    ,input  wire [31:0]                     io_lsu_awaddr
-    ,input  wire [3:0]                      io_lsu_awid
-    ,input  wire [7:0]                      io_lsu_awlen
-    ,input  wire [2:0]                      io_lsu_awsize
-    ,input  wire [1:0]                      io_lsu_awburst
+    // AR
+    ,input  wire         lsu_arb_arvalid //LSU发送读地址有效
+    ,output wire         arb_lsu_arready //arbiter准备好接收读地址
+    ,input  wire [31:0]  lsu_arb_araddr  //要读取的数据地址
 
-    // W 通道
-    ,input  wire                            io_lsu_wvalid
-    ,output wire                            io_lsu_wready
-    ,input  wire [31:0]                     io_lsu_wdata
-    ,input  wire [3:0]                      io_lsu_wstrb
-    ,input  wire                            io_lsu_wlast
+    // R
+    ,output wire         arb_lsu_rvalid  //返回的读数据有效
+    ,input  wire         lsu_arb_rready  //LSU准备好接收读数据
+    ,output wire [1:0]   arb_lsu_rresp   //读响应状态
+    ,output wire [31:0]  arb_lsu_rdata   //读取到的数据
 
-    // B 通道
-    ,output wire                            io_lsu_bvalid
-    ,input  wire                            io_lsu_bready
-    ,output wire [1:0]                      io_lsu_bresp
-    ,output wire [3:0]                      io_lsu_bid
+    //==================== AXI4-Lite slave side ====================
+    // AW
+    ,output wire         arb_axi_awvalid //arbiter发送写地址有效
+    ,input  wire         axi_arb_awready //arbiter准备好接收写地址
+    ,output wire [31:0]  arb_axi_awaddr  //写入的地址
 
-    // AR 通道
-    ,input  wire                            io_lsu_arvalid
-    ,output wire                            io_lsu_arready
-    ,input  wire [31:0]                     io_lsu_araddr
-    ,input  wire [3:0]                      io_lsu_arid
-    ,input  wire [7:0]                      io_lsu_arlen
-    ,input  wire [2:0]                      io_lsu_arsize
-    ,input  wire [1:0]                      io_lsu_arburst
+    // W
+    ,output wire         arb_axi_wvalid  //写数据有效
+    ,input  wire         axi_arb_wready  //AXI从设备准备好接收写数据
+    ,output wire [31:0]  arb_axi_wdata   //写数据
+    ,output wire [3:0]   arb_axi_wstrb   //写字节选通
 
-    // R 通道
-    ,output wire                            io_lsu_rvalid
-    ,input  wire                            io_lsu_rready
-    ,output wire [1:0]                      io_lsu_rresp
-    ,output wire [31:0]                     io_lsu_rdata
-    ,output wire                            io_lsu_rlast
-    ,output wire [3:0]                      io_lsu_rid
+    // B
+    ,input  wire         axi_arb_bvalid  //AXI从设备返回写响应有效
+    ,output wire         arb_axi_bready  //arbiter准备好接收写响应
+    ,input  wire [1:0]   axi_arb_bresp   //写响应状态
 
-    //================== Memory 侧 (仲裁器作为 master) ==================
-    // AW 通道
-    ,output wire                            io_master_awvalid
-    ,input  wire                            io_master_awready
-    ,output wire [31:0]                     io_master_awaddr
-    ,output wire [3:0]                      io_master_awid
-    ,output wire [7:0]                      io_master_awlen
-    ,output wire [2:0]                      io_master_awsize
-    ,output wire [1:0]                      io_master_awburst
+    // AR
+    ,output wire         arb_axi_arvalid //仲裁器发送读地址有效
+    ,input  wire         axi_arb_arready //AXI从设备准备好接收读地址
+    ,output wire [31:0]  arb_axi_araddr  //读地址
 
-    // W 通道
-    ,output wire                            io_master_wvalid
-    ,input  wire                            io_master_wready
-    ,output wire [31:0]                     io_master_wdata
-    ,output wire [3:0]                      io_master_wstrb
-    ,output wire                            io_master_wlast
-
-    // B 通道
-    ,input  wire                            io_master_bvalid
-    ,output wire                            io_master_bready
-    ,input  wire [1:0]                      io_master_bresp
-    ,input  wire [3:0]                      io_master_bid
-
-    // AR 通道
-    ,output wire                            io_master_arvalid
-    ,input  wire                            io_master_arready
-    ,output wire [31:0]                     io_master_araddr
-    ,output wire [3:0]                      io_master_arid
-    ,output wire [7:0]                      io_master_arlen
-    ,output wire [2:0]                      io_master_arsize
-    ,output wire [1:0]                      io_master_arburst
-
-    // R 通道
-    ,input  wire                            io_master_rvalid
-    ,output wire                            io_master_rready
-    ,input  wire [1:0]                      io_master_rresp
-    ,input  wire [31:0]                     io_master_rdata
-    ,input  wire                            io_master_rlast
-    ,input  wire [3:0]                      io_master_rid
+    // R
+    ,input  wire         axi_arb_rvalid  //AXI从设备返回读数据有效
+    ,output wire         arb_axi_rready  //仲裁器准备好接收读数据
+    ,input  wire [1:0]   axi_arb_rresp   //读响应状态
+    ,input  wire [31:0]  axi_arb_rdata   //读数据
 );
 
 //==========================================================================
-// 仲裁状态机
-// IDLE: 空闲, 等待请求
-// LSU_READ:  LSU 读事务进行中
-// LSU_WRITE: LSU 写事务进行中
-// IFU_READ:  IFU 读事务进行中
+// 状态机
+// 单 outstanding：
+//   LSU write > LSU read > IFU read
 //==========================================================================
-localparam [1:0] S_IDLE      = 2'd0;
-localparam [1:0] S_LSU_READ  = 2'd1;
-localparam [1:0] S_LSU_WRITE = 2'd2;
-localparam [1:0] S_IFU_READ  = 2'd3;
+localparam [2:0] S_ARB_IDLE        = 3'd0;
+localparam [2:0] S_ARB_LSU_RD_ADDR = 3'd1;
+localparam [2:0] S_ARB_LSU_RD_DATA = 3'd2;
+localparam [2:0] S_ARB_IFU_RD_ADDR = 3'd3;
+localparam [2:0] S_ARB_IFU_RD_DATA = 3'd4;
+localparam [2:0] S_ARB_LSU_WR_REQ  = 3'd5;
+localparam [2:0] S_ARB_LSU_WR_RESP = 3'd6;
 
-reg [1:0] state;
-reg [1:0] next_state;
+reg [2:0] arb_state;
 
-// LSU 有任何请求 (读或写)
-wire lsu_req = io_lsu_arvalid | io_lsu_awvalid;
-// IFU 只有读请求
-wire ifu_req = io_ifu_arvalid;
+// AXI4-Lite 的 AW / W 独立握手
+reg aw_done;
+reg w_done;
 
-// 读事务结束: R 通道最后一拍握手成功
-wire rd_done  = io_master_rvalid & io_master_rready & io_master_rlast;
-// 写事务结束: B 通道握手成功
-wire wr_done  = io_master_bvalid & io_master_bready;
+// 握手检测
+wire aw_hs;
+wire w_hs;
+wire b_hs;
+wire lsu_ar_hs;
+wire ifu_ar_hs;
+wire lsu_r_hs;
+wire ifu_r_hs;
 
-//----------------------- 状态转移 -----------------------
+assign aw_hs     = arb_axi_awvalid & axi_arb_awready;
+assign w_hs      = arb_axi_wvalid  & axi_arb_wready;
+assign b_hs      = axi_arb_bvalid  & arb_axi_bready;
+assign lsu_ar_hs = arb_axi_arvalid & axi_arb_arready & (arb_state == S_ARB_LSU_RD_ADDR);
+assign ifu_ar_hs = arb_axi_arvalid & axi_arb_arready & (arb_state == S_ARB_IFU_RD_ADDR);
+assign lsu_r_hs  = axi_arb_rvalid  & lsu_arb_rready  & (arb_state == S_ARB_LSU_RD_DATA);
+assign ifu_r_hs  = axi_arb_rvalid  & ifu_arb_rready  & (arb_state == S_ARB_IFU_RD_DATA);
+
+//==========================================================================
+// 状态转移
+//==========================================================================
 always @(posedge clk) begin
-    if (rst)
-        state <= S_IDLE;
-    else
-        state <= next_state;
+    if (rst == `ysyx_25060170_RSTABLE) begin
+        arb_state <= S_ARB_IDLE;
+        aw_done   <= 1'b0;
+        w_done    <= 1'b0;
+    end
+    else begin
+        case (arb_state)
+            S_ARB_IDLE: begin
+                aw_done <= 1'b0;
+                w_done  <= 1'b0;
+
+                // LSU 优先
+                if (lsu_arb_awvalid | lsu_arb_wvalid) begin
+                    arb_state <= S_ARB_LSU_WR_REQ;
+                end
+                else if (lsu_arb_arvalid) begin
+                    arb_state <= S_ARB_LSU_RD_ADDR;
+                end
+                else if (ifu_arb_arvalid) begin
+                    arb_state <= S_ARB_IFU_RD_ADDR;
+                end
+            end
+
+            //==================== LSU READ ====================
+            S_ARB_LSU_RD_ADDR: begin
+                if (lsu_ar_hs) begin
+                    arb_state <= S_ARB_LSU_RD_DATA;
+                end
+            end
+
+            S_ARB_LSU_RD_DATA: begin
+                if (lsu_r_hs) begin
+                    arb_state <= S_ARB_IDLE;
+                end
+            end
+
+            //==================== IFU READ ====================
+            S_ARB_IFU_RD_ADDR: begin
+                if (ifu_ar_hs) begin
+                    arb_state <= S_ARB_IFU_RD_DATA;
+                end
+            end
+
+            S_ARB_IFU_RD_DATA: begin
+                if (ifu_r_hs) begin
+                    arb_state <= S_ARB_IDLE;
+                end
+            end
+
+            //==================== LSU WRITE ====================
+            S_ARB_LSU_WR_REQ: begin
+                if (aw_hs)
+                    aw_done <= 1'b1;
+                if (w_hs)
+                    w_done  <= 1'b1;
+
+                if ( (aw_done | aw_hs) & (w_done | w_hs) ) begin
+                    arb_state <= S_ARB_LSU_WR_RESP;
+                end
+            end
+
+            S_ARB_LSU_WR_RESP: begin
+                if (b_hs) begin
+                    arb_state <= S_ARB_IDLE;
+                end
+            end
+
+            default: begin
+                arb_state <= S_ARB_IDLE;
+                aw_done   <= 1'b0;
+                w_done    <= 1'b0;
+            end
+        endcase
+    end
 end
 
+//==========================================================================
+// 输出仲裁
+//==========================================================================
+reg        arb_ifu_arready_r;
+reg [2:0]  arb_ifu_rresp_r;
+reg        arb_ifu_rvalid_r;
+reg [31:0] arb_ifu_rdata_r;
+
+reg        arb_lsu_awready_r;
+reg        arb_lsu_wready_r;
+reg        arb_lsu_bvalid_r;
+reg [1:0]  arb_lsu_bresp_r;
+reg        arb_lsu_arready_r;
+reg        arb_lsu_rvalid_r;
+reg [1:0]  arb_lsu_rresp_r;
+reg [31:0] arb_lsu_rdata_r;
+
+reg        arb_axi_awvalid_r;
+reg [31:0] arb_axi_awaddr_r;
+reg        arb_axi_wvalid_r;
+reg [31:0] arb_axi_wdata_r;
+reg [3:0]  arb_axi_wstrb_r;
+reg        arb_axi_bready_r;
+reg        arb_axi_arvalid_r;
+reg [31:0] arb_axi_araddr_r;
+reg        arb_axi_rready_r;
+
 always @(*) begin
-    next_state = state;
-    case (state)
-        S_IDLE: begin
-            // LSU 优先
-            if (io_lsu_awvalid)
-                next_state = S_LSU_WRITE;
-            else if (io_lsu_arvalid)
-                next_state = S_LSU_READ;
-            else if (io_ifu_arvalid)
-                next_state = S_IFU_READ;
+    // 默认值
+    arb_ifu_arready_r = 1'b0;
+    arb_ifu_rresp_r   = 3'b000;
+    arb_ifu_rvalid_r  = 1'b0;
+    arb_ifu_rdata_r   = 32'b0;
+
+    arb_lsu_awready_r = 1'b0;
+    arb_lsu_wready_r  = 1'b0;
+    arb_lsu_bvalid_r  = 1'b0;
+    arb_lsu_bresp_r   = 2'b00;
+    arb_lsu_arready_r = 1'b0;
+    arb_lsu_rvalid_r  = 1'b0;
+    arb_lsu_rresp_r   = 2'b00;
+    arb_lsu_rdata_r   = 32'b0;
+
+    arb_axi_awvalid_r = 1'b0;
+    arb_axi_awaddr_r  = 32'b0;
+    arb_axi_wvalid_r  = 1'b0;
+    arb_axi_wdata_r   = 32'b0;
+    arb_axi_wstrb_r   = 4'b0000;
+    arb_axi_bready_r  = 1'b0;
+    arb_axi_arvalid_r = 1'b0;
+    arb_axi_araddr_r  = 32'b0;
+    arb_axi_rready_r  = 1'b0;
+
+    case (arb_state)
+        //==================== LSU READ ====================
+        S_ARB_LSU_RD_ADDR: begin
+            arb_axi_arvalid_r = lsu_arb_arvalid;
+            arb_axi_araddr_r  = lsu_arb_araddr;
+            arb_lsu_arready_r = axi_arb_arready;
         end
-        S_LSU_READ: begin
-            if (rd_done) next_state = S_IDLE;
+
+        S_ARB_LSU_RD_DATA: begin
+            arb_lsu_rvalid_r  = axi_arb_rvalid;
+            arb_lsu_rresp_r   = axi_arb_rresp;
+            arb_lsu_rdata_r   = axi_arb_rdata;
+            arb_axi_rready_r  = lsu_arb_rready;
         end
-        S_LSU_WRITE: begin
-            if (wr_done) next_state = S_IDLE;
+
+        //==================== IFU READ ====================
+        S_ARB_IFU_RD_ADDR: begin
+            arb_axi_arvalid_r = ifu_arb_arvalid;
+            arb_axi_araddr_r  = ifu_arb_araddr;
+            arb_ifu_arready_r = axi_arb_arready;
         end
-        S_IFU_READ: begin
-            if (rd_done) next_state = S_IDLE;
+
+        S_ARB_IFU_RD_DATA: begin
+            arb_ifu_rvalid_r  = axi_arb_rvalid;
+            arb_ifu_rresp_r   = {1'b0, axi_arb_rresp};
+            arb_ifu_rdata_r   = axi_arb_rdata;
+            arb_axi_rready_r  = ifu_arb_rready;
         end
-        default: next_state = S_IDLE;
+
+        //==================== LSU WRITE ====================
+        S_ARB_LSU_WR_REQ: begin
+            arb_axi_awvalid_r = lsu_arb_awvalid & (~aw_done);
+            arb_axi_awaddr_r  = lsu_arb_awaddr;
+            arb_lsu_awready_r = axi_arb_awready & (~aw_done);
+
+            arb_axi_wvalid_r  = lsu_arb_wvalid & (~w_done);
+            arb_axi_wdata_r   = lsu_arb_wdata;
+            arb_axi_wstrb_r   = lsu_arb_wstrb;
+            arb_lsu_wready_r  = axi_arb_wready & (~w_done);
+        end
+
+        S_ARB_LSU_WR_RESP: begin
+            arb_lsu_bvalid_r  = axi_arb_bvalid;
+            arb_lsu_bresp_r   = axi_arb_bresp;
+            arb_axi_bready_r  = lsu_arb_bready;
+        end
+
+        default: begin
+        end
     endcase
 end
 
-//==========================================================================
-// 选择信号
-//==========================================================================
-wire sel_lsu_rd  = (state == S_LSU_READ);
-wire sel_lsu_wr  = (state == S_LSU_WRITE);
-wire sel_ifu_rd  = (state == S_IFU_READ);
-wire sel_lsu     = sel_lsu_rd | sel_lsu_wr;
+//output signals
+assign arb_ifu_arready = arb_ifu_arready_r;
+assign arb_ifu_rresp   = arb_ifu_rresp_r;
+assign arb_ifu_rvalid  = arb_ifu_rvalid_r;
+assign arb_ifu_rdata   = arb_ifu_rdata_r;
 
-//==========================================================================
-// AW 通道: 仅 LSU 写时连接, 其余时刻拉低
-//==========================================================================
-assign io_master_awvalid = sel_lsu_wr ? io_lsu_awvalid : 1'b0;
-assign io_master_awaddr  = sel_lsu_wr ? io_lsu_awaddr  : 32'b0;
-assign io_master_awid    = sel_lsu_wr ? io_lsu_awid    : 4'b0;
-assign io_master_awlen   = sel_lsu_wr ? io_lsu_awlen   : 8'b0;
-assign io_master_awsize  = sel_lsu_wr ? io_lsu_awsize  : 3'b0;
-assign io_master_awburst = sel_lsu_wr ? io_lsu_awburst : 2'b0;
+assign arb_lsu_awready = arb_lsu_awready_r;
+assign arb_lsu_wready  = arb_lsu_wready_r;
+assign arb_lsu_bvalid  = arb_lsu_bvalid_r;
+assign arb_lsu_bresp   = arb_lsu_bresp_r;
+assign arb_lsu_arready = arb_lsu_arready_r;
+assign arb_lsu_rvalid  = arb_lsu_rvalid_r;
+assign arb_lsu_rresp   = arb_lsu_rresp_r;
+assign arb_lsu_rdata   = arb_lsu_rdata_r;
 
-assign io_lsu_awready    = sel_lsu_wr ? io_master_awready : 1'b0;
-assign io_ifu_awready    = 1'b0; // IFU 永远不写
-
-//==========================================================================
-// W 通道: 仅 LSU 写时连接
-//==========================================================================
-assign io_master_wvalid  = sel_lsu_wr ? io_lsu_wvalid  : 1'b0;
-assign io_master_wdata   = sel_lsu_wr ? io_lsu_wdata   : 32'b0;
-assign io_master_wstrb   = sel_lsu_wr ? io_lsu_wstrb   : 4'b0;
-assign io_master_wlast   = sel_lsu_wr ? io_lsu_wlast   : 1'b0;
-
-assign io_lsu_wready     = sel_lsu_wr ? io_master_wready : 1'b0;
-assign io_ifu_wready     = 1'b0; // IFU 永远不写
-
-//==========================================================================
-// B 通道: 仅 LSU 写时连接
-//==========================================================================
-assign io_lsu_bvalid     = sel_lsu_wr ? io_master_bvalid : 1'b0;
-assign io_lsu_bresp      = sel_lsu_wr ? io_master_bresp  : 2'b0;
-assign io_lsu_bid        = sel_lsu_wr ? io_master_bid    : 4'b0;
-assign io_master_bready  = sel_lsu_wr ? io_lsu_bready    : 1'b0;
-
-// IFU B 通道: 永远无效
-assign io_ifu_bvalid     = 1'b0;
-assign io_ifu_bresp      = 2'b0;
-assign io_ifu_bid        = 4'b0;
-
-//==========================================================================
-// AR 通道: LSU 读或 IFU 读时连接
-//==========================================================================
-assign io_master_arvalid = sel_lsu_rd  ? io_lsu_arvalid :
-                           sel_ifu_rd  ? io_ifu_arvalid :
-                           1'b0;
-assign io_master_araddr  = sel_lsu_rd  ? io_lsu_araddr  :
-                           sel_ifu_rd  ? io_ifu_araddr  :
-                           32'b0;
-assign io_master_arid    = sel_lsu_rd  ? io_lsu_arid    :
-                           sel_ifu_rd  ? io_ifu_arid    :
-                           4'b0;
-assign io_master_arlen   = sel_lsu_rd  ? io_lsu_arlen   :
-                           sel_ifu_rd  ? io_ifu_arlen   :
-                           8'b0;
-assign io_master_arsize  = sel_lsu_rd  ? io_lsu_arsize  :
-                           sel_ifu_rd  ? io_ifu_arsize  :
-                           3'b0;
-assign io_master_arburst = sel_lsu_rd  ? io_lsu_arburst :
-                           sel_ifu_rd  ? io_ifu_arburst :
-                           2'b0;
-
-assign io_lsu_arready    = sel_lsu_rd  ? io_master_arready : 1'b0;
-assign io_ifu_arready    = sel_ifu_rd  ? io_master_arready : 1'b0;
-
-//==========================================================================
-// R 通道: 把 slave 的读响应路由回对应 master
-//==========================================================================
-assign io_lsu_rvalid     = sel_lsu_rd  ? io_master_rvalid : 1'b0;
-assign io_lsu_rdata      = sel_lsu_rd  ? io_master_rdata  : 32'b0;
-assign io_lsu_rresp      = sel_lsu_rd  ? io_master_rresp  : 2'b0;
-assign io_lsu_rlast      = sel_lsu_rd  ? io_master_rlast  : 1'b0;
-assign io_lsu_rid        = sel_lsu_rd  ? io_master_rid    : 4'b0;
-
-assign io_ifu_rvalid     = sel_ifu_rd  ? io_master_rvalid : 1'b0;
-assign io_ifu_rdata      = sel_ifu_rd  ? io_master_rdata  : 32'b0;
-assign io_ifu_rresp      = sel_ifu_rd  ? io_master_rresp  : 2'b0;
-assign io_ifu_rlast      = sel_ifu_rd  ? io_master_rlast  : 1'b0;
-assign io_ifu_rid        = sel_ifu_rd  ? io_master_rid    : 4'b0;
-
-assign io_master_rready  = sel_lsu_rd  ? io_lsu_rready    :
-                           sel_ifu_rd  ? io_ifu_rready    :
-                           1'b0;
+assign arb_axi_awvalid = arb_axi_awvalid_r;
+assign arb_axi_awaddr  = arb_axi_awaddr_r;
+assign arb_axi_wvalid  = arb_axi_wvalid_r;
+assign arb_axi_wdata   = arb_axi_wdata_r;
+assign arb_axi_wstrb   = arb_axi_wstrb_r;
+assign arb_axi_bready  = arb_axi_bready_r;
+assign arb_axi_arvalid = arb_axi_arvalid_r;
+assign arb_axi_araddr  = arb_axi_araddr_r;
+assign arb_axi_rready  = arb_axi_rready_r;
 
 endmodule

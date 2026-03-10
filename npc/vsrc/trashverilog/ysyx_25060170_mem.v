@@ -41,8 +41,8 @@ module ysyx_25060170_mem(
 //********************************控制冒险********************************//
  reg  [`ysyx_25060170_DATA]     load_data ;
 
-assign mem_ready_o  = wb_ready_i | (data_ok  & (re));
-assign mem_valid_o  = ls_valid_i | (data_ok  & (re));
+assign mem_ready_o  = wb_ready_i & ~(data_ok  & (re));
+assign mem_valid_o  = ls_valid_i & ~(data_ok  & (re));
 
 reg data_ok;
 

@@ -59,7 +59,7 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 static void exec_once(Decode *s, vaddr_t pc) {
   
   /***********************************FTRACE**************************************/
-  const svScope scope = svGetScopeFromName("TOP.ysyx_25060170_topcore.u_ysyx_25060170_DPIC");
+  const svScope scope = svGetScopeFromName("TOP.ysyxSoCFull.asic.cpu.cpu.u_ysyx_25060170_DPIC");
   assert(scope);
   svSetScope(scope);  // 设置当前 DPI 作用域
 

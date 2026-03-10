@@ -2,7 +2,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <verilated.h>
-#include "Vysyx_25060170_topcore.h"   //包含topcore模块的顶层类
+#include "VysyxSoCFull.h"   //包含topcore模块的顶层类
 #include <verilated_vcd_c.h> //向VCD文件中写入文件
 #include <common.h>
 #include <memory.h>
@@ -18,7 +18,7 @@ bool log_enable();
 #ifdef CONFIG_DIFFTEST
 void difftest_skip_ref();
 #endif
-Vysyx_25060170_topcore* topcore;
+VysyxSoCFull* topcore;
 VerilatedContext* contextp;
 #ifdef CONFIG_GTK
 VerilatedVcdC* tfp = new VerilatedVcdC(); //导出vcd波形需要加此语句
@@ -38,7 +38,13 @@ int difftest_skip_ref_flag;
 
 //在仿真的cpp文件中加入如下内容, 用于解决链接时找不到flash_read和mrom_read的问题
 extern "C" void flash_read(int32_t addr, int32_t *data) { assert(0); }
-extern "C" void mrom_read(int32_t addr, int32_t *data) { assert(0); }
+
+//使其总是返回一条ebreak指令
+extern "C" void mrom_read(int32_t addr, int32_t *data) { 
+  // assert(0); 
+  // printf("mrom read!\n");
+  *data =  0x00100073;
+}
 
 extern "C" void pmem_read(paddr_t raddr, paddr_t* rdata, char rlen , int mode, int* dpic_difftest_skip_flag){
 
@@ -198,14 +204,16 @@ extern "C" void difftest_dut_regs(int Z0, int ra, int sp, int gp, int tp, int t0
 /***********************************************END DPI-C*******************************************/
 
 //在仿真环境的main函数中仿真开始前的位置加入语句Verilated::commandArgs(argc, argv);, 用于解决运行时plusargs功能报错的问题
-Verilated::commandArgs(argc, argv);
+
 
 int main(int argc, char** argv) {
-
+  //在仿真环境的main函数中仿真开始前的位置加入语句Verilated::commandArgs(argc, argv);
+  //用于解决运行时plusargs功能报错的问题
+  Verilated::commandArgs(argc, argv);
   contextp = new VerilatedContext;
 	contextp->commandArgs(argc,argv);
   Verilated::traceEverOn(true);
-	topcore = new Vysyx_25060170_topcore{contextp};
+	topcore = new VysyxSoCFull{contextp};
 
   #ifdef CONFIG_GTK
     topcore->trace(tfp, 0);
@@ -218,12 +226,12 @@ int main(int argc, char** argv) {
 	//sdb_mainloop();
 
   #ifdef CONFIG_GTK
-  // topcore-> clk = 0;
+  // topcore-> clock = 0;
   // topcore -> eval();
-  // topcore-> clk = 1;
+  // topcore-> clock = 1;
   // topcore -> eval();
   //多看一个周期波形以获取后续变化
-  topcore -> clk = 0;
+  topcore -> clock = 0;
   topcore -> eval();
   tfp -> dump(main_time++);
   tfp -> dump(main_time++);
@@ -240,13 +248,13 @@ void isa_exec_once(){
   // printf("inst_end=%d\n",inst_end);
   while(inst_end){
   // printf("wuhuqifei\n");
-  topcore-> clk = 0;
+  topcore-> clock = 0;
   topcore -> eval();
 #ifdef CONFIG_GTK
   tfp -> dump(main_time++);
 #endif  
 
-  topcore -> clk = 1;
+  topcore -> clock = 1;
   topcore -> eval();
 #ifdef CONFIG_GTK
   tfp -> dump(main_time++);
@@ -272,8 +280,8 @@ void close_npc(){
 }
 
 void cpu_reset(){
-  topcore -> clk = 0;
-  topcore -> rst = 1;  
+  topcore -> clock = 0;
+  topcore -> reset = 1;  
   topcore -> eval();
 #ifdef CONFIG_GTK
   tfp -> dump(main_time++);
@@ -281,14 +289,14 @@ void cpu_reset(){
 
   printf("***reset***\n");
 
-  topcore -> clk = 1;
-  topcore -> rst = 1;
+  topcore -> clock = 1;
+  topcore -> reset = 1;
   topcore -> eval();
 #ifdef CONFIG_GTK
   tfp -> dump(main_time++);
 #endif  
 
-  topcore -> rst = 0;
+  topcore -> reset = 0;
 
 }
 

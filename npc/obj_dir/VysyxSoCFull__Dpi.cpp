@@ -6,27 +6,27 @@
 // function names, you will get multiple definition link errors from here.
 // This is an unfortunate result of the DPI specification.
 // To solve this, either
-//    1. Call Vysyx_25060170_topcore::{export_function} instead,
+//    1. Call VysyxSoCFull::{export_function} instead,
 //       and do not even bother to compile this file
 // or 2. Compile all __Dpi.cpp files in the same compiler run,
 //       and #ifdefs already inserted here will sort everything out.
 
-#include "Vysyx_25060170_topcore__Dpi.h"
-#include "Vysyx_25060170_topcore.h"
+#include "VysyxSoCFull__Dpi.h"
+#include "VysyxSoCFull.h"
 
 #ifndef VL_DPIDECL_IDU_SEND_CALL_FLAG_
 #define VL_DPIDECL_IDU_SEND_CALL_FLAG_
 void IDU_SEND_CALL_FLAG(int* call_flag, int* pc, int* dnpc) {
-    // DPI export at vsrc/sim/ysyx_25060170_DPIC.v:281:6
-    return Vysyx_25060170_topcore::IDU_SEND_CALL_FLAG(call_flag, pc, dnpc);
+    // DPI export at vsrc/sim/ysyx_25060170_DPIC.v:277:6
+    return VysyxSoCFull::IDU_SEND_CALL_FLAG(call_flag, pc, dnpc);
 }
 #endif
 
 #ifndef VL_DPIDECL_IDU_SEND_RET_FLAG_
 #define VL_DPIDECL_IDU_SEND_RET_FLAG_
 void IDU_SEND_RET_FLAG(int* ret_flag, int* pc) {
-    // DPI export at vsrc/sim/ysyx_25060170_DPIC.v:300:6
-    return Vysyx_25060170_topcore::IDU_SEND_RET_FLAG(ret_flag, pc);
+    // DPI export at vsrc/sim/ysyx_25060170_DPIC.v:296:6
+    return VysyxSoCFull::IDU_SEND_RET_FLAG(ret_flag, pc);
 }
 #endif
 

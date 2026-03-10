@@ -58,7 +58,7 @@ module ysyx_25060170_ex_ls_reg(
 
 );
     wire flush = ls_flush_i;
-    wire stall = ex_valid_i | ~ls_ready_i;
+    wire stall = ~ex_valid_i | ~ls_ready_i;
     //forwarding
     assign ex_rd_addr_forward_o  = rd_addr_i	;
     assign ex_rd_data_forward_o  = exu_res_i	;
@@ -82,12 +82,12 @@ module ysyx_25060170_ex_ls_reg(
             ls_csr_ena_o        <=  1'b0                    ;    
             csr_addr_o          <=  12'b0                   ;
             csr_data_o          <=  `ysyx_25060170_ZERO32   ;
-            ex_valid_o          <=  1'b1                    ;
+            ex_valid_o          <=  1'b0                    ;
             // pipeline_id_stall_o <=  1'b0                    ;
         end
-        else if (ls_ready_i & ex_valid_i) begin
-            ex_valid_o <= 1'b1;
-        end
+        // else if (ls_ready_i & ex_valid_i) begin
+        //     ex_valid_o <= 1'b1;
+        // end
         else if(stall) begin
             inst_o              <=  inst_o                  ;
             pc_o                <=  pc_o                    ;
@@ -121,7 +121,7 @@ module ysyx_25060170_ex_ls_reg(
             csr_data_o          <=  csr_data_i              ;
             ls_csr_ena_o        <=  ex_csr_ena_i            ;    
             csr_addr_o          <=  csr_addr_i              ;
-            ex_valid_o          <=  1'b0                    ;
+            ex_valid_o          <=  1'b1                    ;
             // pipeline_id_stall_o <=  pipeline_id_stall_i     ;
         end 
     end 
