@@ -2,6 +2,7 @@
 #include "common.h"
 #include "reg.h"
 #include "svdpi.h"
+#include <stdio.h>
 
 void mmio_write(paddr_t addr, int len, word_t data);
 word_t mmio_read(paddr_t addr, int len);
@@ -32,6 +33,12 @@ static word_t pmem_read(paddr_t addr, int len) {
   word_t ret = host_read(guest_to_host(addr), len);
   return ret;
 }
+#ifdef MROM_TEST
+word_t mrom_read(paddr_t addr, int len) {
+  word_t ret = host_read(guest_to_host(addr), len);
+  return ret;
+}
+#endif
 
 static void pmem_write(paddr_t addr, int len, word_t data) {
   host_write(guest_to_host(addr), len, data);
@@ -100,14 +107,13 @@ const static uint32_t img [] = {
   0x00100073,   // ebreak (used as nemu_trap)     0x8000_0018
   0x0000006f,   // j self*/
 };
-
+//在ysyxSoc中输出第一个字符
 
 void init_mem() {
   /* Load built-in image. */
   memcpy(guest_to_host(0x80000000), img, sizeof(img));
   //printf("Memory at 0x80000000: 0x%08x\n", *(uint32_t *)guest_to_host(0x80000000));
- } 
-
+} 
 
 
 //  extern "C" word_t paddr_read(paddr_t addr, int len) {
