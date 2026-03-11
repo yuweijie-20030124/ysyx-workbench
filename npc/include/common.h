@@ -41,7 +41,7 @@
 
 // #define CONFIG_WATCHPOINT 1
 
-//  #define CONFIG_TRACE 1
+ #define CONFIG_TRACE 1
 
 #ifdef CONFIG_TRACE
 #define CONFIG_ITRACE 1
@@ -59,7 +59,7 @@
 #define CONFIG_GTK 1
 
 //测试mrom
-// #define MROM_TEST 1
+#define MROM_TEST 1
 
 
 // #define CONFIG_DEVICE 1

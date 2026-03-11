@@ -16,7 +16,7 @@ void sdb_mainloop();
 int is_exit_status_bad();
 bool log_enable();
 #ifdef MROM_TEST
-word_t mrom_read(paddr_t addr, int len) ;
+word_t mrom_memory_read(paddr_t addr, int len) ;
 #endif
 
 #ifdef CONFIG_DIFFTEST
@@ -53,7 +53,7 @@ extern "C" void mrom_read(int32_t addr, int32_t *data) {
 #endif
 
 #ifdef MROM_TEST
-  *data = mrom_read(addr, 8);
+  *data = mrom_memory_read(addr, 4);
   // *data = 0x00100073;
 #endif
 }

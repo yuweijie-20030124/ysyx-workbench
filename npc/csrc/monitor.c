@@ -125,7 +125,7 @@ void init_monitor(int argc, char *argv[]) {
 
   #ifdef MROM_TEST
   /* Open the elf file. */
-  mrom_parse_elf(mrom_elf_file);
+  // mrom_parse_elf(mrom_elf_file);
   #endif
 
   /* Initialize memory. */

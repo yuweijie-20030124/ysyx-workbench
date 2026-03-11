@@ -6,7 +6,7 @@
 
 void mmio_write(paddr_t addr, int len, word_t data);
 word_t mmio_read(paddr_t addr, int len);
-
+uint8_t* mrom_guest_to_host(paddr_t addr);
 
 paddr_t host_read(void *addr, int len) {
   switch (len) {
@@ -34,8 +34,8 @@ static word_t pmem_read(paddr_t addr, int len) {
   return ret;
 }
 #ifdef MROM_TEST
-word_t mrom_read(paddr_t addr, int len) {
-  word_t ret = host_read(guest_to_host(addr), len);
+word_t mrom_memory_read(paddr_t addr, int len) {
+  word_t ret = host_read(mrom_guest_to_host(addr), len);
   return ret;
 }
 #endif
@@ -110,7 +110,10 @@ const static uint32_t img [] = {
 };
 
 const static uint32_t mrom_img [] = {
-  0x00100073,   // ebreak (used as nemu_trap)     0x8000_0018
+  0x00100073,   // ebreak (used as nemu_trap)     0x20000000
+  0x00100073,   // ebreak (used as nemu_trap)     0x20000004
+  0x00100073,   // ebreak (used as nemu_trap)     0x20000008
+  0x00100073,   // ebreak (used as nemu_trap)     0x2000000C
   0x0000006f,   // j self*/
 };
 
@@ -118,8 +121,9 @@ const static uint32_t mrom_img [] = {
 
 void init_mem() {
   /* Load built-in image. */
-  memcpy(mrom_guest_to_host(0x20000000), mrom_img, sizeof(mrom_img));
+
   memcpy(guest_to_host(0x80000000), img, sizeof(img));
+  memcpy(mrom_guest_to_host(0x20000000), mrom_img, sizeof(mrom_img));
   //printf("Memory at 0x80000000: 0x%08x\n", *(uint32_t *)guest_to_host(0x80000000));
 } 
 
