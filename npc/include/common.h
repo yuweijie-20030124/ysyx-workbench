@@ -184,6 +184,7 @@ typedef uint16_t ioaddr_t;
 // ----------- state -----------
 
 #define RESET_VECTOR 0x80000000
+#define MROM_VECTOR  0x20000000
 
 enum { NPC_RUNNING, NPC_STOP, NPC_END, NPC_ABORT, NPC_QUIT };
 

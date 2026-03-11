@@ -17,7 +17,7 @@ void init_sdb();
 void init_disasm();
 void init_isa();
 void cpu_reset();
-
+uint8_t* mrom_guest_to_host(paddr_t addr);
 
 static void welcome() {
   Log("Trace: %s", MUXDEF(CONFIG_TRACE, ANSI_FMT("ON", ANSI_FG_GREEN), ANSI_FMT("OFF", ANSI_FG_RED)));
@@ -34,6 +34,7 @@ void sdb_set_batch_mode();
 
 static char *diff_so_file = NULL;
 static char *img_file = NULL;
+static char *mrom_img_file = NULL;
 static char *elf_file =NULL;
 static char *mrom_elf_file =NULL;
 static char *log_file = NULL;
@@ -66,6 +67,33 @@ static long load_img() {
   return size;
 }
 
+//把mrom的.txt放到img中。
+static void mrom_load_img() {
+  if (mrom_img_file == NULL) {
+    Log("No mrom-image is given. Use the default build-in image.");
+    return; // built-in image size
+  }
+  //printf ("%s!!!!!!!!!!\n",mrom_img_file);
+  FILE *fp = fopen(mrom_img_file, "rb");//二进制读入imgfile
+  Assert(fp, "Can not open '%s'", mrom_img_file);
+
+  fseek(fp, 0, SEEK_END);//将fp的指针移到最后位置
+  long size = ftell(fp);//返回fp当前文件位置
+
+  Log("The image is %s, size = %ld", mrom_img_file, size);
+
+  fseek(fp, 0, SEEK_SET);//将fp的指针移到文件最开头
+  //size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream) 从给定流 stream 读取数据到 ptr 所指向的数组中。
+  //fread 返回实际读取的元素个数
+  size_t ret = fread(mrom_guest_to_host(MROM_VECTOR), 1, size, fp);
+  //从文件指针 fp 指向的文件中读取二进制数据，并将其直接写入到客户机（Guest）物理内存的 MROM_VECTOR 地址处
+  
+  assert(ret == (size_t)size);
+
+  fclose(fp); //fopen之后一定要fclose
+  return;
+}
+
 //在这里开启是否批处理模式
 //批处理模式下，sdb_mainloop()不会被调用
 //而是直接执行cpu_exec(-1)来执行指令
@@ -87,7 +115,7 @@ static int parse_args(int argc, char *argv[]) {
       case 'p': sscanf(optarg, "%d", &difftest_port); break;
       case 'l': log_file = optarg; break;
       case 'f': elf_file = optarg; break;
-      case 'm': mrom_elf_file = optarg; break;
+      case 'm': mrom_img_file = optarg; break;
       case 'd': diff_so_file = optarg; break;
       //case 'e': img_file = optarg; break;
       case 1: img_file = optarg; return 0;
@@ -97,7 +125,7 @@ static int parse_args(int argc, char *argv[]) {
         printf("\t-b,--batch              run with batch mode\n");
         printf("\t-l,--log=FILE           output log to FILE\n");
         printf("\t-f,--ftrace=ELF_FILE    ftrace ELF to log\n");
-        printf("\t-f,--mrom=mrom_ELF_FILE .test of mrom to 0x20000000\n");
+        printf("\t-f,--mrom=mrom_img_file .test of mrom to 0x20000000\n");
         printf("\t-d,--diff=REF_SO        run DiffTest with reference REF_SO\n");
         printf("\t-p,--port=PORT          run DiffTest with port PORT\n");
         printf("\n");
@@ -140,7 +168,7 @@ void init_monitor(int argc, char *argv[]) {
 
   /* Load the image to memory. This will overwrite the built-in image. */
   long img_size = load_img();
-
+  mrom_load_img();
 
   cpu_reset();
 
