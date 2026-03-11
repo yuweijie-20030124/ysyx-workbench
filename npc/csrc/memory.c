@@ -96,6 +96,7 @@ void vaddr_write(vaddr_t addr, int len, word_t data) {
 uint8_t mem[CONFIG_MSIZE] = {0};
 // Memory transfer
 uint8_t* guest_to_host(paddr_t addr) { return mem + (addr - CONFIG_MEM_BASE); }
+uint8_t* mrom_guest_to_host(paddr_t addr) { return mem + (addr - CONFIG_MROM_BASE); }
 
 const static uint32_t img [] = {
   0x00130393,   // addi t2, t1, 1    t2 = t1 + 1  0x8000_0000
@@ -107,10 +108,17 @@ const static uint32_t img [] = {
   0x00100073,   // ebreak (used as nemu_trap)     0x8000_0018
   0x0000006f,   // j self*/
 };
+
+const static uint32_t mrom_img [] = {
+  0x00100073,   // ebreak (used as nemu_trap)     0x8000_0018
+  0x0000006f,   // j self*/
+};
+
 //在ysyxSoc中输出第一个字符
 
 void init_mem() {
   /* Load built-in image. */
+  memcpy(mrom_guest_to_host(0x20000000), mrom_img, sizeof(mrom_img));
   memcpy(guest_to_host(0x80000000), img, sizeof(img));
   //printf("Memory at 0x80000000: 0x%08x\n", *(uint32_t *)guest_to_host(0x80000000));
 } 

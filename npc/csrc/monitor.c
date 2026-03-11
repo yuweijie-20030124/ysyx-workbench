@@ -6,6 +6,7 @@
 
 void init_log(const char *log_file);
 void parse_elf(const char *elf_file);
+void parse_mrom(const char *elf_file);
 void init_rand();
 void init_mem();
 void init_difftest(char *ref_so_file, long img_size, int port);
@@ -34,6 +35,7 @@ void sdb_set_batch_mode();
 static char *diff_so_file = NULL;
 static char *img_file = NULL;
 static char *elf_file =NULL;
+static char *mrom_elf_file =NULL;
 static char *log_file = NULL;
 static int difftest_port = 1234;
 
@@ -74,6 +76,7 @@ static int parse_args(int argc, char *argv[]) {
     {"diff"     , required_argument, NULL, 'd'},
     {"port"     , required_argument, NULL, 'p'},
     {"ftrace"   , required_argument, NULL, 'f'},
+    {"mrom"     , required_argument, NULL, 'm'},
     {"help"     , no_argument      , NULL, 'h'},
     {0          , 0                , NULL,  0 },
   };
@@ -84,6 +87,7 @@ static int parse_args(int argc, char *argv[]) {
       case 'p': sscanf(optarg, "%d", &difftest_port); break;
       case 'l': log_file = optarg; break;
       case 'f': elf_file = optarg; break;
+      case 'm': mrom_elf_file = optarg; break;
       case 'd': diff_so_file = optarg; break;
       //case 'e': img_file = optarg; break;
       case 1: img_file = optarg; return 0;
@@ -93,6 +97,7 @@ static int parse_args(int argc, char *argv[]) {
         printf("\t-b,--batch              run with batch mode\n");
         printf("\t-l,--log=FILE           output log to FILE\n");
         printf("\t-f,--ftrace=ELF_FILE    ftrace ELF to log\n");
+        printf("\t-f,--mrom=mrom_ELF_FILE .test of mrom to 0x20000000\n");
         printf("\t-d,--diff=REF_SO        run DiffTest with reference REF_SO\n");
         printf("\t-p,--port=PORT          run DiffTest with port PORT\n");
         printf("\n");
@@ -116,6 +121,11 @@ void init_monitor(int argc, char *argv[]) {
   #ifdef CONFIG_FTRACE
   /* Open the elf file. */
   parse_elf(elf_file);
+  #endif
+
+  #ifdef MROM_TEST
+  /* Open the elf file. */
+  mrom_parse_elf(mrom_elf_file);
   #endif
 
   /* Initialize memory. */
