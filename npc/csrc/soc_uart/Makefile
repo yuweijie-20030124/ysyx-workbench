@@ -1,7 +1,7 @@
-OBJCOPY := riscv64-unknown-elf-objcopy
-GCC     := riscv64-unknown-elf-gcc
-LD      := riscv64-unknown-elf-ld
-CFLAGS  := -march=rv32i -mabi=ilp32 -O2 -nostdlib -fno-builtin
+OBJCOPY := riscv64-linux-gnu-objcopy
+GCC     := riscv64-linux-gnu-gcc
+LD      := riscv64-linux-gnu-ld
+CFLAGS  := -march=rv32i_zicsr -mabi=ilp32
 LDFLAGS := -T /dev/stdin
 
 # 源文件
@@ -31,8 +31,8 @@ $(BIN): $(ELF)
 
 # 显示信息
 info: $(ELF)
-	riscv64-unknown-elf-readelf -h $(ELF)
-	riscv64-unknown-elf-objdump -d $(ELF) | head -30
+	riscv64-linux-gnu-readelf -h $(ELF)
+	riscv64-linux-gnu-objdump -d $(ELF) | head -30
 
 # 清理
 clean:
