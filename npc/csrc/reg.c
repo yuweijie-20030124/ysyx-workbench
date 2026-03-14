@@ -29,6 +29,8 @@ void isa_reg_display() {
     printf("mtvec   : 0x%08x %-11d  \n", cpu.csr[3], cpu.csr[3]);
     printf("mhartid : 0x%08x %-11d  "  , cpu.csr[4], cpu.csr[4]);
     printf("mscratch: 0x%08x %-11d  "  , cpu.csr[5], cpu.csr[5]);
+
+    printf("\n");
 }
 
 //讲寄存器名字符转换为对应的寄存器值

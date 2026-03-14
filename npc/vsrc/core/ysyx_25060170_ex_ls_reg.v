@@ -103,7 +103,7 @@ module ysyx_25060170_ex_ls_reg(
             ls_csr_ena_o        <=  ls_csr_ena_o            ;
             csr_data_o          <=  csr_data_o              ;
             csr_addr_o          <=  csr_addr_o              ;
-            ex_valid_o          <=  ex_valid_o              ;
+            ex_valid_o          <=  1'b0              ;
             // pipeline_id_stall_o <=  pipeline_id_stall_o     ;
         end
         else begin  

@@ -62,6 +62,7 @@ VM_USER_CLASSES = \
   memory \
   mmio \
   monitor \
+  mrom \
   reg \
   ringbuffer \
   sdb \
@@ -116,6 +117,8 @@ memory.o: csrc/memory.c
 mmio.o: csrc/mmio.c 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
 monitor.o: csrc/monitor.c 
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
+mrom.o: csrc/mrom.c 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
 reg.o: csrc/reg.c 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<

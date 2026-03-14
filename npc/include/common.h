@@ -18,6 +18,8 @@
 #define CONFIG_ISA32 1
 #define CONFIG_MSIZE 0x8000000
 #define CONFIG_MEM_BASE 0x80000000
+#define CONFIG_MROM_BASE 0x20000000//用于测试mrom的uart功能。
+#define CONFIG_MROM_SIZE 0x1000000   // MROM 大小 16MB
 
 
 #define CONFIG_TIMER_GETTIMEOFDAY 1
@@ -34,7 +36,7 @@
 // #define CONFIG_TRACE_START 0
 // #define CONFIG_ITRACE 1
 // #define CONFIG_MTRACE 1
-#define CONFIG_DIFFTEST 1
+// #define CONFIG_DIFFTEST 1
 // #define CONFIG_ITRACE_IRINGBUF 1
 
 
@@ -57,6 +59,8 @@
 
 #define CONFIG_GTK 1
 
+//测试mrom
+#define MROM_TEST 1
 
 
 // #define CONFIG_DEVICE 1
@@ -181,6 +185,7 @@ typedef uint16_t ioaddr_t;
 // ----------- state -----------
 
 #define RESET_VECTOR 0x80000000
+#define MROM_VECTOR  0x20000000
 
 enum { NPC_RUNNING, NPC_STOP, NPC_END, NPC_ABORT, NPC_QUIT };
 

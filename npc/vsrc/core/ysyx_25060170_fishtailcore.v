@@ -105,7 +105,7 @@ assign io_master_awsize  = 3'b0;
 assign io_master_awburst = 2'b0;    
 
 //W
-assign io_master_wlast   = 1'b0;
+assign io_master_wlast   = 1'b1;
 
 //B
 // assign io_master_bvalid  = 1'b0;

@@ -97,6 +97,7 @@ wire [`ysyx_25060170_DATAADDR]  DPIC_ls_dpic_waddr        ;
 ysyx_25060170_fishtailcore u_ysyx_25060170_fishtailcore (
      .clock                    (clock                     )
     ,.reset                    (reset                     )
+    ,.io_interrupt             (io_interrupt              )
     ,.DPIC_if_id_pc            (DPIC_if_id_pc             )
     ,.DPIC_dpic_ifu_inst       (DPIC_dpic_ifu_inst        )
     ,.DPIC_ls_mem_re           (DPIC_ls_mem_re     )

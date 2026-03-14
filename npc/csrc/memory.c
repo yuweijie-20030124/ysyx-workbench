@@ -2,10 +2,11 @@
 #include "common.h"
 #include "reg.h"
 #include "svdpi.h"
+#include <stdio.h>
 
 void mmio_write(paddr_t addr, int len, word_t data);
 word_t mmio_read(paddr_t addr, int len);
-
+uint8_t* mrom_guest_to_host(paddr_t addr);
 
 paddr_t host_read(void *addr, int len) {
   switch (len) {
@@ -32,6 +33,12 @@ static word_t pmem_read(paddr_t addr, int len) {
   word_t ret = host_read(guest_to_host(addr), len);
   return ret;
 }
+#ifdef MROM_TEST
+word_t mrom_memory_read(paddr_t addr, int len) {
+  word_t ret = host_read(mrom_guest_to_host(addr), len);
+  return ret;
+}
+#endif
 
 static void pmem_write(paddr_t addr, int len, word_t data) {
   host_write(guest_to_host(addr), len, data);
@@ -85,12 +92,20 @@ word_t vaddr_read(vaddr_t addr, int len) {
 void vaddr_write(vaddr_t addr, int len, word_t data) {
   paddr_write(addr, len, data);
 }
-
 uint8_t mem[CONFIG_MSIZE] = {0};
+#ifdef MROM_TEST
+uint8_t mrom_mem[CONFIG_MROM_SIZE] = {0};  // 为 MROM 分配独立内存
+#endif
+
 // Memory transfer
 uint8_t* guest_to_host(paddr_t addr) { return mem + (addr - CONFIG_MEM_BASE); }
 
+#ifdef MROM_TEST
+uint8_t* mrom_guest_to_host(paddr_t addr) { return mrom_mem + (addr - CONFIG_MROM_BASE); }
+#endif
+
 const static uint32_t img [] = {
+  0x00100073,   // ebreak (used as nemu_trap)     0x8000_0018
   0x00130393,   // addi t2, t1, 1    t2 = t1 + 1  0x8000_0000
   0x00c000ef,   // jal ra ,80000010               0x8000_0004 
   0x00240493,   // addi s1, s0, 2    s1 = s0 + 2  0x8000_0008 这个一定不执行
@@ -101,13 +116,25 @@ const static uint32_t img [] = {
   0x0000006f,   // j self*/
 };
 
+const static uint32_t mrom_img [] = {
+  0x00100073,   // ebreak (used as nemu_trap)     0x20000000
+  0x00100073,   // ebreak (used as nemu_trap)     0x20000004
+  0x00100073,   // ebreak (used as nemu_trap)     0x20000008
+  0x00100073,   // ebreak (used as nemu_trap)     0x2000000C
+  0x0000006f,   // j self*/
+};
+
+//在ysyxSoc中输出第一个字符
 
 void init_mem() {
   /* Load built-in image. */
+  #ifdef MROM_TEST
+  memcpy(mrom_guest_to_host(0x20000000), mrom_img, sizeof(mrom_img));
+  #endif
   memcpy(guest_to_host(0x80000000), img, sizeof(img));
-  //printf("Memory at 0x80000000: 0x%08x\n", *(uint32_t *)guest_to_host(0x80000000));
- } 
 
+  //printf("Memory at 0x80000000: 0x%08x\n", *(uint32_t *)guest_to_host(0x80000000));
+} 
 
 
 //  extern "C" word_t paddr_read(paddr_t addr, int len) {

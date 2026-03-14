@@ -15,9 +15,14 @@ void cpu_reset();
 void sdb_mainloop();
 int is_exit_status_bad();
 bool log_enable();
+#ifdef MROM_TEST
+word_t mrom_memory_read(paddr_t addr, int len) ;
+#endif
+
 #ifdef CONFIG_DIFFTEST
 void difftest_skip_ref();
 #endif
+
 VysyxSoCFull* topcore;
 VerilatedContext* contextp;
 #ifdef CONFIG_GTK
@@ -39,11 +44,18 @@ int difftest_skip_ref_flag;
 //在仿真的cpp文件中加入如下内容, 用于解决链接时找不到flash_read和mrom_read的问题
 extern "C" void flash_read(int32_t addr, int32_t *data) { assert(0); }
 
-//使其总是返回一条ebreak指令
+//MROM	0x2000_0000~0x2000_0fff
 extern "C" void mrom_read(int32_t addr, int32_t *data) { 
   // assert(0); 
   // printf("mrom read!\n");
+#ifndef MROM_TEST
   *data =  0x00100073;
+#endif
+
+#ifdef MROM_TEST
+  *data = mrom_memory_read(addr, 4);
+  // *data = 0x00100073;
+#endif
 }
 
 extern "C" void pmem_read(paddr_t raddr, paddr_t* rdata, char rlen , int mode, int* dpic_difftest_skip_flag){
@@ -279,6 +291,15 @@ void close_npc(){
 	
 }
 
+void reset_once(){
+  topcore -> clock = 0;
+  topcore -> reset = 1;  
+  topcore -> eval();
+  topcore -> clock = 1;
+  topcore -> reset = 1;
+  topcore -> eval();
+}
+
 void cpu_reset(){
   topcore -> clock = 0;
   topcore -> reset = 1;  
@@ -292,6 +313,17 @@ void cpu_reset(){
   topcore -> clock = 1;
   topcore -> reset = 1;
   topcore -> eval();
+
+  //多reset几个周期不然会出问题，因为有异步信号同步器
+  reset_once();  
+  reset_once();  
+  reset_once();  
+  reset_once(); 
+  reset_once();  
+  reset_once();  
+  reset_once();  
+  reset_once(); 
+  reset_once(); 
 #ifdef CONFIG_GTK
   tfp -> dump(main_time++);
 #endif  

@@ -45,7 +45,7 @@ module ysyx_25060170_arbiter(
     ,output wire [1:0]   arb_lsu_rresp   //读响应状态
     ,output wire [31:0]  arb_lsu_rdata   //读取到的数据
 
-    //==================== AXI4-Lite slave side ====================
+    //==================== AXI4-Lite RAM side ====================
     // AW
     ,output wire         arb_axi_awvalid //arbiter发送写地址有效
     ,input  wire         axi_arb_awready //arbiter准备好接收写地址
@@ -79,13 +79,13 @@ module ysyx_25060170_arbiter(
 // 单 outstanding：
 //   LSU write > LSU read > IFU read
 //==========================================================================
-localparam [2:0] S_ARB_IDLE        = 3'd0;
-localparam [2:0] S_ARB_LSU_RD_ADDR = 3'd1;
-localparam [2:0] S_ARB_LSU_RD_DATA = 3'd2;
-localparam [2:0] S_ARB_IFU_RD_ADDR = 3'd3;
-localparam [2:0] S_ARB_IFU_RD_DATA = 3'd4;
-localparam [2:0] S_ARB_LSU_WR_REQ  = 3'd5;
-localparam [2:0] S_ARB_LSU_WR_RESP = 3'd6;
+localparam [2:0] S_ARB_IDLE        = 3'd0;//空闲
+localparam [2:0] S_ARB_LSU_RD_ADDR = 3'd1;//lsu读地址
+localparam [2:0] S_ARB_LSU_RD_DATA = 3'd2;//lsu读数据
+localparam [2:0] S_ARB_IFU_RD_ADDR = 3'd3;//ifu读地址
+localparam [2:0] S_ARB_IFU_RD_DATA = 3'd4;//ifu读数据
+localparam [2:0] S_ARB_LSU_WR_REQ  = 3'd5;//lsu写请求
+localparam [2:0] S_ARB_LSU_WR_RESP = 3'd6;//lsu写响应
 
 reg [2:0] arb_state;
 
@@ -126,13 +126,13 @@ always @(posedge clk) begin
                 w_done  <= 1'b0;
 
                 // LSU 优先
-                if (lsu_arb_awvalid | lsu_arb_wvalid) begin
+                if (lsu_arb_awvalid | lsu_arb_wvalid) begin //lsu写
                     arb_state <= S_ARB_LSU_WR_REQ;
                 end
-                else if (lsu_arb_arvalid) begin
+                else if (lsu_arb_arvalid) begin //lsu读
                     arb_state <= S_ARB_LSU_RD_ADDR;
                 end
-                else if (ifu_arb_arvalid) begin
+                else if (ifu_arb_arvalid) begin //ifu读
                     arb_state <= S_ARB_IFU_RD_ADDR;
                 end
             end
@@ -244,6 +244,23 @@ always @(*) begin
     arb_axi_rready_r  = 1'b0;
 
     case (arb_state)
+            //==================== LSU WRITE ====================
+        S_ARB_LSU_WR_REQ: begin
+            arb_axi_awvalid_r = lsu_arb_awvalid & (~aw_done);
+            arb_axi_awaddr_r  = lsu_arb_awaddr;
+            arb_lsu_awready_r = axi_arb_awready & (~aw_done);
+
+            arb_axi_wvalid_r  = lsu_arb_wvalid & (~w_done);
+            arb_axi_wdata_r   = lsu_arb_wdata;
+            arb_axi_wstrb_r   = lsu_arb_wstrb;
+            arb_lsu_wready_r  = axi_arb_wready & (~w_done);
+        end
+
+        S_ARB_LSU_WR_RESP: begin
+            arb_lsu_bvalid_r  = axi_arb_bvalid;
+            arb_lsu_bresp_r   = axi_arb_bresp;
+            arb_axi_bready_r  = lsu_arb_bready;
+        end
         //==================== LSU READ ====================
         S_ARB_LSU_RD_ADDR: begin
             arb_axi_arvalid_r = lsu_arb_arvalid;
@@ -270,24 +287,6 @@ always @(*) begin
             arb_ifu_rresp_r   = {1'b0, axi_arb_rresp};
             arb_ifu_rdata_r   = axi_arb_rdata;
             arb_axi_rready_r  = ifu_arb_rready;
-        end
-
-        //==================== LSU WRITE ====================
-        S_ARB_LSU_WR_REQ: begin
-            arb_axi_awvalid_r = lsu_arb_awvalid & (~aw_done);
-            arb_axi_awaddr_r  = lsu_arb_awaddr;
-            arb_lsu_awready_r = axi_arb_awready & (~aw_done);
-
-            arb_axi_wvalid_r  = lsu_arb_wvalid & (~w_done);
-            arb_axi_wdata_r   = lsu_arb_wdata;
-            arb_axi_wstrb_r   = lsu_arb_wstrb;
-            arb_lsu_wready_r  = axi_arb_wready & (~w_done);
-        end
-
-        S_ARB_LSU_WR_RESP: begin
-            arb_lsu_bvalid_r  = axi_arb_bvalid;
-            arb_lsu_bresp_r   = axi_arb_bresp;
-            arb_axi_bready_r  = lsu_arb_bready;
         end
 
         default: begin

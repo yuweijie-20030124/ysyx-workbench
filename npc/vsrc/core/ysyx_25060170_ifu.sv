@@ -88,9 +88,9 @@ end
 // WAIT_R : 等 R
 //==========================================================================
 typedef enum logic [1:0] {
-    S_IF_IDLE   = 2'd0,
-    S_IF_ARREQ  = 2'd1,
-    S_IF_WAIT_R = 2'd2
+    S_IF_IDLE   = 2'd0,//空闲状态
+    S_IF_ARREQ  = 2'd1,//读需求
+    S_IF_WAIT_R = 2'd2 //读数据
 } if_state_t;
 
 if_state_t if_state_r, if_state_n;
@@ -98,6 +98,11 @@ if_state_t if_state_r, if_state_n;
 // 当前 PC（对外可见）
 // - 当 inst_valid=1 时，它对应当前要送给下游的指令 PC
 // - 当 inst_valid=0 时，它对应下一次要 fetch 的 PC
+/*
+pc_r：当前正在使用的PC（寄存器输出）
+
+pc_n：下一个时钟周期要更新的PC（组合逻辑输出）
+*/
 logic [`ysyx_25060170_PC]   pc_r,      pc_n;
 
 // outstanding request 对应的 PC
