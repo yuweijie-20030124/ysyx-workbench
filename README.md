@@ -7,5 +7,4 @@ bash init.sh subproject-name
 进行初始化, 具体请参考[实验讲义][lecture note].
 
 yuweijie scau -> sust
-luozhiqiang
 [lecture note]: https://ysyx.oscc.cc/docs/
