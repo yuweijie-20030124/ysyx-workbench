@@ -291,6 +291,15 @@ void close_npc(){
 	
 }
 
+void reset_once(){
+  topcore -> clock = 0;
+  topcore -> reset = 1;  
+  topcore -> eval();
+  topcore -> clock = 1;
+  topcore -> reset = 1;
+  topcore -> eval();
+}
+
 void cpu_reset(){
   topcore -> clock = 0;
   topcore -> reset = 1;  
@@ -304,6 +313,17 @@ void cpu_reset(){
   topcore -> clock = 1;
   topcore -> reset = 1;
   topcore -> eval();
+
+  //多reset几个周期不然会出问题，因为有异步信号同步器
+  reset_once();  
+  reset_once();  
+  reset_once();  
+  reset_once(); 
+  reset_once();  
+  reset_once();  
+  reset_once();  
+  reset_once(); 
+  reset_once(); 
 #ifdef CONFIG_GTK
   tfp -> dump(main_time++);
 #endif  

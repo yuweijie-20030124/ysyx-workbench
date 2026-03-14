@@ -331,7 +331,8 @@ assign idu_btb_updatePC = pc_i;
 //**************************************IFU***********************************************//
 
 wire PC_error;
-assign PC_error = ifu_idu_futurePC != next_pc_o & ~if_valid_i;
+assign PC_error = 0;
+// assign PC_error = (ifu_idu_futurePC != next_pc_o);
 
 assign idu_ifu1_jump_pc = PC_error										 ? next_pc_o	:
 						  alusrc_o == `INST_JALR          		         ? 	 	  op1   :
@@ -340,7 +341,7 @@ assign idu_ifu1_jump_pc = PC_error										 ? next_pc_o	:
 						  inst_bxx & (~bp_jump_i &  now_bxx_jump_yes)    ? pc_i + imm   : 
 						  `ysyx_25060170_ZERO32;
 // //bpu预测跳但实际不跳		|       bpu预测不跳但实际跳		|		pc纠正
-assign idu_ifu1_jump	=  inst_jxx | (inst_bxx & (bp_jump_i ^ now_bxx_jump_yes)) | PC_error ; 
+assign idu_ifu1_jump	=  inst_jxx | (inst_bxx & (bp_jump_i ^ now_bxx_jump_yes)) ; 
 
 endmodule
 

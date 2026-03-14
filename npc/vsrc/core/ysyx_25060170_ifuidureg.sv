@@ -49,7 +49,7 @@ always_ff @(posedge clk) begin
         ifuidureg_idu_inst       <= ifuidureg_idu_inst        ;
         ifuidureg_idu_bpupredict <= ifuidureg_idu_bpupredict  ;
         ifuidureg_idu_bpuvalid   <= ifuidureg_idu_bpuvalid    ;
-        ifuidureg_idu_valid      <= ifuidureg_idu_valid       ;
+        ifuidureg_idu_valid      <= 1'b0                      ;
         end
         else if(flush) begin
         ifuidureg_idu_currentpc  <= `ysyx_25060170_ZERO32     ;

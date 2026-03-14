@@ -17,8 +17,9 @@ void init_sdb();
 void init_disasm();
 void init_isa();
 void cpu_reset();
+#ifdef MROM_TEST
 uint8_t* mrom_guest_to_host(paddr_t addr);
-
+#endif
 static void welcome() {
   Log("Trace: %s", MUXDEF(CONFIG_TRACE, ANSI_FMT("ON", ANSI_FG_GREEN), ANSI_FMT("OFF", ANSI_FG_RED)));
   IFDEF(CONFIG_TRACE, Log("If trace is enabled, a log file will be generated "
@@ -67,6 +68,7 @@ static long load_img() {
   return size;
 }
 
+#ifdef MROM_TEST
 //把mrom的.txt放到img中。
 static void mrom_load_img() {
   if (mrom_img_file == NULL) {
@@ -93,7 +95,7 @@ static void mrom_load_img() {
   fclose(fp); //fopen之后一定要fclose
   return;
 }
-
+#endif
 //在这里开启是否批处理模式
 //批处理模式下，sdb_mainloop()不会被调用
 //而是直接执行cpu_exec(-1)来执行指令
@@ -151,11 +153,6 @@ void init_monitor(int argc, char *argv[]) {
   parse_elf(elf_file);
   #endif
 
-  #ifdef MROM_TEST
-  /* Open the elf file. */
-  // mrom_parse_elf(mrom_elf_file);
-  #endif
-
   /* Initialize memory. */
   init_mem();
   
@@ -168,8 +165,9 @@ void init_monitor(int argc, char *argv[]) {
 
   /* Load the image to memory. This will overwrite the built-in image. */
   long img_size = load_img();
+  #ifdef MROM_TEST
   mrom_load_img();
-
+  #endif
   cpu_reset();
 
  #ifdef CONFIG_DIFFTEST

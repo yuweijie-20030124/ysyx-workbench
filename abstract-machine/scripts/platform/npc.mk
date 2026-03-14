@@ -15,7 +15,7 @@ LDFLAGS   += --gc-sections -e _start
 NPCFLAGS += -l $(shell dirname $(IMAGE).elf)/NPC-log.txt
 NPCFLAGS += -f $(IMAGE).elf
 NPCFLAGS += --diff=/home/yuweijie/ysyx-workbench/nemu/build/riscv32-nemu-interpreter-so
-NPCFLAGS += -b
+# NPCFLAGS += -b
 
 # COMMON_CFLAGS += -march=rv32i_zicsr -mabi=ilp32
 
@@ -32,7 +32,7 @@ image: image-dep
 	@$(OBJCOPY) -S --set-section-flags .bss=alloc,contents -O binary $(IMAGE).elf $(IMAGE).bin
 
 run: insert-arg
-	$(MAKE) -C $(NPC_HOME) run NPC_FLAGS="$(NPCFLAGS)" NPC_IMG=$(IMAGE).bin
+	$(MAKE) -C $(NPC_HOME) run NPC_FLAGS="$(NPCFLAGS)" NPC_IMG=$(IMAGE).bin 
 
 gdb: insert-arg
 	$(MAKE) -C $(NPC_HOME) ISA=$(ISA) gdb NPC_FLAGS="$(NPCFLAGS)" NPC_IMG=$(IMAGE).bin
