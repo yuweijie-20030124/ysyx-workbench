@@ -180,6 +180,7 @@ always_comb begin
                 inst_valid_n      = 1'b0;
                 inst_bpupredict_n = 1'b0;
                 inst_bpu_valid_n  = 1'b0;
+                redirect_valid    = 1'b0;
             end
             else if (inst_valid_r) begin
                 // 等待下游消费 buffer 中的指令
@@ -213,6 +214,7 @@ always_comb begin
                     discard_resp_n   = 1'b1;
                     pc_n             = redirect_pc;
                     if_state_n       = S_IF_WAIT_R;
+                    redirect_valid   = 1'b0;
                 end
                 else begin
                     // 还没握手成功，直接把待取地址改成 redirect_pc
@@ -240,6 +242,7 @@ always_comb begin
                 inst_valid_n       = 1'b0;
                 inst_bpupredict_n  = 1'b0;
                 inst_bpu_valid_n   = 1'b0;
+                redirect_valid     = 1'b0;
             end
 
             if (r_handshake) begin
