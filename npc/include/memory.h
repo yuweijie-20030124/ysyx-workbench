@@ -38,7 +38,16 @@ static inline bool in_pmem(paddr_t addr) {
   return addr - CONFIG_MEM_BASE < CONFIG_MSIZE;
 }
 
+static inline bool in_mrom(paddr_t addr) {
+  return addr - CONFIG_MROM_BASE < CONFIG_MROM_SIZE;
+}
+
 uint8_t* guest_to_host(paddr_t addr);
+
+#ifdef MROM_TEST
+word_t mrom_memory_read(paddr_t addr, int len);
+uint8_t* mrom_guest_to_host(paddr_t addr);
+#endif
 
 #define PAGE_SHIFT        12
 #define PAGE_SIZE         (1ul << PAGE_SHIFT)

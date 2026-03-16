@@ -46,15 +46,16 @@ extern "C" void flash_read(int32_t addr, int32_t *data) { assert(0); }
 
 //MROM	0x2000_0000~0x2000_0fff
 extern "C" void mrom_read(int32_t addr, int32_t *data) { 
-  // assert(0); 
-  // printf("mrom read!\n");
+  if (data == nullptr) return;
 #ifndef MROM_TEST
-  *data =  0x00100073;
-#endif
-
-#ifdef MROM_TEST
-  *data = mrom_memory_read(addr, 4);
-  // *data = 0x00100073;
+  *data = 0x00100073;
+#else
+  paddr_t paddr = (paddr_t)(uint32_t)addr;
+  if (!in_mrom(paddr) || !in_mrom(paddr + 3)) {
+    *data = 0;
+    return;
+  }
+  *data = (int32_t)mrom_memory_read(paddr, 4);
 #endif
 }
 

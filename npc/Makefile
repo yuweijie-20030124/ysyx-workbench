@@ -32,7 +32,7 @@ NPC_IMG?=
 
 ##NPC_FLAGS?= -l=$(NPC_HOME)/npc-log.txt -b
 NPC_FLAGS ?= --log=$(NPC_HOME)/npc-log.txt
-NPC_FLAGS += --mrom=/home/yuweijie/ysyx-workbench/npc/csrc/soc_uart/uart.bin
+NPC_FLAGS += --mrom=/home/yuweijie/ysyx-workbench/npc/csrc/soc_uart/char-test.bin
 # NPC_FLAGS += -b
 NPC_FLAGS += --diff=/home/yuweijie/ysyx-workbench/nemu/build/riscv32-nemu-interpreter-so
 
@@ -59,7 +59,8 @@ VERILATOR_FLAGS    = -Wno-fatal \
 				 	 -Ivsrc/core \
 				 	 -I/home/yuweijie/ysyx-workbench/ysyxSoC/perip/uart16550/rtl \
  				 	 -I/home/yuweijie/ysyx-workbench/ysyxSoC/perip/spi/rtl \
-				 	 --top-module ysyxSoCFull
+				 	 --top-module ysyxSoCFull \
+					 --autoflush
 
 GDBVERILATOR_FLAGS = -Wno-fatal \
 					 -Wall --cc --trace \
@@ -73,7 +74,9 @@ GDBVERILATOR_FLAGS = -Wno-fatal \
 					 -Ivsrc/core \
 					 -I/home/yuweijie/ysyx-workbench/ysyxSoC/perip/uart16550/rtl \
  					 -I/home/yuweijie/ysyx-workbench/ysyxSoC/perip/spi/rtl \
-					 --top-module ysyxSoCFull
+					 --top-module ysyxSoCFull \
+					 --autoflush
+
 
 GTK = gtkwave
 
