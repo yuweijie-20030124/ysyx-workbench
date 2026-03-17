@@ -95,6 +95,19 @@ word_t paddr_read(paddr_t addr, int len) {
   out_of_bound(addr);
   return 0;
 }
+//todo tomorown
+// //读mrom地址
+// word_t mrom_paddr_read(paddr_t addr, int len) {
+//   //printf("进来了\n"); 
+//   if (likely(in_mrom_pmem(addr))) {  
+//     IFDEF(CONFIG_MTRACE, Log("read in address = " FMT_PADDR ", len = %d\n", addr, len));
+//     return pmem_read(addr, len);
+//   }
+//   IFDEF(CONFIG_DEVICE, return mmio_read(addr, len));
+//   //printf("");
+//   out_of_bound(addr);
+//   return 0;
+// }
 
 //写物理地址
 void paddr_write(paddr_t addr, int len, word_t data) {
