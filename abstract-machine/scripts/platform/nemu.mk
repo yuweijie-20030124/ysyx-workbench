@@ -15,6 +15,7 @@ LDFLAGS   += --gc-sections -e _start
 NEMUFLAGS += -l $(shell dirname $(IMAGE).elf)/nemu-log.txt
 NEMUFLAGS += -f $(IMAGE).elf
 NEMUFLAGS += -i $(IMAGE).bin
+
 # NEMUFLAGS += -b
 
 MAINARGS_MAX_LEN = 64
