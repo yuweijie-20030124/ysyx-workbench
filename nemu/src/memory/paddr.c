@@ -22,6 +22,7 @@
 
 #if   defined(CONFIG_PMEM_MALLOC)
 static uint8_t *pmem = NULL;
+static uint8_t *mrom_pmem = NULL;
 #else // CONFIG_PMEM_GARRAY
 static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
 static uint8_t mrom_pmem[CONFIG_MSIZE] PG_ALIGN = {};
@@ -69,6 +70,8 @@ static void out_of_bound(paddr_t addr) {
 void init_mem() {
 #if   defined(CONFIG_PMEM_MALLOC)
   pmem = malloc(CONFIG_MSIZE);
+  assert(pmem);
+  mrom_pmem = malloc(CONFIG_MROM_MSIZE);
   assert(pmem);
 #endif
   //如果定义了MEM随机化，那就执行memset
