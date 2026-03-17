@@ -138,13 +138,13 @@ assign consume_inst = inst_valid_r & idu_ifu_ready & (~stall);
 // 输出
 //==========================================================================
 assign ifu_arb_arvalid         = (if_state_r == S_IF_ARREQ);
-assign ifu_arb_araddr          = pc_r;                     // AXI4-Lite 只需要地址
+assign ifu_arb_araddr          = pc_r;                          // AXI4-Lite 只需要地址
 assign ifu_arb_rready          = (if_state_r == S_IF_WAIT_R);
 
 assign ifu_ifidreg_valid       = inst_valid_r & (~stall);
-assign ifu_ifidreg_current_pc  = pc_r;
-assign ifu_ifidreg_next_pc     = pc_r + `ysyx_25060170_PLUS4;
-assign ifu_ididreg_inst        = inst_buf_r;
+assign ifu_ifidreg_current_pc  = inst_valid_r ? pc_r : 0;
+assign ifu_ifidreg_next_pc     = inst_valid_r ? pc_r + `ysyx_25060170_PLUS4 : 0;
+assign ifu_ididreg_inst        = inst_valid_r ? inst_buf_r : 0;
 assign ifu_ifidreg_bpupredict  = inst_bpupredict_r;
 assign ifu_ifidreg_bpu_valid   = inst_bpu_valid_r;
 
@@ -173,7 +173,7 @@ always_comb begin
         //==================================================================
         // IDLE
         //==================================================================
-        S_IF_IDLE: begin
+        S_IF_IDLE: begin//00
             if (redirect_valid) begin
                 // flush 当前 buffer
                 pc_n              = redirect_pc;
@@ -202,7 +202,7 @@ always_comb begin
         //==================================================================
         // ARREQ
         //==================================================================
-        S_IF_ARREQ: begin
+        S_IF_ARREQ: begin//01
             if (redirect_valid) begin
                 if (ar_handshake) begin
                     // 这一拍旧地址已经发出去了，后面 R 必须丢弃
@@ -230,7 +230,7 @@ always_comb begin
         //==================================================================
         // WAIT_R
         //==================================================================
-        S_IF_WAIT_R: begin
+        S_IF_WAIT_R: begin//10
             if (redirect_valid) begin
                 // 旧请求已经在路上，回来后要丢弃
                 discard_resp_n     = 1'b1;

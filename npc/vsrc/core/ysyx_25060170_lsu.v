@@ -323,26 +323,26 @@ always @(posedge clk) begin
             end
         endcase
 
-`ifndef SYNTHESIS
-        if (ls_state == S_LS_IDLE && in_has_mem_op && in_we) begin
-            $display("[LSU ] enter store pc=%08x addr=%08x data=%08x ctl=%b", pc_i, alu_res_i[31:0], store_data_i, ls_ctl_i);
-        end
-        if (aw_hs) begin
-            $display("[LSU ] AW handshake addr=%08x state=%0d", lsu_arb_awaddr, ls_state);
-        end
-        if (w_hs) begin
-            $display("[LSU ] W handshake data=%08x strb=%b state=%0d", lsu_arb_wdata, lsu_arb_wstrb, ls_state);
-        end
-        if (ls_state == S_LS_WREQ && ((aw_done | aw_hs) && (w_done | w_hs))) begin
-            $display("[LSU ] move WAIT_B addr=%08x aw_done=%b w_done=%b", req_addr, (aw_done | aw_hs), (w_done | w_hs));
-        end
-        if (b_hs) begin
-            $display("[LSU ] B handshake resp=%b state=%0d", arb_lsu_bresp, ls_state);
-        end
-        if (ls_state == S_LS_WAIT_B && !arb_lsu_bvalid) begin
-            $display("[LSU ] waiting B addr=%08x bready=%b", req_addr, lsu_arb_bready);
-        end
-`endif
+// `ifndef SYNTHESIS
+//         if (ls_state == S_LS_IDLE && in_has_mem_op && in_we) begin
+//             $display("[LSU ] enter store pc=%08x addr=%08x data=%08x ctl=%b", pc_i, alu_res_i[31:0], store_data_i, ls_ctl_i);
+//         end
+//         if (aw_hs) begin
+//             $display("[LSU ] AW handshake addr=%08x state=%0d", lsu_arb_awaddr, ls_state);
+//         end
+//         if (w_hs) begin
+//             $display("[LSU ] W handshake data=%08x strb=%b state=%0d", lsu_arb_wdata, lsu_arb_wstrb, ls_state);
+//         end
+//         if (ls_state == S_LS_WREQ && ((aw_done | aw_hs) && (w_done | w_hs))) begin
+//             $display("[LSU ] move WAIT_B addr=%08x aw_done=%b w_done=%b", req_addr, (aw_done | aw_hs), (w_done | w_hs));
+//         end
+//         if (b_hs) begin
+//             $display("[LSU ] B handshake resp=%b state=%0d", arb_lsu_bresp, ls_state);
+//         end
+//         if (ls_state == S_LS_WAIT_B && !arb_lsu_bvalid) begin
+//             $display("[LSU ] waiting B addr=%08x bready=%b", req_addr, lsu_arb_bready);
+//         end
+// `endif
     end
 end
 

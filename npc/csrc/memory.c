@@ -35,6 +35,8 @@ static word_t pmem_read(paddr_t addr, int len) {
 }
 #ifdef MROM_TEST
 word_t mrom_memory_read(paddr_t addr, int len) {
+  if (len <= 0) return 0;
+  if (!in_mrom(addr) || !in_mrom(addr + len - 1)) return 0;
   word_t ret = host_read(mrom_guest_to_host(addr), len);
   return ret;
 }

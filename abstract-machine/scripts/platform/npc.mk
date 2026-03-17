@@ -10,7 +10,8 @@ AM_SRCS := riscv/npc/start.S \
 
 CFLAGS    += -fdata-sections -ffunction-sections
 LDSCRIPTS += $(AM_HOME)/scripts/linker.ld
-LDFLAGS   += --defsym=_pmem_start=0x80000000 --defsym=_entry_offset=0x0
+LDFLAGS   += --defsym=_pmem_start=0x80000000 --defsym=_entry_offset=0x0  --defsym=_memory_pmem_start=0x0f000000
+LDFLAGS   += --defsym=_mrom_start=0x20000000
 LDFLAGS   += --gc-sections -e _start
 NPCFLAGS += -l $(shell dirname $(IMAGE).elf)/NPC-log.txt
 NPCFLAGS += -f $(IMAGE).elf

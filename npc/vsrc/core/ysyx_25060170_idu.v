@@ -205,8 +205,8 @@ assign next_pc_o = ((alusrc_o == `INST_JAL) ) 				?  (pc_i + imm)  		:
 				   inst_i == 32'h30_20_00_73				?	mepc				:
 				   next_pc_i;
 
-assign pc_o 	 	= pc_i		;
-assign inst_o 	 	= inst_i	;
+assign pc_o 	 	= id_valid_o ? pc_i : 0		;
+assign inst_o 	 	= id_valid_o ? inst_i : 0	;
 assign csr_imm_o 	= rs1		;
 // assign store_addr_o = rs2		;
 
@@ -331,7 +331,8 @@ assign idu_btb_updatePC = pc_i;
 //**************************************IFU***********************************************//
 
 wire PC_error;
-assign PC_error = (ifu_idu_futurePC != next_pc_o);
+assign PC_error = 0;
+// assign PC_error = (ifu_idu_futurePC != next_pc_o);
 
 assign idu_ifu1_jump_pc = PC_error										 ? next_pc_o	:
 						  alusrc_o == `INST_JALR          		         ? 	 	  op1   :
@@ -340,7 +341,7 @@ assign idu_ifu1_jump_pc = PC_error										 ? next_pc_o	:
 						  inst_bxx & (~bp_jump_i &  now_bxx_jump_yes)    ? pc_i + imm   : 
 						  `ysyx_25060170_ZERO32;
 // //bpu预测跳但实际不跳		|       bpu预测不跳但实际跳		|		pc纠正
-assign idu_ifu1_jump	=  inst_jxx | (inst_bxx & (bp_jump_i ^ now_bxx_jump_yes)) | PC_error ; 
+assign idu_ifu1_jump	=  id_valid_o ? inst_jxx | (inst_bxx & (bp_jump_i ^ now_bxx_jump_yes)) : 0 ; 
 
 endmodule
 

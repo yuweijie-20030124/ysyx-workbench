@@ -117,7 +117,7 @@ always@(posedge clk) begin
         csr_ctl_o           <=   csr_ctl_i              ;
         csr_addr_o          <=   csr_addr_i             ;
         csr_data_o          <=   csr_data_i             ;
-        ls_valid_o          <=   1'b1                   ;
+        ls_valid_o          <=   ls_valid_i                ;
         // pipeline_id_stall_o <=   pipeline_id_stall_i    ;
     end
 end

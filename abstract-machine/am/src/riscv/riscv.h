@@ -34,10 +34,14 @@ enum { MODE_U, MODE_S, MODE_M = 3 };
 #endif
 
 # define DEVICE_BASE 0xa0000000
+//UART的地址
+# define UART_BASE   0X1000000L
+# define UART_TX     (UART_BASE + 0x00)  
 
 #define MMIO_BASE 0xa0000000
 
-#define SERIAL_PORT     (DEVICE_BASE + 0x00003f8)
+#define SERIAL_PORT     (DEVICE_BASE + 0x00003f8) //am原本的数值
+// #define SERIAL_PORT     () //现在通过uart16500来输出字符
 #define KBD_ADDR        (DEVICE_BASE + 0x0000060)
 #define RTC_ADDR        (DEVICE_BASE + 0x0000048)
 #define VGACTL_ADDR     (DEVICE_BASE + 0x0000100)
