@@ -79,6 +79,8 @@ void init_mem() {
   //memset() 函数将指定的值 c 复制到 str 所指向的内存区域的前 n 个字节中，这可以用于将内存块清零或设置为特定值。
   IFDEF(CONFIG_MEM_RANDOM, memset(pmem, rand(), CONFIG_MSIZE));
   Log("physical memory area [" FMT_PADDR ", " FMT_PADDR "]", PMEM_LEFT, PMEM_RIGHT);
+  IFDEF(CONFIG_MEM_RANDOM, memset(mrom_pmem, rand(), CONFIG_MROM_MSIZE));
+  Log("physical memory area [" FMT_PADDR ", " FMT_PADDR "]", MROM_PMEM_LEFT, MROM_PMEM_RIGHT);
 }
 
 //读物理地址
