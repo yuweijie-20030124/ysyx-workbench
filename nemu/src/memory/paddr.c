@@ -24,6 +24,8 @@
 static uint8_t *pmem = NULL;
 #else // CONFIG_PMEM_GARRAY
 static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
+static uint8_t mrom_pmem[CONFIG_MSIZE] PG_ALIGN = {};
+
 #endif
 
 //客户机是nemu 主机是我，客户机执行 mov [0x80001000], eax，模拟器会调用 guest_to_host(0x80001000) 找到主机内存位置并写入数据。
@@ -38,10 +40,17 @@ pmem
 
 CONFIG_MBASE
 客户机物理地址的起始基址（Guest Physical Memory Base），表示客户机物理地址空间的起始偏移量（例如 0x80000000）。*/
-//将客户机物理地址转换为主机虚拟地址。
+//0x80000000~0x87ffffff 将客户机物理地址转换为主机虚拟地址。
 uint8_t* guest_to_host(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
 //将主机虚拟地址转换回客户机物理地址。
 paddr_t host_to_guest(uint8_t *haddr) { return haddr - pmem + CONFIG_MBASE; }
+
+//mrom:0x20000000~0x2000_0fff 将客户机物理地址转换为主机虚拟地址。
+uint8_t* mrom_guest_to_host(paddr_t paddr) { return mrom_pmem + paddr - CONFIG_MROM_MBASE; }
+//将主机虚拟地址转换回客户机物理地址。
+paddr_t mrom_host_to_guest(uint8_t *haddr) { return haddr - mrom_pmem + CONFIG_MROM_MBASE; }
+
+
 
 static word_t pmem_read(paddr_t addr, int len) {
   word_t ret = host_read(guest_to_host(addr), len);

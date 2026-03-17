@@ -29,6 +29,15 @@ static const uint32_t img [] = {
   0xdeadbeef,  // some data
 };
 
+static const uint32_t mrom_img [] = {
+  0x00100073,  // ebreak (used as nemu_trap)
+  0x00100073,  // ebreak (used as nemu_trap)
+  0x00100073,  // ebreak (used as nemu_trap)
+  0x00100073,  // ebreak (used as nemu_trap)
+  0xdeadbeef,  // some data
+};
+
+
 static void restart() {
   /* Set the initial program counter. */
   cpu.pc = RESET_VECTOR;
@@ -44,6 +53,10 @@ static void restart() {
 
 void init_isa() {
   /* Load built-in image. */
+  //0x20000000
+  memcpy(mrom_guest_to_host(RESET_MROM_VECTOR), mrom_img, sizeof(mrom_img));
+
+  //0x80000000
   memcpy(guest_to_host(RESET_VECTOR), img, sizeof(img));
 
   /* Initialize this virtual computer system. */
