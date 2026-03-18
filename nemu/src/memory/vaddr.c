@@ -47,14 +47,12 @@ word_t vaddr_read(vaddr_t addr, int len) {
 void vaddr_write(vaddr_t addr, int len, word_t data) {
   // paddr_write(addr, len, data);
     if(addr >= 0x80000000 && addr <= 0x87FFFFFF){ //物理地址
-    return paddr_write(addr, len, data);
+    paddr_write(addr, len, data);
   }
   else if(addr >= 0x20000000 && addr <= 0x20000FFF){
-    return mromaddr_write(addr, len, data);
+    mromaddr_write(addr, len, data);
   }
   else {
     printf("no mrom no p,out of bound\n");
-    assert(0);
-    // return 0;
   }
 }
