@@ -55,6 +55,9 @@ void vaddr_write(vaddr_t addr, int len, word_t data) {
   else if(addr >= 0x20000000 && addr <= 0x20000FFF){
     mromaddr_write(addr, len, data);
   }
+  else if(addr >= 0x0f000000 && addr <= 0x0fffffff){
+    sramaddr_write(addr, len, data);
+  }
   else {
     printf("no mrom no p,out of bound\n");
   }
