@@ -59,9 +59,6 @@
 
 #define CONFIG_GTK 1
 
-//测试mrom
-#define MROM_TEST 1
-
 
 // #define CONFIG_DEVICE 1
 

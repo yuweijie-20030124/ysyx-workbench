@@ -44,10 +44,10 @@ static inline bool in_mrom(paddr_t addr) {
 
 uint8_t* guest_to_host(paddr_t addr);
 
-#ifdef MROM_TEST
+
 word_t mrom_memory_read(paddr_t addr, int len);
 uint8_t* mrom_guest_to_host(paddr_t addr);
-#endif
+
 
 #define PAGE_SHIFT        12
 #define PAGE_SIZE         (1ul << PAGE_SHIFT)

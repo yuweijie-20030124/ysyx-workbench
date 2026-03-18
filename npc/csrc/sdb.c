@@ -13,9 +13,9 @@
 
 static int is_batch_mode = false;
 
-#ifdef MROM_TEST
+
 word_t mrom_memory_read(paddr_t addr, int len) ;
-#endif
+
 void init_regex();
 void init_wp_pool();
 void add_watch(char *expr,word_t addr);
@@ -174,8 +174,8 @@ static int cmd_x(char *args){
       printf("\n");
   }
 }
-  #ifdef MROM_TEST
-  else if(addr>=0x20000000 &&addr <=0x20000fff){
+
+  else if(addr>=0x20000000 && addr <=0x20000fff){
       printf("now in mrom\n");
       for(int i = 0 ; i < n ; i++){
       uint32_t data = mrom_memory_read(addr + i * 4,4); //这个vaddr_read需要改一下
@@ -187,7 +187,19 @@ static int cmd_x(char *args){
       printf("\n");
   }
   }
-  #endif
+
+  else if(addr>=0x0f000000 && addr <=0x0fffffff){
+      printf("now in sram\n");
+      for(int i = 0 ; i < n ; i++){
+      uint32_t data = sram_memory_read(addr + i * 4,4); 
+      printf("0x%08x  " , addr + i * 4 );
+      for(int j =0 ; j < 4 ; j++){
+          printf("0x%02x " , data & 0xff);
+          data = data >> 8 ;
+      }
+      printf("\n");
+  }
+  }
 
   else printf("you are out of bound\n");     
   return 0;

@@ -17,9 +17,9 @@ void init_sdb();
 void init_disasm();
 void init_isa();
 void cpu_reset();
-#ifdef MROM_TEST
+
 uint8_t* mrom_guest_to_host(paddr_t addr);
-#endif
+
 static void welcome() {
   Log("Trace: %s", MUXDEF(CONFIG_TRACE, ANSI_FMT("ON", ANSI_FG_GREEN), ANSI_FMT("OFF", ANSI_FG_RED)));
   IFDEF(CONFIG_TRACE, Log("If trace is enabled, a log file will be generated "
@@ -41,15 +41,15 @@ static char *mrom_elf_file =NULL;
 static char *log_file = NULL;
 static int difftest_port = 1234;
 
-
+//程序存到0x80000000
 static long load_img() {
   if (img_file == NULL) {
-    Log("No image is given. Use the default build-in image.");
+    Log("0x80000000:No image is given. Use the default build-in image.");
     return 4096; // built-in image size
   }
   //printf ("%s!!!!!!!!!!\n",img_file);
   FILE *fp = fopen(img_file, "rb");//二进制读入imgfile
-  Assert(fp, "Can not open '%s'", img_file);
+  Assert(fp, "0x800000000:Can not open '%s'", img_file);
 
   fseek(fp, 0, SEEK_END);//将fp的指针移到最后位置
   long size = ftell(fp);//返回fp当前文件位置
@@ -64,11 +64,38 @@ static long load_img() {
   
   assert(ret == 1);
 
-  fclose(fp); //fopen之后一定要fclose
+  fclose(fp);
   return size;
 }
 
-#ifdef MROM_TEST
+//程序存到0x20000000
+static long mrom_load_img() {
+  if (mrom_img_file == NULL) {
+    Log("0x20000000:No image is given. Use the default build-in image.");
+    return 4096; // built-in image size
+  }
+  //printf ("%s!!!!!!!!!!\n",img_file);
+  FILE *fp = fopen(mrom_img_file, "rb");//二进制读入imgfile
+  Assert(fp, "0x20000000:Can not open '%s'", mrom_img_file);
+
+  fseek(fp, 0, SEEK_END);//将fp的指针移到最后位置
+  long size = ftell(fp);//返回fp当前文件位置
+
+  Log("0x20000000:The image is %s, size = %ld", mrom_img_file, size);
+
+  fseek(fp, 0, SEEK_SET);//将fp的指针移到文件最开头
+  //size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream) 从给定流 stream 读取数据到 ptr 所指向的数组中。
+  //如果fread读取成功就会返回nmemb，也就是“1”。
+  int ret = fread(mrom_guest_to_host(RESET_MROM_VECTOR), size, 1, fp);
+  //从文件指针 fp 指向的文件中读取二进制数据，并将其直接写入到客户机（Guest）物理内存的 RESET_VECTOR 地址处
+  
+  assert(ret == 1);
+
+  fclose(fp);
+  return size;
+}
+
+
 //把mrom的.txt放到img中。
 static void mrom_load_img() {
   if (mrom_img_file == NULL) {
@@ -95,7 +122,7 @@ static void mrom_load_img() {
   fclose(fp); //fopen之后一定要fclose
   return;
 }
-#endif
+
 //在这里开启是否批处理模式
 //批处理模式下，sdb_mainloop()不会被调用
 //而是直接执行cpu_exec(-1)来执行指令
@@ -165,9 +192,9 @@ void init_monitor(int argc, char *argv[]) {
 
   /* Load the image to memory. This will overwrite the built-in image. */
   long img_size = load_img();
-  #ifdef MROM_TEST
+
   mrom_load_img();
-  #endif
+
   cpu_reset();
 
  #ifdef CONFIG_DIFFTEST

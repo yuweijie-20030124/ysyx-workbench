@@ -15,9 +15,9 @@ void cpu_reset();
 void sdb_mainloop();
 int is_exit_status_bad();
 bool log_enable();
-#ifdef MROM_TEST
+
 word_t mrom_memory_read(paddr_t addr, int len) ;
-#endif
+
 
 #ifdef CONFIG_DIFFTEST
 void difftest_skip_ref();
@@ -47,9 +47,6 @@ extern "C" void flash_read(int32_t addr, int32_t *data) { assert(0); }
 //MROM	0x2000_0000~0x2000_0fff
 extern "C" void mrom_read(int32_t addr, int32_t *data) { 
   if (data == nullptr) return;
-#ifndef MROM_TEST
-  *data = 0x00100073;
-#else
   paddr_t paddr = (paddr_t)(uint32_t)addr;
   if (!in_mrom(paddr) || !in_mrom(paddr + 3)) {
     *data = 0;
