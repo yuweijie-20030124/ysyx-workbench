@@ -67,4 +67,7 @@ void paddr_write(paddr_t addr, int len, word_t data);
 word_t mromaddr_read(paddr_t addr, int len);
 void mromaddr_write(paddr_t addr, int len, word_t data);
 
+word_t sramaddr_read(paddr_t addr, int len);
+void sramaddr_write(paddr_t addr, int len, word_t data);
+
 #endif
