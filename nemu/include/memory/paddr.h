@@ -42,11 +42,14 @@ static inline bool in_pmem(paddr_t addr) {
   return addr - CONFIG_MBASE < CONFIG_MSIZE;
 }
 
-static inline bool in_mrom_pmem(paddr_t addr) {
+static inline bool in_mrom(paddr_t addr) {
   return addr - CONFIG_MROM_MBASE < CONFIG_MSIZE;
 }
 
 word_t paddr_read(paddr_t addr, int len);
 void paddr_write(paddr_t addr, int len, word_t data);
+
+word_t mromaddr_read(paddr_t addr, int len);
+void mromaddr_write(paddr_t addr, int len, word_t data);
 
 #endif
