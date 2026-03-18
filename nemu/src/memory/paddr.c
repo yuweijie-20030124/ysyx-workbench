@@ -67,12 +67,21 @@ static word_t mrom_read(paddr_t addr, int len) {
   return ret;
 }
 
+static word_t sram_read(paddr_t addr, int len) {
+  word_t ret = host_read(sram_guest_to_host(addr), len);
+  return ret;
+}
+
 static void pmem_write(paddr_t addr, int len, word_t data) {
   host_write(guest_to_host(addr), len, data);
 }
 
 static void mrom_write(paddr_t addr, int len, word_t data) {
   host_write(mrom_guest_to_host(addr), len, data);
+}
+
+static void sram_write(paddr_t addr, int len, word_t data) {
+  host_write(sram_guest_to_host(addr), len, data);
 }
 
 static void out_of_bound(paddr_t addr) {
@@ -83,6 +92,11 @@ static void out_of_bound(paddr_t addr) {
 static void mrom_out_of_bound(paddr_t addr) {
   panic("address = " FMT_PADDR " is out of bound of pmem [" FMT_PADDR ", " FMT_PADDR "] at pc = " FMT_WORD,
       addr, MROM_PMEM_LEFT, MROM_PMEM_RIGHT, cpu.pc);
+}
+
+static void sram_out_of_bound(paddr_t addr) {
+  panic("address = " FMT_PADDR " is out of bound of pmem [" FMT_PADDR ", " FMT_PADDR "] at pc = " FMT_WORD,
+      addr, SRAM_PMEM_LEFT, SRAM_PMEM_RIGHT, cpu.pc);
 }
 
 void init_mem() {
@@ -123,6 +137,17 @@ word_t mromaddr_read(paddr_t addr, int len) {
   return 0;
 }
 
+//读sram地址
+word_t sramaddr_read(paddr_t addr, int len) {
+  if (likely(in_sram(addr))) {  
+    IFDEF(CONFIG_MTRACE, Log("read in address = " FMT_PADDR ", len = %d\n", addr, len));
+    return sram_read(addr, len);
+  }
+  // IFDEF(CONFIG_DEVICE, return mmio_read(addr, len));
+  sram_out_of_bound(addr);
+  return 0;
+}
+
 //写物理地址
 void paddr_write(paddr_t addr, int len, word_t data) {
   if (likely(in_pmem(addr))) { 
@@ -135,12 +160,22 @@ void paddr_write(paddr_t addr, int len, word_t data) {
   //Log("weiwei");
 }
 
-//写mrom地址
+//写mrom地址 其实mrom不应该写 后面改掉todo
 void mromaddr_write(paddr_t addr, int len, word_t data) {
   if (likely(in_mrom(addr))) { 
     mrom_write(addr, len, data);
     IFDEF(CONFIG_MTRACE, Log("write in address = " FMT_PADDR ", len = %d, data = " FMT_WORD "\n", addr, len, data));
     return; }
   mrom_out_of_bound(addr);
+  //Log("weiwei");
+}
+
+//写mrom地址
+void sramaddr_write(paddr_t addr, int len, word_t data) {
+  if (likely(in_sram(addr))) { 
+    sram_write(addr, len, data);
+    IFDEF(CONFIG_MTRACE, Log("write in address = " FMT_PADDR ", len = %d, data = " FMT_WORD "\n", addr, len, data));
+    return; }
+  sram_out_of_bound(addr);
   //Log("weiwei");
 }
