@@ -65,7 +65,6 @@ void init_isa() {
   //0x0f00_0000~0x0fff_ffff sram
   memcpy(sram_guest_to_host(RESET_SRAM_VECTOR), sram_img, sizeof(sram_img));
 
-
   //0x20000000
   memcpy(mrom_guest_to_host(RESET_MROM_VECTOR), mrom_img, sizeof(mrom_img));
 
