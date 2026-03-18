@@ -172,12 +172,13 @@ void mromaddr_write(paddr_t addr, int len, word_t data) {
 
 //写mrom地址
 void sramaddr_write(paddr_t addr, int len, word_t data) {
+    printf("addr = 0x%08x",addr);
+  printf("data = 0x%08x",data);
   if (likely(in_sram(addr))) { 
     sram_write(addr, len, data);
     IFDEF(CONFIG_MTRACE, Log("write in address = " FMT_PADDR ", len = %d, data = " FMT_WORD "\n", addr, len, data));
     return; }
   sram_out_of_bound(addr);
-  printf("addr = 0x%08x",addr);
-  printf("data = 0x%08x",data);
+
   //Log("weiwei");
 }
