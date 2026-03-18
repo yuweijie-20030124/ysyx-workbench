@@ -170,6 +170,7 @@ void mromaddr_write(paddr_t addr, int len, word_t data) {
   //Log("weiwei");
 }
 
+//SRAM	0x0f00_0000~0x0fff_ffff
 //写mrom地址
 void sramaddr_write(paddr_t addr, int len, word_t data) {
     printf("addr = 0x%08x",addr);
