@@ -32,7 +32,16 @@ word_t vaddr_ifetch(vaddr_t addr, int len) {
 
 //读地址 == 取指
 word_t vaddr_read(vaddr_t addr, int len) {
-  return paddr_read(addr, len);
+  if(addr >= 0x80000000 && addr <= 0x87FFFFFF){ //物理地址
+    return paddr_read(addr, len);
+  }
+  else if(addr >= 0x20000000 && addr <= 0x20000FFF){
+    return mromaddr_read(addr,len);
+  }
+  else {
+    printf("no mrom no p\n");
+    return 0;
+  }
 }
 //写地址
 void vaddr_write(vaddr_t addr, int len, word_t data) {
