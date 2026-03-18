@@ -58,13 +58,27 @@ static word_t pmem_read(paddr_t addr, int len) {
   return ret;
 }
 
+static word_t mrom_read(paddr_t addr, int len) {
+  word_t ret = host_read(mrom_guest_to_host(addr), len);
+  return ret;
+}
+
 static void pmem_write(paddr_t addr, int len, word_t data) {
   host_write(guest_to_host(addr), len, data);
+}
+
+static void mrom_write(paddr_t addr, int len, word_t data) {
+  host_write(mrom_guest_to_host(addr), len, data);
 }
 
 static void out_of_bound(paddr_t addr) {
   panic("address = " FMT_PADDR " is out of bound of pmem [" FMT_PADDR ", " FMT_PADDR "] at pc = " FMT_WORD,
       addr, PMEM_LEFT, PMEM_RIGHT, cpu.pc);
+}
+
+static void mrom_out_of_bound(paddr_t addr) {
+  panic("address = " FMT_PADDR " is out of bound of pmem [" FMT_PADDR ", " FMT_PADDR "] at pc = " FMT_WORD,
+      addr, MROM_PMEM_LEFT, MROM_PMEM_RIGHT, cpu.pc);
 }
 
 void init_mem() {
@@ -85,29 +99,25 @@ void init_mem() {
 
 //读物理地址
 word_t paddr_read(paddr_t addr, int len) {
-  //printf("进来了\n"); 
   if (likely(in_pmem(addr))) {  
     IFDEF(CONFIG_MTRACE, Log("read in address = " FMT_PADDR ", len = %d\n", addr, len));
     return pmem_read(addr, len);
   }
   IFDEF(CONFIG_DEVICE, return mmio_read(addr, len));
-  //printf("");
   out_of_bound(addr);
   return 0;
 }
-//todo tomorown
-// //读mrom地址
-// word_t mrom_paddr_read(paddr_t addr, int len) {
-//   //printf("进来了\n"); 
-//   if (likely(in_mrom_pmem(addr))) {  
-//     IFDEF(CONFIG_MTRACE, Log("read in address = " FMT_PADDR ", len = %d\n", addr, len));
-//     return pmem_read(addr, len);
-//   }
-//   IFDEF(CONFIG_DEVICE, return mmio_read(addr, len));
-//   //printf("");
-//   out_of_bound(addr);
-//   return 0;
-// }
+
+//读mrom地址
+word_t mromaddr_read(paddr_t addr, int len) {
+  if (likely(in_mrom(addr))) {  
+    IFDEF(CONFIG_MTRACE, Log("read in address = " FMT_PADDR ", len = %d\n", addr, len));
+    return mrom_read(addr, len);
+  }
+  // IFDEF(CONFIG_DEVICE, return mmio_read(addr, len));
+  mrom_out_of_bound(addr);
+  return 0;
+}
 
 //写物理地址
 void paddr_write(paddr_t addr, int len, word_t data) {
@@ -118,5 +128,15 @@ void paddr_write(paddr_t addr, int len, word_t data) {
   
   IFDEF(CONFIG_DEVICE, mmio_write(addr, len, data); return);
   out_of_bound(addr);
+  //Log("weiwei");
+}
+
+//写mrom地址
+void mromaddr_write(paddr_t addr, int len, word_t data) {
+  if (likely(in_mrom(addr))) { 
+    mrom_write(addr, len, data);
+    IFDEF(CONFIG_MTRACE, Log("write in address = " FMT_PADDR ", len = %d, data = " FMT_WORD "\n", addr, len, data));
+    return; }
+  mrom_out_of_bound(addr);
   //Log("weiwei");
 }

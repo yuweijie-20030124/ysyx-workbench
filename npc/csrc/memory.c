@@ -52,6 +52,12 @@ static void out_of_bound(paddr_t addr) {
       addr, PMEM_LEFT, PMEM_RIGHT, cpu.pc);
 }
 
+// static void mrom_out_of_bound(paddr_t addr) {
+//   // printf("???????????????");
+//   panic("address = " FMT_PADDR " is out of bound of pmem [" FMT_PADDR ", " FMT_PADDR "] at pc = " FMT_WORD,
+//       addr, PMEM_LEFT, PMEM_RIGHT, cpu.pc);
+// }
+
 //读物理地址
 word_t paddr_read(paddr_t addr, int len) {
   //printf("进来了\n"); 
