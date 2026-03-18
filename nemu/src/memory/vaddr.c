@@ -38,6 +38,9 @@ word_t vaddr_read(vaddr_t addr, int len) {
   else if(addr >= 0x20000000 && addr <= 0x20000FFF){
     return mromaddr_read(addr,len);
   }
+  else if(addr>=0x0f000000 && addr <= 0x0fffffff){
+    return sramaddr_read(addr,len);
+  }
   else {
     printf("no mrom no p\n");
     return 0;
@@ -51,6 +54,9 @@ void vaddr_write(vaddr_t addr, int len, word_t data) {
   }
   else if(addr >= 0x20000000 && addr <= 0x20000FFF){
     mromaddr_write(addr, len, data);
+  }
+  else if(addr >= 0x0f000000 && addr <= 0x0fffffff){
+    sramaddr_write(addr, len, data);
   }
   else {
     printf("no mrom no p,out of bound\n");
