@@ -4,8 +4,8 @@
 #include <cstdint>
 #include "common.h"
 
-#define PMEM_LEFT  ((paddr_t)CONFIG_MEM_BASE)
-#define PMEM_RIGHT ((paddr_t)CONFIG_MEM_BASE + CONFIG_MSIZE - 1)
+#define PMEM_LEFT  ((paddr_t)CONFIG_MBASE)
+#define PMEM_RIGHT ((paddr_t)CONFIG_MBASE + CONFIG_MSIZE - 1)
 
 paddr_t host_read(void *addr, int len);
 
@@ -35,11 +35,11 @@ void vaddr_write(vaddr_t addr, int len, word_t data);
 void init_mem();
 
 static inline bool in_pmem(paddr_t addr) {
-  return addr - CONFIG_MEM_BASE < CONFIG_MSIZE;
+  return addr - CONFIG_MBASE < CONFIG_MSIZE;
 }
 
 static inline bool in_mrom(paddr_t addr) {
-  return addr - CONFIG_MROM_BASE < CONFIG_MROM_SIZE;
+  return addr - CONFIG_MROM_MBASE < CONFIG_MROM_MSIZE;
 }
 
 uint8_t* guest_to_host(paddr_t addr);

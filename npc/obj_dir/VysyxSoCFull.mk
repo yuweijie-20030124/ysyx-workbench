@@ -38,6 +38,8 @@ VM_MODPREFIX = VysyxSoCFull
 # User CFLAGS (from -CFLAGS on Verilator command line)
 VM_USER_CFLAGS = \
    -I /home/yuweijie/ysyx-workbench/npc/include -O2 \
+   -I /home/yuweijie/ysyx-workbench/npc/tools/capstone/repo/include -O2 \
+   -I /home/yuweijie/ysyx-workbench/npc/include -O2 \
    -I /home/yuweijie/ysyx-workbench/nemu/tools/capstone/repo/include -O2 \
 
 # User LDLIBS (from -LDFLAGS on Verilator command line)

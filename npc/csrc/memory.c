@@ -102,14 +102,14 @@ void vaddr_write(vaddr_t addr, int len, word_t data) {
 }
 uint8_t mem[CONFIG_MSIZE] = {0};
 
-uint8_t mrom_mem[CONFIG_MROM_SIZE] = {0};  // 为 MROM 分配独立内存
+uint8_t mrom_mem[CONFIG_MROM_MSIZE] = {0};  // 为 MROM 分配独立内存
 
 
 // Memory transfer
-uint8_t* guest_to_host(paddr_t addr) { return mem + (addr - CONFIG_MEM_BASE); }
+uint8_t* guest_to_host(paddr_t addr) { return mem + (addr - CONFIG_MBASE); }
 
 
-uint8_t* mrom_guest_to_host(paddr_t addr) { return mrom_mem + (addr - CONFIG_MROM_BASE); }
+uint8_t* mrom_guest_to_host(paddr_t addr) { return mrom_mem + (addr - CONFIG_MROM_MBASE); }
 
 
 const static uint32_t img [] = {
@@ -132,13 +132,24 @@ const static uint32_t mrom_img [] = {
   0x0000006f,   // j self*/
 };
 
+const static uint32_t sram_img [] = {
+  0x00100073,   // ebreak (used as nemu_trap)     0x20000000
+  0xdeadbeef,   // deadbeef
+  0x00100073,   // ebreak (used as nemu_trap)     0x20000004
+  0x00100073,   // ebreak (used as nemu_trap)     0x20000008
+  0x00100073,   // ebreak (used as nemu_trap)     0x2000000C
+  0x0000006f,   // j self*/
+};
+
 //在ysyxSoc中输出第一个字符
 
 void init_mem() {
   /* Load built-in image. */
-
+  // mrom read_only  0x20000000 0x20000ffff
   memcpy(mrom_guest_to_host(0x20000000), mrom_img, sizeof(mrom_img));
-
+  // sram 0x0f00_0000~0x0fff_ffff
+  memcpy(sram_guest_to_host(0x20000000), sram_img, sizeof(sram_img));
+  //pmem 0x80000000~0x8ffffff
   memcpy(guest_to_host(0x80000000), img, sizeof(img));
 
   //printf("Memory at 0x80000000: 0x%08x\n", *(uint32_t *)guest_to_host(0x80000000));
@@ -169,4 +180,3 @@ void init_mem() {
 //   out_of_bound(addr);
 //   //Log("weiwei");
 // }
- 

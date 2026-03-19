@@ -53,12 +53,11 @@ extern "C" void mrom_read(int32_t addr, int32_t *data) {
     return;
   }
   *data = (int32_t)mrom_memory_read(paddr, 4);
-#endif
 }
 
 extern "C" void pmem_read(paddr_t raddr, paddr_t* rdata, char rlen , int mode, int* dpic_difftest_skip_flag){
 
-  if (raddr < CONFIG_MEM_BASE) return;
+  if (raddr < CONFIG_MBASE) return;
   if (likely(in_pmem(raddr))) {
     *rdata = host_read(guest_to_host(raddr),rlen);
 #ifdef CONFIG_MTRACE
@@ -93,7 +92,7 @@ static inline int maskToLen(uint8_t mask) {
 
 // Memory Write for 32-bit system
 extern "C" void pmem_write(uint32_t waddr, uint32_t wdata, uint8_t wlen, int* dpic_difftest_skip_flag) {
-  if (waddr < CONFIG_MEM_BASE) return;
+  if (waddr < CONFIG_MBASE) return;
   
 #ifdef CONFIG_MTRACE
    Log("Write to memory at %#.8x with mask %x, content is %#.8x", waddr, wlen, wdata);

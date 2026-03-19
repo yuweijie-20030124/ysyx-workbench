@@ -8,21 +8,21 @@
 #include <string.h>
 #include <assert.h>
 #include <stdlib.h>
-
+#include <generated/autoconf.h>
 
 //-------------------------------autoconf.h----------------------------------------//
 //#define PIP_CPU 1
 
-#define CONFIG_ISA "riscv32"
-#define CONFIG_ISA_riscv32 1
-#define CONFIG_ISA32 1
-#define CONFIG_MSIZE 0x8000000
-#define CONFIG_MEM_BASE 0x80000000
-#define CONFIG_MROM_BASE 0x20000000//用于测试mrom的uart功能。
-#define CONFIG_MROM_SIZE 0x1000000   // MROM 大小 16MB
+// #define CONFIG_ISA "riscv32"
+// #define CONFIG_ISA_riscv32 1
+// #define CONFIG_ISA32 1
+// #define CONFIG_MSIZE 0x8000000
+// #define CONFIG_MEM_BASE 0x80000000
+// #define CONFIG_MROM_BASE 0x20000000//用于测试mrom的uart功能。
+// #define CONFIG_MROM_SIZE 0x1000000   // MROM 大小 16MB
 
 
-#define CONFIG_TIMER_GETTIMEOFDAY 1
+// #define CONFIG_TIMER_GETTIMEOFDAY 1
 //  #define CONFIG_TRACE 1
 
 //test log function
@@ -42,43 +42,43 @@
 
 // #define CONFIG_WATCHPOINT 1
 
- #define CONFIG_TRACE 1
+//  #define CONFIG_TRACE 1
 
-#ifdef CONFIG_TRACE
-#define CONFIG_ITRACE 1
-#define CONFIG_TRACE_END 10000
-#define CONFIG_TRACE_START 0
-#define CONFIG_ITRACE_IRINGBUF "true"
+// #ifdef CONFIG_TRACE
+// #define CONFIG_ITRACE 1
+// #define CONFIG_TRACE_END 10000
+// #define CONFIG_TRACE_START 0
+// #define CONFIG_ITRACE_IRINGBUF "true"
 // #define CONFIG_WATCHPOINT 1
 // #define CONFIG_FTRACE 1
 // #define CONFIG_MTRACE 1
 // #define CONFIG_DTRACE
-#endif
+// #endif
 
 
 
 #define CONFIG_GTK 1
 
 
-// #define CONFIG_DEVICE 1
+// // #define CONFIG_DEVICE 1
 
-#ifdef CONFIG_DEVICE
-#define CONFIG_HAS_SERIAL 1
-#define CONFIG_SERIAL_MMIO 0xa00003f8
+// #ifdef CONFIG_DEVICE
+// #define CONFIG_HAS_SERIAL 1
+// #define CONFIG_SERIAL_MMIO 0xa00003f8
 
-#define CONFIG_HAS_TIMER 1
-#define CONFIG_RTC_MMIO 0xa0000048
+// #define CONFIG_HAS_TIMER 1
+// #define CONFIG_RTC_MMIO 0xa0000048
 
-#define CONFIG_HAS_KEYBOARD 1
-#define CONFIG_I8042_DATA_MMIO 0xa0000060
+// #define CONFIG_HAS_KEYBOARD 1
+// #define CONFIG_I8042_DATA_MMIO 0xa0000060
 
-#define CONFIG_HAS_VGA 1
-#define CONFIG_VGA_SHOW_SCREEN 1
-#define CONFIG_VGA_CTL_MMIO 0xa0000100
-#define CONFIG_FB_ADDR 0xa1000000
+// #define CONFIG_HAS_VGA 1
+// #define CONFIG_VGA_SHOW_SCREEN 1
+// #define CONFIG_VGA_CTL_MMIO 0xa0000100
+// #define CONFIG_FB_ADDR 0xa1000000
 
-#define CONFIG_VGA_SIZE_400x300 1
-#endif
+// #define CONFIG_VGA_SIZE_400x300 1
+// #endif
 
 //-------------------------------macro.h-------------------------------------------//
 // macro stringizing
