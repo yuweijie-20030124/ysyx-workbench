@@ -9,12 +9,16 @@ AM_SRCS := riscv/npc/start.S \
            platform/dummy/mpe.c
 
 CFLAGS    += -fdata-sections -ffunction-sections
-LDSCRIPTS += $(AM_HOME)/scripts/linker.ld
-LDFLAGS   += --defsym=_pmem_start=0x80000000 --defsym=_entry_offset=0x0
+# LDSCRIPTS += $(AM_HOME)/scripts/linker.ld
+LDSCRIPTS += $(AM_HOME)/scripts/linkerysyxsoc.ld
+LDFLAGS   += --defsym=_pmem_start=0x80000000 --defsym=_entry_offset=0x0 
+LDFLAGS   += --defsym=_mrom_start=0x20000000
+LDFLAGS   += --defsym=_sram_start=0x0f000000
 LDFLAGS   += --gc-sections -e _start
 NPCFLAGS += -l $(shell dirname $(IMAGE).elf)/NPC-log.txt
 NPCFLAGS += -f $(IMAGE).elf
 NPCFLAGS += --diff=/home/yuweijie/ysyx-workbench/nemu/build/riscv32-nemu-interpreter-so
+NPCFLAGS += -m $(IMAGE).bin
 # NPCFLAGS += -b
 
 # COMMON_CFLAGS += -march=rv32i_zicsr -mabi=ilp32
