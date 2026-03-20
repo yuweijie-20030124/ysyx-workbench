@@ -199,7 +199,7 @@ void init_monitor(int argc, char *argv[]) {
   /* Load the image to memory. This will overwrite the built-in image. */
   long img_size = load_img();
   long mrom_img_size = mrom_load_img();
-  long sram_img_size = sram_load_img();
+  // long sram_img_size = sram_load_img();
 
   // mrom_load_img();
 

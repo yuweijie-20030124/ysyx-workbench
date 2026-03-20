@@ -143,12 +143,12 @@ static int parse_args(int argc, char *argv[]) {
     {"ftrace"   , required_argument, NULL, 'f'},
     {"img"      , required_argument, NULL, 'i'},
     {"mromimg"  , required_argument, NULL, 'm'},
-    {"sramimg"  , required_argument, NULL, 's'},
+    // {"sramimg"  , required_argument, NULL, 's'},
     {"help"     , no_argument      , NULL, 'h'},
     {0          , 0                , NULL,  0 },
   };
   int o;
-  while ( (o = getopt_long(argc, argv, "-bhl:d:p:f:e:i:m:s:", table, NULL)) != -1) {
+  while ( (o = getopt_long(argc, argv, "-bhl:d:p:f:e:i:m:", table, NULL)) != -1) {
     switch (o) {
       case 'b': sdb_set_batch_mode(); break;
       case 'p': sscanf(optarg, "%d", &difftest_port); break;
