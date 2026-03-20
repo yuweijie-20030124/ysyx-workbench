@@ -15,6 +15,7 @@ static int is_batch_mode = false;
 
 
 word_t mrom_memory_read(paddr_t addr, int len) ;
+word_t sram_memory_read(paddr_t addr, int len) ;
 
 void init_regex();
 void init_wp_pool();

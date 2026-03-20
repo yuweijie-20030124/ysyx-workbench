@@ -150,7 +150,7 @@ static int cmd_x(char *args){
       printf("\n");
   }
   }
-    else if(addr>=0x0f000000 && addr <= 0x0fffffff){
+    else if(addr>=0x0f000000 && addr <= 0x0ffffffff){
     for(int i = 0 ; i < n ; i++){
       uint32_t data = vaddr_read(addr + i * 4,4);
       printf("0x%08x  " , addr + i * 4 );
