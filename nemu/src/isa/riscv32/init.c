@@ -38,14 +38,14 @@ static const uint32_t mrom_img [] = {
 };
 
 //0x0f00_0000~0x0fff_ffff SRAM,
-static const uint32_t sram_img [] = {
-  0x00100073,  // ebreak (used as nemu_trap)
-  0xdeadbeef,  // some data
-  0x00100073,  // ebreak (used as nemu_trap)
-  0x00100073,  // ebreak (used as nemu_trap)
-  0x00100073,  // ebreak (used as nemu_trap)
-  0xdeadbeef,  // some data
-};
+// static const uint32_t sram_img [] = {
+//   0x00100073,  // ebreak (used as nemu_trap)
+//   0xdeadbeef,  // some data
+//   0x00100073,  // ebreak (used as nemu_trap)
+//   0x00100073,  // ebreak (used as nemu_trap)
+//   0x00100073,  // ebreak (used as nemu_trap)
+//   0xdeadbeef,  // some data
+// };
 
 static void restart() {
   /* Set the initial program counter. */
@@ -63,7 +63,7 @@ static void restart() {
 void init_isa() {
   /* Load built-in image. */
   //0x0f00_0000~0x0fff_ffff sram
-  memcpy(sram_guest_to_host(RESET_SRAM_VECTOR), sram_img, sizeof(sram_img));
+  // memcpy(sram_guest_to_host(RESET_SRAM_VECTOR), sram_img, sizeof(sram_img));
 
   //0x20000000
   memcpy(mrom_guest_to_host(RESET_MROM_VECTOR), mrom_img, sizeof(mrom_img));

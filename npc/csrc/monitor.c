@@ -207,7 +207,13 @@ void init_monitor(int argc, char *argv[]) {
 
  #ifdef CONFIG_DIFFTEST
   /* Initialize differential testing. */
-  init_difftest(diff_so_file, img_size, 0);
+  //同步0x80000000
+  // init_difftest(diff_so_file, img_size, 0);
+  
+  init_difftest(diff_so_file, mrom_img_size, 0);
+  //同步0x20000000给nemu
+  // init_difftest(diff_so_file, mrom_img_file, 0);
+
   //printf("diff_so_file = %s\n",diff_so_file);
   //printf("img_size = %ld\n",img_size);
   #endif

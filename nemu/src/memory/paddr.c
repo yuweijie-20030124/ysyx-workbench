@@ -112,7 +112,7 @@ void init_mem() {
   IFDEF(CONFIG_MEM_RANDOM, memset(pmem, rand(), CONFIG_MSIZE));
   Log("physical memory area [" FMT_PADDR ", " FMT_PADDR "]", PMEM_LEFT, PMEM_RIGHT);
   IFDEF(CONFIG_MEM_RANDOM, memset(mrom_pmem, rand(), CONFIG_MROM_MSIZE));
-  Log("physical memory area [" FMT_PADDR ", " FMT_PADDR "]", MROM_PMEM_LEFT, MROM_PMEM_RIGHT);
+  Log("physical mrom_memory area [" FMT_PADDR ", " FMT_PADDR "]", MROM_PMEM_LEFT, MROM_PMEM_RIGHT);
 }
 
 //读物理地址

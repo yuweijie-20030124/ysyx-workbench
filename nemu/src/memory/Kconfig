@@ -14,7 +14,7 @@ config PC_RESET_OFFSET
   default 0x100000 if ISA_x86
   default 0
 
-config MROM_BASE
+config MROM_MBASE
   hex "mrom Memory base address"
   default 0x0        if ISA_x86
   default 0x20000000
