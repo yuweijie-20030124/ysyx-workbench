@@ -168,7 +168,7 @@ static int parse_args(int argc, char *argv[]) {
         printf("\t-p,--port=PORT              run DiffTest with port PORT\n");
         printf("\t-i,--img=img.bin            用户程序存放在0x80000000\n");
         printf("\t-m,--mromimg=mrom_img.bin   MROM在0x20000000\n");
-        printf("\t-m,--mromimg=mrom_img.bin   SRAM在0x0f00_0000~0x0fff_ffff\n");
+        // printf("\t-m,--mromimg=mrom_img.bin   SRAM在0x0f00_0000~0x0fff_ffff\n");
 
         printf("\n");
         exit(0);
