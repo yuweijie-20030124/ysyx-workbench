@@ -45,9 +45,9 @@ __EXPORT void difftest_memcpy(paddr_t addr, void *buf, size_t n, bool direction)
 __EXPORT void difftest_regcpy(void *dut, bool direction) {
     //npc用的是这个direction
     if (direction == DIFFTEST_TO_REF) {
-    // printf("outpc is %08x\n",((CPU_state *)dut)->pc);
+    printf("outpc is %08x\n",((CPU_state *)dut)->pc);
     cpu.pc = ((CPU_state *)dut)->pc;
-    // printf("nemu pc is%08x\n",cpu.pc);
+    printf("nemu pc is%08x\n",cpu.pc);
     for (int i = 0; i < 32; ++i) {
       cpu.gpr[i] = ((CPU_state *)dut)->gpr[i];
     }
