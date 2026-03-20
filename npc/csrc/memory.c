@@ -6,7 +6,6 @@
 
 void mmio_write(paddr_t addr, int len, word_t data);
 word_t mmio_read(paddr_t addr, int len);
-uint8_t* mrom_guest_to_host(paddr_t addr);
 
 paddr_t host_read(void *addr, int len) {
   switch (len) {
@@ -29,11 +28,14 @@ void host_write(void *addr, int len, paddr_t data) {
   }
 }
 
-static word_t pmem_read(paddr_t addr, int len) {
+
+//读0x8000000内存
+word_t pmem_read(paddr_t addr, int len) {
   word_t ret = host_read(guest_to_host(addr), len);
   return ret;
 }
 
+//读mrom 0x20000000内存
 word_t mrom_memory_read(paddr_t addr, int len) {
   if (len <= 0) return 0;
   if (!in_mrom(addr) || !in_mrom(addr + len - 1)) return 0;
@@ -41,22 +43,36 @@ word_t mrom_memory_read(paddr_t addr, int len) {
   return ret;
 }
 
+//读sram 0x0f000000~0x0fffffff
+word_t sram_memory_read(paddr_t addr, int len) {
+  if (len <= 0) return 0;
+  if (!in_sram(addr) || !in_sram(addr + len - 1)) return 0;
+  word_t ret = host_read(sram_guest_to_host(addr), len);
+  return ret;
+}
 
-static void pmem_write(paddr_t addr, int len, word_t data) {
+//写内存0x80000000
+void pmem_write(paddr_t addr, int len, word_t data) {
   host_write(guest_to_host(addr), len, data);
 }
 
-static void out_of_bound(paddr_t addr) {
-  // printf("???????????????");
+//不能写mrom 不可写 0x2000000
+
+//检查内存0x80000000是否越界
+void out_of_bound(paddr_t addr) {
   panic("address = " FMT_PADDR " is out of bound of pmem [" FMT_PADDR ", " FMT_PADDR "] at pc = " FMT_WORD,
       addr, PMEM_LEFT, PMEM_RIGHT, cpu.pc);
 }
 
-// static void mrom_out_of_bound(paddr_t addr) {
-//   // printf("???????????????");
-//   panic("address = " FMT_PADDR " is out of bound of pmem [" FMT_PADDR ", " FMT_PADDR "] at pc = " FMT_WORD,
-//       addr, PMEM_LEFT, PMEM_RIGHT, cpu.pc);
-// }
+void mrom_out_of_bound(paddr_t addr) {
+  panic("address = " FMT_PADDR " is out of bound of pmem [" FMT_PADDR ", " FMT_PADDR "] at pc = " FMT_WORD,
+      addr, MROM_LEFT, MROM_RIGHT, cpu.pc);
+}
+
+void sram_out_of_bound(paddr_t addr) {
+  panic("address = " FMT_PADDR " is out of bound of pmem [" FMT_PADDR ", " FMT_PADDR "] at pc = " FMT_WORD,
+      addr, SRAM_LEFT, SRAM_RIGHT, cpu.pc);
+}
 
 //读物理地址
 word_t paddr_read(paddr_t addr, int len) {
@@ -100,17 +116,22 @@ word_t vaddr_read(vaddr_t addr, int len) {
 void vaddr_write(vaddr_t addr, int len, word_t data) {
   paddr_write(addr, len, data);
 }
+
+
 uint8_t mem[CONFIG_MSIZE] = {0};
 
 uint8_t mrom_mem[CONFIG_MROM_MSIZE] = {0};  // 为 MROM 分配独立内存
+
+uint8_t sram_mem[CONFIG_SRAM_MSIZE] = {0};  // 为 SRAM 分配独立内存
+
 
 
 // Memory transfer
 uint8_t* guest_to_host(paddr_t addr) { return mem + (addr - CONFIG_MBASE); }
 
-
 uint8_t* mrom_guest_to_host(paddr_t addr) { return mrom_mem + (addr - CONFIG_MROM_MBASE); }
 
+uint8_t* sram_guest_to_host(paddr_t addr) { return sram_mem + (addr - CONFIG_SRAM_MBASE); }
 
 const static uint32_t img [] = {
   0x00100073,   // ebreak (used as nemu_trap)     0x8000_0018
@@ -146,11 +167,11 @@ const static uint32_t sram_img [] = {
 void init_mem() {
   /* Load built-in image. */
   // mrom read_only  0x20000000 0x20000ffff
-  memcpy(mrom_guest_to_host(0x20000000), mrom_img, sizeof(mrom_img));
+  memcpy(mrom_guest_to_host(MROM_RESET_VECTOR), mrom_img, sizeof(mrom_img));
   // sram 0x0f00_0000~0x0fff_ffff
-  memcpy(sram_guest_to_host(0x20000000), sram_img, sizeof(sram_img));
+  memcpy(sram_guest_to_host(SRAM_RESET_VECTOR), sram_img, sizeof(sram_img));
   //pmem 0x80000000~0x8ffffff
-  memcpy(guest_to_host(0x80000000), img, sizeof(img));
+  memcpy(guest_to_host(RESET_VECTOR), img, sizeof(img));
 
   //printf("Memory at 0x80000000: 0x%08x\n", *(uint32_t *)guest_to_host(0x80000000));
 } 
