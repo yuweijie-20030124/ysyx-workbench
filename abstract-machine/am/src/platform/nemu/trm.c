@@ -5,7 +5,7 @@
 extern char _heap_start;
 int main(const char *args);
 
-Area heap = RANGE(&_heap_start, PMEM_END); //结构用于指示堆区的启始和末尾
+Area heap = RANGE(&_sram_start, SRAM_END); //结构用于指示堆区的启始和末尾
 
 static const char mainargs[MAINARGS_MAX_LEN] = TOSTRING(MAINARGS_PLACEHOLDER); // defined in CFLAGS
 
