@@ -62,6 +62,8 @@ void vaddr_write(vaddr_t addr, int len, word_t data) {
     sramaddr_write(addr, len, data);
   }
   else {
+    printf("addr is 0x%08x\n",addr);
+    printf("data is 0x%08x\n",data);
     printf("no mrom no p no sram,out of bound\n");
   }
 }
