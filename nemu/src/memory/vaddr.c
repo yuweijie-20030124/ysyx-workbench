@@ -28,6 +28,7 @@ word_t vaddr_ifetch(vaddr_t addr, int len) {
     return mromaddr_read(addr,len);
   }
   else {
+    printf("now pc is 0x%08x",addr);
     printf("no mrom no p no sram！\n");
     return 0;
   }
