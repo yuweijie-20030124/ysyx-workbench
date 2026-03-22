@@ -37,6 +37,7 @@ void halt(int code) {
 }
 
 void _trm_init() {
+  
   int ret = main(mainargs);
   halt(ret);
 }

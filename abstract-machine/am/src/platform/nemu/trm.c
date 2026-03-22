@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 extern char _heap_start;
+extern char _sram_start;
 int main(const char *args);
 
 Area heap = RANGE(&_sram_start, SRAM_END); //结构用于指示堆区的启始和末尾
@@ -14,7 +15,7 @@ void putch(char ch) { //输出一个字符
 }
 
 void halt(int code) {
-  //printf("halt called with code: %d\n", code);
+  // printf("halt called with code: %d\n", code);
   //fflush(stdout);
   nemu_trap(code);
   // should not reach here
