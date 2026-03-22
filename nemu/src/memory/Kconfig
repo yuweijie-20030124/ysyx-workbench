@@ -29,16 +29,16 @@ config MROM_PC_RESET_OFFSET
   default 0
 
 config SRAM_MBASE
-  hex "mrom Memory base address"
+  hex "sram Memory base address"
   default 0x0        if ISA_x86
   default 0x0f000000
 
 config SRAM_MSIZE
-  hex "mrom Memory size"
-  default 0x01000000
+  hex "sram Memory size"
+  default 0x00002000
 
 config SRAM_PC_RESET_OFFSET
-  hex "mrom Offset of reset vector from the base of memory"
+  hex "sram Offset of reset vector from the base of memory"
   default 0x100000 if ISA_x86
   default 0
 
