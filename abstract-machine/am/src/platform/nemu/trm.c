@@ -15,7 +15,7 @@ void putch(char ch) { //输出一个字符
 }
 
 void halt(int code) {
-  // printf("halt called with code: %d\n", code);
+  printf("halt called with code: %d\n", code);
   //fflush(stdout);
   nemu_trap(code);
   // should not reach here
