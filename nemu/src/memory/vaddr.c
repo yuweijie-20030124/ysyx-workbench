@@ -28,7 +28,7 @@ word_t vaddr_ifetch(vaddr_t addr, int len) {
     return mromaddr_read(addr,len);
   }
   else {
-    printf("no mrom no p no sram\n");
+    printf("no mrom no p no sram！\n");
     return 0;
   }
 }
@@ -45,7 +45,7 @@ word_t vaddr_read(vaddr_t addr, int len) {
     return mromaddr_read(addr,len);
   }
   else {
-    printf("no mrom no p no sram\n");
+    printf("no mrom no p no sram！！\n");
     return 0;
   }
 }
@@ -64,6 +64,6 @@ void vaddr_write(vaddr_t addr, int len, word_t data) {
   else {
     printf("addr is 0x%08x\n",addr);
     printf("data is 0x%08x\n",data);
-    printf("no mrom no p no sram,out of bound\n");
+    printf("no mrom no p no sram！！！,out of bound\n");
   }
 }
