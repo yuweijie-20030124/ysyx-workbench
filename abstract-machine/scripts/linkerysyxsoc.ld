@@ -33,29 +33,15 @@ SECTIONS {
     *(.scommon)
   }
 
-
   /* memory_pmem_start 放在SRAM中，0x0f000000 ~ 0x0fffffff  are defined in LDFLAGS in npc.mk*/ 
-  /* . = _sram_start ;
+  . = _sram_start ;
   _stack_top = ALIGN(0x1000);
-  . = _stack_top + 0x8000;  */
+  . = _stack_top + 0x0100; 
   /*为什么要加上0x8000???*/
 
 
-  /* _stack_pointer = .;
+  _stack_pointer = .;
   end = .;
   _end = .;
-  _heap_start = ALIGN(0x1000); */
-
-
-
-  . = _sram_start;
-
-  _heap_start = .;
-
-  _stack_top = _sram_start + 0x1000;
-  
-  _stack_pointer = _stack_top;
-
-  end = .;
-  _end = .;
+  _heap_start = ALIGN(0x1000);
 }
