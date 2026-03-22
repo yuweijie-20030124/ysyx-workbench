@@ -16,7 +16,10 @@ SECTIONS {
   .rodata : {
     *(.rodata*)
   }
-  /* .data 数据段 存放已初始化的刻度写的全局变量和静态变量 */
+  /* 
+  .data 数据段 存放已初始化的刻度写的全局变量和静态变量 
+  bootloader要把把这个数据段放到sram中
+  */
   .data : {
     *(.data*)
   } : data
@@ -30,14 +33,29 @@ SECTIONS {
     *(.scommon)
   }
 
+
   /* memory_pmem_start 放在SRAM中，0x0f000000 ~ 0x0fffffff  are defined in LDFLAGS in npc.mk*/ 
-  . = _sram_start ;
+  /* . = _sram_start ;
   _stack_top = ALIGN(0x1000);
-  . = _stack_top + 0x8000;
+  . = _stack_top + 0x8000;  */
+  /*为什么要加上0x8000???*/
 
 
-  _stack_pointer = .;
+  /* _stack_pointer = .;
   end = .;
   _end = .;
-  _heap_start = ALIGN(0x1000);
+  _heap_start = ALIGN(0x1000); */
+
+
+
+  . = _sram_start;
+
+  _heap_start = .;
+
+  _stack_top = _sram_start + 0x1000;
+  
+  _stack_pointer = _stack_top;
+
+  end = .;
+  _end = .;
 }
