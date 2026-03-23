@@ -13,7 +13,8 @@ extern char _sram_start;
 
 int main(const char *args);
 
-Area heap = RANGE(&_heap_start, SRAM_END); //结构用于指示堆区的启始和末尾
+// Area heap = RANGE(&_heap_start, SRAM_END);
+Area heap = RANGE(&_heap_start, (&_heap_start) + 1024); //结构用于指示堆区的启始和末尾
 
 static const char mainargs[MAINARGS_MAX_LEN] = TOSTRING(MAINARGS_PLACEHOLDER); // defined in CFLAGS
 
