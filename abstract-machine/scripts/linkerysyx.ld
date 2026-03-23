@@ -26,22 +26,22 @@ SECTIONS {
 
   /* 数据段 - VMA 在 SRAM，LMA 在 MROM */
   .data : AT(LOADADDR(.text) + SIZEOF(.text) + SIZEOF(.rodata)) {
-    __data_vma_start = .;
+    _data_vma_start = .;
     *(.data*)
     *(.data.*)
-    __data_vma_end = .;
+    _data_vma_end = .;
   } > sram
 
-  __data_lma = LOADADDR(.data);
-  __data_size = SIZEOF(.data);
+  _data_lma = LOADADDR(.data);
+  _data_size = SIZEOF(.data);
 
   /* BSS 段 - 在 SRAM，不占用文件空间 */
   .bss (NOLOAD) : {
-    __bss_start = .;
+    _bss_start = .;
     *(.bss*)
     *(.sbss*)
     *(.scommon)
-    __bss_end = .;
+    _bss_end = .;
   } > sram
 
   /* 栈 - 在 SRAM，从 BSS 之后开始 */

@@ -3,11 +3,11 @@
 #include <nemu.h>
 #include <stdio.h>
 
-extern char __data_vma_start;
-extern char __data_vma_end;
-extern char __data_lma;
-extern char __bss_start;
-extern char __bss_end;
+extern char _data_vma_start;
+extern char _data_vma_end;
+extern char _data_lma;
+extern char _bss_start;
+extern char _bss_end;
 extern char _heap_start;
 extern char _sram_start;
 
@@ -19,9 +19,9 @@ static const char mainargs[MAINARGS_MAX_LEN] = TOSTRING(MAINARGS_PLACEHOLDER); /
 
 /* 在 _trm_init 中或者被 _start 调用的初始化函数里做以下工作 */
 void bootloader_copy_data_and_clear_bss() {
-  uintptr_t dst = (uintptr_t)&__data_vma_start;    // VMA -> SRAM 地址（运行时访问地址）
-  uintptr_t src = (uintptr_t)&__data_lma;          // LMA -> MROM 中保存初值的地址
-  size_t len = (size_t)((uintptr_t)&__data_vma_end - dst);
+  uintptr_t dst = (uintptr_t)&_data_vma_start;    // VMA -> SRAM 地址（运行时访问地址）
+  uintptr_t src = (uintptr_t)&_data_lma;          // LMA -> MROM 中保存初值的地址
+  size_t len = (size_t)((uintptr_t)&_data_vma_end - dst);
 
   if (len > 0) {
     /* 从 MROM 的 LMA 复制到 SRAM 的 VMA */
@@ -29,8 +29,8 @@ void bootloader_copy_data_and_clear_bss() {
   }
 
   /* 清零 bss */
-  uintptr_t bss = (uintptr_t)&__bss_start;
-  size_t bss_len = (size_t)((uintptr_t)&__bss_end - bss);
+  uintptr_t bss = (uintptr_t)&_bss_start;
+  size_t bss_len = (size_t)((uintptr_t)&_bss_end - bss);
   if (bss_len > 0) {
     memset((void *)bss, 0, bss_len);
   }
