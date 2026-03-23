@@ -13,6 +13,7 @@ SECTIONS {
   
   .rodata : {
     *(.rodata*)
+    *(.srodata*)
   } > mrom
   
   /* 使得 bootloader 能获取到在 Flash/MROM 里的只读起始地址 */
@@ -21,6 +22,8 @@ SECTIONS {
     /* 这两个符号必须与你在 trm.c 里面的一致 */
     _data_vma_start = .;
     *(.data*)
+    *(.sdata*)
+    *(.sdata2*)
     _data_vma_end = .;
   } > sram AT> mrom   /* LMA 在 mrom, VMA 在 sram */
   
