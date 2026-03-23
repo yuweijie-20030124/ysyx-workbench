@@ -2,6 +2,7 @@
 #include <klib-macros.h>
 #include "../riscv.h"
 
+
 extern char _heap_start;
 extern char _sram_start;
 
@@ -36,8 +37,26 @@ void halt(int code) {
   while (1);
 }
 
+extern char _bss_start;
+extern char _bss_end;
+extern char _data_lma;
+extern char _data;
+extern char edata;
+
 void _trm_init() {
-  
+  // Bootloader: copy data from MROM to SRAM
+  char *src = &_data_lma;
+  char *dst = &_data;
+  while (dst < &edata) {
+    *dst++ = *src++;
+  }
+
+  // Clear BSS
+  dst = &_bss_start;
+  while (dst < &_bss_end) {
+    *dst++ = 0;
+  }
+
   int ret = main(mainargs);
   halt(ret);
 }
