@@ -8,8 +8,8 @@ ENTRY(_start)
 
 
  MEMORY {
-  mrom : ORIGIN = 0x20000000, LENGTH = 1M   
-  sram : ORIGIN = 0x0f000000, LENGTH = 1M   
+  mrom : ORIGIN = 0x20000000, LENGTH = 4k   
+  sram : ORIGIN = 0x0f000000, LENGTH = 8K 
 } 
 
 
