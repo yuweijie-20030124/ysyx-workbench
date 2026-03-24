@@ -30,7 +30,8 @@ insert-arg: image
 	@echo "$(mainargs)"
 
 image: image-dep
-	@$(OBJDUMP) -S -d $(IMAGE).elf > $(IMAGE).txt
+	@$(OBJDUMP) -d $(IMAGE).elf > $(IMAGE).txt
+# 	@$(OBJDUMP) -S -d $(IMAGE).elf > $(IMAGE).txt
 	@echo + OBJCOPY "->" $(IMAGE_REL).bin
 	@$(OBJCOPY) -S --set-section-flags .bss=alloc,contents -O binary $(IMAGE).elf $(IMAGE).bin
 
