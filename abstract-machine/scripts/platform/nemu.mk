@@ -19,7 +19,7 @@ NEMUFLAGS += -l $(shell dirname $(IMAGE).elf)/nemu-log.txt
 NEMUFLAGS += -f $(IMAGE).elf
 NEMUFLAGS += -m $(IMAGE).bin
 
-NEMUFLAGS += -b
+# NEMUFLAGS += -b
 
 MAINARGS_MAX_LEN = 64
 MAINARGS_PLACEHOLDER = the_insert-arg_rule_in_Makefile_will_insert_mainargs_here
