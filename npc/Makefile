@@ -95,7 +95,7 @@ GTK = gtkwave
 
 
 clean:
-	rm -rf obj_dir waveform.vcd .config .config.old include/config include/generated $(NPC_HOME)/tools/kconfig/build $(NPC_HOME)/tools/fixdep/build
+	rm -rf obj_dir waveform.vcd 
 
 sim:
 	$(VERILATOR) $(VERILATOR_FLAGS) $(SRC_FILES) $(VERILOG_FILES)
