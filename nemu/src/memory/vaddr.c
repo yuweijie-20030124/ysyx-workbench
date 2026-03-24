@@ -21,14 +21,15 @@ word_t vaddr_ifetch(vaddr_t addr, int len) {
   if(addr >= 0x80000000 && addr <= 0x87FFFFFF){ //物理地址
     return paddr_read(addr, len);
   }
-  else if(addr >= 0x0f000000 && addr <= 0x0fffffff){
+  else if(addr >= 0x0f000000 && addr <= 0x0f001fff){
     return sramaddr_read(addr,len);
   }
   else if(addr >= 0x20000000 && addr <= 0x20000FFF){
     return mromaddr_read(addr,len);
   }
   else {
-    printf("no mrom no p no sram\n");
+    printf("now pc is 0x%08x",addr);
+    printf("no mrom no p no sram！\n");
     return 0;
   }
 }
@@ -45,7 +46,7 @@ word_t vaddr_read(vaddr_t addr, int len) {
     return mromaddr_read(addr,len);
   }
   else {
-    printf("no mrom no p no sram\n");
+    printf("no mrom no p no sram！！\n");
     return 0;
   }
 }
@@ -58,10 +59,12 @@ void vaddr_write(vaddr_t addr, int len, word_t data) {
   else if(addr >= 0x20000000 && addr <= 0x20000FFF){
     mromaddr_write(addr, len, data);
   }
-  else if(addr >= 0x0f000000 && addr <= 0x0fffffff){
+  else if(addr >= 0x0f000000 && addr <= 0x0FFFFFFF){
     sramaddr_write(addr, len, data);
   }
   else {
-    printf("no mrom no p no sram,out of bound\n");
+    printf("addr is 0x%08x\n",addr);
+    printf("data is 0x%08x\n",data);
+    printf("no mrom no p no sram！！！,out of bound\n");
   }
 }

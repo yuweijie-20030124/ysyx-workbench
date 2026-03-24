@@ -77,31 +77,50 @@ void sram_out_of_bound(paddr_t addr) {
 //读物理地址
 word_t paddr_read(paddr_t addr, int len) {
   //printf("进来了\n"); 
-  if (likely(in_pmem(addr))) { 
-    //printf("进来了\n"); 
+  if (likely(in_pmem(addr))) {
     IFDEF(CONFIG_MTRACE, Log("read in address = " FMT_PADDR ", len = %d\n", addr, len));
     return pmem_read(addr, len);
   }
-  IFDEF(CONFIG_DEVICE, return mmio_read(addr, len));
-  // Log("readweiwei");
 
-  // printf("readweiwei");
+  if (likely(in_mrom(addr))) {
+    IFDEF(CONFIG_MTRACE, Log("mrom read in address = " FMT_PADDR ", len = %d\n", addr, len));
+    return mrom_memory_read(addr, len);
+  }
+
+  if (likely(in_sram(addr))) {
+    IFDEF(CONFIG_MTRACE, Log("sram read in address = " FMT_PADDR ", len = %d\n", addr, len));
+    return sram_memory_read(addr, len);
+  }
+
+  IFDEF(CONFIG_DEVICE, return mmio_read(addr, len));
+
   out_of_bound(addr);
   return 0;
 }
 
 //写物理地址
 void paddr_write(paddr_t addr, int len, word_t data) {
-  if (likely(in_pmem(addr))) { 
+  if (likely(in_pmem(addr))) {
     pmem_write(addr, len, data);
     IFDEF(CONFIG_MTRACE, Log("write in address = " FMT_PADDR ", len = %d, data = " FMT_WORD "\n", addr, len, data));
-    return; }
-  
+    return;
+  }
+
+  if (likely(in_sram(addr))) {
+    IFDEF(CONFIG_MTRACE, Log("sram write in address = " FMT_PADDR ", len = %d, data = " FMT_WORD "\n", addr, len, data));
+    host_write(sram_guest_to_host(addr), len, data);
+    return;
+  }
+
+  if (likely(in_mrom(addr))) {
+    /* MROM is read-only: ignore or panic on writes. Here we panic to catch bugs. */
+    mrom_out_of_bound(addr);
+    return;
+  }
+
   IFDEF(CONFIG_DEVICE, mmio_write(addr, len, data); return);
-  // printf("writeweiwei");
-  // Log("writeweiwei");
+
   out_of_bound(addr);
-  //Log("weiwei");
 }
 
 word_t vaddr_ifetch(vaddr_t addr, int len) {

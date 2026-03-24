@@ -13,7 +13,8 @@
 #define MMAP_NONE  0x00000000 // no access
 #define MMAP_READ  0x00000001 // can read
 #define MMAP_WRITE 0x00000002 // can write
-
+#define UART_BASE 0x10000000L
+#define UART_TX   (UART_BASE + 0x00)
 // Memory area for [@start, @end)
 typedef struct {
   void *start, *end;

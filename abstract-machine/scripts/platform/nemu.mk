@@ -9,8 +9,9 @@ AM_SRCS := platform/nemu/trm.c \
 
 CFLAGS    += -g -fdata-sections -ffunction-sections
 CFLAGS    += -I$(AM_HOME)/am/src/platform/nemu/include
-LDSCRIPTS += $(AM_HOME)/scripts/linkerysyxsoc.ld
-LDFLAGS   += --defsym=_pmem_start=0x80000000 --defsym=_entry_offset=0x0 
+LDSCRIPTS += $(AM_HOME)/scripts/linkerysyx.ld
+LDFLAGS   += --defsym=_pmem_start=0x80000000 
+LDFLAGS   += --defsym=_entry_offset=0x0 
 LDFLAGS   += --defsym=_mrom_start=0x20000000 
 LDFLAGS   += --defsym=_sram_start=0x0f000000
 LDFLAGS   += --gc-sections -e _start
@@ -18,7 +19,7 @@ NEMUFLAGS += -l $(shell dirname $(IMAGE).elf)/nemu-log.txt
 NEMUFLAGS += -f $(IMAGE).elf
 NEMUFLAGS += -m $(IMAGE).bin
 
-# NEMUFLAGS += -b
+NEMUFLAGS += -b
 
 MAINARGS_MAX_LEN = 64
 MAINARGS_PLACEHOLDER = the_insert-arg_rule_in_Makefile_will_insert_mainargs_here
@@ -29,7 +30,8 @@ insert-arg: image
 	@echo "$(mainargs)"
 
 image: image-dep
-	@$(OBJDUMP) -S -d $(IMAGE).elf > $(IMAGE).txt
+	@$(OBJDUMP) -d $(IMAGE).elf > $(IMAGE).txt
+# 	@$(OBJDUMP) -S -d $(IMAGE).elf > $(IMAGE).txt
 	@echo + OBJCOPY "->" $(IMAGE_REL).bin
 	@$(OBJCOPY) -S --set-section-flags .bss=alloc,contents -O binary $(IMAGE).elf $(IMAGE).bin
 

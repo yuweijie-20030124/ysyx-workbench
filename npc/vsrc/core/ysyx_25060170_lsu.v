@@ -157,8 +157,8 @@ wire [4:0] half_shift = {req_half_sel[1], 4'b0000}; // 0 / 16
 wire [31:0] store_byte_lane = ({24'b0, req_store_data[7:0]}  << byte_shift);
 wire [31:0] store_half_lane = ({16'b0, req_store_data[15:0]} << half_shift);
 
-wire [31:0] load_byte_lane  = (rdata_buf >> byte_shift);
-wire [31:0] load_half_lane  = (rdata_buf >> half_shift);
+// wire [31:0] load_byte_lane  = (rdata_buf >> byte_shift);
+// wire [31:0] load_half_lane  = (rdata_buf >> half_shift);
 
 //==========================================================================
 // store 对齐 + wstrb
@@ -215,12 +215,12 @@ always @(*) begin
     if (req_re) begin
         case (req_ls_ctl[2:0])
             3'b001: begin  // LB
-                load_data = {{24{load_byte_lane[7]}}, load_byte_lane[7:0]};
+                load_data = {{24{rdata_buf[7]}}, rdata_buf[7:0]};
             end
 
             3'b010: begin  // LH
                 case (req_half_sel)
-                    2'b00, 2'b10: load_data = {{16{load_half_lane[15]}}, load_half_lane[15:0]};
+                    2'b00, 2'b10: load_data = {{16{rdata_buf[15]}}, rdata_buf[15:0]};
                     default:      load_data = `ysyx_25060170_ZERO32;
                 endcase
             end
@@ -230,12 +230,12 @@ always @(*) begin
             end
 
             3'b101: begin  // LBU
-                load_data = {24'b0, load_byte_lane[7:0]};
+                load_data = {24'b0, rdata_buf[7:0]};
             end
 
             3'b110: begin  // LHU
                 case (req_half_sel)
-                    2'b00, 2'b10: load_data = {16'b0, load_half_lane[15:0]};
+                    2'b00, 2'b10: load_data = {16'b0, rdata_buf[15:0]};
                     default:      load_data = `ysyx_25060170_ZERO32;
                 endcase
             end
@@ -247,7 +247,8 @@ always @(*) begin
     end
 end
 
-assign ls_load_data_o = (ls_state == S_LS_RESP && req_re) ? load_data : `ysyx_25060170_ZERO32;
+assign ls_load_data_o = load_data ;
+// assign ls_load_data_o = (ls_state == S_LS_RESP && req_re) ? load_data : `ysyx_25060170_ZERO32;
 
 //==========================================================================
 // 状态机

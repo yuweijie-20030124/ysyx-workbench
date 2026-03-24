@@ -57,7 +57,36 @@ extern "C" void mrom_read(int32_t addr, int32_t *data) {
 
 extern "C" void pmem_read(paddr_t raddr, paddr_t* rdata, char rlen , int mode, int* dpic_difftest_skip_flag){
 
-  if (raddr < CONFIG_MBASE) return;
+  // if (raddr < CONFIG_MBASE) return;
+
+  if (likely(in_mrom(raddr))) {
+    *rdata = host_read(mrom_guest_to_host(raddr),rlen);
+#ifdef CONFIG_MTRACE
+    if(mode == 1){
+      Log("CPU fetch instruction :PC value %#.8x,content is %#.8x",raddr,*rdata);
+    }
+    else if(mode == 2){
+      Log("Load data:lsu get data at %#.8x for %d bytes,content is %#.8x",raddr,rlen,*rdata);
+    }
+#endif
+
+    return;
+    }
+
+  if (likely(in_sram(raddr))) {
+    *rdata = host_read(sram_guest_to_host(raddr),rlen);
+#ifdef CONFIG_MTRACE
+    if(mode == 1){
+      Log("CPU fetch instruction :PC value %#.8x,content is %#.8x",raddr,*rdata);
+    }
+    else if(mode == 2){
+      Log("Load data:lsu get data at %#.8x for %d bytes,content is %#.8x",raddr,rlen,*rdata);
+    }
+#endif
+
+    return;
+    }
+
   if (likely(in_pmem(raddr))) {
     *rdata = host_read(guest_to_host(raddr),rlen);
 #ifdef CONFIG_MTRACE
@@ -71,6 +100,8 @@ extern "C" void pmem_read(paddr_t raddr, paddr_t* rdata, char rlen , int mode, i
 
     return;
     }
+
+
    IFDEF(CONFIG_DEVICE, *rdata = mmio_read(raddr, rlen);
    if(difftest_skip_ref_flag == 1){
     difftest_skip_ref_flag  = 0;
@@ -92,7 +123,8 @@ static inline int maskToLen(uint8_t mask) {
 
 // Memory Write for 32-bit system
 extern "C" void pmem_write(uint32_t waddr, uint32_t wdata, uint8_t wlen, int* dpic_difftest_skip_flag) {
-  if (waddr < CONFIG_MBASE) return;
+  // if (waddr < CONFIG_MBASE) return;
+
   
 #ifdef CONFIG_MTRACE
    Log("Write to memory at %#.8x with mask %x, content is %#.8x", waddr, wlen, wdata);
@@ -100,7 +132,29 @@ extern "C" void pmem_write(uint32_t waddr, uint32_t wdata, uint8_t wlen, int* dp
 
   int len = 0;
   
-  if (likely(in_pmem(waddr))) {
+  if (likely(in_mrom(waddr))) { //mrom不能写
+      printf("mrom里面不能写\n");    
+  }
+
+    if (likely(in_sram(waddr))) { //写sram
+    // 32位系统，对齐到4字节边界
+    uint32_t addr = waddr & ~0x3u;
+    
+    // 最多处理4个字节
+    for (int i = 0; i < 4; ++i) {
+      if (wlen & 0x01) {  // 检查当前字节是否需要写入
+        host_write(sram_guest_to_host(addr + i), 1, wdata & 0xFF);  // 写入1字节
+        wdata >>= 8;      // 准备下一个字节
+      }
+      wlen >>= 1;         // 检查下一个掩码位
+    }
+    return; 
+  }
+  else {
+    len = maskToLen(wlen);
+  }
+
+  if (likely(in_pmem(waddr))) { //写pmem
     // 32位系统，对齐到4字节边界
     uint32_t addr = waddr & ~0x3u;
     
