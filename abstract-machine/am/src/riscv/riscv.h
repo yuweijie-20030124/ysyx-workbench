@@ -35,8 +35,8 @@ enum { MODE_U, MODE_S, MODE_M = 3 };
 
 # define DEVICE_BASE 0xa0000000
 //UART的地址
-# define UART_BASE   0X1000000L
-# define UART_TX     (UART_BASE + 0x00)  
+// # define UART_BASE   0X1000000L
+// # define UART_TX     (UART_BASE + 0x00)  
 
 #define MMIO_BASE 0xa0000000
 

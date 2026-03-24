@@ -1,9 +1,17 @@
 ENTRY(_start)
 
-MEMORY {
-  mrom : ORIGIN = 0x20000000, LENGTH = 4K   /* 4KB MROM */
-  sram : ORIGIN = 0x0f000000, LENGTH = 8K   /* 8KB SRAM */
-}
+/* MEMORY {
+  mrom : ORIGIN = 0x20000000, LENGTH = 4K   
+  sram : ORIGIN = 0x0f000000, LENGTH = 8K   
+} */
+
+
+
+ MEMORY {
+  mrom : ORIGIN = 0x20000000, LENGTH = 1M   
+  sram : ORIGIN = 0x0f000000, LENGTH = 1M   
+} 
+
 
 SECTIONS {
   .text : {
