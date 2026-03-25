@@ -50,14 +50,12 @@ word_t vaddr_read(vaddr_t addr, int len) {
     return 0;
   }
 }
+
 //写地址
 void vaddr_write(vaddr_t addr, int len, word_t data) {
   // paddr_write(addr, len, data);
     if(addr >= 0x80000000 && addr <= 0x87FFFFFF){ //物理地址
     paddr_write(addr, len, data);
-  }
-  else if(addr >= 0x20000000 && addr <= 0x20000FFF){
-    mromaddr_write(addr, len, data);
   }
   else if(addr >= 0x0f000000 && addr <= 0x0FFFFFFF){
     sramaddr_write(addr, len, data);
