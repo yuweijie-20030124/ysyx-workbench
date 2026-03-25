@@ -56,9 +56,6 @@ void vaddr_write(vaddr_t addr, int len, word_t data) {
     if(addr >= 0x80000000 && addr <= 0x87FFFFFF){ //物理地址
     paddr_write(addr, len, data);
   }
-  else if(addr >= 0x20000000 && addr <= 0x20000FFF){
-    mromaddr_write(addr, len, data);
-  }
   else if(addr >= 0x0f000000 && addr <= 0x0FFFFFFF){
     sramaddr_write(addr, len, data);
   }

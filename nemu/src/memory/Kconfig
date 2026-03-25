@@ -42,6 +42,20 @@ config SRAM_PC_RESET_OFFSET
   default 0x100000 if ISA_x86
   default 0
 
+config FLASH_MBASE
+  hex "flash Memory base address"
+  default 0x0        if ISA_x86
+  default 0x30000000
+
+config FLASH_MSIZE
+  hex "flash Memory size"
+  default 0x10000000
+
+config FLASH_PC_RESET_OFFSET
+  hex "flash Offset of reset vector from the base of memory"
+  default 0x100000 if ISA_x86
+  default 0
+
 choice
   prompt "Physical memory definition"
   default PMEM_GARRAY

@@ -15,8 +15,8 @@ int main(const char *args);
 
 extern char _pmem_start;
 
-#define UART_BASE 0x10000000L
-#define UART_TX   (UART_BASE + 0x00)
+// #define UART_BASE 0x10000000L
+// #define UART_TX   (UART_BASE + 0x00)
 
 #define PMEM_SIZE (128 * 1024 * 1024)
 #define SRAM_SIZE (1024)

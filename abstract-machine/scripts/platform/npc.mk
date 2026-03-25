@@ -20,7 +20,7 @@ NPCFLAGS += -f $(IMAGE).elf
 NPCFLAGS += --diff=/home/yuweijie/ysyx-workbench/nemu/build/riscv32-nemu-interpreter-so
 NPCFLAGS += -m $(IMAGE).bin
 
-NPCFLAGS += -b
+# NPCFLAGS += -b
 
 # COMMON_CFLAGS += -march=rv32i_zicsr -mabi=ilp32
 

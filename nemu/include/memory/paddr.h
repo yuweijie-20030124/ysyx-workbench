@@ -27,6 +27,8 @@
 #define SRAM_PMEM_LEFT    ((paddr_t)CONFIG_SRAM_MBASE)
 #define SRAM_PMEM_RIGHT   ((paddr_t)CONFIG_SRAM_MBASE + CONFIG_SRAM_MSIZE - 1)
 
+#define FLASH_PMEM_LEFT    ((paddr_t)CONFIG_FLASH_MBASE)
+#define FLASH_PMEM_RIGHT   ((paddr_t)CONFIG_FLASH_MBASE + CONFIG_FLASH_MSIZE - 1)
 
 #define RESET_VECTOR      (PMEM_LEFT      + CONFIG_PC_RESET_OFFSET)
 #define RESET_MROM_VECTOR (MROM_PMEM_LEFT + CONFIG_MROM_PC_RESET_OFFSET)
@@ -61,6 +63,10 @@ static inline bool in_sram(paddr_t addr) {
   return addr - CONFIG_SRAM_MBASE < CONFIG_SRAM_MSIZE;
 }
 
+static inline bool in_flash(paddr_t addr) {
+  return addr - CONFIG_FLASH_MBASE < CONFIG_FLASH_MSIZE;
+}
+
 word_t paddr_read(paddr_t addr, int len);
 void paddr_write(paddr_t addr, int len, word_t data);
 
@@ -69,5 +75,8 @@ void mromaddr_write(paddr_t addr, int len, word_t data);
 
 word_t sramaddr_read(paddr_t addr, int len);
 void sramaddr_write(paddr_t addr, int len, word_t data);
+
+word_t flashaddr_read(paddr_t addr, int len);
+void flashaddr_write(paddr_t addr, int len, word_t data);
 
 #endif
