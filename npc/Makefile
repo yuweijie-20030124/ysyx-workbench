@@ -99,11 +99,11 @@ clean:
 
 sim:
 	$(VERILATOR) $(VERILATOR_FLAGS) $(SRC_FILES) $(VERILOG_FILES)
-	$(call git commit, "sim RTL") # % DO NOT REMOVE THIS LINE!!!
+	$(call git_commit, "sim RTL") # % DO NOT REMOVE THIS LINE!!!
 
 run:
 	$(VERILATOR) $(VERILATOR_FLAGS) $(SRC_FILES) $(VERILOG_FILES)
-	$(call git commit, "run RTL") # % DO NOT REMOVE THIS LINE!!!
+	$(call git_commit, "run RTL") # % DO NOT REMOVE THIS LINE!!!
 	./obj_dir/VysyxSoCFull   $(NPC_FLAGS) $(NPC_IMG)
 
 gtk:
@@ -112,7 +112,7 @@ gtk:
 
 all:
 	$(VERILATOR) $(VERILATOR_FLAGS) $(SRC_FILES) $(VERILOG_FILES)
-	$(call git commit, "build RTL") # % DO NOT REMOVE THIS LINE!!!
+	$(call git_commit, "build RTL") # % DO NOT REMOVE THIS LINE!!!
 	$(GTK) waveform.vcd config.gtkw
 
 checkall:
@@ -131,7 +131,7 @@ checkone:
 
 gdb:
 	$(VERILATOR) $(GDBVERILATOR_FLAGS) $(SRC_FILES) $(VERILOG_FILES)
-	$(call git commit, "gdb RTL") # % DO NOT REMOVE THIS LINE!!!
+	$(call git_commit, "gdb RTL") # % DO NOT REMOVE THIS LINE!!!
 	gdb --args ./obj_dir/VysyxSoCFull $(NPC_FLAGS) $(NPC_IMG)
 
 valgrind:
