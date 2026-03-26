@@ -47,10 +47,18 @@ static const uint32_t mrom_img [] = {
 //   0xdeadbeef,  // some data
 // };
 
+static const uint32_t flash_img [] = {
+  0x00100073,  // ebreak (used as nemu_trap)
+  0x00100073,  // ebreak (used as nemu_trap)
+  0x00100073,  // ebreak (used as nemu_trap)
+  0x00100073,  // ebreak (used as nemu_trap)
+  0xdeadbeef,  // some data
+};
+
 static void restart() {
   /* Set the initial program counter. */
   // cpu.pc = RESET_VECTOR;
-  cpu.pc = RESET_MROM_VECTOR;
+  cpu.pc = RESET_FLASH_VECTOR;
   /* The zero register is always 0. */
   cpu.gpr[0] = 0;
 
@@ -70,6 +78,9 @@ void init_isa() {
 
   //0x80000000
   memcpy(guest_to_host(RESET_VECTOR), img, sizeof(img));
+
+  //0x30000000
+  memcpy(flash_guest_to_host(RESET_FLASH_VECTOR), flash_img, sizeof(flash_img));
 
   /* Initialize this virtual computer system. */
   restart();

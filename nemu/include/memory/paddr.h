@@ -33,6 +33,8 @@
 #define RESET_VECTOR      (PMEM_LEFT      + CONFIG_PC_RESET_OFFSET)
 #define RESET_MROM_VECTOR (MROM_PMEM_LEFT + CONFIG_MROM_PC_RESET_OFFSET)
 #define RESET_SRAM_VECTOR (SRAM_PMEM_LEFT + CONFIG_SRAM_PC_RESET_OFFSET)
+#define RESET_FLASH_VECTOR (FLASH_PMEM_LEFT + CONFIG_FLASH_PC_RESET_OFFSET)
+
 
 
 /* 0x80000000convert the guest physical address in the guest program to host virtual address in NEMU */
@@ -50,6 +52,10 @@ uint8_t* sram_guest_to_host(paddr_t paddr);
 /* 0x20000000convert the host virtual address in NEMU to guest physical address in the guest program */
 paddr_t sram_host_to_guest(uint8_t *haddr);
 
+/* 0x0F00 0000 SRAM convert the guest physical address in the guest program to host virtual address in NEMU */
+uint8_t* flash_guest_to_host(paddr_t paddr);
+/* 0x20000000convert the host virtual address in NEMU to guest physical address in the guest program */
+paddr_t flash_host_to_guest(uint8_t *haddr);
 
 static inline bool in_pmem(paddr_t addr) {
   return addr - CONFIG_MBASE < CONFIG_MSIZE;

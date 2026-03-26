@@ -48,10 +48,13 @@ void sdb_set_batch_mode(); //批处理模式
 
 static char *log_file = NULL;
 static char *diff_so_file = NULL;
+static int difftest_port = 1234;
+
 static char *img_file = NULL;
 static char *mrom_img_file = NULL;
 static char *sram_img_file = NULL;
-static int difftest_port = 1234;
+static char *flash_img_file = NULL;
+
 
 //程序存到0x80000000
 static long load_img() {
@@ -126,6 +129,33 @@ static long sram_load_img() {
   //size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream) 从给定流 stream 读取数据到 ptr 所指向的数组中。
   //如果fread读取成功就会返回nmemb，也就是“1”。
   int ret = fread(sram_guest_to_host(RESET_SRAM_VECTOR), size, 1, fp);
+  //从文件指针 fp 指向的文件中读取二进制数据，并将其直接写入到客户机（Guest）物理内存的 RESET_VECTOR 地址处
+  
+  assert(ret == 1);
+
+  fclose(fp);
+  return size;
+}
+
+//程序存到FLASH	0x30000000 ~ 0x3fffffff
+static long flash_load_img() {
+  if (flash_img_file == NULL) {
+    Log("0x30000000:No image is given. Use the default build-in image.");
+    return 4096; // built-in image size
+  }
+  //printf ("%s!!!!!!!!!!\n",img_file);
+  FILE *fp = fopen(flash_img_file, "rb");//二进制读入imgfile
+  Assert(fp, "0x30000000:Can not open '%s'", flash_img_file);
+
+  fseek(fp, 0, SEEK_END);//将fp的指针移到最后位置
+  long size = ftell(fp);//返回fp当前文件位置
+
+  Log("0x30000000:The image is %s, size = %ld", flash_img_file, size);
+
+  fseek(fp, 0, SEEK_SET);//将fp的指针移到文件最开头
+  //size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream) 从给定流 stream 读取数据到 ptr 所指向的数组中。
+  //如果fread读取成功就会返回nmemb，也就是“1”。
+  int ret = fread(flash_guest_to_host(RESET_FLASH_VECTOR), size, 1, fp);
   //从文件指针 fp 指向的文件中读取二进制数据，并将其直接写入到客户机（Guest）物理内存的 RESET_VECTOR 地址处
   
   assert(ret == 1);
@@ -209,6 +239,7 @@ void init_monitor(int argc, char *argv[]) {
   long img_size = load_img();
   long mrom_img_size = mrom_load_img();
   long sram_img_size = sram_load_img();
+  long flash_img_size = flash_load_img();
 
   /* Initialize differential testing. */
   init_difftest(diff_so_file, img_size, difftest_port);
@@ -216,6 +247,7 @@ void init_monitor(int argc, char *argv[]) {
   // printf("diff_so_file = %s\n",diff_so_file);
   printf("mrom_img_size = %ld\n",mrom_img_size);
   printf("sram_img_size = %ld\n",sram_img_size);
+  printf("flash_img_size = %ld\n",flash_img_size);
 
   /* Initialize the simple debugger. */
   init_sdb();
