@@ -26,7 +26,6 @@
  * You can modify this value as you want.
  */
 #define MAX_INST_TO_PRINT 10
-#define DEVICE_UPDATE_INTERVAL 1024
 
 CircularBuffer cb;
 
@@ -102,24 +101,12 @@ static void exec_once(Decode *s, vaddr_t pc) {
 static void execute(uint64_t n) {
   Decode s;
   initBuffer(&cb); // 初始化环形缓冲区，大小为BUFFER_SIZE
-#ifdef CONFIG_DEVICE
-  static uint32_t device_update_countdown = DEVICE_UPDATE_INTERVAL;
-#endif
   for (;n > 0; n --) {
     exec_once(&s, cpu.pc);
     g_nr_guest_inst ++;
     trace_and_difftest(&s, cpu.pc);
     if (nemu_state.state != NEMU_RUNNING) {break;}
-#ifdef CONFIG_DEVICE
-    // CoreMark 这类批量运行里每条指令都读一次 host 时间太贵了；批处理按固定指令间隔轮询设备，单步模式仍保持原粒度。
-    if (unlikely(g_print_step)) {
-      device_update();
-    }
-    else if (unlikely(--device_update_countdown == 0)) {
-      device_update();
-      device_update_countdown = DEVICE_UPDATE_INTERVAL;
-    }
-#endif
+    IFDEF(CONFIG_DEVICE, device_update());
   }
   printBuffer(&cb);
 }
