@@ -19,38 +19,9 @@
 // this is not consistent with uint8_t
 // but it is ok since we do not access the array directly
 static const uint32_t img [] = {
-  0x00000297,  // auipc t0,0        0
-  0x00028823,  // sb  zero,16(t0)   4
-  0x0102c503,  // lbu a0,16(t0)     8
-  // 0x00300413,  // li s0 0x03        c
-  // 0x00d00793,  // li a5 0x0d   
-  // 0xdef448e3,  // blt s0,a5,-0x210 test quick-sort
-  0x00100073,  // ebreak (used as nemu_trap)
-  0xdeadbeef,  // some data
-};
-
-static const uint32_t mrom_img [] = {
-  0x00100073,  // ebreak (used as nemu_trap)
-  0x00100073,  // ebreak (used as nemu_trap)
-  0x00100073,  // ebreak (used as nemu_trap)
-  0x00100073,  // ebreak (used as nemu_trap)
-  0xdeadbeef,  // some data
-};
-
-//0x0f00_0000~0x0fff_ffff SRAM,
-// static const uint32_t sram_img [] = {
-//   0x00100073,  // ebreak (used as nemu_trap)
-//   0xdeadbeef,  // some data
-//   0x00100073,  // ebreak (used as nemu_trap)
-//   0x00100073,  // ebreak (used as nemu_trap)
-//   0x00100073,  // ebreak (used as nemu_trap)
-//   0xdeadbeef,  // some data
-// };
-
-static const uint32_t flash_img [] = {
-  0x00100073,  // ebreak (used as nemu_trap)
-  0x00100073,  // ebreak (used as nemu_trap)
-  0x00100073,  // ebreak (used as nemu_trap)
+  0x00000297,  // auipc t0,0
+  0x00028823,  // sb  zero,16(t0)
+  0x0102c503,  // lbu a0,16(t0)
   0x00100073,  // ebreak (used as nemu_trap)
   0xdeadbeef,  // some data
 };
@@ -58,30 +29,17 @@ static const uint32_t flash_img [] = {
 static void restart() {
   /* Set the initial program counter. */
   cpu.pc = RESET_VECTOR;
-  // cpu.pc = RESET_FLASH_VECTOR;
-  // cpu.pc = RESET_MROM_VECTOR;
+
   /* The zero register is always 0. */
   cpu.gpr[0] = 0;
 
   /* initialize mstatus */
   cpu.mstatus = 0x00001800;
-  
-  cpu.mhartid = 0;
 }
 
 void init_isa() {
   /* Load built-in image. */
-  //0x0f00_0000~0x0fff_ffff sram
-  // memcpy(sram_guest_to_host(RESET_SRAM_VECTOR), sram_img, sizeof(sram_img));
-
-  //0x20000000
-  memcpy(mrom_guest_to_host(RESET_MROM_VECTOR), mrom_img, sizeof(mrom_img));
-
-  //0x80000000
   memcpy(guest_to_host(RESET_VECTOR), img, sizeof(img));
-
-  //0x30000000
-  memcpy(flash_guest_to_host(RESET_FLASH_VECTOR), flash_img, sizeof(flash_img));
 
   /* Initialize this virtual computer system. */
   restart();

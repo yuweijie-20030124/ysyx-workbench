@@ -22,13 +22,8 @@
 
 #if   defined(CONFIG_PMEM_MALLOC)
 static uint8_t *pmem = NULL;
-static uint8_t *mrom_pmem = NULL;
 #else // CONFIG_PMEM_GARRAY
 static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
-static uint8_t mrom_pmem[CONFIG_MSIZE] PG_ALIGN = {};
-static uint8_t sram_pmem[CONFIG_MSIZE] PG_ALIGN = {};
-static uint8_t flash_pmem[CONFIG_MSIZE] PG_ALIGN = {};
-
 #endif
 
 //客户机是nemu 主机是我，客户机执行 mov [0x80001000], eax，模拟器会调用 guest_to_host(0x80001000) 找到主机内存位置并写入数据。
@@ -43,43 +38,13 @@ pmem
 
 CONFIG_MBASE
 客户机物理地址的起始基址（Guest Physical Memory Base），表示客户机物理地址空间的起始偏移量（例如 0x80000000）。*/
-//0x80000000~0x87ffffff 将客户机物理地址转换为主机虚拟地址。
+//将客户机物理地址转换为主机虚拟地址。
 uint8_t* guest_to_host(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
 //将主机虚拟地址转换回客户机物理地址。
 paddr_t host_to_guest(uint8_t *haddr) { return haddr - pmem + CONFIG_MBASE; }
 
-//mrom:0x20000000~0x2000_0fff 将客户机物理地址转换为主机虚拟地址。
-uint8_t* mrom_guest_to_host(paddr_t paddr) { return mrom_pmem + paddr - CONFIG_MROM_MBASE; }
-//将主机虚拟地址转换回客户机物理地址。
-paddr_t mrom_host_to_guest(uint8_t *haddr) { return haddr - mrom_pmem + CONFIG_MROM_MBASE; }
-
-//SRAM	0x0f00_0000~0x0fff_ffff 将客户机物理地址转换为主机虚拟地址。
-uint8_t* sram_guest_to_host(paddr_t paddr) { return sram_pmem + paddr - CONFIG_SRAM_MBASE; }
-//将主机虚拟地址转换回客户机物理地址。
-paddr_t sram_host_to_guest(uint8_t *haddr) { return haddr - sram_pmem + CONFIG_SRAM_MBASE; }
-
-//FLASH	0x0f00_0000~0x0fff_ffff 将客户机物理地址转换为主机虚拟地址。
-uint8_t* flash_guest_to_host(paddr_t paddr) { return flash_pmem + paddr - CONFIG_FLASH_MBASE; }
-//将主机虚拟地址转换回客户机物理地址。
-paddr_t flash_host_to_guest(uint8_t *haddr) { return haddr - flash_pmem + CONFIG_FLASH_MBASE; }
-
 static word_t pmem_read(paddr_t addr, int len) {
   word_t ret = host_read(guest_to_host(addr), len);
-  return ret;
-}
-
-static word_t mrom_read(paddr_t addr, int len) {
-  word_t ret = host_read(mrom_guest_to_host(addr), len);
-  return ret;
-}
-
-static word_t sram_read(paddr_t addr, int len) {
-  word_t ret = host_read(sram_guest_to_host(addr), len);
-  return ret;
-}
-
-static word_t flash_read(paddr_t addr, int len) {
-  word_t ret = host_read(flash_guest_to_host(addr), len);
   return ret;
 }
 
@@ -87,43 +52,14 @@ static void pmem_write(paddr_t addr, int len, word_t data) {
   host_write(guest_to_host(addr), len, data);
 }
 
-// static void mrom_write(paddr_t addr, int len, word_t data) {
-//   host_write(mrom_guest_to_host(addr), len, data);
-// }
-
-static void sram_write(paddr_t addr, int len, word_t data) {
-  host_write(sram_guest_to_host(addr), len, data);
-}
-
-static void flash_write(paddr_t addr, int len, word_t data) {
-  host_write(flash_guest_to_host(addr), len, data);
-}
-
 static void out_of_bound(paddr_t addr) {
   panic("address = " FMT_PADDR " is out of bound of pmem [" FMT_PADDR ", " FMT_PADDR "] at pc = " FMT_WORD,
       addr, PMEM_LEFT, PMEM_RIGHT, cpu.pc);
 }
 
-static void mrom_out_of_bound(paddr_t addr) {
-  panic("address = " FMT_PADDR " is out of bound of pmem [" FMT_PADDR ", " FMT_PADDR "] at pc = " FMT_WORD,
-      addr, MROM_PMEM_LEFT, MROM_PMEM_RIGHT, cpu.pc);
-}
-
-static void sram_out_of_bound(paddr_t addr) {
-  panic("address = " FMT_PADDR " is out of bound of pmem [" FMT_PADDR ", " FMT_PADDR "] at pc = " FMT_WORD,
-      addr, SRAM_PMEM_LEFT, SRAM_PMEM_RIGHT, cpu.pc);
-}
-
-static void flash_out_of_bound(paddr_t addr) {
-  panic("address = " FMT_PADDR " is out of bound of pmem [" FMT_PADDR ", " FMT_PADDR "] at pc = " FMT_WORD,
-      addr, FLASH_PMEM_LEFT, FLASH_PMEM_RIGHT, cpu.pc);
-}
-
 void init_mem() {
 #if   defined(CONFIG_PMEM_MALLOC)
   pmem = malloc(CONFIG_MSIZE);
-  assert(pmem);
-  mrom_pmem = malloc(CONFIG_MROM_MSIZE);
   assert(pmem);
 #endif
   //如果定义了MEM随机化，那就执行memset
@@ -131,54 +67,18 @@ void init_mem() {
   //memset() 函数将指定的值 c 复制到 str 所指向的内存区域的前 n 个字节中，这可以用于将内存块清零或设置为特定值。
   IFDEF(CONFIG_MEM_RANDOM, memset(pmem, rand(), CONFIG_MSIZE));
   Log("physical memory area [" FMT_PADDR ", " FMT_PADDR "]", PMEM_LEFT, PMEM_RIGHT);
-  IFDEF(CONFIG_MEM_RANDOM, memset(mrom_pmem, rand(), CONFIG_MROM_MSIZE));
-  Log("physical mrom_memory area [" FMT_PADDR ", " FMT_PADDR "]", MROM_PMEM_LEFT, MROM_PMEM_RIGHT);
-  // IFDEF(CONFIG_MEM_RANDOM, memset(flash_pmem, rand(), CONFIG_FLASH_MSIZE));
-  // Log("physical mrom_memory area [" FMT_PADDR ", " FMT_PADDR "]", FLASH_PMEM_LEFT, FLASH_PMEM_RIGHT);
-
 }
 
 //读物理地址
 word_t paddr_read(paddr_t addr, int len) {
+  //printf("进来了\n"); 
   if (likely(in_pmem(addr))) {  
     IFDEF(CONFIG_MTRACE, Log("read in address = " FMT_PADDR ", len = %d\n", addr, len));
     return pmem_read(addr, len);
   }
   IFDEF(CONFIG_DEVICE, return mmio_read(addr, len));
+  //printf("");
   out_of_bound(addr);
-  return 0;
-}
-
-//读mrom地址
-word_t mromaddr_read(paddr_t addr, int len) {
-  if (likely(in_mrom(addr))) {  
-    IFDEF(CONFIG_MTRACE, Log("read in address = " FMT_PADDR ", len = %d\n", addr, len));
-    return mrom_read(addr, len);
-  }
-  // IFDEF(CONFIG_DEVICE, return mmio_read(addr, len));
-  mrom_out_of_bound(addr);
-  return 0;
-}
-
-//读sram地址
-word_t sramaddr_read(paddr_t addr, int len) {
-  if (likely(in_sram(addr))) {  
-    IFDEF(CONFIG_MTRACE, Log("read in address = " FMT_PADDR ", len = %d\n", addr, len));
-    return sram_read(addr, len);
-  }
-  // IFDEF(CONFIG_DEVICE, return mmio_read(addr, len));
-  sram_out_of_bound(addr);
-  return 0;
-}
-
-//读flash地址
-word_t flashaddr_read(paddr_t addr, int len) {
-  if (likely(in_flash(addr))) {  
-    IFDEF(CONFIG_MTRACE, Log("read in address = " FMT_PADDR ", len = %d\n", addr, len));
-    return flash_read(addr, len);
-  }
-  // IFDEF(CONFIG_DEVICE, return mmio_read(addr, len));
-  sram_out_of_bound(addr);
   return 0;
 }
 
@@ -193,41 +93,3 @@ void paddr_write(paddr_t addr, int len, word_t data) {
   out_of_bound(addr);
   //Log("weiwei");
 }
-
-//写mrom地址 其实mrom不应该写 后面改掉todo
-// void mromaddr_write(paddr_t addr, int len, word_t data) {
-//   if (likely(in_mrom(addr))) { 
-//     mrom_write(addr, len, data);
-//     IFDEF(CONFIG_MTRACE, Log("write in address = " FMT_PADDR ", len = %d, data = " FMT_WORD "\n", addr, len, data));
-//     return; }
-//   mrom_out_of_bound(addr);
-//   //Log("weiwei");
-// }
-
-//SRAM	0x0f00_0000~0x0fff_ffff
-//写mrom地址
-void sramaddr_write(paddr_t addr, int len, word_t data) {
-  //   printf("addr = 0x%08x",addr);
-  // printf("data = 0x%08x",data);
-  if (likely(in_sram(addr))) { 
-    sram_write(addr, len, data);
-    IFDEF(CONFIG_MTRACE, Log("write in address = " FMT_PADDR ", len = %d, data = " FMT_WORD "\n", addr, len, data));
-    return; }
-  sram_out_of_bound(addr);
-
-  //Log("weiwei");
-}
-
-//FLASH	0x30000000~0x3fffffff
-//写flash地址
-void flashaddr_write(paddr_t addr, int len, word_t data) {
-  //   printf("addr = 0x%08x",addr);
-  // printf("data = 0x%08x",data);
-  if (likely(in_flash(addr))) { 
-    flash_write(addr, len, data);
-    IFDEF(CONFIG_MTRACE, Log("write in address = " FMT_PADDR ", len = %d, data = " FMT_WORD "\n", addr, len, data));
-    return; }
-  flash_out_of_bound(addr);
-
-}
-

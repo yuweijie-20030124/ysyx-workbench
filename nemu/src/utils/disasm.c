@@ -70,9 +70,12 @@ void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte) {
 	cs_insn *insn;
   // printf("pc = 0x%08lx\n",pc);
   // printf("code = 0x%08x\n",*code);
-	size_t count = cs_disasm_dl(handle, code, nbyte, pc, 0, &insn);
+	size_t count = cs_disasm_dl(handle, code, nbyte, pc, 1, &insn);
   // printf("%ld*******\n",count);
-  assert(count == 1);
+  if (count != 1) {
+    snprintf(str, size, "<invalid>");
+    return;
+  }
   int ret = snprintf(str, size, "%s", insn->mnemonic);
   if (insn->op_str[0] != '\0') {
     snprintf(str + ret, size - ret, "\t%s", insn->op_str);

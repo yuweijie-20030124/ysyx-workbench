@@ -15,7 +15,7 @@
 
 #include <isa.h>
 #include "local-include/reg.h"
-#include "/home/yuweijie/ysyx-workbench/nemu/src/isa/riscv32/include/isa-def.h"
+#include "isa-def.h"
 int i = 0;
 const char *regs[] = {
   "$0", "ra", "sp", "gp", "tp", "haox", "t1", "t2",

@@ -15,15 +15,13 @@
 
 #include <isa.h>
 #include <memory/paddr.h>
-#include </home/yuweijie/ysyx-workbench/nemu/include/cpu/ftrace.h>
+#include <cpu/ftrace.h>
 
 void init_rand();
 void init_log(const char *log_file);
 void init_mem();
 void init_difftest(char *ref_so_file, long img_size, int port);
-#ifdef CONFIG_DEVICE
 void init_device();
-#endif
 void init_sdb();
 void init_disasm();
 
@@ -48,23 +46,17 @@ void sdb_set_batch_mode(); //批处理模式
 
 static char *log_file = NULL;
 static char *diff_so_file = NULL;
+static char *img_file = NULL;
 static int difftest_port = 1234;
 
-static char *img_file = NULL;
-static char *mrom_img_file = NULL;
-static char *sram_img_file = NULL;
-static char *flash_img_file = NULL;
-
-
-//程序存到0x80000000
 static long load_img() {
   if (img_file == NULL) {
-    Log("0x80000000:No image is given. Use the default build-in image.");
+    Log("No image is given. Use the default build-in image.");
     return 4096; // built-in image size
   }
   //printf ("%s!!!!!!!!!!\n",img_file);
   FILE *fp = fopen(img_file, "rb");//二进制读入imgfile
-  Assert(fp, "0x800000000:Can not open '%s'", img_file);
+  Assert(fp, "Can not open '%s'", img_file);
 
   fseek(fp, 0, SEEK_END);//将fp的指针移到最后位置
   long size = ftell(fp);//返回fp当前文件位置
@@ -83,87 +75,6 @@ static long load_img() {
   return size;
 }
 
-//程序存到0x20000000
-static long mrom_load_img() {
-  if (mrom_img_file == NULL) {
-    Log("0x20000000:No image is given. Use the default build-in image.");
-    return 4096; // built-in image size
-  }
-  //printf ("%s!!!!!!!!!!\n",img_file);
-  FILE *fp = fopen(mrom_img_file, "rb");//二进制读入imgfile
-  Assert(fp, "0x20000000:Can not open '%s'", mrom_img_file);
-
-  fseek(fp, 0, SEEK_END);//将fp的指针移到最后位置
-  long size = ftell(fp);//返回fp当前文件位置
-
-  Log("0x20000000:The image is %s, size = %ld", mrom_img_file, size);
-
-  fseek(fp, 0, SEEK_SET);//将fp的指针移到文件最开头
-  //size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream) 从给定流 stream 读取数据到 ptr 所指向的数组中。
-  //如果fread读取成功就会返回nmemb，也就是“1”。
-  int ret = fread(mrom_guest_to_host(RESET_MROM_VECTOR), size, 1, fp);
-  //从文件指针 fp 指向的文件中读取二进制数据，并将其直接写入到客户机（Guest）物理内存的 RESET_VECTOR 地址处
-  
-  assert(ret == 1);
-
-  fclose(fp);
-  return size;
-}
-
-//程序存到SRAM	0x0f00_0000~0x0fff_ffff
-static long sram_load_img() {
-  if (sram_img_file == NULL) {
-    Log("0x20000000:No image is given. Use the default build-in image.");
-    return 4096; // built-in image size
-  }
-  //printf ("%s!!!!!!!!!!\n",img_file);
-  FILE *fp = fopen(sram_img_file, "rb");//二进制读入imgfile
-  Assert(fp, "0x20000000:Can not open '%s'", sram_img_file);
-
-  fseek(fp, 0, SEEK_END);//将fp的指针移到最后位置
-  long size = ftell(fp);//返回fp当前文件位置
-
-  Log("0x20000000:The image is %s, size = %ld", sram_img_file, size);
-
-  fseek(fp, 0, SEEK_SET);//将fp的指针移到文件最开头
-  //size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream) 从给定流 stream 读取数据到 ptr 所指向的数组中。
-  //如果fread读取成功就会返回nmemb，也就是“1”。
-  int ret = fread(sram_guest_to_host(RESET_SRAM_VECTOR), size, 1, fp);
-  //从文件指针 fp 指向的文件中读取二进制数据，并将其直接写入到客户机（Guest）物理内存的 RESET_VECTOR 地址处
-  
-  assert(ret == 1);
-
-  fclose(fp);
-  return size;
-}
-
-//程序存到FLASH	0x30000000 ~ 0x3fffffff
-static long flash_load_img() {
-  if (flash_img_file == NULL) {
-    Log("0x30000000:No image is given. Use the default build-in image.");
-    return 4096; // built-in image size
-  }
-  //printf ("%s!!!!!!!!!!\n",img_file);
-  FILE *fp = fopen(flash_img_file, "rb");//二进制读入imgfile
-  Assert(fp, "0x30000000:Can not open '%s'", flash_img_file);
-
-  fseek(fp, 0, SEEK_END);//将fp的指针移到最后位置
-  long size = ftell(fp);//返回fp当前文件位置
-
-  Log("0x30000000:The image is %s, size = %ld", flash_img_file, size);
-
-  fseek(fp, 0, SEEK_SET);//将fp的指针移到文件最开头
-  //size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream) 从给定流 stream 读取数据到 ptr 所指向的数组中。
-  //如果fread读取成功就会返回nmemb，也就是“1”。
-  int ret = fread(flash_guest_to_host(RESET_FLASH_VECTOR), size, 1, fp);
-  //从文件指针 fp 指向的文件中读取二进制数据，并将其直接写入到客户机（Guest）物理内存的 RESET_VECTOR 地址处
-  
-  assert(ret == 1);
-
-  fclose(fp);
-  return size;
-}
-
 static int parse_args(int argc, char *argv[]) {
   const struct option table[] = {
     {"batch"    , no_argument      , NULL, 'b'},
@@ -171,35 +82,25 @@ static int parse_args(int argc, char *argv[]) {
     {"diff"     , required_argument, NULL, 'd'},
     {"port"     , required_argument, NULL, 'p'},
     {"ftrace"   , required_argument, NULL, 'f'},
-    {"img"      , required_argument, NULL, 'i'},
-    {"mromimg"  , required_argument, NULL, 'm'},
-    // {"sramimg"  , required_argument, NULL, 's'},
     {"help"     , no_argument      , NULL, 'h'},
     {0          , 0                , NULL,  0 },
   };
   int o;
-  while ( (o = getopt_long(argc, argv, "-bhl:d:p:f:e:i:m:", table, NULL)) != -1) {
+  while ( (o = getopt_long(argc, argv, "-bhl:d:p:f:e:", table, NULL)) != -1) {
     switch (o) {
       case 'b': sdb_set_batch_mode(); break;
       case 'p': sscanf(optarg, "%d", &difftest_port); break;
       case 'l': log_file = optarg; break;
       case 'f': elf_file = optarg; break;
       case 'd': diff_so_file = optarg; break;
-      case 'i': img_file = optarg; break;
-      case 'm': mrom_img_file = optarg; break;
-      case 's': sram_img_file = optarg; break;
-      // case 1  : img_file = optarg; return 0;
+      case 1: img_file = optarg; return 0;
       default:
         printf("Usage: %s [OPTION...] IMAGE [args]\n\n", argv[0]);
-        printf("\t-b,--batch                  run with batch mode\n");
-        printf("\t-l,--log=FILE               output log to FILE\n");
-        printf("\t-f,--ftrace=ELF_FILE        ftrace ELF to log\n");
-        printf("\t-d,--diff=REF_SO            run DiffTest with reference REF_SO\n");
-        printf("\t-p,--port=PORT              run DiffTest with port PORT\n");
-        printf("\t-i,--img=img.bin            用户程序存放在0x80000000\n");
-        printf("\t-m,--mromimg=mrom_img.bin   MROM在0x20000000\n");
-        // printf("\t-m,--mromimg=mrom_img.bin   SRAM在0x0f00_0000~0x0fff_ffff\n");
-
+        printf("\t-b,--batch              run with batch mode\n");
+        printf("\t-l,--log=FILE           output log to FILE\n");
+        printf("\t-f,--ftrace=ELF_FILE    ftrace ELF to log\n");
+        printf("\t-d,--diff=REF_SO        run DiffTest with reference REF_SO\n");
+        printf("\t-p,--port=PORT          run DiffTest with port PORT\n");
         printf("\n");
         exit(0);
     }
@@ -237,18 +138,11 @@ void init_monitor(int argc, char *argv[]) {
 
   /* Load the image to memory. This will overwrite the built-in image. */
   long img_size = load_img();
-  long mrom_img_size = mrom_load_img();
-  long sram_img_size = sram_load_img();
-  long flash_img_size = flash_load_img();
 
   /* Initialize differential testing. */
   init_difftest(diff_so_file, img_size, difftest_port);
-
   // printf("diff_so_file = %s\n",diff_so_file);
-  printf("mrom_img_size = %ld\n",mrom_img_size);
-  printf("sram_img_size = %ld\n",sram_img_size);
-  printf("flash_img_size = %ld\n",flash_img_size);
-
+  // printf("img_size = %ld\n",img_size);
   /* Initialize the simple debugger. */
   init_sdb();
 

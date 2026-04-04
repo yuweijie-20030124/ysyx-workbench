@@ -17,10 +17,10 @@ LDFLAGS   += --defsym=_sram_start=0x0f000000
 LDFLAGS   += --gc-sections -e _start
 NEMUFLAGS += -l $(shell dirname $(IMAGE).elf)/nemu-log.txt
 NEMUFLAGS += -f $(IMAGE).elf
-NEMUFLAGS += -i $(IMAGE).bin
-
-
 NEMUFLAGS += -b
+NEMUFLAGS += $(IMAGE).bin
+
+
 
 MAINARGS_MAX_LEN = 64
 MAINARGS_PLACEHOLDER = the_insert-arg_rule_in_Makefile_will_insert_mainargs_here

@@ -13,8 +13,12 @@
 # See the Mulan PSL v2 for more details.
 #**************************************************************************************/
 
+SOSOC_HOME := $(abspath $(dir $(lastword $(MAKEFILE_LIST)))../)
+NEMU_HOME := $(SOSOC_HOME)/nemu
+AM_HOME := $(SOSOC_HOME)/bsp
+
 # Sanity check
-#检查NEMU_HOME路径
+#检查nemu_home路径
 ifeq ($(wildcard $(NEMU_HOME)/src/nemu-main.c),) 
   $(error NEMU_HOME=$(NEMU_HOME) is not a NEMU repo)
 endif
@@ -57,7 +61,8 @@ CFLAGS_BUILD += $(if $(CONFIG_CC_LTO),-flto,)
 CFLAGS_BUILD += $(if $(CONFIG_CC_DEBUG),-Og -ggdb3,)
 CFLAGS_BUILD += $(if $(CONFIG_CC_ASAN),-fsanitize=address,)
 CFLAGS_TRACE += -DITRACE_COND=$(if $(CONFIG_ITRACE_COND),$(call remove_quote,$(CONFIG_ITRACE_COND)),true)
-CFLAGS  += $(CFLAGS_BUILD) $(CFLAGS_TRACE) -D__GUEST_ISA__=$(GUEST_ISA)
+CFLAGS  += $(CFLAGS_BUILD) $(CFLAGS_TRACE) -D__GUEST_ISA__=$(GUEST_ISA) \
+           -DNEMU_HOME_STR=\"$(NEMU_HOME)\"
 LDFLAGS += $(CFLAGS_BUILD)
 
 # Include rules for menuconfig
