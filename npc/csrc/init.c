@@ -18,6 +18,7 @@ static const uint32_t img [] = {
 
 static void restart() {
   /* Set the initial program counter. */
+  // cpu.pc = FLASH_RESET_VECTOR;
   cpu.pc = MROM_RESET_VECTOR;
 
   /* The zero register is always 0. */

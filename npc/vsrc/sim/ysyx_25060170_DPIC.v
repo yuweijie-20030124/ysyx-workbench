@@ -372,6 +372,8 @@ endtask
 
 // export "DPI-C" task difftest_skip_ref;
 
+reg [31:0] commit_cout;
+
 	//提交并不包含写，用时序应该没问题。
 	always @(posedge clk) begin
 		// if(~wbu_dpic_id_stall & ~wbu_dpic_ls_valid) begin
@@ -381,6 +383,7 @@ endtask
 			// $display("DPIC_pc_i = 0x%08x",DPIC_pc_i);
 			// $display("pc_finish = 0x%08x",wbu_dpic_pc);
 			// $display("inst_finish = 0x%08x",wbu_dpic_inst);
+			commit_cout <= commit_cout + 1;
 			pc_inst_end(DPIC_wbu_dpic_next_pc, DPIC_wbu_dpic_inst, DPIC_wbu_DPIC_difftest_skip_flag);
 			// difftest_skip_ref();
 		end

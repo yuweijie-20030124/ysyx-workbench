@@ -377,17 +377,32 @@ assign lsu_arb_bready  = (ls_state == S_LS_WAIT_B);
 //==========================================================================
 wire bypass_no_mem = (ls_state == S_LS_IDLE) && (~in_has_mem_op);
 
-assign ls_valid_o = bypass_no_mem ? ex_valid_i : ((ls_state == S_LS_RESP) ? req_ex_valid : 1'b0);
+assign ls_valid_o = bypass_no_mem ? ex_valid_i : ((ls_state == S_LS_RESP) ? (req_ex_valid & ~axi_err) : 1'b0);
 assign ls_ready_o = bypass_no_mem ? wb_ready_i : ((ls_state == S_LS_RESP) ? wb_ready_i : 1'b0);
+
+    reg axi_err;
+    always @(posedge clk) begin
+        if (rst == `ysyx_25060170_RSTABLE) begin
+            axi_err <= 1'b0;
+        end else if (ls_state == S_LS_IDLE && !bypass_no_mem && ex_valid_i) begin
+            axi_err <= 1'b0;
+        end else if (ls_state == S_LS_WAIT_R && r_hs) begin
+            axi_err <= (arb_lsu_rresp != AXI_RESP_OKAY);
+        end else if (ls_state == S_LS_WAIT_B && b_hs) begin
+            axi_err <= (arb_lsu_bresp != AXI_RESP_OKAY);
+        end else if (ls_state == S_LS_RESP && wb_ready_i) begin
+            axi_err <= 1'b0;
+        end
+    end
 
 //==========================================================================
 // 输出
 //==========================================================================
-assign ls_jump_o    = 1'b0;
+assign ls_jump_o    = (ls_state == S_LS_RESP) ? axi_err : 1'b0;
 assign ls_flush_o   = ls_jump_o;
 
 // 这里虽然现在 ls_jump_o 恒为 0，仍然做成对访存请求一致的输出，避免后面扩展再踩坑
-assign ls_jump_pc_o = bypass_no_mem ? alu_res_i[31:0] : req_addr;
+assign ls_jump_pc_o = ls_jump_o ? 32'b0 : (bypass_no_mem ? alu_res_i[31:0] : req_addr);
 
 // 对于无访存指令，直接透传当前输入
 // 对于访存指令，输出锁存的请求信息

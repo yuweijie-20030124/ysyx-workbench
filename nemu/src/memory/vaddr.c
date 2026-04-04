@@ -59,19 +59,19 @@ word_t vaddr_read(vaddr_t addr, int len) {
 
 //写地址
 void vaddr_write(vaddr_t addr, int len, word_t data) {
-  // paddr_write(addr, len, data);
-    if(addr >= 0x80000000 && addr <= 0x87FFFFFF){ //物理地址
-    paddr_write(addr, len, data);
-  }
-  else if(addr >= 0x0f000000 && addr <= 0x0f001FFF){
-    sramaddr_write(addr, len, data);
-  }
-  else if(addr >= 0x30000000 && addr <= 0x3FFFFFFF){
-    flashaddr_write(addr, len, data);
-  }
-  else {
-    printf("addr is 0x%08x\n",addr);
-    printf("data is 0x%08x\n",data);
-    printf("no mrom no p no sram！！！,out of bound\n");
-  }
+  paddr_write(addr, len, data);
+  //   if(addr >= 0x80000000 && addr <= 0x87FFFFFF){ //物理地址
+  //   paddr_write(addr, len, data);
+  // }
+  // else if(addr >= 0x0f000000 && addr <= 0x0f001FFF){
+  //   sramaddr_write(addr, len, data);
+  // }
+  // else if(addr >= 0x30000000 && addr <= 0x3FFFFFFF){
+  //   flashaddr_write(addr, len, data);
+  // }
+  // else {
+  //   printf("addr is 0x%08x\n",addr);
+  //   printf("data is 0x%08x\n",data);
+  //   printf("no mrom no p no sram！！！,out of bound\n");
+  // }
 }

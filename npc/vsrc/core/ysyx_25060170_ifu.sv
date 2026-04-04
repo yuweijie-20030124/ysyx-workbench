@@ -65,6 +65,7 @@ logic [`ysyx_25060170_PC]      redirect_pc;
 
 always_comb begin
     redirect_valid = 1'b0;
+    // redirect_pc    = 32'h3000_0000;
     redirect_pc    = `ysyx_25060170_STARTPC;
 
     if (idu_ifu_jump) begin
@@ -135,10 +136,20 @@ assign r_handshake  = arb_ifu_rvalid  & ifu_arb_rready;
 assign consume_inst = inst_valid_r & idu_ifu_ready & (~stall);
 
 //==========================================================================
+// AXI ARADDR 锁存，防止在 ARVALID 时中途因为 flush 导致 pc_r 改变从而违反协议
+//==========================================================================
+logic [31:0] araddr_r;
+always_ff @(posedge clk) begin
+    if (rst) araddr_r <= `ysyx_25060170_STARTPC;
+    else if (if_state_r == S_IF_IDLE && if_state_n == S_IF_ARREQ)
+        araddr_r <= pc_n;
+end
+
+//==========================================================================
 // 输出
 //==========================================================================
 assign ifu_arb_arvalid         = (if_state_r == S_IF_ARREQ);
-assign ifu_arb_araddr          = pc_r;                          // AXI4-Lite 只需要地址
+assign ifu_arb_araddr          = araddr_r;                          // AXI4-Lite 只需要地址
 assign ifu_arb_rready          = (if_state_r == S_IF_WAIT_R);
 
 assign ifu_ifidreg_valid       = inst_valid_r & (~stall);
@@ -204,23 +215,19 @@ always_comb begin
         //==================================================================
         S_IF_ARREQ: begin//01
             if (redirect_valid) begin
+                discard_resp_n   = 1'b1;
+                pc_n             = redirect_pc;
+                
                 if (ar_handshake) begin
                     // 这一拍旧地址已经发出去了，后面 R 必须丢弃
-                    req_pc_n         = pc_r;
+                    req_pc_n         = araddr_r;
                     req_bpupredict_n = btb_predictedTaken;
                     req_bpu_valid_n  = bpu_ifu_bpuvalid;
-
-                    discard_resp_n   = 1'b1;
-                    pc_n             = redirect_pc;
                     if_state_n       = S_IF_WAIT_R;
-                end
-                else begin
-                    // 还没握手成功，直接把待取地址改成 redirect_pc
-                    pc_n             = redirect_pc;
                 end
             end
             else if (ar_handshake) begin
-                req_pc_n         = pc_r;
+                req_pc_n         = araddr_r;
                 req_bpupredict_n = btb_predictedTaken;
                 req_bpu_valid_n  = bpu_ifu_bpuvalid;
                 if_state_n       = S_IF_WAIT_R;
@@ -256,6 +263,11 @@ always_comb begin
                     inst_valid_n       = 1'b0;
                     inst_bpupredict_n  = 1'b0;
                     inst_bpu_valid_n   = 1'b0;
+                    if ((!discard_resp_r) && (!redirect_valid) && (arb_ifu_rresp[1:0] != 2'b00)) begin
+                        // IFU trigger access fault
+                        pc_n           = 32'b0;
+                        // trigger pipeline flush if needed? Actually it changes next fetch pc to 0
+                    end
                 end
 
                 discard_resp_n       = 1'b0;
@@ -275,7 +287,7 @@ always_ff @(posedge clk) begin
         // pc_r              <= `ysyx_25060170_STARTPC;
         // req_pc_r          <= `ysyx_25060170_STARTPC;
 
-        //mrom 测试
+        //flash 测试
         pc_r              <= 32'h2000_0000;
         req_pc_r          <= 32'h2000_0000;
 

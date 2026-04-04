@@ -17,6 +17,7 @@ int is_exit_status_bad();
 bool log_enable();
 
 word_t mrom_memory_read(paddr_t addr, int len) ;
+word_t flash_memory_read(paddr_t addr, int len) ;
 
 
 #ifdef CONFIG_DIFFTEST
@@ -42,7 +43,17 @@ int difftest_skip_ref_flag;
 
 
 //在仿真的cpp文件中加入如下内容, 用于解决链接时找不到flash_read和mrom_read的问题
-extern "C" void flash_read(int32_t addr, int32_t *data) { assert(0); }
+extern "C" void flash_read(int32_t addr, int32_t *data) {   
+  paddr_t paddr = (paddr_t)(uint32_t)addr;
+    paddr = paddr + 0x30000000; //映射0x30000000
+  // printf("paddr = 0x%08x",paddr);
+    if (!in_flash(paddr) || !in_flash(paddr + 3)) {
+    *data = 0;
+    return;
+  }
+  *data = (int32_t)flash_memory_read(paddr, 4);
+  // printf("caosinidema\n");
+}
 
 //MROM	0x2000_0000~0x2000_0fff
 extern "C" void mrom_read(int32_t addr, int32_t *data) { 

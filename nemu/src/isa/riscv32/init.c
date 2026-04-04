@@ -57,8 +57,9 @@ static const uint32_t flash_img [] = {
 
 static void restart() {
   /* Set the initial program counter. */
-  // cpu.pc = RESET_VECTOR;
-  cpu.pc = RESET_FLASH_VECTOR;
+  cpu.pc = RESET_VECTOR;
+  // cpu.pc = RESET_FLASH_VECTOR;
+  // cpu.pc = RESET_MROM_VECTOR;
   /* The zero register is always 0. */
   cpu.gpr[0] = 0;
 

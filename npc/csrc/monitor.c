@@ -38,6 +38,7 @@ static char *diff_so_file = NULL;
 static char *img_file = NULL;
 static char *mrom_img_file = NULL;
 static char *sram_img_file = NULL;
+static char *flash_img_file = NULL;
 
 
 static char *elf_file =NULL;
@@ -124,6 +125,33 @@ static long sram_load_img() {
   fclose(fp);
   return size;
 }
+
+static long flash_load_img() {
+  if (flash_img_file == NULL) {
+    Log("0x20000000:No image is given. Use the default build-in image.");
+    return 4096; // built-in image size
+  }
+  //printf ("%s!!!!!!!!!!\n",img_file);
+  FILE *fp = fopen(flash_img_file, "rb");//二进制读入imgfile
+  Assert(fp, "0x20000000:Can not open '%s'", flash_img_file);
+
+  fseek(fp, 0, SEEK_END);//将fp的指针移到最后位置
+  long size = ftell(fp);//返回fp当前文件位置
+
+  Log("0x20000000:The image is %s, size = %ld", flash_img_file, size);
+
+  fseek(fp, 0, SEEK_SET);//将fp的指针移到文件最开头
+  //size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream) 从给定流 stream 读取数据到 ptr 所指向的数组中。
+  //如果fread读取成功就会返回nmemb，也就是“1”。
+  int ret = fread(sram_guest_to_host(CONFIG_SRAM_MBASE), size, 1, fp);
+  //从文件指针 fp 指向的文件中读取二进制数据，并将其直接写入到客户机（Guest）物理内存的 RESET_VECTOR 地址处
+  
+  assert(ret == 1);
+
+  fclose(fp);
+  return size;
+}
+
 //在这里开启是否批处理模式
 //批处理模式下，sdb_mainloop()不会被调用
 //而是直接执行cpu_exec(-1)来执行指令

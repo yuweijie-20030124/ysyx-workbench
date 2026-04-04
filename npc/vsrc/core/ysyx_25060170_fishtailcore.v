@@ -297,8 +297,8 @@ ysyx_25060170_ifu u_ysyx_25060170_ifu(
     ,.bpu_ifu_jump_pc           ()//<<i<<                                  
     ,.btb_predictedTaken        ()//<<i<<                            
     ,.bpu_ifu_bpuvalid          ()//<<i<<                        
-    ,.lsu_ifu_jump_pc           ()//<<i<<                        
-    ,.lsu_ifu_jump              ()//<<i<<                    
+    ,.lsu_ifu_jump_pc           (ls_jump_pc)//<<i<<                        
+    ,.lsu_ifu_jump              (ls_pc_jump)//<<i<<                    
     ,.idu_ifu_ready             (id_ready)//<<i<<
     ,.idu_ifu_stall             (id_stall)//<<i<<                    
     ,.ifu_ifidreg_valid         (ifu_ifidreg_valid       )//>>o>>                        
@@ -417,9 +417,9 @@ ysyx_25060170_ifuidureg u_ysyx_25060170_ifuidureg(
     ,.ifu_ifuidureg_valid           (ifu_ifidreg_valid)//<<i<<                                                      
     ,.idu_ifuidureg_ready           (id_ready)//<<i<<                                                      
     ,.idu_ifuidureg_stall           (id_stall)//<<i<<                                                      
-    ,.idu_ifuidureg_flush           ()//<<i<<                                                      
-    ,.lsu_ifuidureg_stall           ()//<<i<<                                                      
-    ,.lsu_ifuidureg_flush           ()//<<i<<                                                      
+    ,.idu_ifuidureg_flush           (id_flush)//<<i<<                                                      
+    ,.lsu_ifuidureg_stall           (1'b0)//<<i<<                                                      
+    ,.lsu_ifuidureg_flush           (ls_flush)//<<i<<                                                      
     ,.ifuidureg_idu_currentpc       (ifuidureg_idu_currentpc)//>>o>>                                                          
     ,.ifuidureg_idu_nextpc          (ifuidureg_idu_nextpc)//>>o>>   
     ,.ifuidureg_idu_inst            (ifuidureg_idu_inst)//>>o>>                                                   

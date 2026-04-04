@@ -8,8 +8,8 @@ ENTRY(_start)
 
 
  MEMORY {
-  mrom : ORIGIN = 0x20000000, LENGTH = 4k   
-  sram : ORIGIN = 0x0f000000, LENGTH = 8K 
+  mrom : ORIGIN = 0x20000000, LENGTH = 1M   
+  sram : ORIGIN = 0x0f000000, LENGTH = 1M 
 } 
 
 
@@ -24,7 +24,7 @@ SECTIONS {
     *(.srodata*)
   } > mrom
   
-  /* 使得 bootloader 能获取到在 Flash/MROM 里的只读起始地址 */
+  /* 使得 bootloader 能获取到在 MROM 里的只读起始地址 */
   _data_lma = LOADADDR(.data);
   .data : {
     /* 这两个符号必须与你在 trm.c 里面的一致 */

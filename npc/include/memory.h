@@ -13,6 +13,8 @@
 #define SRAM_LEFT  ((paddr_t)CONFIG_SRAM_MBASE)
 #define SRAM_RIGHT ((paddr_t)CONFIG_SRAM_MBASE + CONFIG_SRAM_MSIZE - 1)
 
+#define FLASH_LEFT  ((paddr_t)CONFIG_FLASH_MBASE)
+#define FLASH_RIGHT ((paddr_t)CONFIG_FLASH_MBASE + CONFIG_FLASH_MSIZE - 1)
 
 paddr_t host_read(void *addr, int len);
 
@@ -54,12 +56,18 @@ static inline bool in_sram(paddr_t addr) {
   return addr - CONFIG_SRAM_MBASE < CONFIG_SRAM_MSIZE;
 }
 
+static inline bool in_flash(paddr_t addr) {
+  return addr - CONFIG_FLASH_MBASE < CONFIG_FLASH_MSIZE;
+}
+
 uint8_t* guest_to_host(paddr_t addr);
 
 
 word_t mrom_memory_read(paddr_t addr, int len);
 uint8_t* mrom_guest_to_host(paddr_t addr);
 uint8_t* sram_guest_to_host(paddr_t addr);
+uint8_t* flash_guest_to_host(paddr_t addr);
+
 
 
 #define PAGE_SHIFT        12
