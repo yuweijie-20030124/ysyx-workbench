@@ -7,4 +7,6 @@
 enum {SEEK_SET, SEEK_CUR, SEEK_END};
 #endif
 
+int fs_open(const char *path, int flag, int mode);
+
 #endif

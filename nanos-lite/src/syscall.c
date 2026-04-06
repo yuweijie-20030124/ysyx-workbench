@@ -1,10 +1,81 @@
 #include <common.h>
+#include <memory.h>
 #include "syscall.h"
+
+#define CONFIG_STRACE 1
+
+#if CONFIG_STRACE
+#define STRACE_LOG(...) Log(__VA_ARGS__)
+#else
+#define STRACE_LOG(...)
+#endif
+
+static const char *syscall_names[] = {
+  [SYS_exit] = "exit",
+  [SYS_yield] = "yield",
+  [SYS_open] = "open",
+  [SYS_read] = "read",
+  [SYS_write] = "write",
+  [SYS_kill] = "kill",
+  [SYS_getpid] = "getpid",
+  [SYS_close] = "close",
+  [SYS_lseek] = "lseek",
+  [SYS_brk] = "brk",
+  [SYS_fstat] = "fstat",
+  [SYS_time] = "time",
+  [SYS_signal] = "signal",
+  [SYS_execve] = "execve",
+  [SYS_fork] = "fork",
+  [SYS_link] = "link",
+  [SYS_unlink] = "unlink",
+  [SYS_wait] = "wait",
+  [SYS_times] = "times",
+  [SYS_gettimeofday] = "gettimeofday",
+};
+
 void do_syscall(Context *c) {
   uintptr_t a[4];
   a[0] = c->GPR1;
+  a[1] = c->GPR2;
+  a[2] = c->GPR3;
+  a[3] = c->GPR4;
+  const char *name = "unknown";
+
+  if (a[0] < LENGTH(syscall_names) && syscall_names[a[0]] != NULL) {
+    name = syscall_names[a[0]];
+  }
+  (void)name;
+
+  STRACE_LOG("syscall: %s(%d, %p, %p, %p)", name, a[0], a[1], a[2], a[3]);
 
   switch (a[0]) {
+    case SYS_yield:
+      c->GPRx = 0;
+      STRACE_LOG("syscall return: %s -> %d", name, c->GPRx);
+      break;
+    case SYS_write: {
+      int fd = a[1];
+      const char *buf = (const char *)a[2];
+      size_t len = a[3];
+      if (fd == 1 || fd == 2) {
+        for (size_t i = 0; i < len; i++) {
+          putch(buf[i]);
+        }
+        c->GPRx = len;
+        STRACE_LOG("syscall return: %s -> %d", name, c->GPRx);
+        break;
+      }
+      panic("Unsupported fd = %d for SYS_write", fd);
+      break;
+    }
+    case SYS_brk:
+      c->GPRx = mm_brk(a[1]);
+      STRACE_LOG("syscall return: %s -> %d", name, c->GPRx);
+      break;
+    case SYS_exit:
+      STRACE_LOG("syscall exit status = %d", a[1]);
+      halt(a[1]);
+      break;
     default: panic("Unhandled syscall ID = %d", a[0]);
   }
 }
