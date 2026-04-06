@@ -1,7 +1,9 @@
 #include <stdint.h>
+#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/time.h>
 #include <unistd.h>
 
 static int evtdev = -1;
@@ -9,11 +11,17 @@ static int fbdev = -1;
 static int screen_w = 0, screen_h = 0;
 
 uint32_t NDL_GetTicks() {
-  return 0;
+  struct timeval tv = {};
+  gettimeofday(&tv, NULL);
+  return (uint32_t)(tv.tv_sec * 1000 + tv.tv_usec / 1000);
 }
 
 int NDL_PollEvent(char *buf, int len) {
-  return 0;
+  if (evtdev < 0) {
+    return 0;
+  }
+  int nread = read(evtdev, buf, len);
+  return nread > 0 ? 1 : 0;
 }
 
 void NDL_OpenCanvas(int *w, int *h) {
@@ -54,6 +62,8 @@ int NDL_QueryAudio() {
 }
 
 int NDL_Init(uint32_t flags) {
+  (void)flags;
+  evtdev = open("/dev/events", 0);
   if (getenv("NWM_APP")) {
     evtdev = 3;
   }
@@ -61,4 +71,7 @@ int NDL_Init(uint32_t flags) {
 }
 
 void NDL_Quit() {
+  if (evtdev >= 0 && !getenv("NWM_APP")) {
+    close(evtdev);
+  }
 }
