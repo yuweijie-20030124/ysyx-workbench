@@ -72,7 +72,6 @@ int fs_open(const char *pathname, int flags, int mode) {
     }
   }
 
-  assert(0);
   return -1;
 }
 
@@ -149,5 +148,5 @@ const char *fs_fd_name(int fd) {
 }
 
 void init_fs() {
-  file_table[FD_FB].size = 0;
+  file_table[FD_FB].size = 0x200000;
 }

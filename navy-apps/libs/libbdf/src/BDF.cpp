@@ -26,13 +26,14 @@ BDF_Font::BDF_Font(const char *fname) {
   FILE *fp = fopen(fname, "r");
   assert(fp);
 
-  char buf[256], cmd[32];
+  char buf[256] = {}, cmd[32] = {};
   bool valid_file = false, in_bitmap = false;
   uint32_t bm[32], ch = '\0';
   int bm_idx, bm_bbx[4];
 
   while (fgets(buf, 256, fp)) {
-    sscanf(buf, "%s ", cmd);
+    cmd[0] = '\0';
+    sscanf(buf, "%31s ", cmd);
     if (strcmp(cmd, "STARTFONT") == 0) {
       valid_file = true;
     }

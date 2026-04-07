@@ -13,24 +13,22 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
+#ifndef __ISA_MIPS32_H__
+#define __ISA_MIPS32_H__
+
 #include <common.h>
 
-void init_monitor(int, char *[]);
-void am_init_monitor();
-void engine_start();
-int is_exit_status_bad();
+typedef struct {
+  word_t gpr[32];
+  word_t pad[5];
+  vaddr_t pc;
+} mips32_CPU_state;
 
-int main(int argc, char *argv[]) {
-  /* Initialize the monitor. */
-#ifdef CONFIG_TARGET_AM
-// printf("open target_am!!!!!!!!!!!!!!!!!!!!\n");
-  am_init_monitor();
-  //printf("fuck am");
-#else
-  init_monitor(argc, argv);
+// decode
+typedef struct {
+  uint32_t inst;
+} mips32_ISADecodeInfo;
+
+#define isa_mmu_check(vaddr, len, type) (MMU_DIRECT)
+
 #endif
-
-  /* Start engine. */
-  engine_start();
-  return is_exit_status_bad();
-}

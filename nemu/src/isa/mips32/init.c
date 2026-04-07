@@ -13,24 +13,30 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
-#include <common.h>
+#include <isa.h>
+#include <memory/paddr.h>
 
-void init_monitor(int, char *[]);
-void am_init_monitor();
-void engine_start();
-int is_exit_status_bad();
+// this is not consistent with uint8_t
+// but it is ok since we do not access the array directly
+static const uint32_t img [] = {
+  0x3c048000,  // lui a0, 0x8000
+  0xac800000,  // sw  zero, 0(a0)
+  0x8c820000,  // lw  v0,0(a0)
+  0x7000003f,  // sdbbp (used as nemu_trap)
+};
 
-int main(int argc, char *argv[]) {
-  /* Initialize the monitor. */
-#ifdef CONFIG_TARGET_AM
-// printf("open target_am!!!!!!!!!!!!!!!!!!!!\n");
-  am_init_monitor();
-  //printf("fuck am");
-#else
-  init_monitor(argc, argv);
-#endif
+static void restart() {
+  /* Set the initial program counter. */
+  cpu.pc = RESET_VECTOR;
 
-  /* Start engine. */
-  engine_start();
-  return is_exit_status_bad();
+  /* The zero register is always 0. */
+  cpu.gpr[0] = 0;
+}
+
+void init_isa() {
+  /* Load built-in image. */
+  memcpy(guest_to_host(RESET_VECTOR), img, sizeof(img));
+
+  /* Initialize this virtual computer system. */
+  restart();
 }

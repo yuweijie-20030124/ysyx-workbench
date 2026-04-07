@@ -24,7 +24,7 @@ void init_proc() {
 
   Log("Initializing processes...");
 
-  naive_uload(NULL, "/bin/event-test");
+  naive_uload(NULL, "/bin/typing-game");
 }
 
 Context* schedule(Context *prev) {

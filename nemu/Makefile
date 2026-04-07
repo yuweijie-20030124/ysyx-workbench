@@ -14,8 +14,8 @@
 #**************************************************************************************/
 
 SOSOC_HOME := $(abspath $(dir $(lastword $(MAKEFILE_LIST)))../)
-NEMU_HOME := $(SOSOC_HOME)/nemu
-AM_HOME := $(SOSOC_HOME)/bsp
+# NEMU_HOME := $(SOSOC_HOME)/nemu
+# AM_HOME := $(SOSOC_HOME)/bsp
 
 # Sanity check
 #检查nemu_home路径

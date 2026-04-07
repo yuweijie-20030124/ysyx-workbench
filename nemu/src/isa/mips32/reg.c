@@ -13,24 +13,19 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
-#include <common.h>
+#include <isa.h>
+#include "local-include/reg.h"
 
-void init_monitor(int, char *[]);
-void am_init_monitor();
-void engine_start();
-int is_exit_status_bad();
+const char *regs[] = {
+  "$0", "at", "v0", "v1", "a0", "a1", "a2", "a3",
+  "t0", "t1", "t2", "t3", "t4", "t5", "t6", "t7",
+  "s0", "s1", "s2", "s3", "s4", "s5", "s6", "s7",
+  "t8", "t9", "k0", "k1", "gp", "sp", "s8", "ra"
+};
 
-int main(int argc, char *argv[]) {
-  /* Initialize the monitor. */
-#ifdef CONFIG_TARGET_AM
-// printf("open target_am!!!!!!!!!!!!!!!!!!!!\n");
-  am_init_monitor();
-  //printf("fuck am");
-#else
-  init_monitor(argc, argv);
-#endif
+void isa_reg_display() {
+}
 
-  /* Start engine. */
-  engine_start();
-  return is_exit_status_bad();
+word_t isa_reg_str2val(const char *s, bool *success) {
+  return 0;
 }

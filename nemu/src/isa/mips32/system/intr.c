@@ -13,24 +13,16 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
-#include <common.h>
+#include <isa.h>
 
-void init_monitor(int, char *[]);
-void am_init_monitor();
-void engine_start();
-int is_exit_status_bad();
+word_t isa_raise_intr(word_t NO, vaddr_t epc) {
+  /* TODO: Trigger an interrupt/exception with ``NO''.
+   * Then return the address of the interrupt/exception vector.
+   */
 
-int main(int argc, char *argv[]) {
-  /* Initialize the monitor. */
-#ifdef CONFIG_TARGET_AM
-// printf("open target_am!!!!!!!!!!!!!!!!!!!!\n");
-  am_init_monitor();
-  //printf("fuck am");
-#else
-  init_monitor(argc, argv);
-#endif
+  return 0;
+}
 
-  /* Start engine. */
-  engine_start();
-  return is_exit_status_bad();
+word_t isa_query_intr() {
+  return INTR_EMPTY;
 }

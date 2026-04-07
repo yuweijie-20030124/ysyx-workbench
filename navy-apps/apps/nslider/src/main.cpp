@@ -3,6 +3,10 @@
 #include <stdio.h>
 #include <assert.h>
 
+// #define W 400 以前改小了屏幕
+// #define H 300 以前改小了屏幕
+
+
 #define W 400
 #define H 300
 
@@ -12,7 +16,7 @@
 //   gg - first page
 
 // number of slides
-const int N = 10;
+const int N = 3;
 // slides path pattern (starts from 0)
 const char *path = "/share/slides/slides-%d.bmp";
 

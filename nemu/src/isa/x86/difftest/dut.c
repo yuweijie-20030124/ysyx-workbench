@@ -13,24 +13,13 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
-#include <common.h>
+#include <isa.h>
+#include <cpu/difftest.h>
+#include "../local-include/reg.h"
 
-void init_monitor(int, char *[]);
-void am_init_monitor();
-void engine_start();
-int is_exit_status_bad();
+bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
+  return false;
+}
 
-int main(int argc, char *argv[]) {
-  /* Initialize the monitor. */
-#ifdef CONFIG_TARGET_AM
-// printf("open target_am!!!!!!!!!!!!!!!!!!!!\n");
-  am_init_monitor();
-  //printf("fuck am");
-#else
-  init_monitor(argc, argv);
-#endif
-
-  /* Start engine. */
-  engine_start();
-  return is_exit_status_bad();
+void isa_difftest_attach() {
 }

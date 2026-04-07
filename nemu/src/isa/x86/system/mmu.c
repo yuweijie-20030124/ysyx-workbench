@@ -13,24 +13,10 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
-#include <common.h>
+#include <isa.h>
+#include <memory/paddr.h>
+#include <memory/vaddr.h>
 
-void init_monitor(int, char *[]);
-void am_init_monitor();
-void engine_start();
-int is_exit_status_bad();
-
-int main(int argc, char *argv[]) {
-  /* Initialize the monitor. */
-#ifdef CONFIG_TARGET_AM
-// printf("open target_am!!!!!!!!!!!!!!!!!!!!\n");
-  am_init_monitor();
-  //printf("fuck am");
-#else
-  init_monitor(argc, argv);
-#endif
-
-  /* Start engine. */
-  engine_start();
-  return is_exit_status_bad();
+paddr_t isa_mmu_translate(vaddr_t vaddr, int len, int type) {
+  return MEM_RET_FAIL;
 }
