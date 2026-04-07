@@ -23,9 +23,25 @@ static void sh_prompt() {
 }
 
 static void sh_handle_cmd(const char *cmd) {
+  char buf[256];
+  strncpy(buf, cmd, sizeof(buf));
+  buf[sizeof(buf) - 1] = '\0';
+
+  char *argv[16] = {};
+  int argc = 0;
+  for (char *tok = strtok(buf, " \t\r\n"); tok != NULL && argc < 15; tok = strtok(NULL, " \t\r\n")) {
+    argv[argc++] = tok;
+  }
+  if (argc == 0) {
+    return;
+  }
+
+  execvp(argv[0], argv);
+  sh_printf("%s: command not found\n", argv[0]);
 }
 
 void builtin_sh_run() {
+  setenv("PATH", "/bin:/usr/bin", 0);
   sh_banner();
   sh_prompt();
 

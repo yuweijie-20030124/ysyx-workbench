@@ -3,7 +3,17 @@
 static void *pf = NULL;
 
 void* new_page(size_t nr_page) {
-  return NULL;
+  void *page = pf;
+  pf = (void *)((uintptr_t)pf + nr_page * PGSIZE);
+  assert((uintptr_t)pf <= (uintptr_t)heap.end);
+  return page;
+}
+
+void set_page_brk(uintptr_t brk) {
+  brk = ROUNDUP(brk, PGSIZE);
+  if ((uintptr_t)pf < brk) {
+    pf = (void *)brk;
+  }
 }
 
 #ifdef HAS_VME

@@ -1,13 +1,17 @@
 REPO_PATH = repo
+BUSYBOX_REPO = https://github.com/mirror/busybox.git
 CONFIG_FILE = config/nanos-lite.config
 PATCH_FILE = $(abspath patch/diff.patch)
 ifeq ($(wildcard repo/include/busybox.h),)
-  $(shell git clone --depth=1 -b 1_32_stable git://git.busybox.net/busybox $(REPO_PATH))
+  $(shell git clone --depth=1 -b 1_32_stable $(BUSYBOX_REPO) $(REPO_PATH))
   $(shell cd $(REPO_PATH) && git apply $(PATCH_FILE))
   $(shell cp $(CONFIG_FILE) $(REPO_PATH)/.config)
 endif
 
 NAME = busybox
+ifeq ($(MAKECMDGOALS),menuconfig)
+ISA ?= riscv32
+endif
 include $(NAVY_HOME)/Makefile
 
 ifeq ($(ISA), native)

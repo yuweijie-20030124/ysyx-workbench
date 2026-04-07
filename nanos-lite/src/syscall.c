@@ -1,6 +1,7 @@
 #include <common.h>
 #include <fs.h>
 #include <memory.h>
+#include <proc.h>
 #include <sys/time.h>
 #include "syscall.h"
 
@@ -40,6 +41,26 @@ static const char *syscall_names[] = {
   [SYS_times] = "times",
   [SYS_gettimeofday] = "gettimeofday",
 };
+
+#define MAX_EXEC_ARGS 32
+#define MAX_EXEC_ENVS 32
+#define MAX_EXEC_STR 256
+
+static void copy_exec_str(char *dst, const char *src) {
+  strncpy(dst, src, MAX_EXEC_STR - 1);
+  dst[MAX_EXEC_STR - 1] = '\0';
+}
+
+static void copy_exec_list(char *const src[], char *dst_ptrs[], char dst_buf[][MAX_EXEC_STR], int max_cnt) {
+  int i = 0;
+  if (src != NULL) {
+    for (; src[i] != NULL && i < max_cnt; i++) {
+      copy_exec_str(dst_buf[i], src[i]);
+      dst_ptrs[i] = dst_buf[i];
+    }
+  }
+  dst_ptrs[i] = NULL;
+}
 
 void do_syscall(Context *c) {
   uintptr_t a[4];
@@ -112,10 +133,37 @@ void do_syscall(Context *c) {
       STRACE_LOG("syscall return: %s -> %d", name, c->GPRx);
       break;
     }
+    case SYS_execve:
+      STRACE_LOG("syscall: %s(\"%s\", %p, %p)", name, (const char *)a[1], a[2], a[3]);
+      char filename[MAX_EXEC_STR];
+      char argv_buf[MAX_EXEC_ARGS][MAX_EXEC_STR];
+      char envp_buf[MAX_EXEC_ENVS][MAX_EXEC_STR];
+      char *argv[MAX_EXEC_ARGS + 1];
+      char *envp[MAX_EXEC_ENVS + 1];
+      copy_exec_str(filename, (const char *)a[1]);
+      copy_exec_list((char *const *)a[2], argv, argv_buf, MAX_EXEC_ARGS);
+      copy_exec_list((char *const *)a[3], envp, envp_buf, MAX_EXEC_ENVS);
+      int fd = fs_open(filename, 0, 0);
+      if (fd < 0) {
+        c->GPRx = -2;
+        STRACE_LOG("syscall return: %s -> %d", name, c->GPRx);
+        break;
+      }
+      fs_close(fd);
+      context_uload(current, filename, argv, envp);
+      switch_boot_pcb();
+      yield();
+      c->GPRx = -1;
+      STRACE_LOG("syscall return: %s -> %d", name, c->GPRx);
+      break;
     case SYS_exit:
       STRACE_LOG("syscall: %s(%d)", name, a[1]);
       STRACE_LOG("syscall exit status = %d", a[1]);
-      halt(a[1]);
+      char *const nterm_argv[] = {"/bin/nterm", NULL};
+      char *const nterm_envp[] = {NULL};
+      context_uload(current, "/bin/nterm", nterm_argv, nterm_envp);
+      switch_boot_pcb();
+      yield();
       break;
     default:
       STRACE_LOG("syscall: %s(%d, %p, %p, %p)", name, a[0], a[1], a[2], a[3]);

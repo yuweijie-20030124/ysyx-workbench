@@ -38,9 +38,16 @@ size_t invalid_write(const void *buf, size_t offset, size_t len) {
   return 0;
 }
 
+size_t stdin_read(void *buf, size_t offset, size_t len) {
+  (void)buf;
+  (void)offset;
+  (void)len;
+  return 0;
+}
+
 /* This is the information about all files in disk. */
 static Finfo file_table[] __attribute__((used)) = {
-  [FD_STDIN]    = {"stdin", 0, 0, 0, invalid_read, invalid_write},
+  [FD_STDIN]    = {"stdin", 0, 0, 0, stdin_read, invalid_write},
   [FD_STDOUT]   = {"stdout", 0, 0, 0, invalid_read, serial_write},
   [FD_STDERR]   = {"stderr", 0, 0, 0, invalid_read, serial_write},
   [FD_EVENTS]   = {"/dev/events", 0, 0, 0, events_read, invalid_write},
@@ -61,15 +68,23 @@ static size_t clamp_len(size_t offset, size_t len, size_t size) {
   return len < rest ? len : rest;
 }
 
+static int find_file(const char *pathname) {
+  for (size_t i = 0; i < LENGTH(file_table); i++) {
+    if (strcmp(file_table[i].name, pathname) == 0) {
+      return i;
+    }
+  }
+  return -1;
+}
+
 int fs_open(const char *pathname, int flags, int mode) {
   (void)flags;
   (void)mode;
 
-  for (size_t i = 0; i < LENGTH(file_table); i++) {
-    if (strcmp(file_table[i].name, pathname) == 0) {
-      file_table[i].open_offset = 0;
-      return i;
-    }
+  int fd = find_file(pathname);
+  if (fd >= 0) {
+    file_table[fd].open_offset = 0;
+    return fd;
   }
 
   return -1;

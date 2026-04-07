@@ -23,6 +23,7 @@
 #include "sdb.h"
 #include <memory/paddr.h>
 #include <memory/vaddr.h>
+#include <cpu/difftest.h>
 
 #define MAX_ENTRIES 1000  // 假设最多1000组数据
 #define MAX_BUF_LEN 512   // 每行buf的最大长度
@@ -202,6 +203,161 @@ static int cmd_p(char *args) {
     return 0;
 }
 
+
+static int cmd_detach(char *args) {
+  difftest_detach();
+  return 0;
+}
+
+static int cmd_attach(char *args) {
+  difftest_attach();
+  return 0;
+}
+
+#define SNAPSHOT_MAGIC "NEMUSNP"
+#define SNAPSHOT_MAGIC_SIZE 8
+#define SNAPSHOT_VERSION 1
+
+typedef struct {
+  char magic[SNAPSHOT_MAGIC_SIZE];
+  uint32_t version;
+  uint32_t cpu_state_size;
+  uint32_t nemu_state_size;
+  uint32_t paddr_size;
+  uint64_t pmem_size;
+  uint64_t pmem_left;
+} SnapshotHeader;
+
+static char *snapshot_path(char *args) {
+  if (args == NULL) {
+    return NULL;
+  }
+
+  while (*args == ' ' || *args == '\t') {
+    args ++;
+  }
+  if (*args == '\0') {
+    return NULL;
+  }
+
+  char *end = args + strlen(args);
+  while (end > args && (end[-1] == ' ' || end[-1] == '\t' || end[-1] == '\n')) {
+    end --;
+  }
+  *end = '\0';
+  return args;
+}
+
+static bool write_exact(FILE *fp, const void *buf, size_t size, const char *what) {
+  if (fwrite(buf, 1, size, fp) != size) {
+    printf("Failed to write %s: %s\n", what, strerror(errno));
+    return false;
+  }
+  return true;
+}
+
+static bool read_exact(FILE *fp, void *buf, size_t size, const char *what) {
+  if (fread(buf, 1, size, fp) != size) {
+    printf("Failed to read %s: %s\n", what, feof(fp) ? "unexpected end of file" : strerror(errno));
+    return false;
+  }
+  return true;
+}
+
+static bool snapshot_header_match(const SnapshotHeader *header) {
+  if (memcmp(header->magic, SNAPSHOT_MAGIC, SNAPSHOT_MAGIC_SIZE) != 0) {
+    printf("Invalid snapshot file: bad magic\n");
+    return false;
+  }
+  if (header->version != SNAPSHOT_VERSION) {
+    printf("Unsupported snapshot version: %u\n", header->version);
+    return false;
+  }
+  if (header->cpu_state_size != sizeof(cpu) ||
+      header->nemu_state_size != sizeof(nemu_state) ||
+      header->paddr_size != sizeof(paddr_t) ||
+      header->pmem_size != CONFIG_MSIZE ||
+      header->pmem_left != PMEM_LEFT) {
+    printf("Snapshot does not match this NEMU build\n");
+    return false;
+  }
+  return true;
+}
+
+static int cmd_save(char *args) {
+  char *path = snapshot_path(args);
+  if (path == NULL) {
+    printf("Usage: save /absolute/path/to/snapshot\n");
+    return 0;
+  }
+
+  FILE *fp = fopen(path, "wb");
+  if (fp == NULL) {
+    printf("Failed to open snapshot '%s': %s\n", path, strerror(errno));
+    return 0;
+  }
+
+  SnapshotHeader header = {
+    .magic = SNAPSHOT_MAGIC,
+    .version = SNAPSHOT_VERSION,
+    .cpu_state_size = sizeof(cpu),
+    .nemu_state_size = sizeof(nemu_state),
+    .paddr_size = sizeof(paddr_t),
+    .pmem_size = CONFIG_MSIZE,
+    .pmem_left = PMEM_LEFT,
+  };
+
+  bool ok = write_exact(fp, &header, sizeof(header), "snapshot header") &&
+            write_exact(fp, &cpu, sizeof(cpu), "CPU state") &&
+            write_exact(fp, &nemu_state, sizeof(nemu_state), "NEMU state") &&
+            write_exact(fp, guest_to_host(PMEM_LEFT), CONFIG_MSIZE, "physical memory");
+
+  if (fclose(fp) != 0) {
+    printf("Failed to close snapshot '%s': %s\n", path, strerror(errno));
+    ok = false;
+  }
+
+  if (ok) {
+    printf("Snapshot saved to %s\n", path);
+  }
+  return 0;
+}
+
+static int cmd_load(char *args) {
+  char *path = snapshot_path(args);
+  if (path == NULL) {
+    printf("Usage: load /absolute/path/to/snapshot\n");
+    return 0;
+  }
+
+  FILE *fp = fopen(path, "rb");
+  if (fp == NULL) {
+    printf("Failed to open snapshot '%s': %s\n", path, strerror(errno));
+    return 0;
+  }
+
+  SnapshotHeader header;
+  bool ok = read_exact(fp, &header, sizeof(header), "snapshot header") &&
+            snapshot_header_match(&header) &&
+            read_exact(fp, &cpu, sizeof(cpu), "CPU state") &&
+            read_exact(fp, &nemu_state, sizeof(nemu_state), "NEMU state") &&
+            read_exact(fp, guest_to_host(PMEM_LEFT), CONFIG_MSIZE, "physical memory");
+
+  if (fclose(fp) != 0) {
+    printf("Failed to close snapshot '%s': %s\n", path, strerror(errno));
+    ok = false;
+  }
+
+  if (ok) {
+    if (nemu_state.state == NEMU_RUNNING) {
+      nemu_state.state = NEMU_STOP;
+    }
+    difftest_attach();
+    printf("Snapshot loaded from %s\n", path);
+  }
+  return 0;
+}
+
 static int cmd_help(char *args);
 
 static struct {
@@ -218,6 +374,10 @@ static struct {
   { "w", "creat watchpoint", cmd_w },
   { "d", "delete watchpoint", cmd_d },
   { "q", "Exit NEMU", cmd_q },
+  { "detach", "Disable DiffTest checking", cmd_detach },
+  { "attach", "Synchronize REF state and enable DiffTest checking", cmd_attach },
+  { "save", "Save NEMU snapshot to a file", cmd_save },
+  { "load", "Load NEMU snapshot from a file", cmd_load },
   /* TODO: Add more commands cmd_d*/
 };
 

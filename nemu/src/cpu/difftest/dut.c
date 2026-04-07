@@ -29,11 +29,15 @@ void (*ref_difftest_raise_intr)(uint64_t NO) = NULL;
 #ifdef CONFIG_DIFFTEST
 
 static bool is_skip_ref = false;
+static bool is_difftest_attached = true;
 static int skip_dut_nr_inst = 0;
 
 // this is used to let ref skip instructions which
 // can not produce consistent behavior with NEMU
 void difftest_skip_ref() {
+  if (!is_difftest_attached) {
+    return;
+  }
   is_skip_ref = true;
   // If such an instruction is one of the instruction packing in QEMU
   // (see below), we end the process of catching up with QEMU's pc to
@@ -43,7 +47,7 @@ void difftest_skip_ref() {
   // will load that memory, we will encounter false negative. But such
   // situation is infrequent.
   skip_dut_nr_inst = 0;
-}
+}-
 
 // this is used to deal with instruction packing in QEMU.
 // Sometimes letting QEMU step once will execute multiple instructions.
@@ -52,6 +56,9 @@ void difftest_skip_ref() {
 //   Let REF run `nr_ref` instructions first.
 //   We expect that DUT will catch up with REF within `nr_dut` instructions.
 void difftest_skip_dut(int nr_ref, int nr_dut) {
+  if (!is_difftest_attached) {
+    return;
+  }
   skip_dut_nr_inst += nr_dut;
 
   while (nr_ref -- > 0) {
@@ -89,8 +96,39 @@ void init_difftest(char *ref_so_file, long img_size, int port) {
       "If it is not necessary, you can turn it off in menuconfig.", ref_so_file);
 
   ref_difftest_init(port);
+  is_difftest_attached = true;
   ref_difftest_memcpy(RESET_VECTOR, guest_to_host(RESET_VECTOR), img_size, DIFFTEST_TO_REF);
   ref_difftest_regcpy(&cpu, DIFFTEST_TO_REF);
+}
+
+void difftest_detach() {
+  is_difftest_attached = false;
+  is_skip_ref = false;
+  skip_dut_nr_inst = 0;
+  Log("Differential testing: %s", ANSI_FMT("OFF", ANSI_FG_RED));
+}
+
+void difftest_attach() {
+  paddr_t sync_start = PMEM_LEFT;
+  size_t sync_size = CONFIG_MSIZE;
+
+#if defined(CONFIG_ISA_x86)
+  if (PMEM_LEFT < 0x100000 && PMEM_RIGHT >= 0x100000) {
+    sync_start = 0x100000;
+    sync_size = PMEM_RIGHT - sync_start + 1;
+  }
+#endif
+
+  Log("Synchronizing DUT state to REF: memory [" FMT_PADDR ", " FMT_PADDR "] and registers",
+      sync_start, sync_start + sync_size - 1);
+  ref_difftest_memcpy(sync_start, guest_to_host(sync_start), sync_size, DIFFTEST_TO_REF);
+  ref_difftest_regcpy(&cpu, DIFFTEST_TO_REF);
+  isa_difftest_attach();
+
+  is_skip_ref = false;
+  skip_dut_nr_inst = 0;
+  is_difftest_attached = true;
+  Log("Differential testing: %s", ANSI_FMT("ON", ANSI_FG_GREEN));
 }
 
 static void checkregs(CPU_state *ref, vaddr_t pc) {
@@ -102,6 +140,10 @@ static void checkregs(CPU_state *ref, vaddr_t pc) {
 }
 
 void difftest_step(vaddr_t pc, vaddr_t npc) {
+  if (!is_difftest_attached) {
+    return;
+  }
+
   CPU_state ref_r;
 
   if (skip_dut_nr_inst > 0) {
